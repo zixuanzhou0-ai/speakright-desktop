@@ -7,13 +7,13 @@ Download the latest installer from the GitHub Releases page.
 Recommended file:
 
 ```text
-SpeakRight_1.0.0_x64-setup.exe
+SpeakRight_1.0.1_x64-setup.exe
 ```
 
 Alternative MSI package:
 
 ```text
-SpeakRight_1.0.0_x64_en-US.msi
+SpeakRight_1.0.1_x64_en-US.msi
 ```
 
 ## Install on Windows

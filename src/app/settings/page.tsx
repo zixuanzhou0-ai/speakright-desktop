@@ -5,17 +5,21 @@ import { CoachModeCard } from "@/components/settings/coach-mode-card";
 import { ElevenLabsConfigCard } from "@/components/settings/elevenlabs-config-card";
 import { LlmConfigCard } from "@/components/settings/llm-config-card";
 import { PronunciationConfigCard } from "@/components/settings/pronunciation-config-card";
+import { ReleaseCard } from "@/components/settings/release-card";
 import { UsageMonitor } from "@/components/settings/usage-monitor";
 
 export default function SettingsPage() {
   return (
     <div className="h-full overflow-y-auto scrollbar-thin">
       <div className="max-w-5xl mx-auto px-6 py-4">
-        <h1 className="mb-2 text-2xl font-bold">API 设置</h1>
+        <h1 className="mb-2 text-2xl font-bold">设置</h1>
         <p className="mb-6 text-muted-foreground">
-          配置以下三个 API
-          的密钥。所有密钥仅保存在浏览器本地，不会上传到服务器。
+          管理桌面端版本、用量监控和 API 密钥。所有密钥仅保存在本机，不会上传到服务器。
         </p>
+
+        <div className="mb-6">
+          <ReleaseCard />
+        </div>
 
         <div className="mb-10">
           <UsageMonitor />

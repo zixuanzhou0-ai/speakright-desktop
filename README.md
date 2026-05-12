@@ -8,8 +8,8 @@ The desktop app is built with Tauri 2, Next.js 16, React 19, Tailwind CSS 4, and
 
 Installers are published in GitHub Releases:
 
-- `SpeakRight_1.0.0_x64-setup.exe` - recommended Windows installer
-- `SpeakRight_1.0.0_x64_en-US.msi` - MSI installer for Windows deployment
+- `SpeakRight_1.0.1_x64-setup.exe` - recommended Windows installer
+- `SpeakRight_1.0.1_x64_en-US.msi` - MSI installer for Windows deployment
 
 If Windows SmartScreen warns about an unknown publisher, choose **More info** and then **Run anyway**. The current build is unsigned.
 
@@ -23,6 +23,7 @@ If Windows SmartScreen warns about an unknown publisher, choose **More info** an
 - Diagnostic report with evidence, confidence, issues, and training prescription
 - 10 deep deliberate-training courses for common Chinese learner problems
 - Training memory, review queue, mastery profile, and spaced review
+- Desktop version and release panel inside Settings
 - Local-first storage with `localStorage` and Tauri store helpers
 
 ## Requirements
@@ -62,8 +63,8 @@ npm run build
 Build output:
 
 ```text
-src-tauri/target/release/bundle/nsis/SpeakRight_1.0.0_x64-setup.exe
-src-tauri/target/release/bundle/msi/SpeakRight_1.0.0_x64_en-US.msi
+src-tauri/target/release/bundle/nsis/SpeakRight_1.0.1_x64-setup.exe
+src-tauri/target/release/bundle/msi/SpeakRight_1.0.1_x64_en-US.msi
 ```
 
 ## API Keys
@@ -91,6 +92,6 @@ scripts/             Local helper scripts
 
 ## Release Status
 
-Current release: `v1.0.0`
+Current release: `v1.0.1`
 
-See [Release Notes](docs/RELEASE_NOTES_v1.0.0.md).
+See [Release Notes](docs/RELEASE_NOTES_v1.0.1.md).
