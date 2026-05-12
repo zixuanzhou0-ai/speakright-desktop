@@ -11,6 +11,9 @@ import {
   Volume2,
   X,
   ArrowRight,
+  AlertTriangle,
+  ListChecks,
+  Target,
 } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
@@ -33,7 +36,7 @@ import {
   saveMasteryProfile,
 } from "@/lib/mastery-profile";
 import { analyzeAttempt } from "@/lib/attempt-analysis";
-import { buildSessionReviewItems } from "@/lib/review-queue";
+import { buildReviewQueue, buildSessionReviewItems } from "@/lib/review-queue";
 import {
   buildFocusedReviewItems,
   createCourseStartPosition,
@@ -52,6 +55,21 @@ import {
 } from "@/lib/training-course-session";
 import { getRemediationPath, TRAINING_ERROR_PATTERNS } from "@/lib/training-error-patterns";
 import { getTrainingPack } from "@/lib/training-packs";
+import {
+  buildLessonBrief,
+  buildSessionDebrief,
+  type LessonBrief,
+} from "@/lib/lesson-brief";
+import {
+  buildCourseMap,
+  type CourseLevelMapItem,
+  type CourseLevelMapStatus,
+  type CourseMapSummary,
+} from "@/lib/course-map";
+import {
+  buildDeepPracticeCoach,
+  type DeepPracticeCoach,
+} from "@/lib/deep-practice-coach";
 import { cn } from "@/lib/utils";
 import type { AzureAssessmentResult } from "@/types/azure";
 import type {
@@ -203,6 +221,41 @@ export default function TrainingPackPage() {
     if (!currentLevel) return null;
     return levelStats[currentLevel.id] ?? emptySnapshot(currentLevel);
   }, [currentLevel, levelStats]);
+  const savedProfile = useMemo(() => {
+    if (!pack || !course) return null;
+    return loadMasteryProfile();
+  }, [pack, course, phase.type]);
+  const savedReviewQueue = useMemo(
+    () => buildReviewQueue(savedProfile),
+    [savedProfile],
+  );
+  const lessonBrief = useMemo(() => {
+    if (!pack || !course) return null;
+    return buildLessonBrief({
+      pack,
+      requestedLevelId,
+      profile: savedProfile,
+      reviewQueue: savedReviewQueue,
+    });
+  }, [pack, course, requestedLevelId, savedProfile, savedReviewQueue]);
+  const courseMap = useMemo(() => {
+    if (!pack || !course) return null;
+    return buildCourseMap({
+      pack,
+      profile: savedProfile,
+      reviewQueue: savedReviewQueue,
+      requestedLevelId,
+      currentLevelId: phase.type === "course" ? currentLevel?.id : null,
+    });
+  }, [
+    pack,
+    course,
+    savedProfile,
+    savedReviewQueue,
+    requestedLevelId,
+    phase.type,
+    currentLevel?.id,
+  ]);
 
   if (!pack || !course) {
     return (
@@ -630,8 +683,11 @@ export default function TrainingPackPage() {
         {phase.type === "intro" && (
           <IntroCard
             pack={pack}
+            brief={lessonBrief}
+            courseMap={courseMap}
             requestedLevelId={requestedLevelId}
             onStart={() => resetSession()}
+            onStartLevel={(levelId) => resetSession(levelId)}
           />
         )}
 
@@ -642,6 +698,23 @@ export default function TrainingPackPage() {
               level={currentLevel}
               progressText={progressText}
               levelIndex={phase.position.levelIndex}
+              brief={lessonBrief}
+            />
+
+            <CourseMapPanel
+              map={courseMap}
+              compact
+              onStartLevel={(levelId) => resetSession(levelId)}
+            />
+
+            <CoachMissionCard
+              level={currentLevel}
+              item={currentItem}
+              snapshot={currentSnapshot}
+              threshold={pack.masteryRule.targetPassScore}
+              failedAttempts={failedAttempts}
+              lastAttempt={lastAttempt}
+              isFocusedReview={focusedReviewItems.length > 0}
             />
 
             {currentLevel.kind === "perception" && (
@@ -670,6 +743,7 @@ export default function TrainingPackPage() {
 
             {shouldShowRecording && currentSnapshot && (
               <RecordingStep
+                pack={pack}
                 level={currentLevel}
                 item={currentItem}
                 threshold={pack.masteryRule.targetPassScore}
@@ -721,12 +795,18 @@ export default function TrainingPackPage() {
 
 function IntroCard({
   pack,
+  brief,
+  courseMap,
   requestedLevelId,
   onStart,
+  onStartLevel,
 }: {
   pack: TrainingPack;
+  brief: LessonBrief | null;
+  courseMap: CourseMapSummary | null;
   requestedLevelId?: string | null;
   onStart: () => void;
+  onStartLevel: (levelId: string) => void;
 }) {
   const requestedLevel = pack.course?.levels.find(
     (level) => level.id === requestedLevelId,
@@ -749,18 +829,217 @@ function IntroCard({
           <Badge variant="default">从 {requestedLevel.title} 开始</Badge>
         )}
       </div>
-      <h2 className="mt-4 text-xl font-bold">教练式微课程</h2>
+      <h2 className="mt-4 text-xl font-bold">
+        {brief?.headline ?? "教练式微课程"}
+      </h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        听辨 → 动作 → 音节 → 单词 → 对比 → 句子 → 影子跟读 → 混合复测。失败会进入慢速拆解，训练总结会记录 stuck 错因。
+        {brief?.reason ??
+          "听辨 → 动作 → 音节 → 单词 → 对比 → 句子 → 影子跟读 → 混合复测。失败会进入慢速拆解，训练总结会记录 stuck 错因。"}
       </p>
+      {brief && (
+        <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_0.9fr]">
+          <div className="rounded-lg border bg-background p-4">
+            <div className="flex items-center gap-2">
+              <ListChecks className="h-4 w-4 text-primary" />
+              <p className="text-sm font-semibold">课前任务单</p>
+            </div>
+            <div className="mt-3 grid gap-2">
+              {brief.warmupSteps.map((step, index) => (
+                <div key={step} className="flex gap-2 text-sm">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                    {index + 1}
+                  </span>
+                  <span className="text-muted-foreground">{step}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border bg-background p-4">
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-primary" />
+              <p className="text-sm font-semibold">通过标准</p>
+            </div>
+            <div className="mt-3 space-y-2">
+              {brief.successCriteria.map((criterion) => (
+                <p key={criterion} className="text-sm text-muted-foreground">
+                  {criterion}
+                </p>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       <div className="mt-4 rounded-lg bg-muted/40 p-4">
         <p className="text-sm font-semibold">常见母语干扰</p>
         <p className="mt-1 text-sm text-muted-foreground">{pack.l1Problem}</p>
       </div>
+      {brief && brief.risks.length > 0 && (
+        <div className="mt-4 rounded-lg border bg-background p-4">
+          <p className="text-sm font-semibold">这节课重点防的错因</p>
+          <div className="mt-3 grid gap-2 md:grid-cols-3">
+            {brief.risks.map((risk) => (
+              <div key={risk.id} className="rounded-lg bg-muted/40 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-sm font-medium">{risk.title}</p>
+                  {risk.active && <Badge variant="destructive">近期出现</Badge>}
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">{risk.cue}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      <CourseMapPanel map={courseMap} onStartLevel={onStartLevel} />
       <Button onClick={onStart} size="lg" className="mt-5 cursor-pointer">
-        {requestedLevel ? `开始：${requestedLevel.title}` : "开始训练"}
+        {brief?.nextActionLabel ??
+          (requestedLevel ? `开始：${requestedLevel.title}` : "开始训练")}
       </Button>
     </motion.div>
+  );
+}
+
+function courseMapStatusLabel(status: CourseLevelMapStatus): string {
+  const labels: Record<CourseLevelMapStatus, string> = {
+    current: "当前",
+    due: "复习",
+    "needs-work": "卡点",
+    passed: "已过",
+    new: "未练",
+  };
+  return labels[status];
+}
+
+function courseMapStatusClass(status: CourseLevelMapStatus): string {
+  const classes: Record<CourseLevelMapStatus, string> = {
+    current: "border-primary bg-primary/10 ring-1 ring-primary/30",
+    due: "border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100",
+    "needs-work": "border-destructive/30 bg-destructive/5",
+    passed: "border-primary/25 bg-primary/5",
+    new: "bg-background",
+  };
+  return classes[status];
+}
+
+function CourseMapPanel({
+  map,
+  compact = false,
+  onStartLevel,
+}: {
+  map: CourseMapSummary | null;
+  compact?: boolean;
+  onStartLevel?: (levelId: string) => void;
+}) {
+  if (!map) return null;
+
+  return (
+    <div
+      className={cn(
+        "rounded-xl border bg-card shadow-sm",
+        compact ? "p-3" : "mt-4 p-4",
+      )}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <ListChecks className="h-4 w-4 text-primary" />
+            <p className="text-sm font-semibold">课程关卡地图</p>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">{map.guidance}</p>
+        </div>
+        <div className="min-w-[160px]">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>{map.passedLevels}/{map.totalLevels} 已过</span>
+            <span>{map.completionPercent}%</span>
+          </div>
+          <div className="mt-2 h-2 rounded-full bg-muted">
+            <div
+              className="h-full rounded-full bg-primary transition-all"
+              style={{ width: `${map.completionPercent}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={cn(
+          "mt-3 grid gap-2",
+          compact
+            ? "grid-cols-2 md:grid-cols-4 xl:grid-cols-8"
+            : "md:grid-cols-2 xl:grid-cols-4",
+        )}
+      >
+        {map.levels.map((level) => (
+          <CourseMapLevelCard
+            key={level.id}
+            level={level}
+            compact={compact}
+            onStartLevel={onStartLevel}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CourseMapLevelCard({
+  level,
+  compact,
+  onStartLevel,
+}: {
+  level: CourseLevelMapItem;
+  compact: boolean;
+  onStartLevel?: (levelId: string) => void;
+}) {
+  const hasWarning = level.status === "due" || level.status === "needs-work";
+
+  return (
+    <button
+      type="button"
+      onClick={() => onStartLevel?.(level.id)}
+      className={cn(
+        "min-h-[116px] rounded-lg border p-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary cursor-pointer",
+        compact && "min-h-[104px] p-2.5",
+        courseMapStatusClass(level.status),
+      )}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-background text-xs font-semibold shadow-sm">
+          {level.index + 1}
+        </span>
+        <Badge
+          variant={
+            level.status === "needs-work"
+              ? "destructive"
+              : level.status === "passed"
+                ? "secondary"
+                : "outline"
+          }
+        >
+          {courseMapStatusLabel(level.status)}
+        </Badge>
+      </div>
+      <p className="mt-2 line-clamp-2 text-sm font-semibold">{level.title}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{level.passRuleText}</p>
+      <div className="mt-2 flex flex-wrap gap-1 text-[11px] text-muted-foreground">
+        {level.bestScore > 0 && <span>最佳 {level.bestScore}</span>}
+        {level.attempts > 0 && <span>{level.attempts} 次</span>}
+        {level.dueTaskCount > 0 && <span>复习 {level.dueTaskCount}</span>}
+        {level.stuckCount > 0 && <span>卡点 {level.stuckCount}</span>}
+      </div>
+      {!compact && (
+        <div className="mt-2 flex gap-1.5 text-xs text-muted-foreground">
+          {hasWarning ? (
+            <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-destructive" />
+          ) : (
+            <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+          )}
+          <p className="line-clamp-2">
+            {level.reviewReason ?? level.coachCue}
+          </p>
+        </div>
+      )}
+    </button>
   );
 }
 
@@ -769,11 +1048,13 @@ function CourseHeader({
   level,
   progressText,
   levelIndex,
+  brief,
 }: {
   pack: TrainingPack;
   level: TrainingLevel;
   progressText: string;
   levelIndex: number;
+  brief: LessonBrief | null;
 }) {
   const levels = pack.course?.levels ?? [];
   return (
@@ -784,7 +1065,12 @@ function CourseHeader({
           <h2 className="text-lg font-bold">{level.title}</h2>
           <p className="text-sm text-muted-foreground">{level.goal}</p>
         </div>
-        <Badge variant="secondary">{pack.masteryRule.targetPassScore}+ 目标音素</Badge>
+        <div className="flex flex-wrap items-center gap-2">
+          {brief && (
+            <Badge variant="outline">预计剩余 {brief.estimatedMinutes} 分钟</Badge>
+          )}
+          <Badge variant="secondary">{pack.masteryRule.targetPassScore}+ 目标音素</Badge>
+        </div>
       </div>
       <div className="mt-4 grid grid-cols-4 gap-2 md:grid-cols-8">
         {levels.map((courseLevel, index) => (
@@ -800,6 +1086,86 @@ function CourseHeader({
             )}
           />
         ))}
+      </div>
+    </div>
+  );
+}
+
+function passRuleText(level: TrainingLevel, threshold: number): string {
+  const rule = level.passRule;
+  if (level.kind === "perception") {
+    return `听辨正确率达到 ${Math.round((rule.minCorrectRate ?? 0.8) * 100)}%`;
+  }
+  if (rule.minAverageScore != null) {
+    return `平均目标音达到 ${rule.minAverageScore} 分`;
+  }
+  if (rule.requiredPasses != null) {
+    return `${rule.requiredPasses} 题目标音过线`;
+  }
+  return `目标音达到 ${rule.minTargetScore ?? threshold} 分`;
+}
+
+function CoachMissionCard({
+  level,
+  item,
+  snapshot,
+  threshold,
+  failedAttempts,
+  lastAttempt,
+  isFocusedReview,
+}: {
+  level: TrainingLevel;
+  item: TrainingCourseItem;
+  snapshot: CourseAttemptSnapshot | null;
+  threshold: number;
+  failedAttempts: number;
+  lastAttempt: AttemptResult | null;
+  isFocusedReview: boolean;
+}) {
+  const nextCue = lastAttempt?.analysis.nextCue ?? item.successCue;
+  const passText = passRuleText(level, threshold);
+  const attempts = snapshot?.attempts ?? 0;
+  const passedCount = snapshot?.passedCount ?? 0;
+
+  return (
+    <div className="rounded-xl border bg-card p-4 shadow-sm">
+      <div className="grid gap-3 lg:grid-cols-[1.1fr_0.9fr_0.9fr]">
+        <div className="rounded-lg bg-muted/40 p-3">
+          <p className="text-xs font-semibold uppercase text-muted-foreground">
+            这一题只练
+          </p>
+          <p className="mt-1 text-sm font-medium">{item.focusPoint}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            目标音：{item.targetPhonemes.join(" / ")}
+            {item.position ? ` · 位置：${item.position}` : ""}
+          </p>
+        </div>
+
+        <div className="rounded-lg bg-primary/5 p-3">
+          <p className="text-xs font-semibold uppercase text-muted-foreground">
+            下一次只改
+          </p>
+          <p className="mt-1 text-sm font-medium text-primary">{nextCue}</p>
+          {failedAttempts > 0 && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              已尝试 {failedAttempts} 次，连续 2 次未过线会进入慢速拆解。
+            </p>
+          )}
+        </div>
+
+        <div className="rounded-lg bg-background p-3 ring-1 ring-border">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
+              通过条件
+            </p>
+            {isFocusedReview && <Badge variant="destructive">专项复练</Badge>}
+          </div>
+          <p className="mt-1 text-sm font-medium">{passText}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            本关已过 {passedCount}/{attempts || 0} 题
+            {snapshot ? ` · best ${Math.max(0, ...snapshot.scores)}` : ""}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -937,6 +1303,7 @@ function ArticulationStep({
 }
 
 function RecordingStep({
+  pack,
   level,
   item,
   threshold,
@@ -963,6 +1330,7 @@ function RecordingStep({
   onRetry,
   onContinue,
 }: {
+  pack: TrainingPack;
   level: TrainingLevel;
   item: TrainingCourseItem;
   threshold: number;
@@ -997,6 +1365,14 @@ function RecordingStep({
     !!remediation &&
     remediationAttempt?.passed &&
     remediationStepIndex >= remediation.steps.length - 1;
+  const deepCoach = lastAttempt
+    ? buildDeepPracticeCoach({
+        pack,
+        item,
+        analysis: lastAttempt.analysis,
+        failedAttempts,
+      })
+    : null;
 
   return (
     <motion.div
@@ -1098,6 +1474,7 @@ function RecordingStep({
               <p className="mt-1 text-primary">{lastAttempt.analysis.nextCue}</p>
             </div>
           )}
+          {deepCoach && <DeepPracticeCoachPanel coach={deepCoach} />}
           {showRemediation && remediation && (
             <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-left text-sm dark:border-red-900 dark:bg-red-950/20">
               <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1242,6 +1619,81 @@ function RecordingStep({
   );
 }
 
+function DeepPracticeCoachPanel({ coach }: { coach: DeepPracticeCoach }) {
+  const tone =
+    coach.status === "lock-in"
+      ? "border-primary/25 bg-primary/5"
+      : coach.status === "stuck-prep"
+        ? "border-red-500/25 bg-red-500/5"
+        : "border-amber-500/25 bg-amber-500/10";
+
+  return (
+    <div className={cn("mt-4 rounded-lg border p-4 text-left text-sm", tone)}>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="font-semibold">{coach.title}</p>
+          <p className="mt-1 text-muted-foreground">{coach.diagnosis}</p>
+        </div>
+        <Badge variant={coach.status === "stuck-prep" ? "destructive" : "secondary"}>
+          深度练习
+        </Badge>
+      </div>
+
+      <div className="mt-3 grid gap-3 lg:grid-cols-2">
+        <div className="rounded-md bg-background/80 p-3">
+          <p className="text-xs font-semibold uppercase text-muted-foreground">
+            身体检查
+          </p>
+          <p className="mt-1 font-medium">{coach.bodyCheck}</p>
+        </div>
+        <div className="rounded-md bg-background/80 p-3">
+          <p className="text-xs font-semibold uppercase text-muted-foreground">
+            回听检查
+          </p>
+          <p className="mt-1 font-medium">{coach.listeningCheck}</p>
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-md bg-background/80 p-3">
+        <p className="text-xs font-semibold uppercase text-muted-foreground">
+          30 秒微练习
+        </p>
+        <div className="mt-2 grid gap-2 md:grid-cols-3">
+          {coach.microDrill.map((step, index) => (
+            <div key={`${step.label}-${index}`} className="rounded-md bg-muted/40 p-2">
+              <div className="flex items-center gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                  {index + 1}
+                </span>
+                <p className="font-medium">{step.label}</p>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {step.instruction}
+              </p>
+              <p className="mt-1 font-mono text-xs text-primary">{step.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-2 md:grid-cols-2">
+        <div className="rounded-md bg-background/80 p-3">
+          <p className="text-xs font-semibold uppercase text-muted-foreground">
+            继续规则
+          </p>
+          <p className="mt-1 text-muted-foreground">{coach.moveOnRule}</p>
+        </div>
+        <div className="rounded-md bg-background/80 p-3">
+          <p className="text-xs font-semibold uppercase text-muted-foreground">
+            自检问题
+          </p>
+          <p className="mt-1 text-muted-foreground">{coach.reflectionPrompt}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function CompletedStep({
   pack,
   summary,
@@ -1262,6 +1714,7 @@ function CompletedStep({
     : null;
   const nextReview = loadMasteryProfile().packs[pack.id]?.nextReviewAt;
   const evidencePrompt = buildCoachSummaryPrompt(pack, summary, worstAttempt);
+  const debrief = buildSessionDebrief(pack, summary);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -1322,6 +1775,30 @@ function CompletedStep({
               </p>
             </div>
           ))}
+        </div>
+        <div className="mt-5 rounded-lg border bg-background p-4 text-left">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <p className="text-sm font-semibold">{debrief.headline}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {debrief.mainFinding}
+              </p>
+            </div>
+            {debrief.nextLevelTitle && (
+              <Badge variant="secondary">下一关：{debrief.nextLevelTitle}</Badge>
+            )}
+          </div>
+          <p className="mt-3 text-sm font-medium text-primary">
+            {debrief.nextActionReason}
+          </p>
+          <div className="mt-3 grid gap-2 md:grid-cols-3">
+            {debrief.reviewPlan.map((step, index) => (
+              <div key={step} className="rounded-md bg-muted/40 p-2 text-sm">
+                <span className="mr-2 font-semibold text-primary">{index + 1}</span>
+                <span className="text-muted-foreground">{step}</span>
+              </div>
+            ))}
+          </div>
         </div>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
           {nextLevel && (

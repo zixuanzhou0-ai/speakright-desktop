@@ -164,12 +164,20 @@ export default function DrillPage() {
             按诊断处方训练，不再只做浅层刷题
           </p>
         </div>
-        <Link href="/assessment">
-          <Button variant="outline" className="gap-2 cursor-pointer">
-            <ClipboardList className="h-4 w-4" />
-            {report ? "重新诊断" : "先做诊断"}
-          </Button>
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/drill/evidence">
+            <Button variant="outline" className="gap-2 cursor-pointer">
+              <BookOpen className="h-4 w-4" />
+              错题本
+            </Button>
+          </Link>
+          <Link href="/assessment">
+            <Button variant="outline" className="gap-2 cursor-pointer">
+              <ClipboardList className="h-4 w-4" />
+              {report ? "重新诊断" : "先做诊断"}
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <section className="mb-6 rounded-xl border bg-card p-5 shadow-sm">
