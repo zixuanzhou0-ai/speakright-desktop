@@ -1,7 +1,9 @@
 /**
  * Direct API client for desktop mode.
  * Replaces all /api/* proxy routes — calls external APIs directly from the client.
- * API keys are read from localStorage via api-keys.ts.
+ * API keys are read from api-keys.ts. In packaged Tauri builds, secrets are
+ * kept in the Tauri store + in-memory cache rather than persisted in
+ * localStorage.
  */
 
 import { getCoachMode } from "@/lib/api-keys";
@@ -100,6 +102,49 @@ export async function assessPronunciation(
   }
 
   return parseAzureResult(raw);
+}
+
+export async function transcribeSpeech(
+  audioBlob: Blob,
+  key: string,
+  region: string,
+): Promise<string> {
+  const language = "en-US";
+  const url = `https://${region}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=${encodeURIComponent(language)}&format=detailed`;
+  const audioBytes = new Uint8Array(await audioBlob.arrayBuffer());
+  const res = await apiFetch(url, {
+    method: "POST",
+    headers: {
+      "Ocp-Apim-Subscription-Key": key,
+      "Content-Type": "audio/wav",
+      Accept: "application/json",
+    },
+    body: audioBytes,
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Azure transcription failed (${res.status}): ${text}`);
+  }
+
+  const raw = (await res.json()) as Record<string, unknown>;
+  if (
+    raw.RecognitionStatus === "NoMatch" ||
+    raw.RecognitionStatus === "InitialSilenceTimeout"
+  ) {
+    throw new Error("No speech detected. Please try again.");
+  }
+  const nbest = raw.NBest as Array<Record<string, unknown>> | undefined;
+  const best = nbest?.[0];
+  const transcript =
+    (best?.Display as string | undefined) ??
+    (best?.Lexical as string | undefined) ??
+    (raw.DisplayText as string | undefined) ??
+    "";
+  if (!transcript.trim()) {
+    throw new Error("No transcript returned from Azure.");
+  }
+  return transcript.trim();
 }
 
 // ─── ElevenLabs ─────────────────────────────────────────

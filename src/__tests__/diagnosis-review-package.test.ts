@@ -58,6 +58,12 @@ describe("diagnosis review package", () => {
       issueId: "thin-th",
       suggestedAction: "retest",
     });
+    expect(review.reviewItems[0].retestWords.length).toBeGreaterThan(0);
+    expect(
+      review.reviewItems[0].retestWords.every((word) =>
+        word.targetPhonemes.includes("th"),
+      ),
+    ).toBe(true);
     expect(review.summary).toContain("补测");
   });
 });

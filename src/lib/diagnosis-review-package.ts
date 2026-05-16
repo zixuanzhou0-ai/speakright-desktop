@@ -1,3 +1,8 @@
+import {
+  ADAPTIVE_ASSESSMENT_WORDS,
+  ASSESSMENT_WORDS,
+} from "@/lib/assessment-texts";
+import type { AssessmentWord } from "@/types/assessment";
 import type {
   DiagnosisIssue,
   DiagnosisReport,
@@ -12,6 +17,7 @@ export interface DiagnosisReviewItem {
   confidence: "low" | "medium" | "high" | "unknown";
   suggestedAction: "retest" | "coach-review" | "train-with-caution";
   recommendedPackIds: string[];
+  retestWords: AssessmentWord[];
 }
 
 export interface DiagnosisReviewPackage {
@@ -46,6 +52,22 @@ function reasonForIssue(issue: DiagnosisIssue): string {
   return "证据较强；如果用户主观听感冲突，可进入教练复核。";
 }
 
+export function buildTargetedRetestWords(
+  issue: DiagnosisIssue,
+  maxItems = 4,
+): AssessmentWord[] {
+  const targetPhonemes = new Set(issue.targetPhonemes);
+  const words = [...ADAPTIVE_ASSESSMENT_WORDS, ...ASSESSMENT_WORDS].filter(
+    (word) =>
+      word.targetPhonemes.some((phoneme) => targetPhonemes.has(phoneme)),
+  );
+  const unique = new Map<string, AssessmentWord>();
+  for (const word of words) {
+    unique.set(word.word.toLowerCase(), word);
+  }
+  return Array.from(unique.values()).slice(0, maxItems);
+}
+
 export function buildDiagnosisReviewPackage(
   report: DiagnosisReport,
 ): DiagnosisReviewPackage {
@@ -65,6 +87,7 @@ export function buildDiagnosisReviewPackage(
         confidence: issue.confidence ?? "unknown",
         suggestedAction: actionForIssue(issue),
         recommendedPackIds: issue.recommendedPackIds,
+        retestWords: buildTargetedRetestWords(issue),
       }),
     );
 

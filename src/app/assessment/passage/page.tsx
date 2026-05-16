@@ -175,6 +175,7 @@ export default function CoveragePassageAssessmentPage() {
       result,
       source: phase.type === "probe" ? "coverage-probe" : "coverage-segment",
       label: prompt.title,
+      recordingQuality: recordingQuality.report,
     });
     recorder.reset();
     recordingQuality.reset();

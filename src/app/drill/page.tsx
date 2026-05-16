@@ -11,6 +11,7 @@ import {
   GitCompareArrows,
   Headphones,
   MessageSquareText,
+  Mic2,
   PanelsTopLeft,
   Target,
   TrendingUp,
@@ -88,6 +89,12 @@ const FREE_MODES = [
     icon: BriefcaseBusiness,
     title: "场景迁移",
     description: "把弱点迁移到面试、会议和表达",
+  },
+  {
+    href: "/drill/spontaneous",
+    icon: Mic2,
+    title: "即兴迁移",
+    description: "不写稿先说，转写后只看当前目标",
   },
   {
     href: "/progress",

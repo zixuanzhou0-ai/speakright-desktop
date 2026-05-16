@@ -1,4 +1,11 @@
 import type { AzureAssessmentResult } from "@/types/azure";
+import type {
+  TrainingEvidenceItem,
+  TrainingLevelKind,
+  TrainingLevelSummary,
+  TrainingSessionSummary,
+} from "@/types/training";
+import { buildSessionReviewItems } from "./review-queue";
 
 export type ProsodyExerciseKind =
   | "sentence-stress"
@@ -276,6 +283,101 @@ export function analyzeProsodyAttempt(
     evidenceConfidence: pause.confidence,
     likelyIssue,
     nextCue: nextCueByIssue[likelyIssue],
+  };
+}
+
+function levelKindForProsody(exercise: ProsodyExercise): TrainingLevelKind {
+  return exercise.kind === "shadowing" ? "shadowing" : "sentence";
+}
+
+function evidenceStrengthForProsody(
+  confidence: ProsodyAnalysis["evidenceConfidence"],
+): "thin" | "fair" | "strong" {
+  if (confidence === "high") return "strong";
+  if (confidence === "medium") return "fair";
+  return "thin";
+}
+
+export function buildProsodyTrainingSession(
+  exercise: ProsodyExercise,
+  analysis: ProsodyAnalysis,
+  now = Date.now(),
+): TrainingSessionSummary {
+  const score = Math.round(analysis.prosodyScore);
+  const canPromote = analysis.evidenceConfidence !== "low";
+  const countedPass = analysis.passed && canPromote;
+  const levelKind = levelKindForProsody(exercise);
+  const failedItem: TrainingEvidenceItem | undefined = countedPass
+    ? undefined
+    : {
+        itemId: `prosody-${exercise.id}-${now}`,
+        levelId: exercise.id,
+        levelKind,
+        text: exercise.text,
+        targetPhonemes: [],
+        targetScore: score,
+        overallScore: Math.round(analysis.accuracyScore),
+        patternIds: [`prosody-${analysis.likelyIssue}`],
+        nextCue: analysis.nextCue,
+        passed: false,
+        assessmentReliability: {
+          alignment:
+            analysis.completenessScore >= 75 &&
+            analysis.missingFocusWords.length === 0
+              ? "good"
+              : "caution",
+          evidenceStrength: evidenceStrengthForProsody(
+            analysis.evidenceConfidence,
+          ),
+          canPromoteMastery: canPromote,
+          note: canPromote
+            ? "韵律证据可进入 stress-rhythm 复习系统。"
+            : "本次缺少词级 break feedback，只作为韵律观察。",
+        },
+      };
+  const levelSummary: TrainingLevelSummary = {
+    levelId: exercise.id,
+    kind: levelKind,
+    attempts: 1,
+    passed: countedPass,
+    bestScore: score,
+    stuckCount: countedPass ? 0 : 1,
+  };
+  const session: TrainingSessionSummary = {
+    id: `prosody-${exercise.id}-${now}`,
+    packId: "stress-rhythm",
+    modality: "prosody",
+    startedAt: now,
+    completedAt: now,
+    perceptionCorrect: 0,
+    perceptionTotal: 0,
+    targetScores: [score],
+    wordScores: [],
+    sentenceScores: [score],
+    mastered: false,
+    mixedReviewScores: [],
+    levelSummaries: [levelSummary],
+    stuckPatternIds: countedPass ? [] : [`prosody-${analysis.likelyIssue}`],
+    recommendedNextLevelId: countedPass ? undefined : exercise.id,
+    failedItems: failedItem ? [failedItem] : [],
+    remediationResults: [],
+    assessmentReliability: {
+      alignment:
+        analysis.completenessScore >= 75 &&
+        analysis.missingFocusWords.length === 0
+          ? "good"
+          : "caution",
+      evidenceStrength: evidenceStrengthForProsody(analysis.evidenceConfidence),
+      canPromoteMastery: canPromote,
+      note: canPromote
+        ? "韵律训练已作为 stress-rhythm 阶段证据。"
+        : "韵律证据置信度偏低，本次不提升掌握度。",
+    },
+  };
+
+  return {
+    ...session,
+    reviewItems: buildSessionReviewItems(session, now),
   };
 }
 

@@ -7,6 +7,10 @@ import {
   recommendedHvptContrastIds,
   summarizeHvptSession,
 } from "@/lib/hvpt-training";
+import {
+  createEmptyMasteryProfile,
+  recordTrainingSession,
+} from "@/lib/mastery-profile";
 import type { MasteryProfile } from "@/types/training";
 
 describe("hvpt training", () => {
@@ -102,7 +106,9 @@ describe("hvpt training", () => {
     const session = buildHvptTrainingSession(contrast, summary, 1000);
 
     expect(session.packId).toBe("ee-ih");
+    expect(session.modality).toBe("perception");
     expect(session.perceptionCorrect).toBe(10);
+    expect(session.targetScores).toEqual([]);
     expect(session.levelSummaries?.[0]).toMatchObject({
       levelId: "perception-abx",
       kind: "perception",
@@ -110,5 +116,27 @@ describe("hvpt training", () => {
       bestScore: 100,
     });
     expect(session.assessmentReliability?.canPromoteMastery).toBe(true);
+  });
+
+  it("does not write HVPT perception accuracy into production phoneme mastery", () => {
+    const contrast = getHvptContrast("ee-ih");
+    if (!contrast) throw new Error("missing contrast");
+    const trials = buildHvptSession("ee-ih", 10, 12);
+    const responses = trials.map((trial) => ({
+      trialId: trial.id,
+      answer: (trial.xIsA ? "A" : "B") as "A" | "B",
+    }));
+    const summary = summarizeHvptSession(contrast, trials, responses);
+    const profile = recordTrainingSession(
+      createEmptyMasteryProfile(),
+      buildHvptTrainingSession(contrast, summary, 1000),
+    );
+
+    expect(
+      profile.packs["ee-ih"]?.levelProgress["perception-abx"]?.passed,
+    ).toBe(true);
+    expect(profile.packs["ee-ih"]?.perceptionBestRate).toBe(1);
+    expect(profile.phonemes.ee).toBeUndefined();
+    expect(profile.phonemes.ih).toBeUndefined();
   });
 });

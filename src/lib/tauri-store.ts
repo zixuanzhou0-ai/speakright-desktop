@@ -4,8 +4,8 @@
  * In browser: falls back to localStorage.
  */
 
-import { isTauriEnvironment } from "@/lib/tauri-runtime";
 import type { LazyStore } from "@tauri-apps/plugin-store";
+import { isTauriEnvironment } from "@/lib/tauri-runtime";
 
 let storeInstance: LazyStore | null = null;
 
@@ -56,8 +56,7 @@ export async function storeSet<T>(key: string, value: T): Promise<void> {
     // Also fire storage event for UI reactivity
     window.dispatchEvent(new StorageEvent("storage", { key }));
   } catch {
-    // Fallback to localStorage if store fails
-    localStorage.setItem(key, JSON.stringify(value));
+    // In Tauri, do not leak secrets back to localStorage if the store fails.
     window.dispatchEvent(new StorageEvent("storage", { key }));
   }
 }

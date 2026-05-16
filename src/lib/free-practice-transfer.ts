@@ -40,6 +40,7 @@ export interface FreePracticeTransferSummary {
   generatedAt: number;
   text: string;
   mode: "word" | "sentence";
+  transferLayer?: TransferEvidence["layer"];
   recorded: boolean;
   evidences: FreePracticeTransferEvidence[];
   assessmentReliability?: AssessmentReliability;
@@ -132,8 +133,16 @@ function wordScoreForTargets(
 function resultScoreForTargets(
   result: AzureAssessmentResult,
   targetPhonemes: string[],
+  allowedWords?: string[],
 ): { targetScore: number | null; matchedWords: string[] } {
+  const allowed = allowedWords
+    ? new Set(allowedWords.map((word) => normalizePhrase(word)))
+    : null;
   const wordScores = result.words
+    .filter((word) => {
+      if (!allowed) return true;
+      return allowed.has(normalizePhrase(word.word));
+    })
     .map((word) => ({
       text: word.word,
       score: wordScoreForTargets(word, targetPhonemes),
@@ -203,15 +212,6 @@ function nextCueForEvidence(
     patternIds.includes(item.id),
   );
   return pattern?.immediateCue ?? fallback;
-}
-
-function evidenceReason(
-  task: ReviewQueueItem | undefined,
-  packTitle: string,
-  matchedWords: string[],
-): string {
-  if (task) return `命中复习任务：${task.reason}`;
-  return `这句话包含 ${packTitle} 的目标音：${matchedWords.slice(0, 4).join(", ")}。`;
 }
 
 function textFromCourseItem(item: TrainingCourseItem): string {
@@ -376,24 +376,21 @@ export function analyzeFreePracticeTransfer({
   mode,
   now = Date.now(),
 }: AnalyzeFreePracticeTransferInput): FreePracticeTransferSummary {
-  const tasks = candidateTasks(profile, now);
-  const taskByPack = new Map(tasks.map((task) => [task.packId, task]));
-  const candidatePackIds = unique([
-    ...tasks.map((task) => task.packId),
-    ...activePackIds(profile),
-  ]);
+  const preview = buildFreePracticeTargetPreview({
+    profile,
+    text,
+    mode,
+    now,
+  });
 
-  const evidences = candidatePackIds
-    .map((packId): FreePracticeTransferEvidence | null => {
-      const pack = getTrainingPack(packId);
+  const evidences = preview.targets
+    .map((target): FreePracticeTransferEvidence | null => {
+      const pack = getTrainingPack(target.packId);
       if (!pack) return null;
-      const task = taskByPack.get(packId);
-      const levelId =
-        task?.levelId ??
-        (mode === "sentence" ? "shadowing-transfer" : "word-ladder");
       const { targetScore, matchedWords } = resultScoreForTargets(
         result,
-        pack.targetPhonemes,
+        target.targetPhonemes,
+        target.matchedWords,
       );
       if (targetScore == null || matchedWords.length === 0) return null;
 
@@ -402,27 +399,27 @@ export function analyzeFreePracticeTransfer({
       const patternIds = passed
         ? []
         : detectErrorPatterns({
-            packId,
-            targetPhonemes: pack.targetPhonemes,
+            packId: target.packId,
+            targetPhonemes: target.targetPhonemes,
             targetScore,
             overallScore: result.pronunciationScore,
-            isFinalPosition: packId === "final-consonants",
-            issueType: packId === "stress-rhythm" ? "rhythm" : undefined,
+            isFinalPosition: target.packId === "final-consonants",
+            issueType: target.packId === "stress-rhythm" ? "rhythm" : undefined,
           }).map((pattern) => pattern.id);
 
       return {
-        packId,
+        packId: target.packId,
         packTitle: pack.title,
-        levelId,
-        targetPhonemes: pack.targetPhonemes,
+        levelId: target.levelId,
+        targetPhonemes: target.targetPhonemes,
         matchedWords,
         targetScore,
         overallScore: result.pronunciationScore,
         threshold,
         passed,
-        source: task ? "review" : "active-pack",
-        reason: evidenceReason(task, pack.title, matchedWords),
-        nextCue: nextCueForEvidence(packId, patternIds, pack.mouthCue),
+        source: target.source,
+        reason: target.reason,
+        nextCue: nextCueForEvidence(target.packId, patternIds, pack.mouthCue),
         patternIds,
       };
     })
@@ -441,6 +438,25 @@ export function analyzeFreePracticeTransfer({
     recorded: false,
     evidences,
   };
+}
+
+function sameLocalDay(a: number, b: number): boolean {
+  return new Date(a).toDateString() === new Date(b).toDateString();
+}
+
+function hasSameDayTransferSession(
+  profile: MasteryProfile,
+  summary: FreePracticeTransferSummary,
+  evidence: FreePracticeTransferEvidence,
+): boolean {
+  const normalizedText = normalizePhrase(summary.text);
+  return profile.sessions.some((session) => {
+    if (session.packId !== evidence.packId) return false;
+    if (!sameLocalDay(session.completedAt, summary.generatedAt)) return false;
+    return (session.transferEvidence ?? []).some(
+      (item) => normalizePhrase(item.prompt) === normalizedText,
+    );
+  });
 }
 
 function evidenceText(evidence: FreePracticeTransferEvidence): string {
@@ -484,7 +500,7 @@ function buildTransferSession(
     stuckCount: evidence.passed ? 0 : 1,
   };
   const transferEvidence: TransferEvidence = {
-    layer: "guided",
+    layer: summary.transferLayer ?? "guided",
     prompt: summary.text,
     score: evidence.targetScore,
     passed: evidence.passed,
@@ -533,7 +549,11 @@ export function recordFreePracticeTransfer(
     assessmentReliability:
       assessmentReliability ?? summary.assessmentReliability,
   };
-  const sessions = reliableSummary.evidences.map((evidence) =>
+  const dedupedEvidences = reliableSummary.evidences.filter(
+    (evidence) =>
+      !hasSameDayTransferSession(nextProfile, reliableSummary, evidence),
+  );
+  const sessions = dedupedEvidences.map((evidence) =>
     buildTransferSession(reliableSummary, evidence),
   );
 
@@ -543,7 +563,11 @@ export function recordFreePracticeTransfer(
 
   return {
     profile: nextProfile,
-    summary: { ...reliableSummary, recorded: sessions.length > 0 },
+    summary: {
+      ...reliableSummary,
+      evidences: dedupedEvidences,
+      recorded: sessions.length > 0,
+    },
     sessions,
   };
 }

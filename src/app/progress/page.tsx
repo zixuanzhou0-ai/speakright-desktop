@@ -7,6 +7,8 @@ import {
   CalendarClock,
   CheckCircle2,
   Play,
+  ShieldCheck,
+  Trash2,
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
@@ -15,6 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   type BenchmarkRecordingMeta,
+  clearBenchmarkRecordings,
+  deleteBenchmarkRecording,
   getBenchmarkAudioBlob,
   listBenchmarkRecordings,
   summarizeBenchmarkGroups,
@@ -41,6 +45,10 @@ export default function ProgressPage() {
     setProfile(loadMasteryProfile());
   }, []);
 
+  const refreshRecordings = () => {
+    setRecordings(listBenchmarkRecordings());
+  };
+
   const mastered = profile
     ? Object.values(profile.packs).filter((pack) => pack.status === "mastered")
         .length
@@ -59,6 +67,20 @@ export default function ProgressPage() {
     const audio = new Audio(url);
     audio.onended = () => URL.revokeObjectURL(url);
     await audio.play();
+  };
+
+  const handleDeleteRecording = async (id: string) => {
+    if (!window.confirm("删除这条本机录音记录？")) return;
+    await deleteBenchmarkRecording(id);
+    refreshRecordings();
+  };
+
+  const handleClearRecordings = async () => {
+    if (!window.confirm("清空全部本机 benchmark 录音？此操作不能撤销。")) {
+      return;
+    }
+    await clearBenchmarkRecordings();
+    refreshRecordings();
   };
 
   return (
@@ -110,12 +132,33 @@ export default function ProgressPage() {
                 只按同一材料、同一目标比较趋势，不把不同任务混算。
               </p>
             </div>
-            <Badge
-              variant={trend.deltaFromFirst >= 0 ? "default" : "secondary"}
-            >
-              {trend.deltaFromFirst >= 0 ? "+" : ""}
-              {trend.deltaFromFirst}
-            </Badge>
+            <div className="flex items-center gap-2">
+              {recordings.length > 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearRecordings}
+                  className="gap-2"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  清空
+                </Button>
+              )}
+              <Badge
+                variant={trend.deltaFromFirst >= 0 ? "default" : "secondary"}
+              >
+                {trend.deltaFromFirst >= 0 ? "+" : ""}
+                {trend.deltaFromFirst}
+              </Badge>
+            </div>
+          </div>
+          <div className="mb-4 flex items-start gap-2 rounded-lg border bg-muted/30 p-3 text-xs text-muted-foreground">
+            <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+            <p>
+              Benchmark
+              音频只保存在本机浏览器数据中；你可以删除单条录音或清空全部记录。
+            </p>
           </div>
 
           {recordings.length === 0 ? (
@@ -163,15 +206,26 @@ export default function ProgressPage() {
                             </span>
                           </div>
                         </div>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => playRecording(item.id)}
-                          className="shrink-0 cursor-pointer"
-                        >
-                          <Play className="h-4 w-4" />
-                        </Button>
+                        <div className="flex shrink-0 items-center gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => playRecording(item.id)}
+                            className="cursor-pointer"
+                          >
+                            <Play className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDeleteRecording(item.id)}
+                            className="cursor-pointer text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>

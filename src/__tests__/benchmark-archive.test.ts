@@ -84,4 +84,27 @@ describe("benchmark archive", () => {
     });
     expect(benchmarkGroupKey(groups[0].recordings[0])).toContain("stress");
   });
+
+  it("normalizes target label order for scenario trend grouping", () => {
+    const first = benchmarkGroupKey({
+      id: "a",
+      createdAt: 1000,
+      source: "scenario",
+      title: "scenario",
+      text: "I worked late.",
+      score: 80,
+      targetLabel: "v-w, final-consonants",
+    });
+    const second = benchmarkGroupKey({
+      id: "b",
+      createdAt: 2000,
+      source: "scenario",
+      title: "scenario",
+      text: "I worked late.",
+      score: 85,
+      targetLabel: "final-consonants, v-w",
+    });
+
+    expect(first).toBe(second);
+  });
 });

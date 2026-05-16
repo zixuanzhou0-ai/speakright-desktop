@@ -399,7 +399,7 @@ function IssueCard({
     pack?.course?.levels.find((level) => level.id === levelId)?.title ??
     levelId;
   const packHref = retestFirst
-    ? "/assessment"
+    ? `/assessment?retest=${encodeURIComponent(issue.id)}`
     : pack
       ? `/drill/pack/${pack.id}${
           levelId ? `?level=${encodeURIComponent(levelId)}` : ""
@@ -471,6 +471,12 @@ function IssueCard({
           {retestFirst && reviewItem && (
             <p className="mt-1 text-muted-foreground">{reviewItem.reason}</p>
           )}
+          {retestFirst && reviewItem?.retestWords.length ? (
+            <p className="mt-2 text-muted-foreground">
+              补测词：
+              {reviewItem.retestWords.map((word) => word.word).join(" / ")}
+            </p>
+          ) : null}
           {!retestFirst && prescriptionItem?.learningObjective && (
             <p className="mt-1 text-muted-foreground">
               {prescriptionItem.learningObjective}

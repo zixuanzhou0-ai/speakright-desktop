@@ -94,6 +94,23 @@ describe("free-practice transfer", () => {
     expect(preview.suggestions[0].words.length).toBeGreaterThan(0);
   });
 
+  it("does not create transfer evidence when the text misses preview targets", () => {
+    const summary = analyzeFreePracticeTransfer({
+      profile: profile(),
+      result: resultForWord("coffee", [
+        { phoneme: "k", accuracyScore: 92 },
+        { phoneme: "aa", accuracyScore: 90 },
+        { phoneme: "f", accuracyScore: 91 },
+        { phoneme: "iy", accuracyScore: 93 },
+      ]),
+      text: "I had coffee today.",
+      mode: "sentence",
+      now: NOW,
+    });
+
+    expect(summary.evidences).toEqual([]);
+  });
+
   it("turns a failed free-practice target into reviewable evidence", () => {
     const summary = analyzeFreePracticeTransfer({
       profile: profile(),
@@ -179,5 +196,92 @@ describe("free-practice transfer", () => {
     });
     expect(mastery.transferEvidenceCount).toBe(1);
     expect(mastery.masteryState).toBe("retained");
+  });
+
+  it("can record spontaneous transfer evidence separately from guided read-aloud", () => {
+    const base = profile({
+      packs: {
+        "v-w": {
+          packId: "v-w",
+          status: "practicing",
+          masteryState: "integrated",
+          levelProgress: {},
+          bestTargetScore: 82,
+          perceptionBestRate: 0.9,
+          completedSessions: 2,
+          failureStreak: 0,
+          lastPracticedAt: NOW - 1_000,
+        },
+      },
+      errorPatterns: {},
+    });
+    const summary = analyzeFreePracticeTransfer({
+      profile: base,
+      result: resultForWord(
+        "vivid",
+        [
+          { phoneme: "v", accuracyScore: 90 },
+          { phoneme: "ih", accuracyScore: 86 },
+          { phoneme: "v", accuracyScore: 92 },
+        ],
+        90,
+      ),
+      text: "I gave a vivid review.",
+      mode: "sentence",
+      now: NOW,
+    });
+
+    const recorded = recordFreePracticeTransfer(base, {
+      ...summary,
+      transferLayer: "spontaneous",
+    });
+
+    expect(recorded.sessions[0].transferEvidence?.[0]).toMatchObject({
+      layer: "spontaneous",
+      passed: true,
+    });
+  });
+
+  it("does not record the same pack and same sentence twice on the same day", () => {
+    const base = profile({
+      packs: {
+        "v-w": {
+          packId: "v-w",
+          status: "practicing",
+          masteryState: "integrated",
+          levelProgress: {},
+          bestTargetScore: 82,
+          perceptionBestRate: 0.9,
+          completedSessions: 2,
+          failureStreak: 0,
+          lastPracticedAt: NOW - 1_000,
+        },
+      },
+      errorPatterns: {},
+    });
+    const summary = analyzeFreePracticeTransfer({
+      profile: base,
+      result: resultForWord(
+        "vivid",
+        [
+          { phoneme: "v", accuracyScore: 90 },
+          { phoneme: "ih", accuracyScore: 86 },
+          { phoneme: "v", accuracyScore: 92 },
+        ],
+        90,
+      ),
+      text: "I gave a vivid review.",
+      mode: "sentence",
+      now: NOW,
+    });
+    const first = recordFreePracticeTransfer(base, summary);
+    const second = recordFreePracticeTransfer(first.profile, {
+      ...summary,
+      generatedAt: NOW + 60_000,
+    });
+
+    expect(first.summary.recorded).toBe(true);
+    expect(second.summary.recorded).toBe(false);
+    expect(second.sessions).toEqual([]);
   });
 });

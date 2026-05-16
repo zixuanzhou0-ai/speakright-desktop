@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AssessmentReport } from "@/components/assessment/assessment-report";
 import { RecordButton } from "@/components/audio/record-button";
 import { RecordingQualityPanel } from "@/components/audio/recording-quality-panel";
@@ -31,6 +31,7 @@ import {
   buildDiagnosisReport,
   selectAdaptiveAssessmentWords,
 } from "@/lib/diagnosis-engine";
+import { buildTargetedRetestWords } from "@/lib/diagnosis-review-package";
 import { getPhonemeBySlug } from "@/lib/phoneme-data";
 import { buildTrainingPrescription } from "@/lib/training-prescription";
 import type {
@@ -118,6 +119,7 @@ function targetLabels(word: AssessmentWord): string[] {
 }
 
 export default function AssessmentPage() {
+  const [retestIssueId, setRetestIssueId] = useState<string | null>(null);
   const [savedReport, setSavedReport] = useState<DiagnosisReport | null>(() =>
     loadSavedReport(),
   );
@@ -136,6 +138,12 @@ export default function AssessmentPage() {
   const paragraphQualityRef = useRef<RecordingQualitySnapshot | undefined>(
     undefined,
   );
+  const targetedRetestRef = useRef(false);
+  const didAutostartRetestRef = useRef(false);
+
+  useEffect(() => {
+    setRetestIssueId(new URLSearchParams(window.location.search).get("retest"));
+  }, []);
 
   const finalizeReport = useCallback(
     (paragraphResult: AzureAssessmentResult) => {
@@ -152,7 +160,8 @@ export default function AssessmentPage() {
     [],
   );
 
-  const handleStart = () => {
+  const handleStart = useCallback(() => {
+    targetedRetestRef.current = false;
     wordRecordingsRef.current = [];
     paragraphResultRef.current = null;
     paragraphQualityRef.current = undefined;
@@ -160,7 +169,34 @@ export default function AssessmentPage() {
     recordingQuality.reset();
     azure.reset();
     setPhase({ type: "words", index: 0 });
-  };
+  }, [azure, recorder, recordingQuality]);
+
+  const handleTargetedRetest = useCallback(
+    (issueId: string) => {
+      const report = loadSavedReport();
+      const issue = report?.issues.find((item) => item.id === issueId);
+      const words = issue ? buildTargetedRetestWords(issue) : [];
+      if (words.length === 0) {
+        handleStart();
+        return;
+      }
+      targetedRetestRef.current = true;
+      wordRecordingsRef.current = [];
+      paragraphResultRef.current = null;
+      paragraphQualityRef.current = undefined;
+      recorder.reset();
+      recordingQuality.reset();
+      azure.reset();
+      setPhase({ type: "adaptive", index: 0, words });
+    },
+    [azure, handleStart, recorder, recordingQuality],
+  );
+
+  useEffect(() => {
+    if (!retestIssueId || didAutostartRetestRef.current) return;
+    didAutostartRetestRef.current = true;
+    handleTargetedRetest(retestIssueId);
+  }, [handleTargetedRetest, retestIssueId]);
 
   const handleWordRecorded = useCallback(async () => {
     if (!recorder.audioBlob) return;
@@ -204,6 +240,8 @@ export default function AssessmentPage() {
     } else if (paragraphResultRef.current) {
       setPhase({ type: "analyzing" });
       finalizeReport(paragraphResultRef.current);
+    } else {
+      setPhase({ type: "paragraph" });
     }
   }, [
     recorder.audioBlob,
@@ -246,6 +284,12 @@ export default function AssessmentPage() {
     recorder.reset();
     recordingQuality.reset();
     azure.reset();
+
+    if (targetedRetestRef.current) {
+      targetedRetestRef.current = false;
+      finalizeReport(result);
+      return;
+    }
 
     if (adaptiveWords.length > 0) {
       setPhase({ type: "adaptive", index: 0, words: adaptiveWords });

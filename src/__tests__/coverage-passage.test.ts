@@ -180,6 +180,44 @@ describe("coverage passage", () => {
     );
   });
 
+  it("includes coverage recording quality notes in evidence summary", () => {
+    const report = buildCoveragePassageDiagnosisReport({
+      recordings: [
+        {
+          text: "thin sheep",
+          label: COVERAGE_PASSAGE.segments[0].title,
+          source: "coverage-segment",
+          recordingQuality: {
+            score: 72,
+            canSubmit: true,
+            issues: [
+              {
+                code: "low-level",
+                severity: "warning",
+                title: "音量偏低",
+                detail: "可以评分，但不建议用于提升掌握度。",
+              },
+            ],
+          },
+          result: resultForWords([
+            {
+              word: "thin",
+              phonemes: [
+                { phoneme: "th", accuracyScore: 78 },
+                { phoneme: "ih", accuracyScore: 83 },
+                { phoneme: "n", accuracyScore: 88 },
+              ],
+            },
+          ]),
+        },
+      ],
+    });
+
+    expect(report.evidenceSummary?.notes.join("\n")).toContain(
+      "录音质量：音量偏低",
+    );
+  });
+
   it("routes repeated weak final consonants to the final consonant probe", () => {
     const report = buildCoveragePassageDiagnosisReport({
       recordings: [

@@ -1,3 +1,4 @@
+import { isTauriEnvironment } from "@/lib/tauri-runtime";
 import { storeDelete, storeGet, storeSet } from "@/lib/tauri-store";
 import type {
   AzureConfig,
@@ -19,9 +20,13 @@ const STORAGE_KEYS = {
 } as const;
 
 const ALL_STORAGE_KEYS = Object.values(STORAGE_KEYS);
+const runtimeCache = new Map<string, unknown>();
 
 function getItem<T>(key: string): T | null {
   if (typeof window === "undefined") return null;
+  if (isTauriEnvironment()) {
+    return (runtimeCache.get(key) as T | undefined) ?? null;
+  }
   try {
     const raw = localStorage.getItem(key);
     return raw ? (JSON.parse(raw) as T) : null;
@@ -31,10 +36,12 @@ function getItem<T>(key: string): T | null {
 }
 
 function setItem<T>(key: string, value: T): void {
-  localStorage.setItem(key, JSON.stringify(value));
-  // Write-through to Tauri store for persistence across app updates
-  // and XSS-resilient storage. Fire-and-forget — failure falls back
-  // gracefully inside storeSet.
+  if (isTauriEnvironment()) {
+    runtimeCache.set(key, value);
+    localStorage.removeItem(key);
+  } else {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
   void storeSet(key, value);
   window.dispatchEvent(new StorageEvent("storage", { key }));
 }
@@ -44,6 +51,7 @@ function setItem<T>(key: string, value: T): void {
  */
 export function clearItem(key: string): void {
   if (typeof window === "undefined") return;
+  runtimeCache.delete(key);
   localStorage.removeItem(key);
   void storeDelete(key);
   window.dispatchEvent(new StorageEvent("storage", { key }));
@@ -64,6 +72,7 @@ export function clearItem(key: string): void {
  */
 export async function hydrateKeys(): Promise<void> {
   if (typeof window === "undefined") return;
+  const tauri = isTauriEnvironment();
 
   for (const key of ALL_STORAGE_KEYS) {
     try {
@@ -71,17 +80,27 @@ export async function hydrateKeys(): Promise<void> {
       const localRaw = localStorage.getItem(key);
 
       if (storeValue !== null && storeValue !== undefined) {
-        // Tauri store is the source of truth on disk.
-        const serialized = JSON.stringify(storeValue);
-        if (serialized !== localRaw) {
-          localStorage.setItem(key, serialized);
+        if (tauri) {
+          runtimeCache.set(key, storeValue);
+          localStorage.removeItem(key);
           window.dispatchEvent(new StorageEvent("storage", { key }));
+        } else {
+          const serialized = JSON.stringify(storeValue);
+          if (serialized !== localRaw) {
+            localStorage.setItem(key, serialized);
+            window.dispatchEvent(new StorageEvent("storage", { key }));
+          }
         }
       } else if (localRaw) {
         // First-run migration: promote legacy localStorage value to Tauri store.
         try {
           const parsed = JSON.parse(localRaw);
           await storeSet(key, parsed);
+          if (tauri) {
+            runtimeCache.set(key, parsed);
+            localStorage.removeItem(key);
+            window.dispatchEvent(new StorageEvent("storage", { key }));
+          }
         } catch {
           // Malformed legacy value — skip rather than corrupt the store.
         }

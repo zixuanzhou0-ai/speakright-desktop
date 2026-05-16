@@ -23,7 +23,13 @@ import { useRecordingQuality } from "@/hooks/use-recording-quality";
 import { useTtsAligned } from "@/hooks/use-tts-aligned";
 import { saveBenchmarkRecording } from "@/lib/benchmark-archive";
 import {
+  loadMasteryProfile,
+  recordTrainingSession,
+  saveMasteryProfile,
+} from "@/lib/mastery-profile";
+import {
   analyzeProsodyAttempt,
+  buildProsodyTrainingSession,
   PROSODY_EXERCISES,
   type ProsodyAnalysis,
 } from "@/lib/prosody-training";
@@ -66,6 +72,11 @@ export default function ProsodyPage() {
     if (!result) return;
     const nextAnalysis = analyzeProsodyAttempt(exercise, result);
     setAnalysis(nextAnalysis);
+    const profile = recordTrainingSession(
+      loadMasteryProfile(),
+      buildProsodyTrainingSession(exercise, nextAnalysis),
+    );
+    saveMasteryProfile(profile);
     try {
       await saveBenchmarkRecording(recorder.audioBlob, {
         source: "prosody",

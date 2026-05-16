@@ -219,6 +219,10 @@ function reliabilityAllowsPromotion(session: TrainingSessionSummary): boolean {
   return session.assessmentReliability?.canPromoteMastery !== false;
 }
 
+function canUpdateProductionPhonemes(session: TrainingSessionSummary): boolean {
+  return session.modality !== "perception" && session.modality !== "prosody";
+}
+
 function nonPromotingStage(
   existing: PackMastery | undefined,
   session: TrainingSessionSummary,
@@ -272,10 +276,12 @@ export function recordTrainingSession(
   const canPromote = reliabilityAllowsPromotion(session);
   const mastered = evaluateSessionMastery(session);
   const existing = profile.packs[session.packId];
+  const contributesTargetScores =
+    canPromote && session.modality !== "perception";
   const completedSessions = (existing?.completedSessions ?? 0) + 1;
   const bestTargetScore = Math.max(
     existing?.bestTargetScore ?? 0,
-    ...(canPromote ? session.targetScores : []),
+    ...(contributesTargetScores ? session.targetScores : []),
     0,
   );
   const perceptionRate =
@@ -360,7 +366,7 @@ export function recordTrainingSession(
     errorPatterns: updateErrorPatterns(profile.errorPatterns, session),
   };
 
-  if (pack && canPromote) {
+  if (pack && canPromote && canUpdateProductionPhonemes(session)) {
     for (const phoneme of pack.targetPhonemes) {
       nextProfile.phonemes[phoneme] = updatePhoneme(
         profile.phonemes[phoneme],

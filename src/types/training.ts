@@ -252,6 +252,12 @@ export interface TrainingEvidenceItem {
   assessmentReliability?: AssessmentReliability;
 }
 
+export type TrainingSessionModality =
+  | "perception"
+  | "production"
+  | "prosody"
+  | "mixed";
+
 export interface RemediationResult {
   pathId: string;
   stepIndex: number;
@@ -311,6 +317,7 @@ export interface ReviewQueueItem {
 export interface TrainingSessionSummary {
   id: string;
   packId: string;
+  modality?: TrainingSessionModality;
   startedAt: number;
   completedAt: number;
   perceptionCorrect: number;

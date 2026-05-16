@@ -32,8 +32,7 @@
         { "url": "https://dictionaryapi.com/**" },
         { "url": "https://media.merriam-webster.com/**" },
         { "url": "https://dict.youdao.com/**" },
-        { "url": "http://dict.youdao.com/**" },
-        { "url": "https://**" }
+        { "url": "http://dict.youdao.com/**" }
       ]
     },
     "store:default",

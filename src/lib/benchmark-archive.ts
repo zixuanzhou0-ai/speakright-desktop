@@ -3,7 +3,7 @@
 export interface BenchmarkRecordingMeta {
   id: string;
   createdAt: number;
-  source: "prosody" | "coverage" | "scenario" | "free-practice";
+  source: "prosody" | "coverage" | "scenario" | "free-practice" | "spontaneous";
   title: string;
   text: string;
   score: number;
@@ -56,6 +56,30 @@ async function putBlob(id: string, blob: Blob): Promise<void> {
   db.close();
 }
 
+async function deleteBlob(id: string): Promise<void> {
+  if (typeof indexedDB === "undefined") return;
+  const db = await openDb();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+  db.close();
+}
+
+async function clearBlobs(): Promise<void> {
+  if (typeof indexedDB === "undefined") return;
+  const db = await openDb();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    tx.objectStore(STORE_NAME).clear();
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+  db.close();
+}
+
 export async function getBenchmarkAudioBlob(id: string): Promise<Blob | null> {
   if (typeof indexedDB === "undefined") return null;
   const db = await openDb();
@@ -97,6 +121,16 @@ export function listBenchmarkRecordings(): BenchmarkRecordingMeta[] {
   return readMeta().sort((a, b) => b.createdAt - a.createdAt);
 }
 
+export async function deleteBenchmarkRecording(id: string): Promise<void> {
+  await deleteBlob(id);
+  writeMeta(readMeta().filter((item) => item.id !== id));
+}
+
+export async function clearBenchmarkRecordings(): Promise<void> {
+  await clearBlobs();
+  writeMeta([]);
+}
+
 export function normalizeBenchmarkText(text: string): string {
   return text
     .toLowerCase()
@@ -105,10 +139,19 @@ export function normalizeBenchmarkText(text: string): string {
     .trim();
 }
 
+function normalizeTargetLabel(label: string): string {
+  return label
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .sort()
+    .join(", ");
+}
+
 export function benchmarkGroupKey(item: BenchmarkRecordingMeta): string {
   return [
     item.source,
-    item.targetLabel,
+    normalizeTargetLabel(item.targetLabel),
     normalizeBenchmarkText(item.text),
   ].join(":");
 }

@@ -44,6 +44,16 @@ vi.mock("howler", () => ({
   }),
 }));
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  let reject!: (error: unknown) => void;
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  return { promise, resolve, reject };
+}
+
 describe("useTtsAligned", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -108,5 +118,58 @@ describe("useTtsAligned", () => {
     });
 
     expect(result.current.wordTimings).toEqual([]);
+  });
+
+  it("ignores a stale pending TTS response after reset", async () => {
+    const pending = deferred<{
+      audio_base64: string;
+      alignment: {
+        characters: string[];
+        character_start_times_seconds: number[];
+        character_end_times_seconds: number[];
+      };
+    }>();
+    mocks.elevenLabsTtsAligned.mockReturnValueOnce(pending.promise);
+
+    const { result } = renderHook(() => useTtsAligned());
+
+    act(() => {
+      void result.current.speak("Old text.", 0.85);
+    });
+
+    await waitFor(() => {
+      expect(mocks.elevenLabsTtsAligned).toHaveBeenCalledWith(
+        "test-key",
+        "test-voice",
+        "Old text.",
+        "eleven_flash_v2_5",
+        0.85,
+      );
+    });
+
+    act(() => {
+      result.current.reset();
+    });
+
+    await act(async () => {
+      pending.resolve({
+        audio_base64: "AA==",
+        alignment: {
+          characters: Array.from("Old text."),
+          character_start_times_seconds: [
+            0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4,
+          ],
+          character_end_times_seconds: [
+            0.04, 0.09, 0.14, 0.19, 0.24, 0.29, 0.34, 0.39, 0.44,
+          ],
+        },
+      });
+      await pending.promise;
+    });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.wordTimings).toEqual([]);
+    expect(mocks.setTtsToCache).not.toHaveBeenCalled();
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
   });
 });

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   analyzeProsodyAttempt,
+  buildProsodyTrainingSession,
   getProsodyExercise,
   PROSODY_EXERCISES,
   recommendProsodyExercises,
@@ -111,6 +112,54 @@ describe("prosody training", () => {
     expect(analysis.likelyIssue).toBe("choppy-rhythm");
     expect(analysis.missingExpectedPauses).toContain("update|before");
     expect(analysis.evidenceConfidence).toBe("high");
+  });
+
+  it("turns high-confidence prosody failures into stress-rhythm review evidence", () => {
+    const exercise = getProsodyExercise("content-word-stress-1");
+    if (!exercise) throw new Error("missing exercise");
+    const analysis = analyzeProsodyAttempt(
+      exercise,
+      result({
+        words: result().words.map((word) =>
+          word.word.toLowerCase() === "update"
+            ? {
+                ...word,
+                feedback: {
+                  prosody: { break: { errorTypes: ["MissingBreak"] } },
+                },
+              }
+            : word,
+        ),
+      }),
+    );
+
+    const session = buildProsodyTrainingSession(exercise, analysis, 1000);
+
+    expect(session.packId).toBe("stress-rhythm");
+    expect(session.modality).toBe("prosody");
+    expect(session.assessmentReliability?.canPromoteMastery).toBe(true);
+    expect(session.failedItems?.[0]).toMatchObject({
+      levelId: exercise.id,
+      passed: false,
+    });
+    expect(
+      session.reviewItems?.some((item) => item.source === "failed-item"),
+    ).toBe(true);
+  });
+
+  it("keeps low-confidence prosody attempts as non-promoting observations", () => {
+    const exercise = getProsodyExercise("content-word-stress-1");
+    if (!exercise) throw new Error("missing exercise");
+    const analysis = analyzeProsodyAttempt(
+      exercise,
+      result({ prosodyScore: 82 }),
+    );
+
+    const session = buildProsodyTrainingSession(exercise, analysis, 1000);
+
+    expect(analysis.evidenceConfidence).toBe("low");
+    expect(session.assessmentReliability?.canPromoteMastery).toBe(false);
+    expect(session.levelSummaries?.[0].passed).toBe(false);
   });
 
   it("uses Azure break feedback to detect unexpected pauses", () => {

@@ -88,6 +88,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
   const blobUrlRef = useRef<string | null>(null);
   const lastAudioBlobRef = useRef<Blob | null>(null);
   const lastWordTimingsRef = useRef<WordTiming[]>([]);
+  const requestIdRef = useRef(0);
 
   const cleanup = useCallback(() => {
     if (rafRef.current) {
@@ -161,6 +162,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
   }, [cleanup]);
 
   const reset = useCallback(() => {
+    requestIdRef.current += 1;
     cleanup();
     setIsLoading(false);
     setIsPlaying(false);
@@ -173,6 +175,8 @@ export function useTtsAligned(): UseTtsAlignedReturn {
 
   const speak = useCallback(
     async (text: string, speed = 0.85) => {
+      const requestId = requestIdRef.current + 1;
+      requestIdRef.current = requestId;
       const config = getElevenLabsConfig();
       if (!config) {
         setError("请先在设置页面配置 ElevenLabs API 密钥");
@@ -188,6 +192,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
       try {
         // Check cache first
         const cached = await getTtsFromCache(text, config.voiceId, speed);
+        if (requestIdRef.current !== requestId) return;
         if (cached) {
           const blob = cached.audioBlob;
           const alignment = cached.alignment as AlignmentData | null;
@@ -208,6 +213,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
           config.modelId || "eleven_flash_v2_5",
           speed,
         );
+        if (requestIdRef.current !== requestId) return;
         const { audio_base64, alignment } = data;
 
         if (!audio_base64) {
@@ -227,6 +233,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
 
         // Cache the result
         await setTtsToCache(text, config.voiceId, speed, blob, alignment);
+        if (requestIdRef.current !== requestId) return;
 
         // Dispatch custom event to notify usage monitor (only on actual API calls)
         window.dispatchEvent(
@@ -240,6 +247,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
         setIsLoading(false);
         playBlob(blob, timings);
       } catch (e) {
+        if (requestIdRef.current !== requestId) return;
         console.error("[ElevenLabs TTS Aligned]", e);
         setError(e instanceof Error ? e.message : "语音合成失败");
         setIsLoading(false);

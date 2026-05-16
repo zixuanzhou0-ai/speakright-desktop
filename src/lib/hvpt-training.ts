@@ -488,11 +488,12 @@ export function buildHvptTrainingSession(
   const session: TrainingSessionSummary = {
     id: `hvpt-${contrast.id}-${now}`,
     packId: contrast.packId,
+    modality: "perception",
     startedAt: now,
     completedAt: now,
     perceptionCorrect: summary.correct,
     perceptionTotal: summary.total,
-    targetScores: [score],
+    targetScores: [],
     wordScores: [],
     sentenceScores: [],
     mixedReviewScores: [],
