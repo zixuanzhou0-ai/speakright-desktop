@@ -186,7 +186,7 @@ export function evaluateMasteryStage(
 
   const stageCeiling = LAYER_CEILINGS[layer];
   const rawScore = sessionScore(session);
-  const stageScore = Math.min(stageCeiling, rawScore || stageCeiling);
+  const stageScore = Math.min(stageCeiling, rawScore);
   const nextRequiredLayer =
     state === "transferred"
       ? "spontaneous"

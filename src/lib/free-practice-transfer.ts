@@ -19,6 +19,8 @@ import { getTrainingPack } from "./training-packs";
 const MAX_TRANSFER_TARGETS = 2;
 const MAX_PREVIEW_TARGETS = 3;
 const MAX_SUGGESTIONS = 3;
+const MIN_SPONTANEOUS_MATCHED_WORDS = 2;
+const MIN_SPONTANEOUS_TOTAL_WORDS = 6;
 
 export interface FreePracticeTransferEvidence {
   packId: string;
@@ -489,13 +491,27 @@ function buildTransferSession(
   summary: FreePracticeTransferSummary,
   evidence: FreePracticeTransferEvidence,
 ): TrainingSessionSummary {
-  const failedItem = buildFailedItem(summary, evidence);
+  const isSpontaneous = summary.transferLayer === "spontaneous";
+  const spontaneousEvidenceStrong =
+    !isSpontaneous ||
+    (evidence.matchedWords.length >= MIN_SPONTANEOUS_MATCHED_WORDS &&
+      normalizeWords(summary.text).length >= MIN_SPONTANEOUS_TOTAL_WORDS);
+  const effectivePassed = evidence.passed && spontaneousEvidenceStrong;
+  const promotionBlockers =
+    isSpontaneous && evidence.passed && !spontaneousEvidenceStrong
+      ? [
+          "即兴迁移证据过薄：需要至少 2 个目标词和更完整的上下文，才会提升掌握度。",
+        ]
+      : [];
+  const failedItem = evidence.passed
+    ? undefined
+    : buildFailedItem(summary, evidence);
   const levelKind = levelKindFromId(evidence.packId, evidence.levelId);
   const levelSummary: TrainingLevelSummary = {
     levelId: evidence.levelId,
     kind: levelKind,
     attempts: 1,
-    passed: evidence.passed,
+    passed: effectivePassed,
     bestScore: evidence.targetScore,
     stuckCount: evidence.passed ? 0 : 1,
   };
@@ -503,7 +519,7 @@ function buildTransferSession(
     layer: summary.transferLayer ?? "guided",
     prompt: summary.text,
     score: evidence.targetScore,
-    passed: evidence.passed,
+    passed: effectivePassed,
     completedAt: summary.generatedAt,
   };
   const session: TrainingSessionSummary = {
@@ -525,6 +541,7 @@ function buildTransferSession(
     recommendedNextLevelId: evidence.passed ? undefined : evidence.levelId,
     transferEvidence: [transferEvidence],
     assessmentReliability: summary.assessmentReliability,
+    promotionBlockers,
     isReviewSession: evidence.source === "review",
   };
 

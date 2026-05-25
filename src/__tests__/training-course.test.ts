@@ -1,23 +1,28 @@
 import { describe, expect, it } from "vitest";
+import { analyzeAttempt } from "@/lib/attempt-analysis";
 import {
   buildFocusedReviewItems,
-  createCourseStartPosition,
   createCourseRunnerState,
+  createCourseStartPosition,
   evaluateLevelGate,
   getCourseItemReference,
   recordRunnerAttempt,
 } from "@/lib/course-runner";
 import {
-  shouldAppendPerceptionReview,
   hasLevelPassed,
+  shouldAppendPerceptionReview,
   shouldEnterRemediation,
   shouldMarkStuck,
 } from "@/lib/training-course-session";
-import { analyzeAttempt } from "@/lib/attempt-analysis";
 import { detectErrorPatterns } from "@/lib/training-error-patterns";
 import { TRAINING_PACKS } from "@/lib/training-packs";
 import type { AzureAssessmentResult } from "@/types/azure";
-import type { TrainingLevel } from "@/types/training";
+import type {
+  TrainingCourseItem,
+  TrainingLevel,
+  TrainingLevelKind,
+  TrainingPack,
+} from "@/types/training";
 
 describe("training course v2.5", () => {
   it("expands every core pack into a complete coaching course", () => {
@@ -33,12 +38,26 @@ describe("training course v2.5", () => {
         "shadowing",
         "mixed-review",
       ]);
-      expect(pack.course?.levels.find((level) => level.kind === "perception")?.items).toHaveLength(8);
-      expect(pack.course?.levels.find((level) => level.kind === "word")?.items).toHaveLength(12);
-      expect(pack.course?.levels.find((level) => level.kind === "minimal-pair")?.items).toHaveLength(8);
-      expect(pack.course?.levels.find((level) => level.kind === "sentence")?.items).toHaveLength(8);
-      expect(pack.course?.levels.find((level) => level.kind === "shadowing")?.items).toHaveLength(3);
-      expect(pack.course?.levels.find((level) => level.kind === "mixed-review")?.items).toHaveLength(6);
+      expect(
+        pack.course?.levels.find((level) => level.kind === "perception")?.items,
+      ).toHaveLength(8);
+      expect(
+        pack.course?.levels.find((level) => level.kind === "word")?.items,
+      ).toHaveLength(12);
+      expect(
+        pack.course?.levels.find((level) => level.kind === "minimal-pair")
+          ?.items,
+      ).toHaveLength(8);
+      expect(
+        pack.course?.levels.find((level) => level.kind === "sentence")?.items,
+      ).toHaveLength(8);
+      expect(
+        pack.course?.levels.find((level) => level.kind === "shadowing")?.items,
+      ).toHaveLength(3);
+      expect(
+        pack.course?.levels.find((level) => level.kind === "mixed-review")
+          ?.items,
+      ).toHaveLength(6);
     }
   });
 
@@ -81,7 +100,9 @@ describe("training course v2.5", () => {
   });
 });
 
-function result(overrides: Partial<AzureAssessmentResult> = {}): AzureAssessmentResult {
+function result(
+  overrides: Partial<AzureAssessmentResult> = {},
+): AzureAssessmentResult {
   return {
     pronunciationScore: 86,
     accuracyScore: 86,
@@ -105,31 +126,68 @@ function result(overrides: Partial<AzureAssessmentResult> = {}): AzureAssessment
   };
 }
 
+function expectFound<T>(value: T | null | undefined, label: string): T {
+  expect(value, label).toBeTruthy();
+  if (!value) {
+    throw new Error(`Missing ${label}`);
+  }
+  return value;
+}
+
+function trainingPack(id: string): TrainingPack {
+  return expectFound(
+    TRAINING_PACKS.find((item) => item.id === id),
+    `training pack ${id}`,
+  );
+}
+
+function courseLevel(
+  pack: TrainingPack,
+  kind: TrainingLevelKind,
+): TrainingLevel {
+  return expectFound(
+    pack.course?.levels.find((item) => item.kind === kind),
+    `${pack.id}/${kind}`,
+  );
+}
+
+function targetItem(level: TrainingLevel, phoneme: string): TrainingCourseItem {
+  return expectFound(
+    level.items.find((entry) => entry.targetPhonemes.includes(phoneme)),
+    `${level.id}/${phoneme}`,
+  );
+}
+
 describe("training course v2.6 quality gates", () => {
   it("keeps every recordable course item scoreable with natural English reference text", () => {
-    const forbidden = /(^\/.*\/$|target|slow word|\b[a-z]+-[a-z]+\b|[θðæɪʊŋː])/i;
+    const forbidden =
+      /(^\/.*\/$|target|slow word|\b[a-z]+-[a-z]+\b|[θðæɪʊŋː])/i;
     for (const pack of TRAINING_PACKS) {
       for (const level of pack.course?.levels ?? []) {
         for (const item of level.items) {
           if (item.isRecordable === false) continue;
           const reference = getCourseItemReference(item);
-          expect(reference.trim().length, `${pack.id}/${level.id}/${item.id}`).toBeGreaterThan(0);
-          expect(reference, `${pack.id}/${level.id}/${item.id}`).not.toMatch(forbidden);
+          expect(
+            reference.trim().length,
+            `${pack.id}/${level.id}/${item.id}`,
+          ).toBeGreaterThan(0);
+          expect(reference, `${pack.id}/${level.id}/${item.id}`).not.toMatch(
+            forbidden,
+          );
         }
       }
     }
   });
 
   it("analyzes target-low overall-high attempts as failed attempts with a concrete cue", () => {
-    const pack = TRAINING_PACKS.find((item) => item.id === "s-th");
-    const level = pack?.course?.levels.find((item) => item.kind === "word");
-    const item = level?.items.find((entry) => entry.targetPhonemes.includes("th"));
-    expect(pack && level && item).toBeTruthy();
+    const pack = trainingPack("s-th");
+    const level = courseLevel(pack, "word");
+    const item = targetItem(level, "th");
 
     const analysis = analyzeAttempt({
-      pack: pack!,
-      levelKind: level!.kind,
-      item: item!,
+      pack,
+      levelKind: level.kind,
+      item,
       result: result(),
     });
 
@@ -141,9 +199,9 @@ describe("training course v2.6 quality gates", () => {
   });
 
   it("uses stricter pass thresholds for target phoneme attempts", () => {
-    const pack = TRAINING_PACKS.find((item) => item.id === "s-th")!;
-    const level = pack.course!.levels.find((item) => item.kind === "word")!;
-    const item = level.items.find((entry) => entry.targetPhonemes.includes("th"))!;
+    const pack = trainingPack("s-th");
+    const level = courseLevel(pack, "word");
+    const item = targetItem(level, "th");
 
     const nearMiss = analyzeAttempt({
       pack,
@@ -182,9 +240,38 @@ describe("training course v2.6 quality gates", () => {
     expect(pass.passed).toBe(true);
   });
 
+  it("does not pass when Azure misses the target phoneme and falls back to overall score", () => {
+    const pack = trainingPack("s-th");
+    const level = courseLevel(pack, "word");
+    const item = targetItem(level, "th");
+
+    const analysis = analyzeAttempt({
+      pack,
+      levelKind: level.kind,
+      item,
+      result: result({
+        pronunciationScore: 96,
+        words: [
+          {
+            word: "think",
+            accuracyScore: 96,
+            errorType: "None",
+            phonemes: [{ phoneme: "ih", accuracyScore: 96 }],
+            syllables: [],
+          },
+        ],
+      }),
+    });
+
+    expect(analysis.targetScore).toBe(96);
+    expect(analysis.usedFallback).toBe(true);
+    expect(analysis.passed).toBe(false);
+    expect(analysis.nextCue).toContain("没有对齐到目标音素");
+  });
+
   it("builds focused review when a level gate is not passed", () => {
-    const pack = TRAINING_PACKS.find((item) => item.id === "v-w");
-    const level = pack?.course?.levels.find((item) => item.kind === "word") as TrainingLevel;
+    const pack = trainingPack("v-w");
+    const level = courseLevel(pack, "word");
     const gate = evaluateLevelGate(
       level,
       {
@@ -204,8 +291,8 @@ describe("training course v2.6 quality gates", () => {
   });
 
   it("requires both average score and enough passed items in mixed review", () => {
-    const pack = TRAINING_PACKS.find((item) => item.id === "s-th")!;
-    const level = pack.course!.levels.find((item) => item.kind === "mixed-review")!;
+    const pack = trainingPack("s-th");
+    const level = courseLevel(pack, "mixed-review");
 
     expect(
       hasLevelPassed(level, {
@@ -231,10 +318,15 @@ describe("training course v2.6 quality gates", () => {
   });
 
   it("pure runner enters remediation after two failures and records stuck after three", () => {
-    const pack = TRAINING_PACKS.find((item) => item.id === "s-th")!;
-    const level = pack.course!.levels.find((item) => item.kind === "word")!;
+    const pack = trainingPack("s-th");
+    const level = courseLevel(pack, "word");
     const item = level.items[0];
-    const first = analyzeAttempt({ pack, levelKind: level.kind, item, result: result() });
+    const first = analyzeAttempt({
+      pack,
+      levelKind: level.kind,
+      item,
+      result: result(),
+    });
     const second = { ...first, detectedPatternIds: ["tongue-between-teeth"] };
 
     let state = createCourseRunnerState(pack.id);
@@ -247,30 +339,39 @@ describe("training course v2.6 quality gates", () => {
   });
 
   it("creates perception focused review items from the same target contrast", () => {
-    const pack = TRAINING_PACKS.find((item) => item.id === "ee-ih")!;
-    const level = pack.course!.levels.find((item) => item.kind === "perception")!;
+    const pack = trainingPack("ee-ih");
+    const level = courseLevel(pack, "perception");
     const review = buildFocusedReviewItems(level, level.items[0], 4);
 
     expect(review).toHaveLength(4);
-    expect(review.every((item) => item.id.startsWith("focus-perception-abx"))).toBe(true);
+    expect(
+      review.every((item) => item.id.startsWith("focus-perception-abx")),
+    ).toBe(true);
   });
 
   it("starts a pack from the prescribed level id", () => {
-    const pack = TRAINING_PACKS.find((item) => item.id === "stress-rhythm")!;
-    const position = createCourseStartPosition(pack.course!, "shadowing-transfer");
+    const pack = trainingPack("stress-rhythm");
+    const course = expectFound(pack.course, "stress-rhythm course");
+    const position = createCourseStartPosition(course, "shadowing-transfer");
 
-    expect(pack.course!.levels[position.levelIndex].id).toBe("shadowing-transfer");
+    expect(course.levels[position.levelIndex].id).toBe("shadowing-transfer");
     expect(position.itemIndex).toBe(0);
-    expect(createCourseStartPosition(pack.course!, "missing-level").levelIndex).toBe(0);
+    expect(createCourseStartPosition(course, "missing-level").levelIndex).toBe(
+      0,
+    );
   });
 
   it("keeps remediation steps scoreable with natural English text", () => {
-    const forbidden = /(^\/.*\/$|target|slow word|\b[a-z]+-[a-z]+\b|[θðæɪʊŋː])/i;
+    const forbidden =
+      /(^\/.*\/$|target|slow word|\b[a-z]+-[a-z]+\b|[θðæɪʊŋː])/i;
     for (const pack of TRAINING_PACKS) {
       for (const path of pack.course?.remediation ?? []) {
         for (const step of path.steps) {
           const reference = step.referenceText ?? step.text;
-          expect(reference.trim().length, `${pack.id}/${path.id}`).toBeGreaterThan(0);
+          expect(
+            reference.trim().length,
+            `${pack.id}/${path.id}`,
+          ).toBeGreaterThan(0);
           expect(reference, `${pack.id}/${path.id}`).not.toMatch(forbidden);
         }
       }

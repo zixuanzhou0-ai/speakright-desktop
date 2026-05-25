@@ -467,6 +467,14 @@ export default function TrainingPackPage() {
       toLevelSummary(level, levelStats[level.id] ?? emptySnapshot(level)),
     );
     const targetScores = results.map((result) => result.targetScore);
+    const usedTargetFallback =
+      results.some((result) => result.analysis.usedFallback) ||
+      remediationResults.some((result) => result.usedFallback);
+    const promotionBlockers = [
+      usedTargetFallback
+        ? "目标音素未成功对齐，本轮整体分只作反馈，不提升掌握度。"
+        : null,
+    ].filter((item): item is string => item !== null);
     const qualityIssues = qualityReportsRef.current.flatMap((report) =>
       report.issues.map((issue) => issue.title),
     );
@@ -515,9 +523,12 @@ export default function TrainingPackPage() {
               }),
               audioQualityScore: minQualityScore,
               audioQualityIssues: uniqueQualityIssues,
-              canPromoteMastery: uniqueQualityIssues.length === 0,
+              canPromoteMastery:
+                uniqueQualityIssues.length === 0 &&
+                promotionBlockers.length === 0,
             }
           : undefined,
+      promotionBlockers,
       mastered: false,
     };
     summary.reviewItems = buildSessionReviewItems(summary);
@@ -692,6 +703,7 @@ export default function TrainingPackPage() {
           patternIds: analysis.detectedPatternIds,
           nextCue: analysis.nextCue,
           passed: false,
+          usedFallback: analysis.usedFallback,
           assessmentReliability: reliabilityFromRecordingQuality(qualityReport),
         },
       ]);
@@ -776,6 +788,7 @@ export default function TrainingPackPage() {
         targetScore: remediationResult.targetScore,
         overallScore: remediationResult.overallScore,
         passed: remediationResult.passed,
+        usedFallback: remediationResult.analysis.usedFallback,
       },
     ]);
   };

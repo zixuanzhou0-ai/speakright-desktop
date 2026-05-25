@@ -129,7 +129,10 @@ function scoreAverage(scores: number[]): number {
 export function evaluateSessionMastery(
   session: TrainingSessionSummary,
 ): boolean {
-  if (session.assessmentReliability?.canPromoteMastery === false) {
+  if (
+    session.assessmentReliability?.canPromoteMastery === false ||
+    hasPromotionBlockers(session)
+  ) {
     return false;
   }
   const pack = getTrainingPack(session.packId);
@@ -215,8 +218,22 @@ function buildLevelProgress(
   return progress;
 }
 
+function hasPromotionBlockers(session: TrainingSessionSummary): boolean {
+  return (session.promotionBlockers?.length ?? 0) > 0;
+}
+
+function promotionBlockerNote(
+  session: TrainingSessionSummary,
+): string | undefined {
+  const blockers = session.promotionBlockers ?? [];
+  return blockers.length > 0 ? blockers.join("；") : undefined;
+}
+
 function reliabilityAllowsPromotion(session: TrainingSessionSummary): boolean {
-  return session.assessmentReliability?.canPromoteMastery !== false;
+  return (
+    session.assessmentReliability?.canPromoteMastery !== false &&
+    !hasPromotionBlockers(session)
+  );
 }
 
 function canUpdateProductionPhonemes(session: TrainingSessionSummary): boolean {
@@ -238,6 +255,7 @@ function nonPromotingStage(
     highestLayer: existing?.highestLayer ?? "isolated",
     nextRequiredLayer: existing?.nextRequiredLayer ?? "perception",
     rationale:
+      promotionBlockerNote(session) ??
       session.assessmentReliability?.note ??
       "本次证据可靠性不足，只作为观察记录，不提升掌握度。",
   };

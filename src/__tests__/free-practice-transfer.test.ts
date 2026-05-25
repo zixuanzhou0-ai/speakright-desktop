@@ -198,7 +198,7 @@ describe("free-practice transfer", () => {
     expect(mastery.masteryState).toBe("retained");
   });
 
-  it("can record spontaneous transfer evidence separately from guided read-aloud", () => {
+  it("keeps single-word spontaneous evidence non-promoting", () => {
     const base = profile({
       packs: {
         "v-w": {
@@ -238,8 +238,12 @@ describe("free-practice transfer", () => {
 
     expect(recorded.sessions[0].transferEvidence?.[0]).toMatchObject({
       layer: "spontaneous",
-      passed: true,
+      passed: false,
     });
+    expect(recorded.sessions[0].promotionBlockers?.[0]).toContain(
+      "即兴迁移证据过薄",
+    );
+    expect(recorded.profile.packs["v-w"].masteryState).not.toBe("transferred");
   });
 
   it("does not record the same pack and same sentence twice on the same day", () => {

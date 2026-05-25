@@ -249,6 +249,7 @@ export interface TrainingEvidenceItem {
   patternIds: string[];
   nextCue: string;
   passed: boolean;
+  usedFallback?: boolean;
   assessmentReliability?: AssessmentReliability;
 }
 
@@ -267,6 +268,7 @@ export interface RemediationResult {
   targetScore: number;
   overallScore: number;
   passed: boolean;
+  usedFallback?: boolean;
 }
 
 export interface TransferEvidence {
@@ -334,6 +336,7 @@ export interface TrainingSessionSummary {
   remediationResults?: RemediationResult[];
   transferEvidence?: TransferEvidence[];
   assessmentReliability?: AssessmentReliability;
+  promotionBlockers?: string[];
   isReviewSession?: boolean;
   masteryStateAfter?: MasteryState;
   masteryStageScore?: number;
@@ -354,6 +357,7 @@ export interface AttemptAnalysis {
   passed: boolean;
   targetScore: number;
   overallScore: number;
+  usedFallback: boolean;
   scoreGap: number;
   detectedPatternIds: string[];
   primaryPatternId?: string;

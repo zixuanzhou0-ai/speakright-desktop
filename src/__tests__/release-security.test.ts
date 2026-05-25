@@ -29,6 +29,35 @@ describe("release security configuration", () => {
     expect(urls).not.toContain("https://**");
   });
 
+  it("does not allow plaintext HTTP endpoints in desktop capabilities", () => {
+    const capability = readJson<{
+      permissions: Array<
+        | string
+        | {
+            identifier?: string;
+            allow?: Array<{ url?: string }>;
+          }
+      >;
+    }>("src-tauri/capabilities/default.json");
+
+    const urls = capability.permissions.flatMap((permission) =>
+      typeof permission === "string"
+        ? []
+        : (permission.allow ?? []).map((item) => item.url ?? ""),
+    );
+
+    expect(urls.every((url) => !url.startsWith("http://"))).toBe(true);
+  });
+
+  it("does not ship Tauri devtools in the release dependency feature set", () => {
+    const cargoToml = readFileSync(
+      join(projectRoot, "src-tauri/Cargo.toml"),
+      "utf8",
+    );
+
+    expect(cargoToml).not.toMatch(/features\s*=\s*\[[^\]]*"devtools"/);
+  });
+
   it("keeps blob permission scoped to media and avoids unsafe eval", () => {
     const config = readJson<{
       app?: { security?: { csp?: string } };

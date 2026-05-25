@@ -91,6 +91,23 @@ describe("mastery state", () => {
     expect(stage.stageScore).toBe(45);
   });
 
+  it("does not inflate a zero raw score to the layer ceiling", () => {
+    const stage = evaluateMasteryStage(
+      undefined,
+      session({
+        targetScores: [0],
+        wordScores: [0],
+        levelSummaries: [level("word")],
+      }),
+      false,
+      0,
+    );
+
+    expect(stage.state).toBe("controlled");
+    expect(stage.stageCeiling).toBe(45);
+    expect(stage.stageScore).toBe(0);
+  });
+
   it("marks due review success as retained", () => {
     const stage = evaluateMasteryStage(
       existing(),

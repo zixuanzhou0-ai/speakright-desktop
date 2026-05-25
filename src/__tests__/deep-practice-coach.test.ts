@@ -30,6 +30,7 @@ function analysis(overrides: Partial<AttemptAnalysis> = {}): AttemptAnalysis {
     passed: false,
     targetScore: 52,
     overallScore: 86,
+    usedFallback: false,
     scoreGap: 34,
     detectedPatternIds: ["tongue-between-teeth", "target-low-overall-high"],
     primaryPatternId: "tongue-between-teeth",

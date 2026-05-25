@@ -5,8 +5,8 @@ import type {
   TrainingLevelKind,
   TrainingPack,
 } from "@/types/training";
-import { getPassScore } from "./training-score";
 import { detectErrorPatterns } from "./training-error-patterns";
+import { getPassScore } from "./training-score";
 
 export interface AttemptAnalysisInput {
   pack: TrainingPack;
@@ -20,7 +20,14 @@ function fallbackCue(item: TrainingCourseItem, passed: boolean): string {
   return item.focusPoint;
 }
 
-function isFinalPosition(pack: TrainingPack, item: TrainingCourseItem): boolean {
+function targetMissingCue(): string {
+  return "这次没有对齐到目标音素，整体分只作参考；请放慢一点重录，让目标音更清楚。";
+}
+
+function isFinalPosition(
+  pack: TrainingPack,
+  item: TrainingCourseItem,
+): boolean {
   return pack.id === "final-consonants" || item.position === "final";
 }
 
@@ -45,17 +52,20 @@ export function analyzeAttempt({
     levelKind === "syllable"
       ? 78
       : levelKind === "mixed-review"
-        ? pack.masteryRule.mixedReviewAverage ?? pack.masteryRule.targetPassScore
+        ? (pack.masteryRule.mixedReviewAverage ??
+          pack.masteryRule.targetPassScore)
         : pack.masteryRule.targetPassScore;
-  const passed = score.targetScore >= threshold;
-  const patterns = detectErrorPatterns({
-    packId: pack.id,
-    targetPhonemes: item.targetPhonemes,
-    targetScore: score.targetScore,
-    overallScore: score.overallScore,
-    isFinalPosition: isFinalPosition(pack, item),
-    issueType: pack.id === "stress-rhythm" ? "rhythm" : undefined,
-  });
+  const passed = !score.usedFallback && score.targetScore >= threshold;
+  const patterns = score.usedFallback
+    ? []
+    : detectErrorPatterns({
+        packId: pack.id,
+        targetPhonemes: item.targetPhonemes,
+        targetScore: score.targetScore,
+        overallScore: score.overallScore,
+        isFinalPosition: isFinalPosition(pack, item),
+        issueType: pack.id === "stress-rhythm" ? "rhythm" : undefined,
+      });
   const patternIds = [
     ...patterns.map((pattern) => pattern.id),
     ...prosodyPatternIds(pack, result),
@@ -70,10 +80,13 @@ export function analyzeAttempt({
     passed,
     targetScore: score.targetScore,
     overallScore: score.overallScore,
+    usedFallback: score.usedFallback,
     scoreGap: score.overallScore - score.targetScore,
     detectedPatternIds: uniquePatternIds,
     primaryPatternId: primaryPattern?.id ?? uniquePatternIds[0],
-    nextCue: primaryPattern?.immediateCue ?? fallbackCue(item, passed),
+    nextCue:
+      primaryPattern?.immediateCue ??
+      (score.usedFallback ? targetMissingCue() : fallbackCue(item, passed)),
     remediationPathId: primaryPattern?.remediationPathId,
   };
 }

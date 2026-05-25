@@ -20,6 +20,12 @@ const STORAGE_KEYS = {
 } as const;
 
 const ALL_STORAGE_KEYS = Object.values(STORAGE_KEYS);
+export const API_KEY_STORAGE_KEYS = [
+  STORAGE_KEYS.azure,
+  STORAGE_KEYS.elevenlabs,
+  STORAGE_KEYS.llm,
+  STORAGE_KEYS.merriamWebster,
+] as const;
 const runtimeCache = new Map<string, unknown>();
 
 function getItem<T>(key: string): T | null {

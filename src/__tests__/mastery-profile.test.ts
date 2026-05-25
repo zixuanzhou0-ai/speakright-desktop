@@ -160,6 +160,24 @@ describe("mastery profile", () => {
     );
   });
 
+  it("does not promote mastery from target phoneme fallback evidence", () => {
+    const profile = recordTrainingSession(
+      createEmptyMasteryProfile(),
+      session({
+        promotionBlockers: [
+          "目标音素未成功对齐，本轮整体分只作反馈，不提升掌握度。",
+        ],
+      }),
+    );
+
+    expect(evaluateSessionMastery(profile.sessions[0])).toBe(false);
+    expect(profile.packs["s-th"].status).toBe("practicing");
+    expect(profile.packs["s-th"].masteryState).toBe("suspected");
+    expect(profile.packs["s-th"].levelProgress["word-ladder"]).toBeUndefined();
+    expect(profile.phonemes.th).toBeUndefined();
+    expect(profile.sessions[0].promotionBlockers).toHaveLength(1);
+  });
+
   it("downgrades a due mastered pack after repeated review failure", () => {
     const mastered = recordTrainingSession(
       createEmptyMasteryProfile(),
