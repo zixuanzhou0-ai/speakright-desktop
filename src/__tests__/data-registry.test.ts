@@ -89,7 +89,7 @@ describe("data registry", () => {
     localStorage.setItem("speakright_azure_config", "{}");
     localStorage.setItem("speakright_llm_config", "{}");
 
-    deleteApiKeys();
+    await deleteApiKeys();
 
     expect(localStorage.getItem("speakright_azure_config")).toBeNull();
     expect(localStorage.getItem("speakright_llm_config")).toBeNull();
@@ -100,5 +100,19 @@ describe("data registry", () => {
       "speakright_llm_config",
     );
     expect(mocks.storeDelete).not.toHaveBeenCalled();
+  });
+
+  it("reports API key delete failures and preserves the local fallback copy", async () => {
+    const { deleteApiKeys } = await import("@/lib/data-registry");
+    localStorage.setItem("speakright_azure_config", '{"subscriptionKey":"x"}');
+    mocks.secureStoreDelete.mockRejectedValueOnce(
+      new Error("keychain delete failed"),
+    );
+
+    await expect(deleteApiKeys()).rejects.toThrow("keychain delete failed");
+
+    expect(localStorage.getItem("speakright_azure_config")).toBe(
+      '{"subscriptionKey":"x"}',
+    );
   });
 });

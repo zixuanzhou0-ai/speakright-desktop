@@ -69,7 +69,7 @@ export function DataControlCard() {
         await deleteLearningData();
         toast.success("学习数据已删除");
       } else if (confirmAction === "api-keys") {
-        deleteApiKeys();
+        await deleteApiKeys();
         toast.success("API keys 已删除");
       } else {
         await deleteBenchmarkAudioData();

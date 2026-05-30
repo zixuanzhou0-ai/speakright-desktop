@@ -167,8 +167,6 @@ export async function deleteBenchmarkAudioData(): Promise<void> {
   removeLocalStorageKeys(["speakright_benchmark_recordings_v1"]);
 }
 
-export function deleteApiKeys(): void {
-  for (const key of API_KEY_STORAGE_KEYS) {
-    clearItem(key);
-  }
+export async function deleteApiKeys(): Promise<void> {
+  await Promise.all(API_KEY_STORAGE_KEYS.map((key) => clearItem(key)));
 }

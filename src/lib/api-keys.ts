@@ -121,14 +121,27 @@ function setItem<T>(key: string, value: T): void {
 /**
  * Remove a key from both localStorage and Tauri store.
  */
-export function clearItem(key: string): void {
+export async function clearItem(key: string): Promise<void> {
   if (typeof window === "undefined") return;
+  const hadRuntimeValue = runtimeCache.has(key);
+  const previousRuntimeValue = runtimeCache.get(key);
+  const previousLocalValue = localStorage.getItem(key);
   runtimeCache.delete(key);
   localStorage.removeItem(key);
-  void persistentDelete(key).catch((error: unknown) =>
-    dispatchStorageError(key, "delete", error),
-  );
-  window.dispatchEvent(new StorageEvent("storage", { key }));
+  try {
+    await persistentDelete(key);
+    window.dispatchEvent(new StorageEvent("storage", { key }));
+  } catch (error) {
+    if (hadRuntimeValue) {
+      runtimeCache.set(key, previousRuntimeValue);
+    }
+    if (previousLocalValue !== null) {
+      localStorage.setItem(key, previousLocalValue);
+    }
+    dispatchStorageError(key, "delete", error);
+    window.dispatchEvent(new StorageEvent("storage", { key }));
+    throw error;
+  }
 }
 
 /**
