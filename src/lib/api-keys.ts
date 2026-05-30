@@ -1,4 +1,9 @@
 import { isTauriEnvironment } from "@/lib/tauri-runtime";
+import {
+  secureStoreDelete,
+  secureStoreGet,
+  secureStoreSet,
+} from "@/lib/secure-store";
 import { storeDelete, storeGet, storeSet } from "@/lib/tauri-store";
 import type {
   AzureConfig,
@@ -28,6 +33,7 @@ export const API_KEY_STORAGE_KEYS = [
 ] as const;
 export const API_KEY_STORAGE_ERROR_EVENT = "speakright:api-key-storage-error";
 const runtimeCache = new Map<string, unknown>();
+const SECRET_STORAGE_KEYS = new Set<string>(API_KEY_STORAGE_KEYS);
 
 export interface ApiKeyStorageErrorDetail {
   key: string;
@@ -62,6 +68,30 @@ function dispatchStorageError(
   );
 }
 
+function isSecretKey(key: string): boolean {
+  return SECRET_STORAGE_KEYS.has(key);
+}
+
+async function persistentGet<T>(key: string): Promise<T | null> {
+  return isSecretKey(key) ? secureStoreGet<T>(key) : storeGet<T>(key);
+}
+
+async function persistentSet<T>(key: string, value: T): Promise<void> {
+  if (isSecretKey(key)) {
+    await secureStoreSet(key, value);
+  } else {
+    await storeSet(key, value);
+  }
+}
+
+async function persistentDelete(key: string): Promise<void> {
+  if (isSecretKey(key)) {
+    await secureStoreDelete(key);
+  } else {
+    await storeDelete(key);
+  }
+}
+
 function getItem<T>(key: string): T | null {
   if (typeof window === "undefined") return null;
   if (isTauriEnvironment()) {
@@ -82,7 +112,7 @@ function setItem<T>(key: string, value: T): void {
   } else {
     localStorage.setItem(key, JSON.stringify(value));
   }
-  void storeSet(key, value).catch((error: unknown) =>
+  void persistentSet(key, value).catch((error: unknown) =>
     dispatchStorageError(key, "save", error),
   );
   window.dispatchEvent(new StorageEvent("storage", { key }));
@@ -95,7 +125,7 @@ export function clearItem(key: string): void {
   if (typeof window === "undefined") return;
   runtimeCache.delete(key);
   localStorage.removeItem(key);
-  void storeDelete(key).catch((error: unknown) =>
+  void persistentDelete(key).catch((error: unknown) =>
     dispatchStorageError(key, "delete", error),
   );
   window.dispatchEvent(new StorageEvent("storage", { key }));
@@ -120,7 +150,7 @@ export async function hydrateKeys(): Promise<void> {
 
   for (const key of ALL_STORAGE_KEYS) {
     try {
-      const storeValue = await storeGet<unknown>(key);
+      const storeValue = await persistentGet<unknown>(key);
       const localRaw = localStorage.getItem(key);
 
       if (storeValue !== null && storeValue !== undefined) {
@@ -139,7 +169,7 @@ export async function hydrateKeys(): Promise<void> {
         // First-run migration: promote legacy localStorage value to Tauri store.
         try {
           const parsed = JSON.parse(localRaw);
-          await storeSet(key, parsed);
+          await persistentSet(key, parsed);
           if (tauri) {
             runtimeCache.set(key, parsed);
             localStorage.removeItem(key);
@@ -148,6 +178,14 @@ export async function hydrateKeys(): Promise<void> {
         } catch (error) {
           dispatchStorageError(key, "hydrate", error);
           // Malformed legacy value — skip rather than corrupt the store.
+        }
+      } else if (tauri && isSecretKey(key)) {
+        const legacyStoreValue = await storeGet<unknown>(key);
+        if (legacyStoreValue !== null && legacyStoreValue !== undefined) {
+          await secureStoreSet(key, legacyStoreValue);
+          await storeDelete(key);
+          runtimeCache.set(key, legacyStoreValue);
+          window.dispatchEvent(new StorageEvent("storage", { key }));
         }
       }
     } catch (error) {

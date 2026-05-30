@@ -3,6 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   clearBenchmarkRecordings: vi.fn(async () => {}),
   clearTtsCache: vi.fn(async () => {}),
+  secureStoreDelete: vi.fn(async (key: string) => {
+    localStorage.removeItem(key);
+  }),
   storeDelete: vi.fn(async () => {}),
   storeGet: vi.fn(async () => null),
   storeSet: vi.fn(async () => {}),
@@ -18,6 +21,12 @@ vi.mock("@/lib/tts-cache", () => ({
 
 vi.mock("@/lib/tauri-runtime", () => ({
   isTauriEnvironment: () => false,
+}));
+
+vi.mock("@/lib/secure-store", () => ({
+  secureStoreDelete: mocks.secureStoreDelete,
+  secureStoreGet: vi.fn(async () => null),
+  secureStoreSet: vi.fn(async () => {}),
 }));
 
 vi.mock("@/lib/tauri-store", () => ({
@@ -84,7 +93,12 @@ describe("data registry", () => {
 
     expect(localStorage.getItem("speakright_azure_config")).toBeNull();
     expect(localStorage.getItem("speakright_llm_config")).toBeNull();
-    expect(mocks.storeDelete).toHaveBeenCalledWith("speakright_azure_config");
-    expect(mocks.storeDelete).toHaveBeenCalledWith("speakright_llm_config");
+    expect(mocks.secureStoreDelete).toHaveBeenCalledWith(
+      "speakright_azure_config",
+    );
+    expect(mocks.secureStoreDelete).toHaveBeenCalledWith(
+      "speakright_llm_config",
+    );
+    expect(mocks.storeDelete).not.toHaveBeenCalled();
   });
 });

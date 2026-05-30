@@ -75,6 +75,24 @@ describe("release security configuration", () => {
     expect(config.identifier).not.toMatch(/\.(app|exe|msi|dmg)$/);
   });
 
+  it("stores desktop API keys through an OS credential store backend", () => {
+    const cargoToml = readFileSync(
+      join(projectRoot, "src-tauri/Cargo.toml"),
+      "utf8",
+    );
+    const rustEntry = readFileSync(
+      join(projectRoot, "src-tauri/src/lib.rs"),
+      "utf8",
+    );
+
+    expect(cargoToml).toContain("keyring =");
+    expect(cargoToml).toContain("windows-native");
+    expect(rustEntry).toContain('const SECURE_STORE_SERVICE: &str = "com.speakright.desktop"');
+    expect(rustEntry).toContain("secure_store_get");
+    expect(rustEntry).toContain("secure_store_set");
+    expect(rustEntry).toContain("secure_store_delete");
+  });
+
   it("keeps blob permission scoped to media and avoids unsafe eval", () => {
     const config = readJson<{
       app?: { security?: { csp?: string } };
