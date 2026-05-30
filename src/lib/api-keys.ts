@@ -26,7 +26,41 @@ export const API_KEY_STORAGE_KEYS = [
   STORAGE_KEYS.llm,
   STORAGE_KEYS.merriamWebster,
 ] as const;
+export const API_KEY_STORAGE_ERROR_EVENT = "speakright:api-key-storage-error";
 const runtimeCache = new Map<string, unknown>();
+
+export interface ApiKeyStorageErrorDetail {
+  key: string;
+  operation: "save" | "delete" | "hydrate";
+  message: string;
+}
+
+declare global {
+  interface WindowEventMap {
+    [API_KEY_STORAGE_ERROR_EVENT]: CustomEvent<ApiKeyStorageErrorDetail>;
+  }
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : "本机密钥存储失败";
+}
+
+function dispatchStorageError(
+  key: string,
+  operation: ApiKeyStorageErrorDetail["operation"],
+  error: unknown,
+): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent<ApiKeyStorageErrorDetail>(API_KEY_STORAGE_ERROR_EVENT, {
+      detail: {
+        key,
+        operation,
+        message: errorMessage(error),
+      },
+    }),
+  );
+}
 
 function getItem<T>(key: string): T | null {
   if (typeof window === "undefined") return null;
@@ -48,7 +82,9 @@ function setItem<T>(key: string, value: T): void {
   } else {
     localStorage.setItem(key, JSON.stringify(value));
   }
-  void storeSet(key, value);
+  void storeSet(key, value).catch((error: unknown) =>
+    dispatchStorageError(key, "save", error),
+  );
   window.dispatchEvent(new StorageEvent("storage", { key }));
 }
 
@@ -59,7 +95,9 @@ export function clearItem(key: string): void {
   if (typeof window === "undefined") return;
   runtimeCache.delete(key);
   localStorage.removeItem(key);
-  void storeDelete(key);
+  void storeDelete(key).catch((error: unknown) =>
+    dispatchStorageError(key, "delete", error),
+  );
   window.dispatchEvent(new StorageEvent("storage", { key }));
 }
 
@@ -107,11 +145,13 @@ export async function hydrateKeys(): Promise<void> {
             localStorage.removeItem(key);
             window.dispatchEvent(new StorageEvent("storage", { key }));
           }
-        } catch {
+        } catch (error) {
+          dispatchStorageError(key, "hydrate", error);
           // Malformed legacy value — skip rather than corrupt the store.
         }
       }
-    } catch {
+    } catch (error) {
+      dispatchStorageError(key, "hydrate", error);
       // Never let a single bad key block the rest of hydration.
     }
   }

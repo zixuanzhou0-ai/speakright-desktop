@@ -38,7 +38,15 @@ export function ScoreTrend({ historyKey }: ScoreTrendProps) {
     .join(" ");
 
   return (
-    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="block">
+    <svg
+      width={W}
+      height={H}
+      viewBox={`0 0 ${W} ${H}`}
+      className="block"
+      role="img"
+      aria-label="最近 5 次评分趋势"
+    >
+      <title>最近 5 次评分趋势</title>
       {points.length > 1 && (
         <path
           d={linePath}
@@ -52,7 +60,7 @@ export function ScoreTrend({ historyKey }: ScoreTrendProps) {
       )}
       {points.map((p, i) => (
         <circle
-          key={i}
+          key={`${p.x}-${p.y}-${p.score}`}
           cx={p.x}
           cy={p.y}
           r={i === points.length - 1 ? 4 : 3}

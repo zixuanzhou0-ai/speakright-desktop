@@ -2,7 +2,7 @@
 
 import { ArrowLeft, PartyPopper, RotateCcw } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import type { DrillSummary } from "@/types/drill";
 
@@ -52,6 +52,15 @@ export function DrillSummaryCard({
   onBack,
 }: DrillSummaryCardProps) {
   const [showConfetti, setShowConfetti] = useState(true);
+  const confettiParticles = useMemo(
+    () =>
+      Array.from({ length: 40 }, (_, index) => ({
+        id: `${summary.completedAt}-${Math.random().toString(36).slice(2)}`,
+        delay: index * 0.05,
+        color: CONFETTI_COLORS[index % CONFETTI_COLORS.length],
+      })),
+    [summary.completedAt],
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 4000);
@@ -67,11 +76,11 @@ export function DrillSummaryCard({
       {/* Confetti */}
       {showConfetti && (
         <div className="absolute inset-0 z-10 overflow-hidden">
-          {Array.from({ length: 40 }).map((_, i) => (
+          {confettiParticles.map((particle) => (
             <ConfettiParticle
-              key={`confetti-${i}-${summary.completedAt}`}
-              delay={i * 0.05}
-              color={CONFETTI_COLORS[i % CONFETTI_COLORS.length]}
+              key={particle.id}
+              delay={particle.delay}
+              color={particle.color}
             />
           ))}
         </div>

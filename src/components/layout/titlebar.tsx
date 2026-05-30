@@ -3,6 +3,7 @@
 import { AudioLines, Maximize2, Minimize2, Minus, X } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { isTauriEnvironment } from "@/lib/tauri-runtime";
 
 async function windowMinimize() {
   const { getCurrentWindow } = await import("@tauri-apps/api/window");
@@ -28,7 +29,7 @@ export function Titlebar() {
 
   // Detect Tauri + listen for maximize state changes
   useEffect(() => {
-    const hasTauri = "__TAURI__" in window || "__TAURI_INTERNALS__" in window;
+    const hasTauri = isTauriEnvironment();
     setShowControls(hasTauri);
     if (!hasTauri) return;
 

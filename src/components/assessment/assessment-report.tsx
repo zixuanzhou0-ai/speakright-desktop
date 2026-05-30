@@ -128,6 +128,9 @@ export function AssessmentReport({ result, onRetake }: AssessmentReportProps) {
                   ? "报告基于覆盖短文、多段语流和必要补测生成。它更适合做阶段性体检，先处理最影响清晰度和自然度的问题。"
                   : "报告基于基础筛查、短文朗读和必要的自适应补测生成。先处理最影响清晰度的问题，再按处方进入训练包。"}
               </p>
+              <p className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
+                分数是训练反馈，不是医学、考试或口音定级诊断。证据偏薄时，请优先补测，不要把单次结果当成定论。
+              </p>
               {result.evidenceSummary && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   <Badge variant="outline">

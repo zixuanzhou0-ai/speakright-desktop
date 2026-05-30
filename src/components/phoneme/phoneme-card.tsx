@@ -1,5 +1,6 @@
 "use client";
 
+import { Play } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -125,14 +126,7 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
             onClick={handlePlayPhoneme}
             className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-muted transition-colors hover:bg-primary hover:text-primary-foreground"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="h-5 w-5"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
+            <Play className="h-5 w-5" />
           </motion.div>
         </div>
       </Card>

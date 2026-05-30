@@ -227,7 +227,7 @@ function normalizeAssessmentPhoneme(phoneme: string) {
   return phoneme
     .trim()
     .toLowerCase()
-    .replace(/[\/\[\]]/g, "")
+    .replace(/[/[\]]/g, "")
     .replace(/[ˈˌ.]/g, "");
 }
 
@@ -249,7 +249,9 @@ export function getPhonemeAccuracy(
   },
   phonemeSlug: string,
 ): number | null {
-  const targetCodes = slugToAzureAliases[phonemeSlug]?.map(normalizeAssessmentPhoneme);
+  const targetCodes = slugToAzureAliases[phonemeSlug]?.map(
+    normalizeAssessmentPhoneme,
+  );
   if (!targetCodes?.length) return null;
 
   const scores: number[] = [];

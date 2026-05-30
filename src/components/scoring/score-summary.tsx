@@ -19,6 +19,7 @@ export function ScoreSummary({
 }: ScoreSummaryProps) {
   return (
     <div
+      role="status"
       className="grid grid-cols-[100px_1fr] gap-4"
       aria-live="polite"
       aria-label="发音评分结果"

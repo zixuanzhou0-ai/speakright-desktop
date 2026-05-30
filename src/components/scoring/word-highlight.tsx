@@ -25,7 +25,7 @@ export function WordHighlight({ words, onWordClick }: WordHighlightProps) {
 
         return (
           <motion.button
-            key={`${word.word}-${i}`}
+            key={`${word.word}-${word.accuracyScore}-${word.errorType}`}
             type="button"
             initial={{ opacity: 0, y: 8 }}
             animate={{

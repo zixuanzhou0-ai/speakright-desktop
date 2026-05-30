@@ -58,6 +58,14 @@ describe("release security configuration", () => {
     expect(cargoToml).not.toMatch(/features\s*=\s*\[[^\]]*"devtools"/);
   });
 
+  it("does not expose the Tauri API on the global window object", () => {
+    const config = readJson<{
+      app?: { withGlobalTauri?: boolean };
+    }>("src-tauri/tauri.conf.json");
+
+    expect(config.app?.withGlobalTauri).toBe(false);
+  });
+
   it("keeps blob permission scoped to media and avoids unsafe eval", () => {
     const config = readJson<{
       app?: { security?: { csp?: string } };

@@ -64,4 +64,23 @@ describe("api key storage in Tauri", () => {
     });
     expect(getElevenLabsConfig()?.apiKey).toBe("eleven-secret");
   });
+
+  it("emits a visible storage error event when Tauri persistence fails", async () => {
+    mocks.storeSet.mockRejectedValueOnce(new Error("store unavailable"));
+    const events: Array<{ operation: string; message: string }> = [];
+    window.addEventListener("speakright:api-key-storage-error", (event) => {
+      events.push({
+        operation: event.detail.operation,
+        message: event.detail.message,
+      });
+    });
+    const { setAzureConfig } = await import("@/lib/api-keys");
+
+    setAzureConfig({ subscriptionKey: "azure-secret", region: "eastus" });
+    await Promise.resolve();
+
+    expect(events).toEqual([
+      { operation: "save", message: "store unavailable" },
+    ]);
+  });
 });

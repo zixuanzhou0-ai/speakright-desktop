@@ -22,7 +22,8 @@ export function WaveformDisplay({ audioBlob, stream }: WaveformDisplayProps) {
     let cancelled = false;
 
     // Clear any leftover live-recording canvas
-    clearContainer(containerRef.current);
+    const container = containerRef.current;
+    clearContainer(container);
 
     (async () => {
       const WaveSurfer = (await import("wavesurfer.js")).default;
@@ -32,7 +33,7 @@ export function WaveformDisplay({ audioBlob, stream }: WaveformDisplayProps) {
       wsRef.current?.destroy();
 
       const ws = WaveSurfer.create({
-        container: containerRef.current!,
+        container,
         waveColor: "hsl(var(--muted-foreground) / 0.4)",
         progressColor: "hsl(var(--primary))",
         cursorColor: "hsl(var(--primary))",
@@ -68,7 +69,8 @@ export function WaveformDisplay({ audioBlob, stream }: WaveformDisplayProps) {
     canvas.height = 40;
     containerRef.current.appendChild(canvas);
 
-    const ctx = canvas.getContext("2d")!;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
     const audioCtx = new AudioContext();
     const source = audioCtx.createMediaStreamSource(stream);
     const analyser = audioCtx.createAnalyser();

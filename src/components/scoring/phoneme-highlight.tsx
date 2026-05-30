@@ -198,7 +198,11 @@ export function PhonemeHighlight({
         </div>
         <div className="flex flex-wrap gap-2">
           {phonemes.map((ph, i) => (
-            <PhonemeBlock key={`${ph.phoneme}-${i}`} ph={ph} index={i} />
+            <PhonemeBlock
+              key={`${ph.phoneme}-${ph.accuracyScore}`}
+              ph={ph}
+              index={i}
+            />
           ))}
         </div>
       </div>
@@ -218,7 +222,7 @@ export function PhonemeHighlight({
               const stressPrefix = isPrimary ? "ˈ" : isSecondary ? "ˌ" : "";
               return (
                 <span
-                  key={`syl-${s.syllable}-${i}`}
+                  key={`${s.syllable}-${s.accuracyScore}-${s.stress ?? "none"}`}
                   className="inline-flex items-center gap-1"
                 >
                   {i > 0 && <span className="text-muted-foreground/50">·</span>}

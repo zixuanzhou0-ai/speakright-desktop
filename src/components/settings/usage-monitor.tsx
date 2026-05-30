@@ -43,7 +43,14 @@ function Ring({ percent, size = 96, strokeWidth = 6 }: RingProps) {
   const offset = circumference - (Math.min(percent, 100) / 100) * circumference;
 
   return (
-    <svg width={size} height={size} className="-rotate-90">
+    <svg
+      width={size}
+      height={size}
+      className="-rotate-90"
+      role="img"
+      aria-label={`用量 ${percent.toFixed(1)}%`}
+    >
+      <title>{`用量 ${percent.toFixed(1)}%`}</title>
       <circle
         cx={size / 2}
         cy={size / 2}
@@ -251,9 +258,9 @@ function AzureUsageCard() {
               最近调用
             </p>
             <div className="max-h-32 overflow-y-auto space-y-0.5">
-              {usage.history.map((h, i) => (
+              {usage.history.map((h) => (
                 <div
-                  key={`${h.timestamp}-${i}`}
+                  key={`${h.timestamp}-${h.target}-${h.durationSeconds}`}
                   className="flex justify-between text-xs text-muted-foreground"
                 >
                   <span className="truncate max-w-[140px]">{h.target}</span>

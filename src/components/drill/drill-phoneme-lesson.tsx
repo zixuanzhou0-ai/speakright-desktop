@@ -23,7 +23,6 @@ export function DrillPhonemeLesson({
   kind,
   onReady,
   onPlayExample,
-  isPlayingExample,
   isLoadingExample,
 }: DrillPhonemeLessonProps) {
   return (

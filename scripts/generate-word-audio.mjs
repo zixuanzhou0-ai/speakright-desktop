@@ -46,9 +46,10 @@ function extractWords() {
   const source = readFileSync(PHONEME_DATA_PATH, "utf-8");
   const wordSet = new Set();
   const regex = /word:\s*"([^"]+)"/g;
-  let match;
-  while ((match = regex.exec(source)) !== null) {
+  let match = regex.exec(source);
+  while (match !== null) {
     wordSet.add(match[1].toLowerCase());
+    match = regex.exec(source);
   }
   return [...wordSet].sort();
 }

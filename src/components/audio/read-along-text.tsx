@@ -41,7 +41,7 @@ export function ReadAlongText({
 
         return (
           <motion.span
-            key={`${word}-${i}`}
+            key={`${word}-${timing?.start ?? "untimed"}-${timing?.end ?? "untimed"}`}
             animate={{
               scale: state === "current" ? 1.05 : 1,
             }}

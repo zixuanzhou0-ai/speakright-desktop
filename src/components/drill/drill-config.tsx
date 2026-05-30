@@ -102,9 +102,9 @@ export function DrillConfig({ kind, onStart }: DrillConfigProps) {
           )}
 
           <div>
-            <label className="mb-2 block text-sm font-medium">
+            <p className="mb-2 block text-sm font-medium">
               {kind === "word" ? "训练单词数" : "训练句子数"}
-            </label>
+            </p>
             <div className="flex gap-2">
               {countOptions.map((n) => {
                 const disabled = kind === "word" && n > availableWords;

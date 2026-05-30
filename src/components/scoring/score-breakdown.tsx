@@ -141,7 +141,11 @@ function CompactLayout({
         </p>
         <div className="flex flex-wrap gap-1.5">
           {phonemes.map((ph, i) => (
-            <PhonemeBlock key={`${ph.phoneme}-${i}`} ph={ph} index={i} />
+            <PhonemeBlock
+              key={`${ph.phoneme}-${ph.accuracyScore}`}
+              ph={ph}
+              index={i}
+            />
           ))}
         </div>
 
@@ -160,7 +164,7 @@ function CompactLayout({
                 const stressPrefix = isPrimary ? "ˈ" : isSecondary ? "ˌ" : "";
                 return (
                   <span
-                    key={`syl-${s.syllable}-${i}`}
+                    key={`${s.syllable}-${s.accuracyScore}-${s.stress ?? "none"}`}
                     className="inline-flex items-center gap-1"
                   >
                     {i > 0 && (
