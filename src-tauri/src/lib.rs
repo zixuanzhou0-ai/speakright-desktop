@@ -58,3 +58,44 @@ pub fn run() {
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+  use std::time::{SystemTime, UNIX_EPOCH};
+
+  fn unique_test_key(label: &str) -> String {
+    let nanos = SystemTime::now()
+      .duration_since(UNIX_EPOCH)
+      .expect("system clock is before unix epoch")
+      .as_nanos();
+    format!("speakright-test-{label}-{nanos}")
+  }
+
+  #[test]
+  fn secure_store_rejects_blank_keys() {
+    let result = secure_store_set("  ".to_string(), "secret".to_string());
+
+    assert!(result.is_err());
+    assert_eq!(
+      result.expect_err("blank secure store key should fail"),
+      "secure store key must not be empty"
+    );
+  }
+
+  #[test]
+  fn secure_store_roundtrips_through_platform_keychain() {
+    let key = unique_test_key("roundtrip");
+    let value = r#"{"apiKey":"desktop-secret","region":"eastus"}"#.to_string();
+
+    secure_store_delete(key.clone()).expect("pre-test cleanup should succeed");
+    secure_store_set(key.clone(), value.clone()).expect("set should succeed");
+
+    let stored = secure_store_get(key.clone()).expect("get should succeed");
+    assert_eq!(stored, Some(value));
+
+    secure_store_delete(key.clone()).expect("delete should succeed");
+    let deleted = secure_store_get(key).expect("get after delete should succeed");
+    assert_eq!(deleted, None);
+  }
+}
