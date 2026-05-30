@@ -45,6 +45,8 @@ describe("data registry", () => {
 
     const snapshot = buildLocalDataExport();
 
+    expect(snapshot.schemaVersion).toBe(2);
+    expect(snapshot.dataSchema.currentVersion).toBeGreaterThanOrEqual(2);
     expect(snapshot.localStorage.speakright_mastery_profile_v2).toEqual({
       version: 2,
     });
@@ -57,6 +59,7 @@ describe("data registry", () => {
     localStorage.setItem("speakright_mastery_profile_v2", "{}");
     localStorage.setItem("speakright_ipa_cache", "{}");
     localStorage.setItem("speakright_mw_words_th", "{}");
+    localStorage.setItem("speakright_corrupt_data_v1", "[]");
     localStorage.setItem("speakright_azure_config", "{}");
     localStorage.setItem("theme", "dark");
 
@@ -65,6 +68,7 @@ describe("data registry", () => {
     expect(localStorage.getItem("speakright_mastery_profile_v2")).toBeNull();
     expect(localStorage.getItem("speakright_ipa_cache")).toBeNull();
     expect(localStorage.getItem("speakright_mw_words_th")).toBeNull();
+    expect(localStorage.getItem("speakright_corrupt_data_v1")).toBeNull();
     expect(localStorage.getItem("speakright_azure_config")).toBe("{}");
     expect(localStorage.getItem("theme")).toBe("dark");
     expect(mocks.clearBenchmarkRecordings).toHaveBeenCalledOnce();

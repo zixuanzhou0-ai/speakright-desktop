@@ -2,6 +2,13 @@
 
 import { API_KEY_STORAGE_KEYS, clearItem } from "@/lib/api-keys";
 import { clearBenchmarkRecordings } from "@/lib/benchmark-archive";
+import {
+  clearCorruptLocalData,
+  CORRUPT_LOCAL_DATA_KEY,
+  getLocalDataSchemaStatus,
+  LOCAL_DATA_MIGRATED_AT_KEY,
+  LOCAL_DATA_SCHEMA_VERSION_KEY,
+} from "@/lib/local-data-migrations";
 import { clearTtsCache } from "@/lib/tts-cache";
 
 const ASSESSMENT_STORAGE_KEYS = [
@@ -19,6 +26,7 @@ const LEARNING_STORAGE_KEYS = [
   "speakright_usage",
   "speakright_benchmark_recordings_v1",
   "speakright_coverage_benchmarks_v1",
+  CORRUPT_LOCAL_DATA_KEY,
 ] as const;
 
 const CACHE_STORAGE_KEYS = [
@@ -29,9 +37,10 @@ const CACHE_STORAGE_KEYS = [
 const CACHE_STORAGE_PREFIXES = ["speakright_mw_words_"] as const;
 
 export interface LocalDataExport {
-  schemaVersion: 1;
+  schemaVersion: 2;
   exportedAt: string;
   product: "SpeakRight Desktop";
+  dataSchema: ReturnType<typeof getLocalDataSchemaStatus>;
   localStorage: Record<string, unknown>;
   excluded: string[];
 }
@@ -40,6 +49,8 @@ export interface LocalDataSummary {
   learningKeys: number;
   cacheKeys: number;
   apiKeySlots: number;
+  dataSchemaVersion: number;
+  corruptItems: number;
 }
 
 function safeParse(raw: string): unknown {
@@ -85,13 +96,18 @@ function removeLocalStorageKeys(keys: readonly string[]): void {
 export function buildLocalDataExport(): LocalDataExport {
   const cacheKeys = prefixedLocalStorageKeys(CACHE_STORAGE_PREFIXES);
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     exportedAt: new Date().toISOString(),
     product: "SpeakRight Desktop",
+    dataSchema: getLocalDataSchemaStatus(),
     localStorage: {
       ...collectKeys(LEARNING_STORAGE_KEYS),
       ...collectKeys(CACHE_STORAGE_KEYS),
       ...collectKeys(cacheKeys),
+      ...collectKeys([
+        LOCAL_DATA_SCHEMA_VERSION_KEY,
+        LOCAL_DATA_MIGRATED_AT_KEY,
+      ]),
     },
     excluded: [
       "API keys",
@@ -111,6 +127,8 @@ export function getLocalDataSummary(): LocalDataSummary {
     learningKeys: Object.keys(collectKeys(LEARNING_STORAGE_KEYS)).length,
     cacheKeys: Object.keys(collectKeys(cacheKeys)).length,
     apiKeySlots: API_KEY_STORAGE_KEYS.length,
+    dataSchemaVersion: getLocalDataSchemaStatus().storedVersion,
+    corruptItems: getLocalDataSchemaStatus().corruptItems,
   };
 }
 
@@ -141,6 +159,7 @@ export async function deleteLearningData(): Promise<void> {
     ...CACHE_STORAGE_KEYS,
     ...cacheKeys,
   ]);
+  clearCorruptLocalData();
 }
 
 export async function deleteBenchmarkAudioData(): Promise<void> {

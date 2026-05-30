@@ -66,6 +66,15 @@ describe("release security configuration", () => {
     expect(config.app?.withGlobalTauri).toBe(false);
   });
 
+  it("uses a bundle identifier that will not collide with platform bundle extensions", () => {
+    const config = readJson<{
+      identifier?: string;
+    }>("src-tauri/tauri.conf.json");
+
+    expect(config.identifier).toBe("com.speakright.desktop");
+    expect(config.identifier).not.toMatch(/\.(app|exe|msi|dmg)$/);
+  });
+
   it("keeps blob permission scoped to media and avoids unsafe eval", () => {
     const config = readJson<{
       app?: { security?: { csp?: string } };

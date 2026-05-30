@@ -79,10 +79,11 @@ export function PhonemeStudyCard({
               }}
               className="flex shrink-0 flex-col items-center cursor-pointer"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={`/images/ipa/${phoneme.chartImage}.png`}
                 alt={phoneme.chartWord || ""}
+                width={32}
+                height={32}
                 className="h-8 w-8 object-contain"
               />
               <span className="text-[10px] text-muted-foreground capitalize">

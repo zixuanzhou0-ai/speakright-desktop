@@ -94,7 +94,7 @@ export function DataControlCard() {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-3 text-sm md:grid-cols-3">
+          <div className="grid gap-3 text-sm md:grid-cols-4">
             <div className="rounded-lg border bg-background p-3">
               <p className="text-xs text-muted-foreground">学习数据项</p>
               <p className="mt-1 text-2xl font-semibold">
@@ -110,6 +110,17 @@ export function DataControlCard() {
               <p className="mt-1 text-2xl font-semibold">
                 {summary.apiKeySlots}
               </p>
+            </div>
+            <div className="rounded-lg border bg-background p-3">
+              <p className="text-xs text-muted-foreground">数据版本</p>
+              <p className="mt-1 text-2xl font-semibold">
+                v{summary.dataSchemaVersion}
+              </p>
+              {summary.corruptItems > 0 && (
+                <p className="mt-1 text-xs text-destructive">
+                  已隔离 {summary.corruptItems} 项损坏数据
+                </p>
+              )}
             </div>
           </div>
 

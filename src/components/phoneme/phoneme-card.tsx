@@ -2,6 +2,7 @@
 
 import { Play } from "lucide-react";
 import { motion } from "motion/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -102,10 +103,11 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
                 onClick={handlePlayWord}
                 className="relative h-12 w-12 shrink-0 cursor-pointer"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={`/images/ipa/${image}.png`}
                   alt={word || ""}
+                  width={48}
+                  height={48}
                   className="h-full w-full object-contain"
                 />
               </motion.div>
