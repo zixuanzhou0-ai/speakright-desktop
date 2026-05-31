@@ -3,6 +3,7 @@ import { testLlm, streamLlmFeedback } from "@/lib/api-client";
 import {
   DESKTOP_LLM_POLICY_MESSAGE,
   getDesktopLlmPolicyError,
+  normalizeStoredProvider,
 } from "@/lib/llm-providers";
 import type { AzureAssessmentResult } from "@/types/azure";
 
@@ -35,6 +36,16 @@ describe("desktop LLM network policy", () => {
     expect(getDesktopLlmPolicyError("gpt", "not a url")).toBe(
       DESKTOP_LLM_POLICY_MESSAGE,
     );
+    expect(
+      getDesktopLlmPolicyError("unknown", "https://api.openai.com/v1"),
+    ).toBe(DESKTOP_LLM_POLICY_MESSAGE);
+  });
+
+  it("normalizes damaged stored provider names before rendering settings", () => {
+    expect(normalizeStoredProvider("gpt")).toBe("gpt");
+    expect(normalizeStoredProvider("custom")).toBe("custom");
+    expect(normalizeStoredProvider("custom", true)).toBe("claude");
+    expect(normalizeStoredProvider("unknown-provider")).toBe("claude");
   });
 
   it("blocks custom desktop LLM tests before calling network fetch", async () => {

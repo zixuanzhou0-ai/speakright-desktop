@@ -50,6 +50,21 @@ export const PRESET_PROVIDERS: Record<ProviderName, PresetProvider> = {
 
 export const PROVIDER_NAMES = Object.keys(PRESET_PROVIDERS) as ProviderName[];
 
+export function isProviderName(value: unknown): value is ProviderName {
+  return (
+    typeof value === "string" &&
+    (PROVIDER_NAMES as readonly string[]).includes(value)
+  );
+}
+
+export function normalizeStoredProvider(
+  value: unknown,
+  isDesktop = false,
+): ProviderName {
+  if (!isProviderName(value)) return "claude";
+  return isDesktop && value === "custom" ? "claude" : value;
+}
+
 const DESKTOP_ALLOWED_LLM_ORIGINS = new Set(
   Object.entries(PRESET_PROVIDERS)
     .filter(([provider]) => provider !== "custom")
@@ -63,7 +78,9 @@ export function getDesktopLlmPolicyError(
   provider: string,
   baseUrl: string,
 ): string | null {
-  if (provider === "custom") return DESKTOP_LLM_POLICY_MESSAGE;
+  if (!isProviderName(provider) || provider === "custom") {
+    return DESKTOP_LLM_POLICY_MESSAGE;
+  }
   try {
     const origin = new URL(baseUrl).origin;
     return DESKTOP_ALLOWED_LLM_ORIGINS.has(origin)

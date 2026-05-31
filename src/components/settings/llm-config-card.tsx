@@ -17,6 +17,7 @@ import { testLlm } from "@/lib/api-client";
 import { getLlmConfig, setLlmConfig } from "@/lib/api-keys";
 import {
   DESKTOP_LLM_POLICY_MESSAGE,
+  normalizeStoredProvider,
   PRESET_PROVIDERS,
   PROVIDER_NAMES,
 } from "@/lib/llm-providers";
@@ -33,13 +34,19 @@ export function LlmConfigCard() {
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    setIsDesktop(isTauriEnvironment());
+    const desktop = isTauriEnvironment();
+    setIsDesktop(desktop);
     const saved = getLlmConfig();
     if (saved) {
-      setProvider((saved.provider as ProviderName) ?? "claude");
-      setApiKey(saved.apiKey);
-      setBaseUrl(saved.baseUrl);
-      setModel(saved.model);
+      const nextProvider = normalizeStoredProvider(saved.provider, desktop);
+      const nextPreset = PRESET_PROVIDERS[nextProvider];
+      const canUseSavedEndpoint = nextProvider === "custom" && !desktop;
+      setProvider(nextProvider);
+      setApiKey(saved.apiKey ?? "");
+      setBaseUrl(
+        canUseSavedEndpoint ? (saved.baseUrl ?? "") : nextPreset.baseUrl,
+      );
+      setModel(saved.model || nextPreset.models[0] || "");
     }
   }, []);
   const [status, setStatus] = useState<ConnectionState>("idle");
