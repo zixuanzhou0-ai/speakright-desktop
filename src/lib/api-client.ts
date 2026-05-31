@@ -303,10 +303,88 @@ interface LlmConfig {
   model: string;
 }
 
+interface ChatMessage {
+  role: "user";
+  content: string;
+}
+
 function getBlockedDesktopLlmReason(config: LlmConfig): string | null {
   return isTauriEnvironment()
     ? getDesktopLlmPolicyError(config.provider, config.baseUrl)
     : null;
+}
+
+function isClaudeProvider(config: Pick<LlmConfig, "provider">): boolean {
+  return config.provider === "claude";
+}
+
+function buildLlmHeaders(config: LlmConfig): Record<string, string> {
+  if (isClaudeProvider(config)) {
+    return {
+      "Content-Type": "application/json",
+      "x-api-key": config.apiKey,
+      "anthropic-version": "2023-06-01",
+    };
+  }
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${config.apiKey}`,
+  };
+}
+
+function buildLlmEndpoint(config: LlmConfig): string {
+  return isClaudeProvider(config)
+    ? `${config.baseUrl}/messages`
+    : `${config.baseUrl}/chat/completions`;
+}
+
+function buildLlmBody({
+  config,
+  messages,
+  maxTokens,
+  stream = false,
+}: {
+  config: LlmConfig;
+  messages: ChatMessage[];
+  maxTokens?: number;
+  stream?: boolean;
+}): Record<string, unknown> {
+  if (isClaudeProvider(config)) {
+    return {
+      model: config.model,
+      max_tokens: maxTokens ?? 1024,
+      messages,
+      ...(stream ? { stream: true } : {}),
+    };
+  }
+  return {
+    model: config.model,
+    messages,
+    ...(maxTokens ? { max_tokens: maxTokens } : {}),
+    ...(stream
+      ? { stream: true, stream_options: { include_usage: true } }
+      : {}),
+  };
+}
+
+function extractClaudeText(data: unknown): string {
+  const content =
+    typeof data === "object" && data !== null && "content" in data
+      ? (data as { content?: unknown }).content
+      : undefined;
+  if (!Array.isArray(content)) return "";
+  return content
+    .map((block) =>
+      typeof block === "object" &&
+      block !== null &&
+      "type" in block &&
+      (block as { type?: unknown }).type === "text" &&
+      "text" in block &&
+      typeof (block as { text?: unknown }).text === "string"
+        ? (block as { text: string }).text
+        : "",
+    )
+    .join("");
 }
 
 /** Test LLM connection */
@@ -318,25 +396,18 @@ export async function testLlm(
     return { success: false, error: blockedReason };
   }
 
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${config.apiKey}`,
-  };
-  if (config.provider === "claude") {
-    headers["x-api-key"] = config.apiKey;
-    headers["anthropic-version"] = "2023-06-01";
-  }
-
-  const res = await apiFetch(`${config.baseUrl}/chat/completions`, {
+  const res = await apiFetch(buildLlmEndpoint(config), {
     method: "POST",
-    headers,
-    body: JSON.stringify({
-      model: config.model,
-      messages: [
-        { role: "user", content: "Say hello in Chinese, one sentence only." },
-      ],
-      max_tokens: 50,
-    }),
+    headers: buildLlmHeaders(config),
+    body: JSON.stringify(
+      buildLlmBody({
+        config,
+        messages: [
+          { role: "user", content: "Say hello in Chinese, one sentence only." },
+        ],
+        maxTokens: 50,
+      }),
+    ),
   });
 
   if (!res.ok) {
@@ -348,7 +419,9 @@ export async function testLlm(
   }
 
   const data = await res.json();
-  const reply = data.choices?.[0]?.message?.content ?? "";
+  const reply = isClaudeProvider(config)
+    ? extractClaudeText(data)
+    : (data.choices?.[0]?.message?.content ?? "");
   return { success: true, reply };
 }
 
@@ -391,25 +464,17 @@ export function streamLlmFeedback(
   return new ReadableStream({
     async start(controller) {
       try {
-        const headers: Record<string, string> = {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${config.apiKey}`,
-        };
-        if (config.provider === "claude") {
-          headers["x-api-key"] = config.apiKey;
-          headers["anthropic-version"] = "2023-06-01";
-        }
-
-        const res = await apiFetch(`${config.baseUrl}/chat/completions`, {
+        const res = await apiFetch(buildLlmEndpoint(config), {
           method: "POST",
-          headers,
+          headers: buildLlmHeaders(config),
           signal,
-          body: JSON.stringify({
-            model: config.model,
-            messages: [{ role: "user", content: prompt }],
-            stream: true,
-            stream_options: { include_usage: true },
-          }),
+          body: JSON.stringify(
+            buildLlmBody({
+              config,
+              messages: [{ role: "user", content: prompt }],
+              stream: true,
+            }),
+          ),
         });
 
         if (!res.ok) {
@@ -445,16 +510,35 @@ export function streamLlmFeedback(
             }
             try {
               const parsed = JSON.parse(data);
-              const content = parsed.choices?.[0]?.delta?.content;
+              const content = isClaudeProvider(config)
+                ? parsed.type === "content_block_delta" &&
+                  parsed.delta?.type === "text_delta"
+                  ? parsed.delta.text
+                  : undefined
+                : parsed.choices?.[0]?.delta?.content;
               if (content) {
                 controller.enqueue(
                   encoder.encode(`data: ${JSON.stringify({ content })}\n\n`),
                 );
               }
-              if (parsed.usage) {
+              const usage = isClaudeProvider(config)
+                ? parsed.type === "message_start" && parsed.message?.usage
+                  ? {
+                      prompt_tokens: parsed.message.usage.input_tokens ?? 0,
+                      completion_tokens:
+                        parsed.message.usage.output_tokens ?? 0,
+                    }
+                  : parsed.type === "message_delta" && parsed.usage
+                    ? {
+                        prompt_tokens: 0,
+                        completion_tokens: parsed.usage.output_tokens ?? 0,
+                      }
+                    : null
+                : parsed.usage;
+              if (usage) {
                 controller.enqueue(
                   encoder.encode(
-                    `data: ${JSON.stringify({ usage: { prompt_tokens: parsed.usage.prompt_tokens, completion_tokens: parsed.usage.completion_tokens } })}\n\n`,
+                    `data: ${JSON.stringify({ usage: { prompt_tokens: usage.prompt_tokens, completion_tokens: usage.completion_tokens } })}\n\n`,
                   ),
                 );
               }

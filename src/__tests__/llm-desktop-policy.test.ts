@@ -89,6 +89,47 @@ describe("desktop LLM network policy", () => {
     );
   });
 
+  it("uses Anthropic Messages API for Claude tests", async () => {
+    mocks.isTauriEnvironment.mockReturnValue(true);
+    mocks.apiFetch.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          content: [{ type: "text", text: "你好" }],
+        }),
+      ),
+    );
+
+    const result = await testLlm({
+      apiKey: "secret",
+      provider: "claude",
+      baseUrl: "https://api.anthropic.com/v1",
+      model: "claude-sonnet-4-6",
+    });
+
+    expect(result).toEqual({ success: true, reply: "你好" });
+    expect(mocks.apiFetch).toHaveBeenCalledWith(
+      "https://api.anthropic.com/v1/messages",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({
+          "x-api-key": "secret",
+          "anthropic-version": "2023-06-01",
+        }),
+      }),
+    );
+    const request = mocks.apiFetch.mock.calls[0]?.[1] as RequestInit;
+    expect((request.headers as Record<string, string>).Authorization).toBe(
+      undefined,
+    );
+    expect(JSON.parse(String(request.body))).toMatchObject({
+      model: "claude-sonnet-4-6",
+      max_tokens: 50,
+      messages: [
+        { role: "user", content: "Say hello in Chinese, one sentence only." },
+      ],
+    });
+  });
+
   it("returns a stream error for blocked custom desktop LLM feedback", async () => {
     mocks.isTauriEnvironment.mockReturnValue(true);
 
@@ -108,5 +149,69 @@ describe("desktop LLM network policy", () => {
       DESKTOP_LLM_POLICY_MESSAGE,
     );
     expect(mocks.apiFetch).not.toHaveBeenCalled();
+  });
+
+  it("translates Anthropic stream events into local feedback SSE chunks", async () => {
+    mocks.isTauriEnvironment.mockReturnValue(true);
+    mocks.apiFetch.mockResolvedValue(
+      new Response(
+        [
+          "event: message_start",
+          'data: {"type":"message_start","message":{"usage":{"input_tokens":12,"output_tokens":1}}}',
+          "",
+          "event: content_block_delta",
+          'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"<summary>好"}}',
+          "",
+          "event: content_block_delta",
+          'data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"</summary>"}}',
+          "",
+          "event: message_delta",
+          'data: {"type":"message_delta","usage":{"output_tokens":8}}',
+          "",
+          "event: message_stop",
+          'data: {"type":"message_stop"}',
+          "",
+        ].join("\n"),
+      ),
+    );
+
+    const stream = streamLlmFeedback(
+      {
+        apiKey: "secret",
+        provider: "claude",
+        baseUrl: "https://api.anthropic.com/v1",
+        model: "claude-sonnet-4-6",
+      },
+      "think",
+      { words: [] } as unknown as AzureAssessmentResult,
+    );
+    const reader = stream.getReader();
+    let output = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      output += new TextDecoder().decode(value);
+    }
+
+    expect(output).toContain('"content":"<summary>好"');
+    expect(output).toContain('"content":"</summary>"');
+    expect(output).toContain(
+      '"usage":{"prompt_tokens":12,"completion_tokens":1}',
+    );
+    expect(output).toContain(
+      '"usage":{"prompt_tokens":0,"completion_tokens":8}',
+    );
+    expect(output).toContain("data: [DONE]");
+    expect(mocks.apiFetch).toHaveBeenCalledWith(
+      "https://api.anthropic.com/v1/messages",
+      expect.objectContaining({ method: "POST" }),
+    );
+    const request = mocks.apiFetch.mock.calls[0]?.[1] as RequestInit;
+    expect(JSON.parse(String(request.body))).toMatchObject({
+      model: "claude-sonnet-4-6",
+      stream: true,
+      messages: expect.any(Array),
+    });
+    expect(JSON.parse(String(request.body)).stream_options).toBeUndefined();
   });
 });
