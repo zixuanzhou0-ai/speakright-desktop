@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   benchmarkGroupKey,
+  encodeBenchmarkAudioBlob,
   summarizeBenchmarkGroups,
   summarizeBenchmarkTrend,
 } from "@/lib/benchmark-archive";
@@ -106,5 +107,19 @@ describe("benchmark archive", () => {
     });
 
     expect(first).toBe(second);
+  });
+
+  it("encodes benchmark audio blobs for data export", async () => {
+    const encoded = await encodeBenchmarkAudioBlob(
+      "bench-1",
+      new Blob(["abc"], { type: "audio/webm" }),
+    );
+
+    expect(encoded).toEqual({
+      id: "bench-1",
+      mimeType: "audio/webm",
+      bytes: 3,
+      dataBase64: "YWJj",
+    });
   });
 });

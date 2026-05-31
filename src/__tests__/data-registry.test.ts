@@ -2,6 +2,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   clearBenchmarkRecordings: vi.fn(async () => {}),
+  exportBenchmarkRecordings: vi.fn(async () => ({
+    meta: [] as Array<Record<string, unknown>>,
+    audio: [] as Array<Record<string, unknown>>,
+    missingAudioIds: [] as string[],
+    errors: [] as string[],
+  })),
   clearTtsCache: vi.fn(async () => {}),
   secureStoreDelete: vi.fn(async (key: string) => {
     localStorage.removeItem(key);
@@ -13,6 +19,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/lib/benchmark-archive", () => ({
   clearBenchmarkRecordings: mocks.clearBenchmarkRecordings,
+  exportBenchmarkRecordings: mocks.exportBenchmarkRecordings,
 }));
 
 vi.mock("@/lib/tts-cache", () => ({
@@ -52,15 +59,60 @@ describe("data registry", () => {
       JSON.stringify({ subscriptionKey: "secret" }),
     );
 
-    const snapshot = buildLocalDataExport();
+    const snapshot = await buildLocalDataExport();
 
-    expect(snapshot.schemaVersion).toBe(2);
+    expect(snapshot.schemaVersion).toBe(3);
     expect(snapshot.dataSchema.currentVersion).toBeGreaterThanOrEqual(2);
     expect(snapshot.localStorage.speakright_mastery_profile_v2).toEqual({
       version: 2,
     });
     expect(snapshot.localStorage.speakright_azure_config).toBeUndefined();
+    expect(snapshot.indexedDb.benchmarkRecordings).toEqual({
+      meta: [],
+      audio: [],
+      missingAudioIds: [],
+      errors: [],
+    });
     expect(snapshot.excluded).toContain("API keys");
+    expect(snapshot.excluded).not.toContain("Benchmark audio blobs");
+  });
+
+  it("exports benchmark audio from IndexedDB with the learning snapshot", async () => {
+    const { buildLocalDataExport } = await import("@/lib/data-registry");
+    mocks.exportBenchmarkRecordings.mockResolvedValueOnce({
+      meta: [
+        {
+          id: "bench-1",
+          createdAt: 1000,
+          source: "spontaneous",
+          title: "Transfer",
+          text: "I think so.",
+          score: 86,
+          targetLabel: "/th/",
+        },
+      ],
+      audio: [
+        {
+          id: "bench-1",
+          mimeType: "audio/webm",
+          bytes: 3,
+          dataBase64: "YWJj",
+        },
+      ],
+      missingAudioIds: [],
+      errors: [],
+    });
+
+    const snapshot = await buildLocalDataExport();
+
+    expect(snapshot.indexedDb.benchmarkRecordings.audio).toEqual([
+      {
+        id: "bench-1",
+        mimeType: "audio/webm",
+        bytes: 3,
+        dataBase64: "YWJj",
+      },
+    ]);
   });
 
   it("deletes learning data and caches while preserving app settings and keys", async () => {

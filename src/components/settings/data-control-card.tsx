@@ -56,9 +56,16 @@ export function DataControlCard() {
 
   const refresh = () => setSummaryVersion((value) => value + 1);
 
-  const handleExport = () => {
-    downloadLocalDataExport();
-    toast.success("本地学习数据已导出");
+  const handleExport = async () => {
+    setBusy(true);
+    try {
+      await downloadLocalDataExport();
+      toast.success("本地学习数据已导出");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "导出失败");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleConfirm = async () => {
@@ -128,11 +135,16 @@ export function DataControlCard() {
             录音评分会发送音频与参考文本到 Azure
             Speech；标准示范会把练习文本发送到 ElevenLabs；AI
             教练会把文本、分数和错误摘要发送到你配置的 LLM provider。
-            原始训练录音默认不长期保存，benchmark 录音只保存在本机。
+            原始训练录音默认不长期保存，benchmark 录音只保存在本机并会随学习数据导出。
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={handleExport} className="gap-2">
+            <Button
+              type="button"
+              onClick={handleExport}
+              disabled={busy}
+              className="gap-2"
+            >
               <Download className="h-4 w-4" />
               导出学习数据
             </Button>
@@ -140,6 +152,7 @@ export function DataControlCard() {
               type="button"
               variant="outline"
               onClick={() => setConfirmAction("learning")}
+              disabled={busy}
               className="gap-2"
             >
               <Trash2 className="h-4 w-4" />
@@ -149,6 +162,7 @@ export function DataControlCard() {
               type="button"
               variant="outline"
               onClick={() => setConfirmAction("benchmark-audio")}
+              disabled={busy}
               className="gap-2"
             >
               <VolumeX className="h-4 w-4" />
@@ -158,6 +172,7 @@ export function DataControlCard() {
               type="button"
               variant="destructive"
               onClick={() => setConfirmAction("api-keys")}
+              disabled={busy}
               className="gap-2"
             >
               <KeyRound className="h-4 w-4" />

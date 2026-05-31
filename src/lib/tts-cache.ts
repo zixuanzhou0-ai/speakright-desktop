@@ -17,6 +17,10 @@ function buildCacheKey(text: string, voiceId: string, speed: number): string {
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
+    if (typeof indexedDB === "undefined") {
+      reject(new Error("IndexedDB is unavailable"));
+      return;
+    }
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
@@ -29,23 +33,36 @@ function openDb(): Promise<IDBDatabase> {
   });
 }
 
+function waitForTransaction(tx: IDBTransaction): Promise<void> {
+  return new Promise((resolve, reject) => {
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+    tx.onabort = () => reject(tx.error);
+  });
+}
+
 export async function getTtsFromCache(
   text: string,
   voiceId: string,
   speed: number,
 ): Promise<TtsCacheEntry | null> {
+  let db: IDBDatabase | null = null;
   try {
-    const db = await openDb();
+    db = await openDb();
     const key = buildCacheKey(text, voiceId, speed);
-    return new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      const store = tx.objectStore(STORE_NAME);
-      const req = store.get(key);
-      req.onsuccess = () => resolve(req.result ?? null);
-      req.onerror = () => resolve(null);
-    });
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.get(key);
+    let result: TtsCacheEntry | null = null;
+    req.onsuccess = () => {
+      result = req.result ?? null;
+    };
+    await waitForTransaction(tx);
+    return result;
   } catch {
     return null;
+  } finally {
+    db?.close();
   }
 }
 
@@ -56,8 +73,9 @@ export async function setTtsToCache(
   audioBlob: Blob,
   alignment: unknown,
 ): Promise<void> {
+  let db: IDBDatabase | null = null;
   try {
-    const db = await openDb();
+    db = await openDb();
     const key = buildCacheKey(text, voiceId, speed);
 
     const entry: TtsCacheEntry = {
@@ -69,13 +87,13 @@ export async function setTtsToCache(
     };
 
     // Evict if over limit
-    const allEntries = await new Promise<TtsCacheEntry[]>((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      const store = tx.objectStore(STORE_NAME);
-      const req = store.getAll();
-      req.onsuccess = () => resolve(req.result ?? []);
-      req.onerror = () => resolve([]);
-    });
+    const readTx = db.transaction(STORE_NAME, "readonly");
+    const readReq = readTx.objectStore(STORE_NAME).getAll();
+    let allEntries: TtsCacheEntry[] = [];
+    readReq.onsuccess = () => {
+      allEntries = readReq.result ?? [];
+    };
+    await waitForTransaction(readTx);
 
     const tx = db.transaction(STORE_NAME, "readwrite");
     const store = tx.objectStore(STORE_NAME);
@@ -90,17 +108,24 @@ export async function setTtsToCache(
     }
 
     store.put(entry);
+    await waitForTransaction(tx);
   } catch {
     // Graceful fallback if IndexedDB unavailable (e.g., private browsing)
+  } finally {
+    db?.close();
   }
 }
 
 export async function clearTtsCache(): Promise<void> {
+  let db: IDBDatabase | null = null;
   try {
-    const db = await openDb();
+    db = await openDb();
     const tx = db.transaction(STORE_NAME, "readwrite");
     tx.objectStore(STORE_NAME).clear();
+    await waitForTransaction(tx);
   } catch {
     // Ignore
+  } finally {
+    db?.close();
   }
 }

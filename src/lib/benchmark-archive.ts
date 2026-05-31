@@ -10,6 +10,20 @@ export interface BenchmarkRecordingMeta {
   targetLabel: string;
 }
 
+export interface BenchmarkAudioExport {
+  id: string;
+  mimeType: string;
+  bytes: number;
+  dataBase64: string;
+}
+
+export interface BenchmarkArchiveExport {
+  meta: BenchmarkRecordingMeta[];
+  audio: BenchmarkAudioExport[];
+  missingAudioIds: string[];
+  errors: string[];
+}
+
 const META_KEY = "speakright_benchmark_recordings_v1";
 const DB_NAME = "speakright-benchmark-audio";
 const STORE_NAME = "recordings";
@@ -119,6 +133,69 @@ export async function saveBenchmarkRecording(
 
 export function listBenchmarkRecordings(): BenchmarkRecordingMeta[] {
   return readMeta().sort((a, b) => b.createdAt - a.createdAt);
+}
+
+function bytesToBase64(bytes: Uint8Array): string {
+  if (typeof btoa === "function") {
+    let binary = "";
+    for (let index = 0; index < bytes.length; index += 0x8000) {
+      const chunk = bytes.subarray(index, index + 0x8000);
+      binary += String.fromCharCode(...chunk);
+    }
+    return btoa(binary);
+  }
+
+  if (typeof Buffer !== "undefined") {
+    return Buffer.from(bytes).toString("base64");
+  }
+
+  throw new Error("No base64 encoder is available");
+}
+
+export async function encodeBenchmarkAudioBlob(
+  id: string,
+  blob: Blob,
+): Promise<BenchmarkAudioExport> {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  return {
+    id,
+    mimeType: blob.type || "application/octet-stream",
+    bytes: blob.size,
+    dataBase64: bytesToBase64(bytes),
+  };
+}
+
+export async function exportBenchmarkRecordings(): Promise<BenchmarkArchiveExport> {
+  const meta = listBenchmarkRecordings();
+  const audio: BenchmarkAudioExport[] = [];
+  const missingAudioIds: string[] = [];
+  const errors: string[] = [];
+
+  if (typeof indexedDB === "undefined") {
+    return {
+      meta,
+      audio,
+      missingAudioIds: meta.map((item) => item.id),
+      errors: meta.length > 0 ? ["IndexedDB is unavailable"] : [],
+    };
+  }
+
+  for (const item of meta) {
+    try {
+      const blob = await getBenchmarkAudioBlob(item.id);
+      if (!blob) {
+        missingAudioIds.push(item.id);
+        continue;
+      }
+      audio.push(await encodeBenchmarkAudioBlob(item.id, blob));
+    } catch (error) {
+      errors.push(
+        `${item.id}: ${error instanceof Error ? error.message : "unknown error"}`,
+      );
+    }
+  }
+
+  return { meta, audio, missingAudioIds, errors };
 }
 
 export async function deleteBenchmarkRecording(id: string): Promise<void> {

@@ -1,7 +1,10 @@
 "use client";
 
 import { API_KEY_STORAGE_KEYS, clearItem } from "@/lib/api-keys";
-import { clearBenchmarkRecordings } from "@/lib/benchmark-archive";
+import {
+  clearBenchmarkRecordings,
+  exportBenchmarkRecordings,
+} from "@/lib/benchmark-archive";
 import {
   clearCorruptLocalData,
   CORRUPT_LOCAL_DATA_KEY,
@@ -37,11 +40,16 @@ const CACHE_STORAGE_KEYS = [
 const CACHE_STORAGE_PREFIXES = ["speakright_mw_words_"] as const;
 
 export interface LocalDataExport {
-  schemaVersion: 2;
+  schemaVersion: 3;
   exportedAt: string;
   product: "SpeakRight Desktop";
   dataSchema: ReturnType<typeof getLocalDataSchemaStatus>;
   localStorage: Record<string, unknown>;
+  indexedDb: {
+    benchmarkRecordings: Awaited<
+      ReturnType<typeof exportBenchmarkRecordings>
+    >;
+  };
   excluded: string[];
 }
 
@@ -93,10 +101,10 @@ function removeLocalStorageKeys(keys: readonly string[]): void {
   }
 }
 
-export function buildLocalDataExport(): LocalDataExport {
+export async function buildLocalDataExport(): Promise<LocalDataExport> {
   const cacheKeys = prefixedLocalStorageKeys(CACHE_STORAGE_PREFIXES);
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     exportedAt: new Date().toISOString(),
     product: "SpeakRight Desktop",
     dataSchema: getLocalDataSchemaStatus(),
@@ -109,9 +117,11 @@ export function buildLocalDataExport(): LocalDataExport {
         LOCAL_DATA_MIGRATED_AT_KEY,
       ]),
     },
+    indexedDb: {
+      benchmarkRecordings: await exportBenchmarkRecordings(),
+    },
     excluded: [
       "API keys",
-      "Benchmark audio blobs",
       "ElevenLabs TTS audio cache",
       "Theme preference",
     ],
@@ -132,9 +142,9 @@ export function getLocalDataSummary(): LocalDataSummary {
   };
 }
 
-export function downloadLocalDataExport(): void {
+export async function downloadLocalDataExport(): Promise<void> {
   if (typeof document === "undefined") return;
-  const snapshot = buildLocalDataExport();
+  const snapshot = await buildLocalDataExport();
   const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
     type: "application/json",
   });
