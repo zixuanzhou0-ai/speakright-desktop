@@ -44,6 +44,12 @@ describe("desktop artifact smoke wiring", () => {
     expect(smokeScript).toContain("_next");
     expect(smokeScript).toContain("sheep.mp3");
     expect(smokeScript).toContain("sheep.png");
+    expect(smokeScript).toContain("findNewestGeneratedCapabilities");
+    expect(smokeScript).toContain("generated Tauri capabilities.json");
+    expect(smokeScript).toContain("core:default");
+    expect(smokeScript).toContain("store:default");
+    expect(smokeScript).toContain("http://");
+    expect(smokeScript).toContain("https://**");
   });
 
   it("checks Windows installer metadata before artifacts are trusted", () => {

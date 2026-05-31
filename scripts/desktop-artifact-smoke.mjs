@@ -5,6 +5,13 @@ import path from "node:path";
 const root = process.cwd();
 const outDir = path.join(root, "out");
 const tauriConfigPath = path.join(root, "src-tauri", "tauri.conf.json");
+const tauriReleaseBuildDir = path.join(
+  root,
+  "src-tauri",
+  "target",
+  "release",
+  "build",
+);
 
 function fail(message) {
   throw new Error(`Desktop artifact smoke failed: ${message}`);
@@ -47,6 +54,40 @@ function countFiles(dirPath) {
   return count;
 }
 
+function findNewestGeneratedCapabilities() {
+  if (!existsSync(tauriReleaseBuildDir)) {
+    fail("Tauri release build directory is missing");
+  }
+
+  const candidates = [];
+  for (const buildEntry of readdirSync(tauriReleaseBuildDir, {
+    withFileTypes: true,
+  })) {
+    if (!buildEntry.isDirectory() || !buildEntry.name.startsWith("speakright-")) {
+      continue;
+    }
+    const capabilitiesPath = path.join(
+      tauriReleaseBuildDir,
+      buildEntry.name,
+      "out",
+      "capabilities.json",
+    );
+    if (existsSync(capabilitiesPath)) {
+      candidates.push({
+        path: capabilitiesPath,
+        mtimeMs: statSync(capabilitiesPath).mtimeMs,
+      });
+    }
+  }
+
+  if (candidates.length === 0) {
+    fail("generated Tauri capabilities.json is missing");
+  }
+
+  candidates.sort((left, right) => right.mtimeMs - left.mtimeMs);
+  return candidates[0].path;
+}
+
 async function readJson(filePath) {
   return JSON.parse(await readFile(filePath, "utf8"));
 }
@@ -68,6 +109,39 @@ async function assertTauriConfig() {
   }
   if ((mainWindow?.minWidth ?? 0) < 1024 || (mainWindow?.minHeight ?? 0) < 800) {
     fail("Tauri main window minimum size is below the desktop layout floor");
+  }
+}
+
+async function assertGeneratedCapabilities() {
+  const generatedCapabilitiesPath = findNewestGeneratedCapabilities();
+  const generated = await readJson(generatedCapabilitiesPath);
+  const permissions = generated.default?.permissions ?? [];
+  const stringPermissions = permissions.filter(
+    (permission) => typeof permission === "string",
+  );
+  const scopedUrls = permissions.flatMap((permission) =>
+    typeof permission === "string"
+      ? []
+      : (permission.allow ?? []).map((item) => item.url ?? ""),
+  );
+
+  for (const forbiddenPermission of ["core:default", "store:default"]) {
+    if (stringPermissions.includes(forbiddenPermission)) {
+      fail(
+        `${path.relative(root, generatedCapabilitiesPath)} contains broad ${forbiddenPermission}`,
+      );
+    }
+  }
+
+  if (scopedUrls.some((url) => url.startsWith("http://"))) {
+    fail(
+      `${path.relative(root, generatedCapabilitiesPath)} contains plaintext HTTP capability URLs`,
+    );
+  }
+  if (scopedUrls.includes("https://**")) {
+    fail(
+      `${path.relative(root, generatedCapabilitiesPath)} allows arbitrary HTTPS capability URLs`,
+    );
   }
 }
 
@@ -122,8 +196,9 @@ async function assertStaticExport() {
 
 async function main() {
   await assertTauriConfig();
+  await assertGeneratedCapabilities();
   await assertStaticExport();
-  console.log("Desktop artifact smoke passed: Tauri config, static export, routes, chunks and core assets are present.");
+  console.log("Desktop artifact smoke passed: Tauri config, generated capabilities, static export, routes, chunks and core assets are present.");
 }
 
 main().catch((error) => {
