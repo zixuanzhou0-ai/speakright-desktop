@@ -23,7 +23,7 @@ export function KeyHydrator() {
       event: WindowEventMap[typeof API_KEY_STORAGE_ERROR_EVENT],
     ) => {
       const subject = apiKeySlots.has(event.detail.key)
-        ? "API key"
+        ? "API key "
         : appPreferenceSlots.has(event.detail.key)
           ? "本机设置"
           : "本机数据";

@@ -64,7 +64,7 @@ describe("KeyHydrator", () => {
     });
 
     expect(mocks.toastError).toHaveBeenCalledWith(
-      "API key保存失败：keychain unavailable",
+      "API key 保存失败：keychain unavailable",
     );
   });
 

@@ -53,6 +53,15 @@ describe("secure store", () => {
     });
   });
 
+  it("reports corrupted desktop keychain values instead of treating them as missing", async () => {
+    mocks.invoke.mockResolvedValueOnce("not-json");
+    const { secureStoreGet } = await import("@/lib/secure-store");
+
+    await expect(secureStoreGet("speakright_llm_config")).rejects.toThrow(
+      "Secure store value for speakright_llm_config is not valid JSON",
+    );
+  });
+
   it("keeps browser dev fallback in localStorage only outside Tauri", async () => {
     mocks.tauri = false;
     const { secureStoreGet, secureStoreSet } = await import(
