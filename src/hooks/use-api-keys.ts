@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import {
   getAzureConfig,
+  getCoachMode,
   getElevenLabsConfig,
   getLlmConfig,
   getMerriamWebsterConfig,
@@ -50,5 +51,13 @@ export function usePronunciationConfig() {
     typeof window !== "undefined" ? subscribeToStorage : emptySubscribe,
     getPronunciationConfig,
     getPronunciationConfig,
+  );
+}
+
+export function useCoachMode() {
+  return useSyncExternalStore(
+    typeof window !== "undefined" ? subscribeToStorage : emptySubscribe,
+    getCoachMode,
+    getCoachMode,
   );
 }

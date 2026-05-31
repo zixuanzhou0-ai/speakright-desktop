@@ -1,9 +1,9 @@
 "use client";
 
 import { GraduationCap } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { type CoachMode, getCoachMode, setCoachMode } from "@/lib/api-keys";
+import { useCoachMode } from "@/hooks/use-api-keys";
+import { type CoachMode, setCoachMode } from "@/lib/api-keys";
 import { cn } from "@/lib/utils";
 
 const MODES: { value: CoachMode; label: string; desc: string }[] = [
@@ -14,14 +14,9 @@ const MODES: { value: CoachMode; label: string; desc: string }[] = [
 ];
 
 export function CoachModeCard() {
-  const [mode, setMode] = useState<CoachMode>("normal");
-
-  useEffect(() => {
-    setMode(getCoachMode());
-  }, []);
+  const mode = useCoachMode();
 
   const handleChange = (value: CoachMode) => {
-    setMode(value);
     setCoachMode(value);
   };
 

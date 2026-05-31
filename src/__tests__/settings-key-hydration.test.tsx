@@ -16,7 +16,9 @@ vi.mock("@/lib/tauri-runtime", () => ({
 }));
 
 vi.mock("@/lib/secure-store", () => ({
-  secureStoreGet: vi.fn(async (key: string) => mocks.secureStore.get(key) ?? null),
+  secureStoreGet: vi.fn(
+    async (key: string) => mocks.secureStore.get(key) ?? null,
+  ),
   secureStoreSet: vi.fn(async (key: string, value: unknown) => {
     mocks.secureStore.set(key, value);
   }),
@@ -97,7 +99,9 @@ describe("settings key hydration", () => {
   });
 
   it("refreshes the ElevenLabs usage card after secure-store hydration", async () => {
-    const { UsageMonitor } = await import("@/components/settings/usage-monitor");
+    const { UsageMonitor } = await import(
+      "@/components/settings/usage-monitor"
+    );
     const { hydrateKeys } = await import("@/lib/api-keys");
     mocks.secureStore.set("speakright_elevenlabs_config", {
       apiKey: "eleven-hydrated-key",
@@ -163,6 +167,30 @@ describe("settings key hydration", () => {
       expect(
         screen.getByText("单词模式 · 发音来自韦氏词典"),
       ).toBeInTheDocument();
+    });
+  });
+
+  it("updates the coach mode card after store hydration", async () => {
+    const { CoachModeCard } = await import(
+      "@/components/settings/coach-mode-card"
+    );
+    const { hydrateKeys } = await import("@/lib/api-keys");
+    mocks.store.set("speakright_coach_mode", "strict");
+
+    render(<CoachModeCard />);
+
+    expect(screen.getByRole("button", { name: /正常/ })).toHaveClass(
+      "border-primary",
+    );
+
+    await act(async () => {
+      await hydrateKeys();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /严师/ })).toHaveClass(
+        "border-primary",
+      );
     });
   });
 
