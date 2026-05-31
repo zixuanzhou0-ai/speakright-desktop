@@ -165,6 +165,28 @@ describe("data registry", () => {
     });
   });
 
+  it("reports configured API keys separately from available key slots", async () => {
+    const { getLocalDataSummary } = await import("@/lib/data-registry");
+    localStorage.setItem(
+      "speakright_azure_config",
+      JSON.stringify({ subscriptionKey: "azure-secret", region: "eastus" }),
+    );
+    localStorage.setItem(
+      "speakright_llm_config",
+      JSON.stringify({
+        provider: "claude",
+        apiKey: "llm-secret",
+        baseUrl: "https://api.anthropic.com/v1",
+        model: "claude-sonnet-4-5",
+      }),
+    );
+
+    const summary = getLocalDataSummary();
+
+    expect(summary.configuredApiKeys).toBe(2);
+    expect(summary.apiKeySlots).toBe(4);
+  });
+
   it("deletes learning data and caches while preserving app settings and keys", async () => {
     const { deleteLearningData } = await import("@/lib/data-registry");
     localStorage.setItem("speakright_mastery_profile_v2", "{}");

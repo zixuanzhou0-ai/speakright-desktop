@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   getLocalDataSummary: vi.fn(() => ({
     learningKeys: 2,
     cacheKeys: 1,
+    configuredApiKeys: 2,
     apiKeySlots: 4,
     dataSchemaVersion: 3,
     corruptItems: 0,
@@ -60,6 +61,7 @@ describe("desktop diagnostics", () => {
     expect(bundle.schemaVersion).toBe(1);
     expect(bundle.product).toBe("SpeakRight Desktop");
     expect(bundle.release.currentVersion).toBeTruthy();
+    expect(bundle.dataSummary.configuredApiKeys).toBe(2);
     expect(bundle.dataSummary.apiKeySlots).toBe(4);
     expect(bundle.runtime.app_identifier).toBe("com.speakright.desktop");
     expect(bundle.runtime.log.path).toBe(

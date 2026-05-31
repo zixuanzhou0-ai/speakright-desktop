@@ -165,4 +165,34 @@ describe("settings key hydration", () => {
       ).toBeInTheDocument();
     });
   });
+
+  it("updates the data privacy summary after desktop key hydration", async () => {
+    const { DataControlCard } = await import(
+      "@/components/settings/data-control-card"
+    );
+    const { hydrateKeys } = await import("@/lib/api-keys");
+    mocks.secureStore.set("speakright_azure_config", {
+      subscriptionKey: "desktop-azure-key",
+      region: "eastus",
+    });
+    mocks.secureStore.set("speakright_llm_config", {
+      provider: "claude",
+      apiKey: "desktop-llm-key",
+      baseUrl: "https://api.anthropic.com/v1",
+      model: "claude-sonnet-4-5",
+    });
+
+    render(<DataControlCard />);
+
+    expect(screen.getByText("已配置密钥")).toBeInTheDocument();
+    expect(screen.getByText("0/4")).toBeInTheDocument();
+
+    await act(async () => {
+      await hydrateKeys();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("2/4")).toBeInTheDocument();
+    });
+  });
 });

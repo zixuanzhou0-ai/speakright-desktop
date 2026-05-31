@@ -4,6 +4,7 @@ import {
   API_KEY_STORAGE_KEYS,
   APP_PREFERENCE_STORAGE_KEYS,
   clearItem,
+  getApiKeySummary,
 } from "@/lib/api-keys";
 import {
   clearBenchmarkRecordings,
@@ -69,6 +70,7 @@ export interface LocalDataExport {
 export interface LocalDataSummary {
   learningKeys: number;
   cacheKeys: number;
+  configuredApiKeys: number;
   apiKeySlots: number;
   dataSchemaVersion: number;
   corruptItems: number;
@@ -180,10 +182,12 @@ export function getLocalDataSummary(): LocalDataSummary {
     ...CACHE_STORAGE_KEYS,
     ...prefixedLocalStorageKeys(CACHE_STORAGE_PREFIXES),
   ];
+  const apiKeys = getApiKeySummary();
   return {
     learningKeys: Object.keys(collectKeys(LEARNING_STORAGE_KEYS)).length,
     cacheKeys: Object.keys(collectKeys(cacheKeys)).length,
-    apiKeySlots: API_KEY_STORAGE_KEYS.length,
+    configuredApiKeys: apiKeys.configured,
+    apiKeySlots: apiKeys.totalSlots,
     dataSchemaVersion: getLocalDataSchemaStatus().storedVersion,
     corruptItems: getLocalDataSchemaStatus().corruptItems,
   };

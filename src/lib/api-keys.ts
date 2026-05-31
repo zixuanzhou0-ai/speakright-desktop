@@ -46,6 +46,11 @@ export interface ApiKeyStorageErrorDetail {
   message: string;
 }
 
+export interface ApiKeySummary {
+  configured: number;
+  totalSlots: number;
+}
+
 declare global {
   interface WindowEventMap {
     [API_KEY_STORAGE_ERROR_EVENT]: CustomEvent<ApiKeyStorageErrorDetail>;
@@ -108,6 +113,10 @@ function getItem<T>(key: string): T | null {
   } catch {
     return null;
   }
+}
+
+function hasTextSecret(value: string | undefined): boolean {
+  return typeof value === "string" && value.trim().length > 0;
 }
 
 function setItem<T>(key: string, value: T): void {
@@ -266,6 +275,19 @@ export function getMerriamWebsterConfig(): MerriamWebsterConfig | null {
 
 export function setMerriamWebsterConfig(config: MerriamWebsterConfig): void {
   setItem(STORAGE_KEYS.merriamWebster, config);
+}
+
+export function getApiKeySummary(): ApiKeySummary {
+  const configs = [
+    hasTextSecret(getAzureConfig()?.subscriptionKey),
+    hasTextSecret(getElevenLabsConfig()?.apiKey),
+    hasTextSecret(getLlmConfig()?.apiKey),
+    hasTextSecret(getMerriamWebsterConfig()?.apiKey),
+  ];
+  return {
+    configured: configs.filter(Boolean).length,
+    totalSlots: API_KEY_STORAGE_KEYS.length,
+  };
 }
 
 // Pronunciation source

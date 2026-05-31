@@ -9,7 +9,7 @@ import {
   Trash2,
   VolumeX,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,6 +31,7 @@ import {
   getLocalDataSummary,
 } from "@/lib/data-registry";
 import { downloadDesktopSupportBundle } from "@/lib/desktop-diagnostics";
+import { subscribeToStorage } from "@/lib/api-keys";
 
 type ConfirmAction =
   | "learning"
@@ -74,10 +75,18 @@ export function DataControlCard() {
   const [summaryVersion, setSummaryVersion] = useState(0);
   const [busy, setBusy] = useState(false);
   const [resetIncludesApiKeys, setResetIncludesApiKeys] = useState(false);
-  const summary = getLocalDataSummary();
+  const [summary, setSummary] = useState(() => getLocalDataSummary());
   const copy = confirmAction ? COPY[confirmAction] : null;
 
-  const refresh = () => setSummaryVersion((value) => value + 1);
+  useEffect(
+    () => subscribeToStorage(() => setSummary(getLocalDataSummary())),
+    [],
+  );
+
+  const refresh = () => {
+    setSummary(getLocalDataSummary());
+    setSummaryVersion((value) => value + 1);
+  };
   const closeDialog = () => {
     setConfirmAction(null);
     setResetIncludesApiKeys(false);
@@ -159,9 +168,9 @@ export function DataControlCard() {
               <p className="mt-1 text-2xl font-semibold">{summary.cacheKeys}</p>
             </div>
             <div className="rounded-lg border bg-background p-3">
-              <p className="text-xs text-muted-foreground">密钥槽位</p>
+              <p className="text-xs text-muted-foreground">已配置密钥</p>
               <p className="mt-1 text-2xl font-semibold">
-                {summary.apiKeySlots}
+                {summary.configuredApiKeys}/{summary.apiKeySlots}
               </p>
             </div>
             <div className="rounded-lg border bg-background p-3">
