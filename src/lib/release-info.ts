@@ -8,7 +8,7 @@ const releaseAssetUrl = `${repositoryUrl}/releases/download/${releaseTag}`;
 export const DESKTOP_RELEASE_INFO = {
   productName: "SpeakRight",
   currentVersion: DESKTOP_RELEASE_VERSION,
-  channel: "stable",
+  channel: "internal",
   releasedAt: "2026-05-13",
   repositoryUrl,
   releaseUrl,
@@ -45,8 +45,8 @@ export const DESKTOP_RELEASE_INFO = {
   notes: {
     privateRepository: "当前发布仓库是私有仓库，需要 GitHub 访问权限。",
     unsigned:
-      "当前安装包暂未做代码签名，Windows 可能显示未知发布者提示；确认来源是官方 GitHub Release 后继续安装即可。",
+      "当前安装包暂未做代码签名，Windows 可能显示未知发布者提示；仅建议用于可控内测，公开发布前必须完成代码签名。",
     checksum:
-      "每个安装包上传到 GitHub Release 后都会生成 SHA-256 digest，发布说明中也会同步记录。",
+      "每次桌面构建都会生成 release report，记录 EXE/MSI/NSIS 的 SHA-256 digest 与签名状态。",
   },
 } as const;

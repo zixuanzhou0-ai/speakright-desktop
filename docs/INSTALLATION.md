@@ -2,7 +2,10 @@
 
 ## Download
 
-Download the latest installer from the GitHub Releases page.
+Download the latest internal-test installer from the GitHub Releases page.
+
+This build is not code-signed yet. Use it only for controlled testing until the
+Windows EXE/MSI/NSIS artifacts are signed.
 
 Recommended file:
 
@@ -19,7 +22,9 @@ SpeakRight_1.0.1_x64_en-US.msi
 ## Install on Windows
 
 1. Run the installer.
-2. If Windows SmartScreen appears, choose **More info** and then **Run anyway**.
+2. If Windows SmartScreen appears, stop and confirm this is the expected
+   internal-test build from the project GitHub Release before choosing
+   **More info** and **Run anyway**.
 3. Launch SpeakRight.
 4. Open **Settings** and configure API keys.
 
@@ -48,20 +53,23 @@ Required value:
 
 Used for Chinese AI coach feedback.
 
-Supported providers are OpenAI-compatible, including OpenAI, Gemini-compatible proxy, DeepSeek, Qwen, GLM, Kimi, Doubao, and custom providers.
+Supported desktop providers are the preset providers shown in Settings:
+Claude, GPT, Gemini-compatible, DeepSeek, Qwen, GLM, Kimi, and Doubao.
+Custom endpoints are disabled in the desktop build until their domains are added
+to the Tauri allowlist and CSP.
 
 Required values:
 
 - Provider
 - API key
 - Model
-- Base URL when using a custom provider
+- Base URL is managed by the selected preset provider in the desktop build
 
 ## Local Data
 
-Phase 1 stores user data locally:
+Phase 1 stores user data locally. API keys are stored through the desktop
+credential store where supported; learning data stays local to the app.
 
-- API key settings
 - usage tracking
 - pronunciation history
 - diagnosis results
