@@ -1,6 +1,13 @@
 "use client";
 
-import { Database, Download, KeyRound, Trash2, VolumeX } from "lucide-react";
+import {
+  Database,
+  Download,
+  KeyRound,
+  RotateCcw,
+  Trash2,
+  VolumeX,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -13,7 +20,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
 import {
+  deleteAllLocalData,
   deleteApiKeys,
   deleteBenchmarkAudioData,
   deleteLearningData,
@@ -21,7 +30,12 @@ import {
   getLocalDataSummary,
 } from "@/lib/data-registry";
 
-type ConfirmAction = "learning" | "api-keys" | "benchmark-audio" | null;
+type ConfirmAction =
+  | "learning"
+  | "api-keys"
+  | "benchmark-audio"
+  | "all-data"
+  | null;
 
 const COPY: Record<
   Exclude<ConfirmAction, null>,
@@ -45,16 +59,27 @@ const COPY: Record<
       "会删除本机 IndexedDB 中保存的 benchmark 录音和对应列表记录，不影响普通训练记录。",
     button: "清空音频",
   },
+  "all-data": {
+    title: "重置本机数据？",
+    description:
+      "会删除学习记录、缓存、数据迁移状态、麦克风检查和非密钥偏好设置。你可以选择是否同时删除 API keys。",
+    button: "重置本机数据",
+  },
 };
 
 export function DataControlCard() {
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
   const [summaryVersion, setSummaryVersion] = useState(0);
   const [busy, setBusy] = useState(false);
+  const [resetIncludesApiKeys, setResetIncludesApiKeys] = useState(false);
   const summary = getLocalDataSummary();
   const copy = confirmAction ? COPY[confirmAction] : null;
 
   const refresh = () => setSummaryVersion((value) => value + 1);
+  const closeDialog = () => {
+    setConfirmAction(null);
+    setResetIncludesApiKeys(false);
+  };
 
   const handleExport = async () => {
     setBusy(true);
@@ -78,11 +103,18 @@ export function DataControlCard() {
       } else if (confirmAction === "api-keys") {
         await deleteApiKeys();
         toast.success("API keys 已删除");
+      } else if (confirmAction === "all-data") {
+        await deleteAllLocalData({ includeApiKeys: resetIncludesApiKeys });
+        toast.success(
+          resetIncludesApiKeys
+            ? "本机数据和 API keys 已重置"
+            : "本机数据已重置，API keys 已保留",
+        );
       } else {
         await deleteBenchmarkAudioData();
         toast.success("Benchmark 音频已清空");
       }
-      setConfirmAction(null);
+      closeDialog();
       refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "操作失败");
@@ -151,6 +183,16 @@ export function DataControlCard() {
             <Button
               type="button"
               variant="outline"
+              onClick={() => setConfirmAction("all-data")}
+              disabled={busy}
+              className="gap-2"
+            >
+              <RotateCcw className="h-4 w-4" />
+              重置本机数据
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
               onClick={() => setConfirmAction("learning")}
               disabled={busy}
               className="gap-2"
@@ -184,18 +226,35 @@ export function DataControlCard() {
 
       <Dialog
         open={!!confirmAction}
-        onOpenChange={() => setConfirmAction(null)}
+        onOpenChange={(open) => {
+          if (!open) closeDialog();
+        }}
       >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{copy?.title}</DialogTitle>
             <DialogDescription>{copy?.description}</DialogDescription>
           </DialogHeader>
+          {confirmAction === "all-data" && (
+            <div className="flex items-center justify-between gap-4 rounded-lg border bg-muted/25 p-3">
+              <div>
+                <p className="text-sm font-medium">同时删除 API keys</p>
+                <p className="text-xs text-muted-foreground">
+                  关闭时会保留 Azure、ElevenLabs、LLM 和词典密钥，便于重置后继续使用。
+                </p>
+              </div>
+              <Switch
+                checked={resetIncludesApiKeys}
+                onCheckedChange={setResetIncludesApiKeys}
+                aria-label="同时删除 API keys"
+              />
+            </div>
+          )}
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
-              onClick={() => setConfirmAction(null)}
+              onClick={closeDialog}
               disabled={busy}
             >
               取消

@@ -13,7 +13,7 @@ const mocks = vi.hoisted(() => ({
     localStorage.removeItem(key);
   }),
   storeDelete: vi.fn(async () => {}),
-  storeGet: vi.fn(async () => null),
+  storeGet: vi.fn(async (_key: string): Promise<unknown | null> => null),
   storeSet: vi.fn(async () => {}),
 }));
 
@@ -46,6 +46,12 @@ describe("data registry", () => {
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
+    mocks.secureStoreDelete.mockImplementation(async (key: string) => {
+      localStorage.removeItem(key);
+    });
+    mocks.storeGet.mockImplementation(
+      async (_key: string): Promise<unknown | null> => null,
+    );
   });
 
   it("exports learning data without API keys", async () => {
@@ -61,7 +67,7 @@ describe("data registry", () => {
 
     const snapshot = await buildLocalDataExport();
 
-    expect(snapshot.schemaVersion).toBe(3);
+    expect(snapshot.schemaVersion).toBe(4);
     expect(snapshot.dataSchema.currentVersion).toBeGreaterThanOrEqual(2);
     expect(snapshot.localStorage.speakright_mastery_profile_v2).toEqual({
       version: 2,
@@ -75,6 +81,28 @@ describe("data registry", () => {
     });
     expect(snapshot.excluded).toContain("API keys");
     expect(snapshot.excluded).not.toContain("Benchmark audio blobs");
+  });
+
+  it("exports non-secret desktop app preferences from the Tauri store", async () => {
+    const { buildLocalDataExport } = await import("@/lib/data-registry");
+    mocks.storeGet.mockImplementation(async (key: string) => {
+      if (key === "speakright_pronunciation_config") {
+        return { source: "merriam-webster" };
+      }
+      if (key === "speakright_coach_mode") {
+        return "hard";
+      }
+      return null;
+    });
+
+    const snapshot = await buildLocalDataExport();
+
+    expect(snapshot.appSettings).toEqual({
+      speakright_pronunciation_config: { source: "merriam-webster" },
+      speakright_coach_mode: "hard",
+    });
+    expect(snapshot.localStorage.speakright_pronunciation_config).toBeUndefined();
+    expect(snapshot.localStorage.speakright_coach_mode).toBeUndefined();
   });
 
   it("exports benchmark audio from IndexedDB with the learning snapshot", async () => {
@@ -185,6 +213,55 @@ describe("data registry", () => {
 
     expect(localStorage.getItem("speakright_azure_config")).toBe(
       '{"subscriptionKey":"x"}',
+    );
+  });
+
+  it("resets all local app data while preserving API keys when requested", async () => {
+    const { deleteAllLocalData } = await import("@/lib/data-registry");
+    localStorage.setItem("speakright_mastery_profile_v2", "{}");
+    localStorage.setItem("speakright_desktop_mic_check_v1", "{}");
+    localStorage.setItem("speakright_local_data_schema_version", "3");
+    localStorage.setItem("speakright_local_data_migrated_at", "1000");
+    localStorage.setItem("speakright_pronunciation_config", "{}");
+    localStorage.setItem("speakright_coach_mode", '"strict"');
+    localStorage.setItem("speakright_azure_config", '{"subscriptionKey":"x"}');
+    localStorage.setItem("theme", "dark");
+
+    await deleteAllLocalData({ includeApiKeys: false });
+
+    expect(localStorage.getItem("speakright_mastery_profile_v2")).toBeNull();
+    expect(localStorage.getItem("speakright_desktop_mic_check_v1")).toBeNull();
+    expect(
+      localStorage.getItem("speakright_local_data_schema_version"),
+    ).toBeNull();
+    expect(localStorage.getItem("speakright_local_data_migrated_at")).toBeNull();
+    expect(localStorage.getItem("speakright_pronunciation_config")).toBeNull();
+    expect(localStorage.getItem("speakright_coach_mode")).toBeNull();
+    expect(localStorage.getItem("theme")).toBeNull();
+    expect(localStorage.getItem("speakright_azure_config")).toBe(
+      '{"subscriptionKey":"x"}',
+    );
+    expect(mocks.storeDelete).toHaveBeenCalledWith(
+      "speakright_pronunciation_config",
+    );
+    expect(mocks.storeDelete).toHaveBeenCalledWith("speakright_coach_mode");
+    expect(mocks.secureStoreDelete).not.toHaveBeenCalled();
+  });
+
+  it("can include API keys in the full local reset", async () => {
+    const { deleteAllLocalData } = await import("@/lib/data-registry");
+    localStorage.setItem("speakright_azure_config", '{"subscriptionKey":"x"}');
+    localStorage.setItem("speakright_elevenlabs_config", '{"apiKey":"y"}');
+
+    await deleteAllLocalData({ includeApiKeys: true });
+
+    expect(localStorage.getItem("speakright_azure_config")).toBeNull();
+    expect(localStorage.getItem("speakright_elevenlabs_config")).toBeNull();
+    expect(mocks.secureStoreDelete).toHaveBeenCalledWith(
+      "speakright_azure_config",
+    );
+    expect(mocks.secureStoreDelete).toHaveBeenCalledWith(
+      "speakright_elevenlabs_config",
     );
   });
 });

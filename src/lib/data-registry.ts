@@ -1,6 +1,10 @@
 "use client";
 
-import { API_KEY_STORAGE_KEYS, clearItem } from "@/lib/api-keys";
+import {
+  API_KEY_STORAGE_KEYS,
+  APP_PREFERENCE_STORAGE_KEYS,
+  clearItem,
+} from "@/lib/api-keys";
 import {
   clearBenchmarkRecordings,
   exportBenchmarkRecordings,
@@ -13,6 +17,7 @@ import {
   LOCAL_DATA_SCHEMA_VERSION_KEY,
 } from "@/lib/local-data-migrations";
 import { DESKTOP_MIC_CHECK_KEY } from "@/lib/desktop-readiness";
+import { storeDelete, storeGet } from "@/lib/tauri-store";
 import { clearTtsCache } from "@/lib/tts-cache";
 
 const ASSESSMENT_STORAGE_KEYS = [
@@ -41,13 +46,20 @@ const CACHE_STORAGE_KEYS = [
 const DEVICE_STORAGE_KEYS = [DESKTOP_MIC_CHECK_KEY] as const;
 
 const CACHE_STORAGE_PREFIXES = ["speakright_mw_words_"] as const;
+const RESET_ONLY_STORAGE_KEYS = [
+  ...DEVICE_STORAGE_KEYS,
+  LOCAL_DATA_SCHEMA_VERSION_KEY,
+  LOCAL_DATA_MIGRATED_AT_KEY,
+  "theme",
+] as const;
 
 export interface LocalDataExport {
-  schemaVersion: 3;
+  schemaVersion: 4;
   exportedAt: string;
   product: "SpeakRight Desktop";
   dataSchema: ReturnType<typeof getLocalDataSchemaStatus>;
   localStorage: Record<string, unknown>;
+  appSettings: Record<string, unknown>;
   indexedDb: {
     benchmarkRecordings: Awaited<
       ReturnType<typeof exportBenchmarkRecordings>
@@ -62,6 +74,10 @@ export interface LocalDataSummary {
   apiKeySlots: number;
   dataSchemaVersion: number;
   corruptItems: number;
+}
+
+export interface DeleteAllLocalDataOptions {
+  includeApiKeys: boolean;
 }
 
 function safeParse(raw: string): unknown {
@@ -79,6 +95,24 @@ function collectKeys(keys: readonly string[]): Record<string, unknown> {
     const raw = localStorage.getItem(key);
     if (raw !== null) {
       entries[key] = safeParse(raw);
+    }
+  }
+  return entries;
+}
+
+async function collectPersistentKeys(
+  keys: readonly string[],
+): Promise<Record<string, unknown>> {
+  const entries: Record<string, unknown> = {};
+  for (const key of keys) {
+    const persisted = await storeGet<unknown>(key);
+    if (persisted !== null && persisted !== undefined) {
+      entries[key] = persisted;
+    } else if (typeof window !== "undefined") {
+      const raw = localStorage.getItem(key);
+      if (raw !== null) {
+        entries[key] = safeParse(raw);
+      }
     }
   }
   return entries;
@@ -104,10 +138,21 @@ function removeLocalStorageKeys(keys: readonly string[]): void {
   }
 }
 
+async function removePersistentKeys(keys: readonly string[]): Promise<void> {
+  if (typeof window === "undefined") return;
+  await Promise.all(
+    keys.map(async (key) => {
+      localStorage.removeItem(key);
+      await storeDelete(key);
+      window.dispatchEvent(new StorageEvent("storage", { key }));
+    }),
+  );
+}
+
 export async function buildLocalDataExport(): Promise<LocalDataExport> {
   const cacheKeys = prefixedLocalStorageKeys(CACHE_STORAGE_PREFIXES);
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     exportedAt: new Date().toISOString(),
     product: "SpeakRight Desktop",
     dataSchema: getLocalDataSchemaStatus(),
@@ -121,6 +166,7 @@ export async function buildLocalDataExport(): Promise<LocalDataExport> {
         LOCAL_DATA_MIGRATED_AT_KEY,
       ]),
     },
+    appSettings: await collectPersistentKeys(APP_PREFERENCE_STORAGE_KEYS),
     indexedDb: {
       benchmarkRecordings: await exportBenchmarkRecordings(),
     },
@@ -183,4 +229,15 @@ export async function deleteBenchmarkAudioData(): Promise<void> {
 
 export async function deleteApiKeys(): Promise<void> {
   await Promise.all(API_KEY_STORAGE_KEYS.map((key) => clearItem(key)));
+}
+
+export async function deleteAllLocalData({
+  includeApiKeys,
+}: DeleteAllLocalDataOptions): Promise<void> {
+  await deleteLearningData();
+  removeLocalStorageKeys(RESET_ONLY_STORAGE_KEYS);
+  await removePersistentKeys(APP_PREFERENCE_STORAGE_KEYS);
+  if (includeApiKeys) {
+    await deleteApiKeys();
+  }
 }

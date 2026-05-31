@@ -31,6 +31,10 @@ export const API_KEY_STORAGE_KEYS = [
   STORAGE_KEYS.llm,
   STORAGE_KEYS.merriamWebster,
 ] as const;
+export const APP_PREFERENCE_STORAGE_KEYS = [
+  STORAGE_KEYS.pronunciation,
+  STORAGE_KEYS.coachMode,
+] as const;
 export const API_KEY_STORAGE_ERROR_EVENT = "speakright:api-key-storage-error";
 const runtimeCache = new Map<string, unknown>();
 const SECRET_STORAGE_KEYS = new Set<string>(API_KEY_STORAGE_KEYS);
