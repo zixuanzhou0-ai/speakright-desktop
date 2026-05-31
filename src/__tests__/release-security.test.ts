@@ -93,6 +93,24 @@ describe("release security configuration", () => {
     expect(rustEntry).toContain("secure_store_delete");
   });
 
+  it("keeps release desktop diagnostics enabled without logging secret values", () => {
+    const rustEntry = readFileSync(
+      join(projectRoot, "src-tauri/src/lib.rs"),
+      "utf8",
+    );
+
+    expect(rustEntry).toContain("tauri_plugin_log::Builder::new()");
+    expect(rustEntry).toContain("TargetKind::LogDir");
+    expect(rustEntry).toContain('file_name: Some(LOG_FILE_NAME.into())');
+    expect(rustEntry).toContain("RotationStrategy::KeepSome(LOG_ARCHIVE_COUNT)");
+    expect(rustEntry).toContain("LOG_MAX_FILE_SIZE_BYTES");
+    expect(rustEntry).toContain("LevelFilter::Info");
+    expect(rustEntry).not.toMatch(/if\s+cfg!\(debug_assertions\)[\s\S]{0,160}tauri_plugin_log/);
+
+    const rustLogCalls = rustEntry.match(/log::\w+!\([^)]+\)/g) ?? [];
+    expect(rustLogCalls.join("\n")).not.toMatch(/\b(key|value)\b/);
+  });
+
   it("keeps blob permission scoped to media and avoids unsafe eval", () => {
     const config = readJson<{
       app?: { security?: { csp?: string } };

@@ -1,6 +1,6 @@
 import { execFile, spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 
@@ -8,6 +8,8 @@ const execFileAsync = promisify(execFile);
 
 const root = process.cwd();
 const expectedTitle = "SpeakRight";
+const appIdentifier = "com.speakright.desktop";
+const expectedRuntimeLogLine = "SpeakRight desktop runtime initialized";
 const timeoutMs = Number(process.env.SPEAKRIGHT_SMOKE_TIMEOUT_MS ?? 15_000);
 
 function executablePath() {
@@ -33,6 +35,52 @@ function executablePath() {
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function runtimeLogPath() {
+  if (process.platform !== "win32") return null;
+  const localAppData = process.env.LOCALAPPDATA;
+  if (!localAppData) {
+    throw new Error("LOCALAPPDATA is not set; cannot locate desktop runtime logs.");
+  }
+  return path.join(localAppData, appIdentifier, "logs", "speakright.log");
+}
+
+async function captureRuntimeLogEvidence(smokeStartedAt) {
+  const logPath = runtimeLogPath();
+  if (!logPath) return null;
+
+  const deadline = Date.now() + 5_000;
+  let lastError = null;
+  while (Date.now() < deadline) {
+    try {
+      const [logStats, contents] = await Promise.all([
+        stat(logPath),
+        readFile(logPath, "utf8"),
+      ]);
+      if (
+        logStats.mtimeMs >= smokeStartedAt - 1_000 &&
+        contents.includes(expectedRuntimeLogLine)
+      ) {
+        const lastLine = contents.trim().split(/\r?\n/).at(-1) ?? "";
+        return {
+          path: logPath,
+          bytes: logStats.size,
+          lastLine,
+        };
+      }
+      lastError = new Error(
+        `Runtime log did not contain the expected startup line yet: ${logPath}`,
+      );
+    } catch (error) {
+      lastError = error;
+    }
+    await delay(500);
+  }
+
+  throw new Error(
+    `Desktop runtime log was not written after launch: ${lastError instanceof Error ? lastError.message : lastError}`,
+  );
 }
 
 async function getWindowTitle(pid) {
@@ -203,6 +251,7 @@ async function smoke() {
     );
   }
 
+  const smokeStartedAt = Date.now();
   const child = spawn(exe, [], {
     detached: false,
     stdio: "ignore",
@@ -230,13 +279,19 @@ async function smoke() {
       observedTitle = await getWindowTitle(child.pid);
       if (process.platform !== "win32" || observedTitle === expectedTitle) {
         await delay(1_000);
-        const evidence = await captureWindowEvidence(child.pid);
+        const [evidence, runtimeLog] = await Promise.all([
+          captureWindowEvidence(child.pid),
+          captureRuntimeLogEvidence(smokeStartedAt),
+        ]);
         console.log(
           [
             `Desktop smoke test passed: pid=${child.pid}`,
             observedTitle ? `title="${observedTitle}"` : "",
             evidence
               ? `screenshot="${evidence.Path}" ${evidence.Width}x${evidence.Height} nonWhiteRatio=${evidence.NonWhiteRatio.toFixed(4)} distinctColors=${evidence.DistinctColors}`
+              : "",
+            runtimeLog
+              ? `runtimeLog="${runtimeLog.path}" bytes=${runtimeLog.bytes}`
               : "",
           ]
             .filter(Boolean)

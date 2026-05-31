@@ -59,4 +59,16 @@ describe("desktop artifact smoke wiring", () => {
     expect(installerSmokeScript).toContain("UpgradeCode");
     expect(installerSmokeScript).toContain("SHA-256");
   });
+
+  it("checks the release executable writes runtime diagnostics during smoke", () => {
+    const smokeScript = readFileSync(
+      join(projectRoot, "scripts/desktop-smoke.mjs"),
+      "utf8",
+    );
+
+    expect(smokeScript).toContain("captureRuntimeLogEvidence");
+    expect(smokeScript).toContain("com.speakright.desktop");
+    expect(smokeScript).toContain("speakright.log");
+    expect(smokeScript).toContain("SpeakRight desktop runtime initialized");
+  });
 });
