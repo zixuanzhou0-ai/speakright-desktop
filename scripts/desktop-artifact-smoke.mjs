@@ -150,6 +150,11 @@ async function assertGeneratedCapabilities() {
     }
   }
 
+  const permissionText = JSON.stringify(permissions).toLowerCase();
+  if (permissionText.includes("devtools")) {
+    fail(`${path.relative(root, generatedCapabilitiesPath)} exposes a devtools permission`);
+  }
+
   if (scopedUrls.some((url) => url.startsWith("http://"))) {
     fail(
       `${path.relative(root, generatedCapabilitiesPath)} contains plaintext HTTP capability URLs`,
