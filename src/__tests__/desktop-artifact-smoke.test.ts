@@ -71,4 +71,16 @@ describe("desktop artifact smoke wiring", () => {
     expect(smokeScript).toContain("speakright.log");
     expect(smokeScript).toContain("SpeakRight desktop runtime initialized");
   });
+
+  it("keeps Windows desktop CI bounded by explicit timeouts", () => {
+    const workflow = readFileSync(
+      join(projectRoot, ".github/workflows/build-windows.yml"),
+      "utf8",
+    );
+
+    expect(workflow).toContain("timeout-minutes: 45");
+    expect(workflow).toContain("timeout-minutes: 30");
+    expect(workflow).toContain("Validate desktop build");
+    expect(workflow).toContain("npm run validate:desktop-ci");
+  });
 });
