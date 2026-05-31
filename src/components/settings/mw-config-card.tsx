@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { DesktopExternalLink } from "@/components/common/desktop-external-link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -81,14 +82,13 @@ export function MwConfigCard() {
           />
           <p className="text-xs text-muted-foreground">
             前往{" "}
-            <a
+            <DesktopExternalLink
               href="https://dictionaryapi.com/register/index"
-              target="_blank"
-              rel="noopener noreferrer"
+              copyMessage="已复制韦氏词典注册链接，请在浏览器中打开"
               className="text-primary underline"
             >
               dictionaryapi.com
-            </a>{" "}
+            </DesktopExternalLink>{" "}
             免费注册获取 Collegiate Dictionary API Key
           </p>
         </div>

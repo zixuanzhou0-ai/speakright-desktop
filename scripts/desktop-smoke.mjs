@@ -587,6 +587,106 @@ async function captureInteractiveEvidence(debuggingPort) {
       );
     }
 
+    const externalLinkPolicy = await evaluate(
+      cdp,
+      `
+(async () => {
+  const beforeHref = window.location.href;
+  const merriamRadio = [...document.querySelectorAll('input[name="pronunciation-source"]')]
+    .find((item) => item.value === "merriam-webster");
+  if (!merriamRadio) {
+    return {
+      ok: false,
+      reason: "Merriam-Webster pronunciation source radio missing",
+      bodyText: document.body.innerText.slice(0, 1200)
+    };
+  }
+  merriamRadio.dispatchEvent(new MouseEvent("click", {
+    bubbles: true,
+    cancelable: true,
+    view: window
+  }));
+
+  const deadline = Date.now() + 5000;
+  let link = null;
+  while (!link && Date.now() < deadline) {
+    link = [...document.querySelectorAll('a[href="https://dictionaryapi.com/register/index"]')]
+      .find((item) => (item.textContent || "").includes("dictionaryapi.com"));
+    if (!link) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+  }
+  if (!link) {
+    return {
+      ok: false,
+      reason: "dictionary registration link missing",
+      bodyText: document.body.innerText.slice(0, 1200)
+    };
+  }
+
+  const originalClipboard = navigator.clipboard;
+  let copiedHref = null;
+  Object.defineProperty(navigator, "clipboard", {
+    configurable: true,
+    value: {
+      writeText: async (value) => {
+        copiedHref = value;
+      }
+    }
+  });
+  const clickEvent = new MouseEvent("click", {
+    bubbles: true,
+    cancelable: true,
+    view: window
+  });
+  try {
+    link.dispatchEvent(clickEvent);
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  } finally {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: originalClipboard
+    });
+    const youdaoRadio = [...document.querySelectorAll('input[name="pronunciation-source"]')]
+      .find((item) => item.value === "youdao");
+    youdaoRadio?.dispatchEvent(new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+      view: window
+    }));
+  }
+
+  return {
+    ok: true,
+    defaultPrevented: clickEvent.defaultPrevented,
+    copiedHref,
+    beforeHref,
+    afterHref: window.location.href,
+    target: link.target,
+    rel: link.rel
+  };
+})()
+`,
+    );
+    if (!externalLinkPolicy?.ok) {
+      throw new Error(
+        `Desktop external link policy could not be verified: ${externalLinkPolicy?.reason ?? "unknown"} ${externalLinkPolicy?.bodyText ?? ""}`,
+      );
+    }
+    if (
+      !externalLinkPolicy.defaultPrevented ||
+      externalLinkPolicy.copiedHref !==
+        "https://dictionaryapi.com/register/index" ||
+      externalLinkPolicy.afterHref !== externalLinkPolicy.beforeHref ||
+      externalLinkPolicy.target !== "_blank" ||
+      !externalLinkPolicy.rel.includes("noopener") ||
+      !externalLinkPolicy.rel.includes("noreferrer")
+    ) {
+      throw new Error(
+        `Desktop external link policy failed: ${JSON.stringify(externalLinkPolicy)}`,
+      );
+    }
+
     const diagnostics = await evaluate(
       cdp,
       `
@@ -1353,6 +1453,7 @@ async function captureInteractiveEvidence(debuggingPort) {
       learningDataDownload: learningExport.download.download,
       appIdentifier: diagnostics.bundle.appIdentifier,
       llmCustomDisabled: llmPolicy.customButtonDisabled,
+      externalLinkCopied: externalLinkPolicy.copiedHref,
       learningDeletePreservedKey: learningDelete.preservedApiKey,
       apiKeysDeleted: apiKeysDelete.deletedApiKeys,
       localResetPreservedKey: localReset.preservedApiKey,
@@ -1455,7 +1556,7 @@ async function smoke() {
               ? `runtimeLog="${runtimeLog.path}" bytes=${runtimeLog.bytes}`
               : "",
             interactiveEvidence
-              ? `diagnostics="${interactiveEvidence.diagnosticsDownload}" learningData="${interactiveEvidence.learningDataDownload}" learningDeletePreservedKey=${interactiveEvidence.learningDeletePreservedKey} apiKeysDeleted=${interactiveEvidence.apiKeysDeleted} localResetPreservedKey=${interactiveEvidence.localResetPreservedKey} benchmarkAudioCleared=${interactiveEvidence.benchmarkAudioCleared} route=${interactiveEvidence.route} appIdentifier=${interactiveEvidence.appIdentifier} llmCustomDisabled=${interactiveEvidence.llmCustomDisabled}`
+              ? `diagnostics="${interactiveEvidence.diagnosticsDownload}" learningData="${interactiveEvidence.learningDataDownload}" learningDeletePreservedKey=${interactiveEvidence.learningDeletePreservedKey} apiKeysDeleted=${interactiveEvidence.apiKeysDeleted} localResetPreservedKey=${interactiveEvidence.localResetPreservedKey} benchmarkAudioCleared=${interactiveEvidence.benchmarkAudioCleared} externalLinkCopied=${interactiveEvidence.externalLinkCopied === "https://dictionaryapi.com/register/index"} route=${interactiveEvidence.route} appIdentifier=${interactiveEvidence.appIdentifier} llmCustomDisabled=${interactiveEvidence.llmCustomDisabled}`
               : "",
           ]
             .filter(Boolean)
