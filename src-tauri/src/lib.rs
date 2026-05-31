@@ -68,6 +68,137 @@ fn truncate_log_line(line: &str) -> String {
     line.chars().take(LOG_TAIL_MAX_LINE_CHARS).collect()
 }
 
+fn find_case_insensitive(haystack: &str, needle: &str, from: usize) -> Option<usize> {
+    haystack
+        .get(from..)?
+        .to_ascii_lowercase()
+        .find(&needle.to_ascii_lowercase())
+        .map(|index| from + index)
+}
+
+fn secret_delimiter(character: char) -> bool {
+    character.is_whitespace() || matches!(character, '"' | '\'' | ',' | '}' | ']' | '&' | '#')
+}
+
+fn replace_secret_ranges(mut text: String, marker: &str, keep_marker: bool) -> String {
+    let mut search_start = 0;
+    while let Some(marker_start) = find_case_insensitive(&text, marker, search_start) {
+        let mut value_start = marker_start + marker.len();
+        while text
+            .get(value_start..)
+            .is_some_and(|tail| tail.starts_with(' '))
+        {
+            value_start += 1;
+        }
+        let value_end = text
+            .get(value_start..)
+            .and_then(|tail| {
+                tail.char_indices()
+                    .find(|(_, character)| secret_delimiter(*character))
+                    .map(|(index, _)| value_start + index)
+            })
+            .unwrap_or(text.len());
+        if value_end > value_start {
+            let replace_start = if keep_marker {
+                value_start
+            } else {
+                marker_start
+            };
+            text.replace_range(replace_start..value_end, "[REDACTED]");
+            search_start = replace_start + "[REDACTED]".len();
+        } else {
+            search_start = value_start;
+        }
+    }
+    text
+}
+
+fn redact_json_string_value(mut text: String, key: &str) -> String {
+    let needle = format!("\"{key}\"");
+    let mut search_start = 0;
+    while let Some(key_start) = text.get(search_start..).and_then(|tail| tail.find(&needle)) {
+        let key_start = search_start + key_start;
+        let after_key = key_start + needle.len();
+        let Some(colon_index) = text.get(after_key..).and_then(|tail| tail.find(':')) else {
+            break;
+        };
+        let mut quote_index = after_key + colon_index + 1;
+        while text
+            .get(quote_index..)
+            .is_some_and(|tail| tail.starts_with(' '))
+        {
+            quote_index += 1;
+        }
+        if !text
+            .get(quote_index..)
+            .is_some_and(|tail| tail.starts_with('"'))
+        {
+            search_start = quote_index;
+            continue;
+        }
+        let value_start = quote_index + 1;
+        let mut escaped = false;
+        let mut value_end = None;
+        for (index, character) in text[value_start..].char_indices() {
+            if escaped {
+                escaped = false;
+                continue;
+            }
+            if character == '\\' {
+                escaped = true;
+                continue;
+            }
+            if character == '"' {
+                value_end = Some(value_start + index);
+                break;
+            }
+        }
+        let Some(value_end) = value_end else {
+            break;
+        };
+        text.replace_range(value_start..value_end, "[REDACTED]");
+        search_start = value_start + "[REDACTED]".len();
+    }
+    text
+}
+
+fn redact_log_line(line: &str) -> String {
+    let mut redacted = line.to_string();
+    for key in [
+        "apiKey",
+        "subscriptionKey",
+        "Authorization",
+        "Ocp-Apim-Subscription-Key",
+        "xi-api-key",
+        "x-api-key",
+    ] {
+        redacted = redact_json_string_value(redacted, key);
+    }
+    for marker in [
+        "?key=",
+        "&key=",
+        "?api_key=",
+        "&api_key=",
+        "?apiKey=",
+        "&apiKey=",
+        "?subscriptionKey=",
+        "&subscriptionKey=",
+        "Bearer ",
+    ] {
+        redacted = replace_secret_ranges(redacted, marker, true);
+    }
+    for marker in [
+        "Ocp-Apim-Subscription-Key:",
+        "xi-api-key:",
+        "x-api-key:",
+        "apiKey:",
+        "subscriptionKey:",
+    ] {
+        redacted = replace_secret_ranges(redacted, marker, true);
+    }
+    truncate_log_line(&redacted)
+}
+
 fn read_log_tail(path: &Path) -> Result<(Option<u64>, Vec<String>), String> {
     let bytes = fs::metadata(path).ok().map(|metadata| metadata.len());
     let contents = fs::read_to_string(path).map_err(|error| error.to_string())?;
@@ -75,7 +206,7 @@ fn read_log_tail(path: &Path) -> Result<(Option<u64>, Vec<String>), String> {
         .lines()
         .rev()
         .take(LOG_TAIL_LINE_COUNT)
-        .map(truncate_log_line)
+        .map(redact_log_line)
         .collect::<Vec<_>>();
     tail.reverse();
     Ok((bytes, tail))
@@ -274,6 +405,46 @@ mod tests {
         let (_, tail) = read_log_tail(&path).expect("tail should be read");
 
         assert_eq!(tail[0].chars().count(), LOG_TAIL_MAX_LINE_CHARS);
+
+        fs::remove_file(path).expect("test log should be removed");
+    }
+
+    #[test]
+    fn log_tail_redacts_json_secrets() {
+        let path = std::env::temp_dir().join(unique_test_key("secret-json-diagnostics-log"));
+        fs::write(
+            &path,
+            r#"failed request {"apiKey":"sk-live-secret","subscriptionKey":"azure-secret","safe":"visible"}"#,
+        )
+        .expect("test log should be written");
+
+        let (_, tail) = read_log_tail(&path).expect("tail should be read");
+
+        assert!(!tail[0].contains("sk-live-secret"));
+        assert!(!tail[0].contains("azure-secret"));
+        assert!(tail[0].contains(r#""apiKey":"[REDACTED]""#));
+        assert!(tail[0].contains(r#""subscriptionKey":"[REDACTED]""#));
+        assert!(tail[0].contains(r#""safe":"visible""#));
+
+        fs::remove_file(path).expect("test log should be removed");
+    }
+
+    #[test]
+    fn log_tail_redacts_bearer_headers_and_query_keys() {
+        let path = std::env::temp_dir().join(unique_test_key("secret-url-diagnostics-log"));
+        fs::write(
+            &path,
+            "Authorization: Bearer anth-secret-token url=https://dictionaryapi.com/api/v3/references/collegiate/json/hello?key=mw-secret&format=json",
+        )
+        .expect("test log should be written");
+
+        let (_, tail) = read_log_tail(&path).expect("tail should be read");
+
+        assert!(!tail[0].contains("anth-secret-token"));
+        assert!(!tail[0].contains("mw-secret"));
+        assert!(tail[0].contains("Bearer [REDACTED]"));
+        assert!(tail[0].contains("?key=[REDACTED]"));
+        assert!(tail[0].contains("format=json"));
 
         fs::remove_file(path).expect("test log should be removed");
     }
