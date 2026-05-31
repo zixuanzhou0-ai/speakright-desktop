@@ -541,9 +541,157 @@ async function captureInteractiveEvidence(debuggingPort) {
       );
     }
 
+    const learningExport = await evaluate(
+      cdp,
+      `
+(async () => {
+  const button = [...document.querySelectorAll("button")].find((item) =>
+    (item.textContent || "").includes("导出学习数据")
+  );
+  if (!button) {
+    return {
+      ok: false,
+      reason: "learning data export button missing",
+      bodyText: document.body.innerText.slice(0, 1200)
+    };
+  }
+
+  const originalCreateObjectUrl = URL.createObjectURL.bind(URL);
+  const originalRevokeObjectUrl = URL.revokeObjectURL.bind(URL);
+  const originalClick = HTMLAnchorElement.prototype.click;
+  let capturedBlob = null;
+  let capturedDownload = null;
+
+  URL.createObjectURL = (blob) => {
+    capturedBlob = blob;
+    return "blob:speakright-smoke-learning-data";
+  };
+  URL.revokeObjectURL = () => {};
+  HTMLAnchorElement.prototype.click = function () {
+    capturedDownload = {
+      download: this.download,
+      href: this.href
+    };
+  };
+
+  try {
+    localStorage.setItem(
+      "speakright_mastery_profile_v2",
+      JSON.stringify({ version: 2, desktopSmokeExport: true })
+    );
+    localStorage.setItem(
+      "speakright_azure_config",
+      JSON.stringify({ subscriptionKey: "desktop-smoke-secret" })
+    );
+
+    const deadline = Date.now() + 10000;
+    let attempts = 0;
+    while (!capturedBlob && Date.now() < deadline) {
+      const currentButton = [...document.querySelectorAll("button")].find((item) =>
+        (item.textContent || "").includes("导出学习数据")
+      );
+      if (currentButton && !currentButton.disabled) {
+        attempts += 1;
+        currentButton.dispatchEvent(
+          new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          })
+        );
+      }
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+    if (!capturedBlob) {
+      return {
+        ok: false,
+        reason: "learning data export did not create a blob",
+        attempts,
+        bodyText: document.body.innerText.slice(0, 1200)
+      };
+    }
+    const snapshot = JSON.parse(await capturedBlob.text());
+    return {
+      ok: true,
+      download: capturedDownload,
+      snapshot: {
+        schemaVersion: snapshot.schemaVersion,
+        product: snapshot.product,
+        hasSmokeMastery:
+          snapshot.localStorage?.speakright_mastery_profile_v2
+            ?.desktopSmokeExport === true,
+        exportedApiKey:
+          Object.prototype.hasOwnProperty.call(
+            snapshot.localStorage ?? {},
+            "speakright_azure_config"
+          ) ||
+          Object.prototype.hasOwnProperty.call(
+            snapshot.appSettings ?? {},
+            "speakright_azure_config"
+          ),
+        benchmarkAudioIsArray: Array.isArray(
+          snapshot.indexedDb?.benchmarkRecordings?.audio
+        ),
+        excluded: snapshot.excluded
+      }
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      reason: error instanceof Error ? error.message : String(error)
+    };
+  } finally {
+    localStorage.removeItem("speakright_mastery_profile_v2");
+    localStorage.removeItem("speakright_azure_config");
+    URL.createObjectURL = originalCreateObjectUrl;
+    URL.revokeObjectURL = originalRevokeObjectUrl;
+    HTMLAnchorElement.prototype.click = originalClick;
+  }
+})()
+`,
+    );
+
+    if (!learningExport?.ok) {
+      throw new Error(
+        `Desktop learning data export failed in release window: ${learningExport?.reason ?? "unknown"} ${learningExport?.bodyText ?? ""}`,
+      );
+    }
+    if (learningExport.snapshot?.product !== "SpeakRight Desktop") {
+      throw new Error("Desktop learning data export product marker is wrong.");
+    }
+    if (learningExport.snapshot?.schemaVersion < 4) {
+      throw new Error(
+        `Desktop learning data export schema is too old: ${learningExport.snapshot?.schemaVersion}.`,
+      );
+    }
+    if (!learningExport.snapshot?.hasSmokeMastery) {
+      throw new Error(
+        "Desktop learning data export did not include learning localStorage data.",
+      );
+    }
+    if (learningExport.snapshot?.exportedApiKey) {
+      throw new Error("Desktop learning data export included an API key slot.");
+    }
+    if (!learningExport.snapshot?.benchmarkAudioIsArray) {
+      throw new Error(
+        "Desktop learning data export did not include benchmark audio archive metadata.",
+      );
+    }
+    if (!learningExport.snapshot?.excluded?.includes("API keys")) {
+      throw new Error(
+        "Desktop learning data export does not document API key exclusion.",
+      );
+    }
+    if (
+      !learningExport.download?.download?.startsWith("speakright-data-")
+    ) {
+      throw new Error("Desktop learning data export filename is not versioned.");
+    }
+
     return {
       route: "/settings",
-      download: diagnostics.download.download,
+      diagnosticsDownload: diagnostics.download.download,
+      learningDataDownload: learningExport.download.download,
       appIdentifier: diagnostics.bundle.appIdentifier,
       llmCustomDisabled: llmPolicy.customButtonDisabled,
       logPath: diagnostics.bundle.logPath,
@@ -643,7 +791,7 @@ async function smoke() {
               ? `runtimeLog="${runtimeLog.path}" bytes=${runtimeLog.bytes}`
               : "",
             interactiveEvidence
-              ? `diagnostics="${interactiveEvidence.download}" route=${interactiveEvidence.route} appIdentifier=${interactiveEvidence.appIdentifier} llmCustomDisabled=${interactiveEvidence.llmCustomDisabled}`
+              ? `diagnostics="${interactiveEvidence.diagnosticsDownload}" learningData="${interactiveEvidence.learningDataDownload}" route=${interactiveEvidence.route} appIdentifier=${interactiveEvidence.appIdentifier} llmCustomDisabled=${interactiveEvidence.llmCustomDisabled}`
               : "",
           ]
             .filter(Boolean)
