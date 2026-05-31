@@ -368,7 +368,7 @@ async function clickVisibleButtonByText(
     lastResult = await evaluate(
       cdp,
       `
-(() => {
+(async () => {
   const root = ${
     withinSelector
       ? `document.querySelector(${JSON.stringify(withinSelector)})`
@@ -402,11 +402,26 @@ async function clickVisibleButtonByText(
     };
   }
   button.scrollIntoView({ block: "center", inline: "center" });
+  await new Promise((resolve) => requestAnimationFrame(resolve));
   const rect = button.getBoundingClientRect();
+  const x = rect.left + rect.width / 2;
+  const y = rect.top + rect.height / 2;
+  const hitTarget = document.elementFromPoint(x, y);
+  const hitButton = hitTarget?.closest?.("button");
+  if (hitButton !== button) {
+    return {
+      ok: false,
+      reason: "button center is covered or outside the viewport",
+      targetText: hitButton ? (hitButton.textContent || "").trim() : null,
+      x,
+      y,
+      bodyText: document.body.innerText.slice(0, 1200)
+    };
+  }
   return {
     ok: true,
-    x: rect.left + rect.width / 2,
-    y: rect.top + rect.height / 2,
+    x,
+    y,
     text: (button.textContent || "").trim()
   };
 })()
@@ -862,6 +877,96 @@ async function captureInteractiveEvidence(debuggingPort) {
       throw new Error("Desktop learning data delete removed an API key slot.");
     }
 
+    await evaluate(
+      cdp,
+      `
+(() => {
+  localStorage.setItem(
+    "speakright_azure_config",
+    JSON.stringify({ subscriptionKey: "desktop-smoke-azure-key", region: "eastus" })
+  );
+  localStorage.setItem(
+    "speakright_elevenlabs_config",
+    JSON.stringify({ apiKey: "desktop-smoke-elevenlabs-key" })
+  );
+  localStorage.setItem(
+    "speakright_llm_config",
+    JSON.stringify({
+      provider: "openai",
+      apiKey: "desktop-smoke-llm-key",
+      model: "gpt-4o-mini"
+    })
+  );
+  localStorage.setItem(
+    "speakright_mw_config",
+    JSON.stringify({ apiKey: "desktop-smoke-mw-key" })
+  );
+  return true;
+})()
+`,
+    );
+
+    let apiKeysDelete = null;
+    try {
+      await clickVisibleButtonByText(cdp, "删除 API keys", {
+        timeoutMs: 10_000,
+      });
+      await waitForBodyText(cdp, "删除所有 API keys？");
+      await clickVisibleButtonByText(cdp, "删除 API keys", {
+        withinSelector: '[data-slot="dialog-content"]',
+      });
+      apiKeysDelete = await evaluate(
+        cdp,
+        `
+(async () => {
+  const keys = [
+    "speakright_azure_config",
+    "speakright_elevenlabs_config",
+    "speakright_llm_config",
+    "speakright_mw_config"
+  ];
+  const deleteDeadline = Date.now() + 10000;
+  while (
+    keys.some((key) => localStorage.getItem(key) !== null) &&
+    Date.now() < deleteDeadline
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  return {
+    ok: true,
+    deletedApiKeys: keys.every((key) => localStorage.getItem(key) === null)
+  };
+})()
+`,
+      );
+    } finally {
+      await evaluate(
+        cdp,
+        `
+(() => {
+  for (const key of [
+    "speakright_azure_config",
+    "speakright_elevenlabs_config",
+    "speakright_llm_config",
+    "speakright_mw_config"
+  ]) {
+    localStorage.removeItem(key);
+  }
+  return true;
+})()
+`,
+      );
+    }
+
+    if (!apiKeysDelete?.ok) {
+      throw new Error(
+        `Desktop API key delete failed in release window: ${apiKeysDelete?.reason ?? "unknown"} ${apiKeysDelete?.bodyText ?? ""}`,
+      );
+    }
+    if (!apiKeysDelete.deletedApiKeys) {
+      throw new Error("Desktop API key delete did not clear all API key slots.");
+    }
+
     return {
       route: "/settings",
       diagnosticsDownload: diagnostics.download.download,
@@ -869,6 +974,7 @@ async function captureInteractiveEvidence(debuggingPort) {
       appIdentifier: diagnostics.bundle.appIdentifier,
       llmCustomDisabled: llmPolicy.customButtonDisabled,
       learningDeletePreservedKey: learningDelete.preservedApiKey,
+      apiKeysDeleted: apiKeysDelete.deletedApiKeys,
       logPath: diagnostics.bundle.logPath,
       logBytes: diagnostics.bundle.logBytes,
       screenshot,
@@ -966,7 +1072,7 @@ async function smoke() {
               ? `runtimeLog="${runtimeLog.path}" bytes=${runtimeLog.bytes}`
               : "",
             interactiveEvidence
-              ? `diagnostics="${interactiveEvidence.diagnosticsDownload}" learningData="${interactiveEvidence.learningDataDownload}" learningDeletePreservedKey=${interactiveEvidence.learningDeletePreservedKey} route=${interactiveEvidence.route} appIdentifier=${interactiveEvidence.appIdentifier} llmCustomDisabled=${interactiveEvidence.llmCustomDisabled}`
+              ? `diagnostics="${interactiveEvidence.diagnosticsDownload}" learningData="${interactiveEvidence.learningDataDownload}" learningDeletePreservedKey=${interactiveEvidence.learningDeletePreservedKey} apiKeysDeleted=${interactiveEvidence.apiKeysDeleted} route=${interactiveEvidence.route} appIdentifier=${interactiveEvidence.appIdentifier} llmCustomDisabled=${interactiveEvidence.llmCustomDisabled}`
               : "",
           ]
             .filter(Boolean)
