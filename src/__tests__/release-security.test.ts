@@ -201,6 +201,29 @@ describe("release security configuration", () => {
     expect(csp).not.toMatch(/connect-src[^;]*\sblob:/);
   });
 
+  it("does not allow arbitrary remote image beacons in the desktop CSP", () => {
+    const config = readJson<{
+      app?: { security?: { csp?: string } };
+    }>("src-tauri/tauri.conf.json");
+    const csp = config.app?.security?.csp ?? "";
+    const imgDirective =
+      csp
+        .split(";")
+        .map((part) => part.trim())
+        .find((part) => part.startsWith("img-src ")) ?? "";
+
+    expect(imgDirective).toBeTruthy();
+    const remoteOrigins = imgDirective.match(/https?:\/\/[^\s;]+/g) ?? [];
+
+    expect(imgDirective).not.toMatch(/\shttps:/);
+    expect(remoteOrigins).toEqual(["http://asset.localhost"]);
+    expect(imgDirective).not.toContain("*");
+    expect(imgDirective).toContain("'self'");
+    expect(imgDirective).toContain("asset:");
+    expect(imgDirective).toContain("blob:");
+    expect(imgDirective).toContain("data:");
+  });
+
   it("does not allow plaintext external hosts in the desktop CSP", () => {
     const config = readJson<{
       app?: { security?: { csp?: string } };
