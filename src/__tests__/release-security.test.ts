@@ -74,6 +74,25 @@ describe("release security configuration", () => {
     expect(permissions).not.toContain("store:allow-get-store");
   });
 
+  it("keeps core permissions scoped to the desktop titlebar interactions in use", () => {
+    const capability = readJson<{
+      permissions: Array<string | Record<string, unknown>>;
+    }>("src-tauri/capabilities/default.json");
+    const permissions = capability.permissions.filter(
+      (permission): permission is string => typeof permission === "string",
+    );
+
+    expect(permissions).not.toContain("core:default");
+    expect(permissions).toContain("core:event:allow-listen");
+    expect(permissions).toContain("core:event:allow-unlisten");
+    expect(permissions).toContain("core:window:allow-minimize");
+    expect(permissions).toContain("core:window:allow-toggle-maximize");
+    expect(permissions).toContain("core:window:allow-is-maximized");
+    expect(permissions).toContain("core:window:allow-close");
+    expect(permissions).toContain("core:window:allow-start-dragging");
+    expect(permissions).toContain("core:window:allow-set-focus");
+  });
+
   it("does not ship Tauri devtools in the release dependency feature set", () => {
     const cargoToml = readFileSync(
       join(projectRoot, "src-tauri/Cargo.toml"),
