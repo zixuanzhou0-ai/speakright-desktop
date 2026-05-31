@@ -12,6 +12,12 @@ const LOG_MAX_FILE_SIZE_BYTES: u128 = 1_000_000;
 const LOG_ARCHIVE_COUNT: usize = 5;
 const LOG_TAIL_LINE_COUNT: usize = 200;
 const LOG_TAIL_MAX_LINE_CHARS: usize = 500;
+const ALLOWED_SECURE_STORE_KEYS: [&str; 4] = [
+    "speakright_azure_config",
+    "speakright_elevenlabs_config",
+    "speakright_llm_config",
+    "speakright_mw_config",
+];
 
 #[derive(Serialize)]
 struct DesktopDiagnosticsLog {
@@ -35,10 +41,22 @@ fn desktop_log_level() -> LevelFilter {
     }
 }
 
-fn secure_entry(key: &str) -> Result<Entry, String> {
+fn is_allowed_secure_store_key(key: &str) -> bool {
+    ALLOWED_SECURE_STORE_KEYS.contains(&key) || (cfg!(test) && key.starts_with("speakright-test-"))
+}
+
+fn validate_secure_store_key(key: &str) -> Result<(), String> {
     if key.trim().is_empty() {
         return Err("secure store key must not be empty".to_string());
     }
+    if !is_allowed_secure_store_key(key) {
+        return Err("secure store key is not allowed".to_string());
+    }
+    Ok(())
+}
+
+fn secure_entry(key: &str) -> Result<Entry, String> {
+    validate_secure_store_key(key)?;
     Entry::new(SECURE_STORE_SERVICE, key).map_err(|error| {
         let message = error.to_string();
         log::warn!("secure credential store entry could not be opened: {message}");
@@ -191,6 +209,25 @@ mod tests {
             result.expect_err("blank secure store key should fail"),
             "secure store key must not be empty"
         );
+    }
+
+    #[test]
+    fn secure_store_rejects_unregistered_keys() {
+        let result = secure_store_set("speakright_unregistered".to_string(), "secret".to_string());
+
+        assert!(result.is_err());
+        assert_eq!(
+            result.expect_err("unregistered secure store key should fail"),
+            "secure store key is not allowed"
+        );
+    }
+
+    #[test]
+    fn secure_store_allows_only_registered_app_keys() {
+        for key in ALLOWED_SECURE_STORE_KEYS {
+            assert!(validate_secure_store_key(key).is_ok());
+        }
+        assert!(validate_secure_store_key("speakright_azure_config_extra").is_err());
     }
 
     #[test]

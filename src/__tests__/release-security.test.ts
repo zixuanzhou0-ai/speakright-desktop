@@ -88,6 +88,8 @@ describe("release security configuration", () => {
     expect(cargoToml).toContain("keyring =");
     expect(cargoToml).toContain("windows-native");
     expect(rustEntry).toContain('const SECURE_STORE_SERVICE: &str = "com.speakright.desktop"');
+    expect(rustEntry).toContain("ALLOWED_SECURE_STORE_KEYS");
+    expect(rustEntry).toContain("validate_secure_store_key(key)?");
     expect(rustEntry).toContain("secure_store_get");
     expect(rustEntry).toContain("secure_store_set");
     expect(rustEntry).toContain("secure_store_delete");
