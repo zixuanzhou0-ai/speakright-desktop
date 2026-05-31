@@ -62,7 +62,12 @@ describe("desktop diagnostics", () => {
     expect(bundle.release.currentVersion).toBeTruthy();
     expect(bundle.dataSummary.apiKeySlots).toBe(4);
     expect(bundle.runtime.app_identifier).toBe("com.speakright.desktop");
+    expect(bundle.runtime.log.path).toBe(
+      "<local-app-data>/com.speakright.desktop/logs/speakright.log",
+    );
+    expect(bundle.runtime.log.path).not.toContain("Users/me");
     expect(bundle.excluded).toContain("API keys");
+    expect(bundle.excluded).toContain("Local user profile path");
     expect(bundle.excluded).toContain("Benchmark audio blobs");
   });
 

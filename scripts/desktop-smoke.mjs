@@ -516,6 +516,19 @@ async function captureInteractiveEvidence(debuggingPort) {
       );
     }
     if (
+      diagnostics.bundle?.logPath &&
+      !diagnostics.bundle.logPath.startsWith("<local-app-data>/")
+    ) {
+      throw new Error(
+        `Desktop diagnostics log path was not redacted: ${diagnostics.bundle.logPath}`,
+      );
+    }
+    if (/Users[\\\\/][^\\\\/]+/i.test(diagnostics.bundle?.logPath ?? "")) {
+      throw new Error(
+        "Desktop diagnostics log path exposed a local user profile path.",
+      );
+    }
+    if (
       !diagnostics.download?.download?.startsWith("speakright-diagnostics-")
     ) {
       throw new Error(

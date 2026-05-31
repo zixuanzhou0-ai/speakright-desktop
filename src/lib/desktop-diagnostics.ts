@@ -25,6 +25,30 @@ export interface DesktopSupportBundle {
   excluded: string[];
 }
 
+function redactDesktopLogPath(path: string | null): string | null {
+  if (!path) return null;
+  const normalized = path.replaceAll("\\", "/");
+  const marker = "/com.speakright.desktop/";
+  const markerIndex = normalized.lastIndexOf(marker);
+  if (markerIndex >= 0) {
+    return `<local-app-data>${normalized.slice(markerIndex)}`;
+  }
+  const fileName = normalized.split("/").filter(Boolean).at(-1);
+  return fileName ? `<redacted>/${fileName}` : "<redacted>";
+}
+
+function sanitizeDesktopRuntimeDiagnostics(
+  diagnostics: DesktopRuntimeDiagnostics,
+): DesktopRuntimeDiagnostics {
+  return {
+    ...diagnostics,
+    log: {
+      ...diagnostics.log,
+      path: redactDesktopLogPath(diagnostics.log.path),
+    },
+  };
+}
+
 export async function getDesktopRuntimeDiagnostics(): Promise<DesktopRuntimeDiagnostics> {
   if (!isTauriEnvironment()) {
     return {
@@ -41,15 +65,17 @@ export async function getDesktopRuntimeDiagnostics(): Promise<DesktopRuntimeDiag
 }
 
 export async function buildDesktopSupportBundle(): Promise<DesktopSupportBundle> {
+  const runtime = await getDesktopRuntimeDiagnostics();
   return {
     schemaVersion: 1,
     exportedAt: new Date().toISOString(),
     product: "SpeakRight Desktop",
     release: DESKTOP_RELEASE_INFO,
     dataSummary: getLocalDataSummary(),
-    runtime: await getDesktopRuntimeDiagnostics(),
+    runtime: sanitizeDesktopRuntimeDiagnostics(runtime),
     excluded: [
       "API keys",
+      "Local user profile path",
       "Full learning history",
       "Benchmark audio blobs",
       "ElevenLabs TTS audio cache",

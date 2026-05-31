@@ -77,6 +77,8 @@ describe("desktop artifact smoke wiring", () => {
     expect(smokeScript).toContain("internal");
     expect(smokeScript).toContain("NotSigned");
     expect(smokeScript).toContain("可控内测");
+    expect(smokeScript).toContain("<local-app-data>/");
+    expect(smokeScript).toContain("local user profile path");
     expect(smokeScript).toContain("com.speakright.desktop");
     expect(smokeScript).toContain("speakright.log");
     expect(smokeScript).toContain("SpeakRight desktop runtime initialized");
