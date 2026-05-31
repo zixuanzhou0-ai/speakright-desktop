@@ -1,7 +1,8 @@
 import { execFile, spawn } from "node:child_process";
 import { existsSync } from "node:fs";
-import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import net from "node:net";
+import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 
@@ -56,18 +57,31 @@ function getOpenPort() {
   });
 }
 
-function buildSmokeEnv(debuggingPort) {
-  if (!debuggingPort || process.platform !== "win32") return process.env;
+async function createSmokeProfileRoot() {
+  const rootDir = await mkdtemp(
+    path.join(os.tmpdir(), "speakright-desktop-smoke-"),
+  );
+  await mkdir(path.join(rootDir, "WebView2"), { recursive: true });
+  return rootDir;
+}
+
+function buildSmokeEnv(debuggingPort, smokeProfileRoot) {
+  if (process.platform !== "win32") return process.env;
   const existingArgs = process.env.WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS ?? "";
   const smokeArgs = [
     `--remote-debugging-port=${debuggingPort}`,
     "--remote-allow-origins=*",
   ].join(" ");
-  return {
+  const env = {
     ...process.env,
     WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: [existingArgs, smokeArgs]
       .filter(Boolean)
       .join(" "),
+  };
+  if (!smokeProfileRoot) return env;
+  return {
+    ...env,
+    WEBVIEW2_USER_DATA_FOLDER: path.join(smokeProfileRoot, "WebView2"),
   };
 }
 
@@ -563,10 +577,13 @@ async function smoke() {
 
   const debuggingPort =
     process.platform === "win32" ? await getOpenPort() : null;
+  const smokeProfileRoot =
+    process.platform === "win32" ? await createSmokeProfileRoot() : null;
+  const smokeEnv = buildSmokeEnv(debuggingPort, smokeProfileRoot);
   const smokeStartedAt = Date.now();
   const child = spawn(exe, [], {
     detached: false,
-    env: buildSmokeEnv(debuggingPort),
+    env: smokeEnv,
     stdio: "ignore",
     windowsHide: false,
   });
@@ -622,6 +639,11 @@ async function smoke() {
     );
   } finally {
     await stopProcess(child);
+    if (smokeProfileRoot) {
+      await rm(smokeProfileRoot, { force: true, recursive: true }).catch(
+        () => {},
+      );
+    }
   }
 }
 
