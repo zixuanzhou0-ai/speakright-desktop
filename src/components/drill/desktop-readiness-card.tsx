@@ -15,14 +15,24 @@ import { Button } from "@/components/ui/button";
 import { getAzureConfig, subscribeToStorage } from "@/lib/api-keys";
 import {
   buildDesktopReadinessSummary,
+  DESKTOP_MIC_SAMPLE_MS,
+  evaluateDesktopMicSignal,
   readDesktopMicCheck,
   saveDesktopMicCheck,
   type DesktopMicCheck,
+  type DesktopMicSignal,
   type DesktopReadinessStep,
 } from "@/lib/desktop-readiness";
 import { cn } from "@/lib/utils";
 
-type MicStatus = "unknown" | "checking" | "ready" | "unsupported" | "denied" | "error";
+type MicStatus =
+  | "unknown"
+  | "checking"
+  | "ready"
+  | "unsupported"
+  | "denied"
+  | "low-signal"
+  | "error";
 
 const STEP_ICONS = {
   azure: KeyRound,
@@ -45,15 +55,66 @@ function isPermissionDenied(error: unknown): boolean {
   );
 }
 
+function formatSignalLevel(value?: number): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "";
+  return ` · 电平 ${Math.round(value * 100)}%`;
+}
+
 function micStatusText(status: MicStatus, check: DesktopMicCheck | null): string {
   if (status === "ready") {
-    return check?.deviceLabel ? check.deviceLabel : "已通过";
+    return check?.deviceLabel
+      ? `${check.deviceLabel}${formatSignalLevel(check.rmsLevel)}`
+      : `已通过${formatSignalLevel(check?.rmsLevel)}`;
   }
   if (status === "checking") return "检测中";
   if (status === "unsupported") return "不可用";
   if (status === "denied") return "未授权";
+  if (status === "low-signal") return "输入太低";
   if (status === "error") return "检测失败";
   return "待检测";
+}
+
+async function measureMicSignal(stream: MediaStream): Promise<DesktopMicSignal | null> {
+  const AudioContextCtor =
+    window.AudioContext ??
+    (window as Window & { webkitAudioContext?: typeof AudioContext })
+      .webkitAudioContext;
+  if (!AudioContextCtor) return null;
+
+  const audioContext = new AudioContextCtor();
+  const source = audioContext.createMediaStreamSource(stream);
+  const analyser = audioContext.createAnalyser();
+  analyser.fftSize = 2048;
+  source.connect(analyser);
+
+  const samples = new Float32Array(analyser.fftSize);
+  let sumSquares = 0;
+  let sampleCount = 0;
+  let peakLevel = 0;
+  const startedAt = performance.now();
+  const deadline = startedAt + DESKTOP_MIC_SAMPLE_MS;
+
+  try {
+    while (performance.now() < deadline) {
+      analyser.getFloatTimeDomainData(samples);
+      for (const sample of samples) {
+        const level = Math.abs(sample);
+        peakLevel = Math.max(peakLevel, level);
+        sumSquares += level * level;
+        sampleCount += 1;
+      }
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    }
+  } finally {
+    source.disconnect();
+    await audioContext.close().catch(() => {});
+  }
+
+  return {
+    rmsLevel: sampleCount > 0 ? Math.sqrt(sumSquares / sampleCount) : 0,
+    peakLevel,
+    sampledMs: Math.round(performance.now() - startedAt),
+  };
 }
 
 export function DesktopReadinessCard({
@@ -99,19 +160,27 @@ export function DesktopReadinessCard({
     }
 
     setMicStatus("checking");
+    let stream: MediaStream | null = null;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         audio: { sampleRate: 16000, channelCount: 1 },
       });
       const deviceLabel = stream.getAudioTracks()[0]?.label;
-      for (const track of stream.getTracks()) {
-        track.stop();
+      const signal = await measureMicSignal(stream);
+      if (signal && !evaluateDesktopMicSignal(signal).passed) {
+        setMicCheck(null);
+        setMicStatus("low-signal");
+        return;
       }
-      const saved = saveDesktopMicCheck({ deviceLabel });
+      const saved = saveDesktopMicCheck({ deviceLabel, ...(signal ?? {}) });
       setMicCheck(saved);
       setMicStatus("ready");
     } catch (error) {
       setMicStatus(isPermissionDenied(error) ? "denied" : "error");
+    } finally {
+      for (const track of stream?.getTracks() ?? []) {
+        track.stop();
+      }
     }
   };
 
@@ -166,14 +235,20 @@ export function DesktopReadinessCard({
           {!microphoneReady && (
             <Button
               type="button"
-              variant={micStatus === "denied" ? "destructive" : "outline"}
+              variant={
+                micStatus === "denied" || micStatus === "low-signal"
+                  ? "destructive"
+                  : "outline"
+              }
               onClick={handleMicCheck}
               disabled={micStatus === "checking" || micStatus === "unsupported"}
               className="gap-2"
             >
               {micStatus === "checking" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
-              ) : micStatus === "denied" || micStatus === "error" ? (
+              ) : micStatus === "denied" ||
+                micStatus === "low-signal" ||
+                micStatus === "error" ? (
                 <AlertTriangle className="h-4 w-4" />
               ) : (
                 <Mic2 className="h-4 w-4" />

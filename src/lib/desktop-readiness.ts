@@ -2,11 +2,28 @@
 
 export const DESKTOP_MIC_CHECK_KEY = "speakright_desktop_mic_check_v1";
 export const DESKTOP_MIC_CHECK_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+export const DESKTOP_MIC_SAMPLE_MS = 1_200;
+export const DESKTOP_MIC_MIN_RMS_LEVEL = 0.012;
+export const DESKTOP_MIC_MIN_PEAK_LEVEL = 0.04;
 
 export interface DesktopMicCheck {
   version: 1;
   passedAt: number;
   deviceLabel?: string;
+  rmsLevel?: number;
+  peakLevel?: number;
+  sampledMs?: number;
+}
+
+export interface DesktopMicSignal {
+  rmsLevel: number;
+  peakLevel: number;
+  sampledMs: number;
+}
+
+export interface DesktopMicSignalEvaluation {
+  passed: boolean;
+  reason?: "low-signal";
 }
 
 export type DesktopReadinessStepId = "azure" | "microphone" | "diagnosis";
@@ -29,6 +46,12 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
 
+function finiteNonNegative(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0
+    ? value
+    : undefined;
+}
+
 export function parseDesktopMicCheck(raw: string | null): DesktopMicCheck | null {
   if (!raw) return null;
   try {
@@ -42,7 +65,7 @@ export function parseDesktopMicCheck(raw: string | null): DesktopMicCheck | null
       return null;
     }
 
-    return {
+    const check: DesktopMicCheck = {
       version: 1,
       passedAt: parsed.passedAt,
       deviceLabel:
@@ -50,9 +73,26 @@ export function parseDesktopMicCheck(raw: string | null): DesktopMicCheck | null
           ? parsed.deviceLabel
           : undefined,
     };
+    const rmsLevel = finiteNonNegative(parsed.rmsLevel);
+    const peakLevel = finiteNonNegative(parsed.peakLevel);
+    const sampledMs = finiteNonNegative(parsed.sampledMs);
+    if (rmsLevel !== undefined) check.rmsLevel = rmsLevel;
+    if (peakLevel !== undefined) check.peakLevel = peakLevel;
+    if (sampledMs !== undefined) check.sampledMs = sampledMs;
+    return check;
   } catch {
     return null;
   }
+}
+
+export function evaluateDesktopMicSignal({
+  rmsLevel,
+  peakLevel,
+}: Pick<DesktopMicSignal, "rmsLevel" | "peakLevel">): DesktopMicSignalEvaluation {
+  const passed =
+    rmsLevel >= DESKTOP_MIC_MIN_RMS_LEVEL ||
+    peakLevel >= DESKTOP_MIC_MIN_PEAK_LEVEL;
+  return passed ? { passed } : { passed: false, reason: "low-signal" };
 }
 
 export function isDesktopMicCheckFresh(
@@ -73,7 +113,7 @@ export function readDesktopMicCheck(now = Date.now()): DesktopMicCheck | null {
 }
 
 export function saveDesktopMicCheck(
-  check: Omit<DesktopMicCheck, "version" | "passedAt"> & {
+  check: Partial<Omit<DesktopMicCheck, "version" | "passedAt">> & {
     passedAt?: number;
   } = {},
 ): DesktopMicCheck {
@@ -82,6 +122,9 @@ export function saveDesktopMicCheck(
     passedAt: check.passedAt ?? Date.now(),
     deviceLabel: check.deviceLabel,
   };
+  if (check.rmsLevel !== undefined) item.rmsLevel = check.rmsLevel;
+  if (check.peakLevel !== undefined) item.peakLevel = check.peakLevel;
+  if (check.sampledMs !== undefined) item.sampledMs = check.sampledMs;
   if (typeof window !== "undefined") {
     localStorage.setItem(DESKTOP_MIC_CHECK_KEY, JSON.stringify(item));
     window.dispatchEvent(new StorageEvent("storage", { key: DESKTOP_MIC_CHECK_KEY }));

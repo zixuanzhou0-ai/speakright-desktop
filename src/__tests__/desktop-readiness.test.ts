@@ -3,6 +3,9 @@ import {
   buildDesktopReadinessSummary,
   DESKTOP_MIC_CHECK_KEY,
   DESKTOP_MIC_CHECK_MAX_AGE_MS,
+  DESKTOP_MIC_MIN_PEAK_LEVEL,
+  DESKTOP_MIC_MIN_RMS_LEVEL,
+  evaluateDesktopMicSignal,
   isDesktopMicCheckFresh,
   parseDesktopMicCheck,
   readDesktopMicCheck,
@@ -21,12 +24,18 @@ describe("desktop readiness", () => {
           version: 1,
           passedAt: 1000,
           deviceLabel: "Studio Mic",
+          rmsLevel: 0.025,
+          peakLevel: 0.08,
+          sampledMs: 1200,
         }),
       ),
     ).toEqual({
       version: 1,
       passedAt: 1000,
       deviceLabel: "Studio Mic",
+      rmsLevel: 0.025,
+      peakLevel: 0.08,
+      sampledMs: 1200,
     });
     expect(parseDesktopMicCheck(null)).toBeNull();
     expect(parseDesktopMicCheck("{bad json")).toBeNull();
@@ -49,14 +58,41 @@ describe("desktop readiness", () => {
     ).toBe(false);
   });
 
+  it("requires real microphone signal before considering desktop audio ready", () => {
+    expect(
+      evaluateDesktopMicSignal({
+        rmsLevel: DESKTOP_MIC_MIN_RMS_LEVEL,
+        peakLevel: 0,
+      }),
+    ).toEqual({ passed: true });
+    expect(
+      evaluateDesktopMicSignal({
+        rmsLevel: 0,
+        peakLevel: DESKTOP_MIC_MIN_PEAK_LEVEL,
+      }),
+    ).toEqual({ passed: true });
+    expect(
+      evaluateDesktopMicSignal({ rmsLevel: 0.001, peakLevel: 0.002 }),
+    ).toEqual({ passed: false, reason: "low-signal" });
+  });
+
   it("saves and reads the latest desktop microphone check", () => {
-    saveDesktopMicCheck({ passedAt: 2000, deviceLabel: "USB Mic" });
+    saveDesktopMicCheck({
+      passedAt: 2000,
+      deviceLabel: "USB Mic",
+      rmsLevel: 0.02,
+      peakLevel: 0.09,
+      sampledMs: 1200,
+    });
 
     expect(localStorage.getItem(DESKTOP_MIC_CHECK_KEY)).toContain("USB Mic");
     expect(readDesktopMicCheck(2001)).toEqual({
       version: 1,
       passedAt: 2000,
       deviceLabel: "USB Mic",
+      rmsLevel: 0.02,
+      peakLevel: 0.09,
+      sampledMs: 1200,
     });
   });
 
