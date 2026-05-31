@@ -49,6 +49,35 @@ describe("release security configuration", () => {
     expect(urls.every((url) => !url.startsWith("http://"))).toBe(true);
   });
 
+  it("keeps Tauri HTTP permission scoped to the allowlisted default object", () => {
+    const capability = readJson<{
+      permissions: Array<
+        | string
+        | {
+            identifier?: string;
+            allow?: Array<{ url?: string }>;
+          }
+      >;
+    }>("src-tauri/capabilities/default.json");
+
+    const bareHttpPermissions = capability.permissions.filter(
+      (permission): permission is string =>
+        typeof permission === "string" && permission.startsWith("http:"),
+    );
+    const scopedHttpDefaults = capability.permissions.filter(
+      (
+        permission,
+      ): permission is { identifier: string; allow: Array<{ url?: string }> } =>
+        typeof permission !== "string" &&
+        permission.identifier === "http:default" &&
+        Array.isArray(permission.allow),
+    );
+
+    expect(bareHttpPermissions).toEqual([]);
+    expect(scopedHttpDefaults).toHaveLength(1);
+    expect(scopedHttpDefaults[0].allow.length).toBeGreaterThan(0);
+  });
+
   it("keeps Tauri store permissions limited to the settings store operations in use", () => {
     const capability = readJson<{
       permissions: Array<string | Record<string, unknown>>;
