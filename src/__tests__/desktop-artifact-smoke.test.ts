@@ -85,6 +85,13 @@ describe("desktop artifact smoke wiring", () => {
       "utf8",
     );
 
+    expect(workflow).toContain("concurrency:");
+    expect(workflow).toMatch(
+      /group:\s+\$\{\{\s*github\.workflow\s*\}\}-\$\{\{\s*github\.ref\s*\}\}/,
+    );
+    expect(workflow).toMatch(
+      /cancel-in-progress:\s+\$\{\{\s*!startsWith\(github\.ref,\s*'refs\/tags\/v'\)\s*\}\}/,
+    );
     expect(workflow).toContain("timeout-minutes: 45");
     expect(workflow).toContain("timeout-minutes: 30");
     expect(workflow).toContain("Validate desktop build");
