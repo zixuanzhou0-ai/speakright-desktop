@@ -128,6 +128,32 @@ describe("api key storage in Tauri", () => {
     ]);
   });
 
+  it("rolls back optimistic secret cache when Tauri persistence fails", async () => {
+    const { getAzureConfig, setAzureConfig } = await import("@/lib/api-keys");
+    setAzureConfig({ subscriptionKey: "old-secret", region: "eastus" });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    mocks.secureStoreSet.mockRejectedValueOnce(
+      new Error("keychain unavailable"),
+    );
+
+    setAzureConfig({ subscriptionKey: "new-secret", region: "westus" });
+    expect(getAzureConfig()).toEqual({
+      subscriptionKey: "new-secret",
+      region: "westus",
+    });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(getAzureConfig()).toEqual({
+      subscriptionKey: "old-secret",
+      region: "eastus",
+    });
+    expect(mocks.secureStore.get("speakright_azure_config")).toEqual({
+      subscriptionKey: "old-secret",
+      region: "eastus",
+    });
+    expect(localStorage.getItem("speakright_azure_config")).toBeNull();
+  });
+
   it("emits a visible storage error event when app preference persistence fails", async () => {
     mocks.storeSet.mockRejectedValueOnce(
       new Error("settings store unavailable"),
@@ -147,5 +173,22 @@ describe("api key storage in Tauri", () => {
     expect(events).toEqual([
       { operation: "save", message: "settings store unavailable" },
     ]);
+  });
+
+  it("rolls back optimistic app preference cache when Tauri persistence fails", async () => {
+    const { getCoachMode, setCoachMode } = await import("@/lib/api-keys");
+    setCoachMode("normal");
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    mocks.storeSet.mockRejectedValueOnce(
+      new Error("settings store unavailable"),
+    );
+
+    setCoachMode("strict");
+    expect(getCoachMode()).toBe("strict");
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(getCoachMode()).toBe("normal");
+    expect(mocks.store.get("speakright_coach_mode")).toBe("normal");
+    expect(localStorage.getItem("speakright_coach_mode")).toBeNull();
   });
 });

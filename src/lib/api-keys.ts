@@ -110,15 +110,34 @@ function getItem<T>(key: string): T | null {
 }
 
 function setItem<T>(key: string, value: T): void {
-  if (isTauriEnvironment()) {
+  const tauri = isTauriEnvironment();
+  const hadRuntimeValue = runtimeCache.has(key);
+  const previousRuntimeValue = runtimeCache.get(key);
+  const previousLocalValue =
+    typeof window === "undefined" ? null : localStorage.getItem(key);
+
+  if (tauri) {
     runtimeCache.set(key, value);
     localStorage.removeItem(key);
   } else {
     localStorage.setItem(key, JSON.stringify(value));
   }
-  void persistentSet(key, value).catch((error: unknown) =>
-    dispatchStorageError(key, "save", error),
-  );
+  void persistentSet(key, value).catch((error: unknown) => {
+    if (tauri) {
+      if (hadRuntimeValue) {
+        runtimeCache.set(key, previousRuntimeValue);
+      } else {
+        runtimeCache.delete(key);
+      }
+      if (previousLocalValue !== null) {
+        localStorage.setItem(key, previousLocalValue);
+      } else {
+        localStorage.removeItem(key);
+      }
+      window.dispatchEvent(new StorageEvent("storage", { key }));
+    }
+    dispatchStorageError(key, "save", error);
+  });
   window.dispatchEvent(new StorageEvent("storage", { key }));
 }
 
