@@ -47,6 +47,7 @@ const CACHE_STORAGE_KEYS = [
 const DEVICE_STORAGE_KEYS = [DESKTOP_MIC_CHECK_KEY] as const;
 
 const LEARNING_STORAGE_PREFIXES = [
+  "speakright_assessment_result_v2:",
   "speakright_mastery_profile_v2:",
   "speakright_training_sessions_v2:",
 ] as const;

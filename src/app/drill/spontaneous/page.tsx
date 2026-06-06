@@ -16,6 +16,7 @@ import { WaveformDisplay } from "@/components/audio/waveform-display";
 import { LanguageModuleGate } from "@/components/common/language-module-gate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { useRecorder } from "@/hooks/use-recorder";
 import { useRecordingQuality } from "@/hooks/use-recording-quality";
 import { assessPronunciation, transcribeSpeech } from "@/lib/api-client";
@@ -52,6 +53,7 @@ const PROMPTS = [
 ];
 
 export default function SpontaneousPage() {
+  const { languageId } = useLanguageConfig();
   const [profile, setProfile] = useState<MasteryProfile | null>(null);
   const [promptId, setPromptId] = useState(PROMPTS[0].id);
   const [transcript, setTranscript] = useState("");
@@ -67,8 +69,12 @@ export default function SpontaneousPage() {
   });
 
   useEffect(() => {
-    setProfile(loadMasteryProfile(DEFAULT_LANGUAGE_ID));
-  }, []);
+    setProfile(
+      languageId === DEFAULT_LANGUAGE_ID
+        ? loadMasteryProfile(DEFAULT_LANGUAGE_ID)
+        : null,
+    );
+  }, [languageId]);
 
   const prompt = useMemo(
     () => PROMPTS.find((item) => item.id === promptId) ?? PROMPTS[0],
@@ -104,6 +110,7 @@ export default function SpontaneousPage() {
   };
 
   const submit = async () => {
+    if (languageId !== DEFAULT_LANGUAGE_ID) return;
     const config = getAzureConfig();
     if (!config) {
       setError("请先在设置页面配置 Azure Speech API 密钥");
@@ -156,6 +163,7 @@ export default function SpontaneousPage() {
         setSummary(transferSummary);
       }
       await saveBenchmarkRecording(recorder.audioBlob, {
+        languageId: DEFAULT_LANGUAGE_ID,
         source: "spontaneous",
         title: prompt.title,
         text: nextTranscript,

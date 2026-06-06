@@ -43,12 +43,12 @@ export default function ProgressPage() {
   );
 
   useEffect(() => {
-    setRecordings(listBenchmarkRecordings());
+    setRecordings(listBenchmarkRecordings(languageId));
     setProfile(loadMasteryProfile(languageId));
   }, [languageId]);
 
   const refreshRecordings = () => {
-    setRecordings(listBenchmarkRecordings());
+    setRecordings(listBenchmarkRecordings(languageId));
   };
 
   const mastered = profile
@@ -78,10 +78,10 @@ export default function ProgressPage() {
   };
 
   const handleClearRecordings = async () => {
-    if (!window.confirm("清空全部本机 benchmark 录音？此操作不能撤销。")) {
+    if (!window.confirm("清空当前语言的本机 benchmark 录音？此操作不能撤销。")) {
       return;
     }
-    await clearBenchmarkRecordings();
+    await clearBenchmarkRecordings(languageId);
     refreshRecordings();
   };
 

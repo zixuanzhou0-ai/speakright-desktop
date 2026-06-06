@@ -165,6 +165,7 @@ function EnglishCoveragePassageAssessmentPage() {
 
   const finalizeReport = useCallback(() => {
     const report = buildCoveragePassageDiagnosisReport({
+      languageId: "en-US",
       recordings: recordingsRef.current,
     });
     saveReport(report);
@@ -229,6 +230,7 @@ function EnglishCoveragePassageAssessmentPage() {
         message: "正在判断是否需要补测某些薄弱音...",
       });
       const preliminaryReport = buildCoveragePassageDiagnosisReport({
+        languageId: "en-US",
         recordings: recordingsRef.current,
       });
       const probes = selectCoverageAdaptiveProbes(

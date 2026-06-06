@@ -144,6 +144,10 @@ export default function PerceptionDrillPage() {
       setPhase({ type: "completed", summary });
       return;
     }
+    if (languageId !== DEFAULT_LANGUAGE_ID) {
+      setPhase({ type: "completed", summary });
+      return;
+    }
     const session = buildHvptTrainingSession(selectedContrast, summary);
     const nextProfile = recordTrainingSession(
       loadMasteryProfile(DEFAULT_LANGUAGE_ID),

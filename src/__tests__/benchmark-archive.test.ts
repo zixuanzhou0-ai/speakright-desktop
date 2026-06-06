@@ -5,11 +5,19 @@ import {
   summarizeBenchmarkGroups,
   summarizeBenchmarkTrend,
 } from "@/lib/benchmark-archive";
+import type { BenchmarkRecordingMeta } from "@/lib/benchmark-archive";
+
+function benchmark(
+  item: Omit<BenchmarkRecordingMeta, "languageId"> &
+    Partial<Pick<BenchmarkRecordingMeta, "languageId">>,
+): BenchmarkRecordingMeta {
+  return { languageId: "en-US", ...item };
+}
 
 describe("benchmark archive", () => {
   it("summarizes before/after score trend", () => {
     const trend = summarizeBenchmarkTrend([
-      {
+      benchmark({
         id: "a",
         createdAt: 1000,
         source: "prosody",
@@ -17,8 +25,8 @@ describe("benchmark archive", () => {
         text: "hello",
         score: 68,
         targetLabel: "stress",
-      },
-      {
+      }),
+      benchmark({
         id: "b",
         createdAt: 2000,
         source: "prosody",
@@ -26,7 +34,7 @@ describe("benchmark archive", () => {
         text: "hello",
         score: 82,
         targetLabel: "stress",
-      },
+      }),
     ]);
 
     expect(trend.latestScore).toBe(82);
@@ -46,7 +54,7 @@ describe("benchmark archive", () => {
 
   it("groups trends by source, target and normalized text", () => {
     const groups = summarizeBenchmarkGroups([
-      {
+      benchmark({
         id: "a",
         createdAt: 1000,
         source: "prosody",
@@ -54,8 +62,8 @@ describe("benchmark archive", () => {
         text: "Hello, world!",
         score: 70,
         targetLabel: "stress",
-      },
-      {
+      }),
+      benchmark({
         id: "b",
         createdAt: 2000,
         source: "prosody",
@@ -63,8 +71,8 @@ describe("benchmark archive", () => {
         text: "hello world",
         score: 80,
         targetLabel: "stress",
-      },
-      {
+      }),
+      benchmark({
         id: "c",
         createdAt: 3000,
         source: "scenario",
@@ -72,7 +80,7 @@ describe("benchmark archive", () => {
         text: "hello world",
         score: 95,
         targetLabel: "stress",
-      },
+      }),
     ]);
 
     expect(groups).toHaveLength(2);
@@ -87,7 +95,7 @@ describe("benchmark archive", () => {
   });
 
   it("normalizes target label order for scenario trend grouping", () => {
-    const first = benchmarkGroupKey({
+    const first = benchmarkGroupKey(benchmark({
       id: "a",
       createdAt: 1000,
       source: "scenario",
@@ -95,8 +103,8 @@ describe("benchmark archive", () => {
       text: "I worked late.",
       score: 80,
       targetLabel: "v-w, final-consonants",
-    });
-    const second = benchmarkGroupKey({
+    }));
+    const second = benchmarkGroupKey(benchmark({
       id: "b",
       createdAt: 2000,
       source: "scenario",
@@ -104,9 +112,37 @@ describe("benchmark archive", () => {
       text: "I worked late.",
       score: 85,
       targetLabel: "final-consonants, v-w",
-    });
+    }));
 
     expect(first).toBe(second);
+  });
+
+  it("separates identical benchmark text by language", () => {
+    const english = benchmarkGroupKey(
+      benchmark({
+        id: "en",
+        createdAt: 1000,
+        source: "scenario",
+        title: "scenario",
+        text: "No.",
+        score: 80,
+        targetLabel: "stress",
+      }),
+    );
+    const spanish = benchmarkGroupKey(
+      benchmark({
+        id: "es",
+        languageId: "es-ES",
+        createdAt: 1000,
+        source: "scenario",
+        title: "scenario",
+        text: "No.",
+        score: 80,
+        targetLabel: "stress",
+      }),
+    );
+
+    expect(english).not.toBe(spanish);
   });
 
   it("encodes benchmark audio blobs for data export", async () => {

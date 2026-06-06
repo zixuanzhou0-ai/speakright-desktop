@@ -36,7 +36,12 @@ const KNOWN_JSON_STORAGE_KEYS = [
   "speakright_stress_cache",
 ] as const;
 
-const KNOWN_JSON_STORAGE_PREFIXES = ["speakright_mw_words_"] as const;
+const KNOWN_JSON_STORAGE_PREFIXES = [
+  "speakright_assessment_result_v2:",
+  "speakright_mastery_profile_v2:",
+  "speakright_training_sessions_v2:",
+  "speakright_mw_words_",
+] as const;
 
 export interface CorruptLocalDataItem {
   key: string;

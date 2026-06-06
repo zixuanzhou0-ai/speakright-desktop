@@ -18,6 +18,7 @@ import { WaveformDisplay } from "@/components/audio/waveform-display";
 import { LanguageModuleGate } from "@/components/common/language-module-gate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { useAzureAssessment } from "@/hooks/use-azure-assessment";
 import { useRecorder } from "@/hooks/use-recorder";
 import { useRecordingQuality } from "@/hooks/use-recording-quality";
@@ -37,6 +38,7 @@ import {
 } from "@/lib/prosody-training";
 
 export default function ProsodyPage() {
+  const { languageId } = useLanguageConfig();
   const [selectedId, setSelectedId] = useState(PROSODY_EXERCISES[0].id);
   const [analysis, setAnalysis] = useState<ProsodyAnalysis | null>(null);
   const recorder = useRecorder({ maxDurationMs: 35_000 });
@@ -69,6 +71,7 @@ export default function ProsodyPage() {
   };
 
   const submit = async () => {
+    if (languageId !== DEFAULT_LANGUAGE_ID) return;
     if (!recorder.audioBlob || !quality.report?.canSubmit) return;
     const result = await assessment.assess(recorder.audioBlob, exercise.text);
     if (!result) return;
@@ -81,6 +84,7 @@ export default function ProsodyPage() {
     saveMasteryProfile(profile, DEFAULT_LANGUAGE_ID);
     try {
       await saveBenchmarkRecording(recorder.audioBlob, {
+        languageId: DEFAULT_LANGUAGE_ID,
         source: "prosody",
         title: exercise.title,
         text: exercise.text,

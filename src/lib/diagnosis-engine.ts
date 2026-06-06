@@ -738,7 +738,7 @@ export function buildDiagnosisReport({
 }
 
 export function buildCoveragePassageDiagnosisReport({
-  languageId = DEFAULT_LANGUAGE_ID,
+  languageId,
   recordings,
 }: CoveragePassageBuildInput): DiagnosisReport {
   if (languageId !== DEFAULT_LANGUAGE_ID) {

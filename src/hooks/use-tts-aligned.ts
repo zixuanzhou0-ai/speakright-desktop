@@ -2,6 +2,7 @@
 
 import { Howl } from "howler";
 import { useCallback, useRef, useState } from "react";
+import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { elevenLabsTtsAligned } from "@/lib/api-client";
 import { getElevenLabsConfig } from "@/lib/api-keys";
 import { getTtsFromCache, setTtsToCache } from "@/lib/tts-cache";
@@ -77,6 +78,7 @@ function aggregateToWordTimings(
 }
 
 export function useTtsAligned(): UseTtsAlignedReturn {
+  const { languageId } = useLanguageConfig();
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -190,8 +192,20 @@ export function useTtsAligned(): UseTtsAlignedReturn {
       setCurrentTime(0);
 
       try {
+        const modelId = config.modelId || "eleven_flash_v2_5";
+        const cacheKeyParts = {
+          languageId,
+          provider: "elevenlabs",
+          modelId,
+          voiceId: config.voiceId,
+          purpose: "sentence" as const,
+          speed,
+          text,
+          textNormalizerVersion: "aligned-v1",
+        };
+
         // Check cache first
-        const cached = await getTtsFromCache(text, config.voiceId, speed);
+        const cached = await getTtsFromCache(cacheKeyParts);
         if (requestIdRef.current !== requestId) return;
         if (cached) {
           const blob = cached.audioBlob;
@@ -210,7 +224,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
           config.apiKey,
           config.voiceId,
           text,
-          config.modelId || "eleven_flash_v2_5",
+          modelId,
           speed,
         );
         if (requestIdRef.current !== requestId) return;
@@ -232,7 +246,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
         const blob = new Blob([audioBytes], { type: "audio/mpeg" });
 
         // Cache the result
-        await setTtsToCache(text, config.voiceId, speed, blob, alignment);
+        await setTtsToCache(cacheKeyParts, blob, alignment);
         if (requestIdRef.current !== requestId) return;
 
         // Dispatch custom event to notify usage monitor (only on actual API calls)
@@ -253,7 +267,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
         setIsLoading(false);
       }
     },
-    [cleanup, playBlob],
+    [cleanup, languageId, playBlob],
   );
 
   const replay = useCallback(() => {

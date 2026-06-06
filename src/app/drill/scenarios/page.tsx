@@ -18,6 +18,7 @@ import { WaveformDisplay } from "@/components/audio/waveform-display";
 import { LanguageModuleGate } from "@/components/common/language-module-gate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { useAzureAssessment } from "@/hooks/use-azure-assessment";
 import { useRecorder } from "@/hooks/use-recorder";
 import { useRecordingQuality } from "@/hooks/use-recording-quality";
@@ -38,6 +39,7 @@ import {
 import type { MasteryProfile } from "@/types/training";
 
 export default function ScenariosPage() {
+  const { languageId } = useLanguageConfig();
   const [profile, setProfile] = useState<MasteryProfile | null>(null);
   const [scenarioId, setScenarioId] = useState(TRANSFER_SCENARIOS[0].id);
   const [userText, setUserText] = useState("");
@@ -53,8 +55,12 @@ export default function ScenariosPage() {
   });
 
   useEffect(() => {
-    setProfile(loadMasteryProfile(DEFAULT_LANGUAGE_ID));
-  }, []);
+    setProfile(
+      languageId === DEFAULT_LANGUAGE_ID
+        ? loadMasteryProfile(DEFAULT_LANGUAGE_ID)
+        : null,
+    );
+  }, [languageId]);
 
   const plan = useMemo(
     () => buildTransferPromptPlan(scenarioId, profile),
@@ -78,6 +84,7 @@ export default function ScenariosPage() {
   };
 
   const submit = async () => {
+    if (languageId !== DEFAULT_LANGUAGE_ID) return;
     if (!recorder.audioBlob || !quality.report?.canSubmit) return;
     const result = await assessment.assess(recorder.audioBlob, textToRead);
     if (!result) return;
@@ -108,6 +115,7 @@ export default function ScenariosPage() {
     }
     try {
       await saveBenchmarkRecording(recorder.audioBlob, {
+        languageId: DEFAULT_LANGUAGE_ID,
         source: "scenario",
         title: plan.scenario.title,
         text: textToRead,

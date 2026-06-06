@@ -17,6 +17,10 @@ vi.mock("@/lib/api-keys", () => ({
   getElevenLabsConfig: mocks.getElevenLabsConfig,
 }));
 
+vi.mock("@/hooks/use-api-keys", () => ({
+  useLanguageConfig: () => ({ languageId: "en-US" }),
+}));
+
 vi.mock("@/lib/tts-cache", () => ({
   getTtsFromCache: mocks.getTtsFromCache,
   setTtsToCache: mocks.setTtsToCache,

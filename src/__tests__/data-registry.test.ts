@@ -65,6 +65,10 @@ describe("data registry", () => {
       JSON.stringify({ version: 2, languageId: "es-ES" }),
     );
     localStorage.setItem(
+      "speakright_assessment_result_v2:es-ES",
+      JSON.stringify({ languageId: "es-ES", overallScore: 78 }),
+    );
+    localStorage.setItem(
       "speakright_azure_config",
       JSON.stringify({ subscriptionKey: "secret" }),
     );
@@ -82,6 +86,12 @@ describe("data registry", () => {
         languageId: "es-ES",
       },
     );
+    expect(
+      snapshot.localStorage["speakright_assessment_result_v2:es-ES"],
+    ).toEqual({
+      languageId: "es-ES",
+      overallScore: 78,
+    });
     expect(snapshot.localStorage.speakright_azure_config).toBeUndefined();
     expect(snapshot.indexedDb.benchmarkRecordings).toEqual({
       meta: [],
@@ -200,6 +210,7 @@ describe("data registry", () => {
   it("deletes learning data and caches while preserving app settings and keys", async () => {
     const { deleteLearningData } = await import("@/lib/data-registry");
     localStorage.setItem("speakright_mastery_profile_v2", "{}");
+    localStorage.setItem("speakright_assessment_result_v2:es-ES", "{}");
     localStorage.setItem("speakright_mastery_profile_v2:es-ES", "{}");
     localStorage.setItem("speakright_training_sessions_v2:es-ES", "[]");
     localStorage.setItem("speakright_ipa_cache", "{}");
@@ -211,6 +222,9 @@ describe("data registry", () => {
     await deleteLearningData();
 
     expect(localStorage.getItem("speakright_mastery_profile_v2")).toBeNull();
+    expect(
+      localStorage.getItem("speakright_assessment_result_v2:es-ES"),
+    ).toBeNull();
     expect(localStorage.getItem("speakright_mastery_profile_v2:es-ES")).toBeNull();
     expect(
       localStorage.getItem("speakright_training_sessions_v2:es-ES"),

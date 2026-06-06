@@ -1,36 +1,46 @@
 import { describe, expect, it } from "vitest";
+import { buildTtsCacheKey } from "@/lib/tts-cache";
 
-// Test the buildCacheKey logic directly (the function is internal to tts-cache.ts,
-// so we test its behavior through the module's public API contract)
+const baseKey = {
+  languageId: "en-US",
+  provider: "elevenlabs",
+  modelId: "eleven_flash_v2_5",
+  voiceId: "voice1",
+  purpose: "sentence" as const,
+  speed: 1,
+  text: "Hello",
+  textNormalizerVersion: "aligned-v1",
+};
+
 describe("TTS cache key format", () => {
-  // Replicating the internal buildCacheKey logic for unit testing
-  function buildCacheKey(text: string, voiceId: string, speed: number): string {
-    return `${text.trim().toLowerCase()}:${voiceId}:${speed.toFixed(1)}`;
-  }
-
-  it("lowercases text", () => {
-    expect(buildCacheKey("Hello", "voice1", 1.0)).toBe("hello:voice1:1.0");
+  it("normalizes text and speed while preserving provider dimensions", () => {
+    expect(buildTtsCacheKey({ ...baseKey, text: "  Hello  " })).toBe(
+      "v2:en-US:elevenlabs:eleven_flash_v2_5:voice1:sentence:1.0:default-dict:aligned-v1:hello",
+    );
   });
 
-  it("trims whitespace", () => {
-    expect(buildCacheKey("  hello  ", "voice1", 1.0)).toBe("hello:voice1:1.0");
+  it("separates identical text across languages", () => {
+    const english = buildTtsCacheKey(baseKey);
+    const spanish = buildTtsCacheKey({ ...baseKey, languageId: "es-ES" });
+
+    expect(english).not.toBe(spanish);
   });
 
-  it("normalizes speed to 1 decimal", () => {
-    expect(buildCacheKey("hello", "voice1", 0.85)).toBe("hello:voice1:0.8");
-    expect(buildCacheKey("hello", "voice1", 1.0)).toBe("hello:voice1:1.0");
-    expect(buildCacheKey("hello", "voice1", 0.7)).toBe("hello:voice1:0.7");
-  });
+  it("separates provider, model, voice, purpose and speed", () => {
+    const original = buildTtsCacheKey(baseKey);
 
-  it("includes voiceId in key", () => {
-    const key1 = buildCacheKey("hello", "voice1", 1.0);
-    const key2 = buildCacheKey("hello", "voice2", 1.0);
-    expect(key1).not.toBe(key2);
-  });
-
-  it("different speeds produce different keys", () => {
-    const key1 = buildCacheKey("hello", "voice1", 0.8);
-    const key2 = buildCacheKey("hello", "voice1", 1.0);
-    expect(key1).not.toBe(key2);
+    expect(
+      buildTtsCacheKey({ ...baseKey, provider: "azure-tts" }),
+    ).not.toBe(original);
+    expect(
+      buildTtsCacheKey({ ...baseKey, modelId: "eleven_multilingual_v2" }),
+    ).not.toBe(original);
+    expect(
+      buildTtsCacheKey({ ...baseKey, voiceId: "voice2" }),
+    ).not.toBe(original);
+    expect(
+      buildTtsCacheKey({ ...baseKey, purpose: "diagnosis" }),
+    ).not.toBe(original);
+    expect(buildTtsCacheKey({ ...baseKey, speed: 0.85 })).not.toBe(original);
   });
 });
