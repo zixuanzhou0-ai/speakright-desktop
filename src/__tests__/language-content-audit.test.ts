@@ -139,6 +139,56 @@ describe("language content audit", () => {
     expect(getLanguagePhonemeBySlug("ru-RU", "ru-stress-reduction")).toBeUndefined();
   });
 
+  it("keeps second-pass phonology review fixes in place", () => {
+    const spanishD = getLanguagePhonemeBySlug("es-ES", "es-d");
+    const spanishG = getLanguagePhonemeBySlug("es-ES", "es-g");
+    const spanishB = getLanguagePhonemeBySlug("es-ES", "es-b");
+    const spanishHiatus = getLanguagePhonemeBySlug("es-ES", "es-diphthong-hiatus");
+    const spanishOU = getLanguagePhonemeBySlug("es-ES", "es-o-u");
+    const frenchNasal = getLanguagePhonemeBySlug("fr-FR", "fr-nasal-contrast");
+    const frenchEnchainement = getLanguagePhonemeBySlug("fr-FR", "fr-enchainement");
+    const frenchRhythm = getLanguagePhonemeBySlug("fr-FR", "fr-rhythm-group");
+    const russianStress = getLanguagePhonemeBySlug("ru-RU", "ru-stress");
+    const russianFinalDevoicing = getLanguagePhonemeBySlug(
+      "ru-RU",
+      "ru-final-devoicing",
+    );
+    const russianKgx = getLanguagePhonemeBySlug("ru-RU", "ru-kgx-pair");
+    const russianSz = getLanguagePhonemeBySlug("ru-RU", "ru-sz-pair");
+    const russianSoftSign = getLanguagePhonemeBySlug("ru-RU", "ru-soft-sign");
+
+    expect(spanishD?.keywords.map((entry) => entry.word)).not.toContain("nada");
+    expect(spanishD?.keywords.map((entry) => entry.word)).not.toContain("lado");
+    expect(spanishG?.ipa).toBe("/ɡ/");
+    expect(spanishG?.keywords.map((entry) => entry.word)).not.toContain("agua");
+    expect(spanishB?.keywords.map((entry) => entry.word)).not.toContain("bebé");
+    expect(
+      spanishHiatus?.keywords.find((entry) => entry.word === "día")?.ipa,
+    ).toBe("/ˈdi.a/");
+    expect(spanishOU?.name).toContain("near contrast");
+
+    expect(frenchNasal?.keywords.map((entry) => entry.word)).not.toContain(
+      "France / français",
+    );
+    expect(frenchEnchainement?.keywords[0]?.ipa).toBe("/a.vɛ.k‿ɛl/");
+    expect(frenchRhythm?.keywords[0]?.ipa).toBe("/ʒə vu.dʁɛ œ̃ ka.fe/");
+
+    expect(russianStress?.keywords.map((entry) => entry.word)).not.toContain(
+      "во́да / вода́",
+    );
+    expect(russianStress?.keywords.map((entry) => entry.word)).toContain(
+      "пла́чу / плачу́",
+    );
+    expect(
+      russianFinalDevoicing?.keywords.find((entry) => entry.word === "город")?.ipa,
+    ).toBe("/ˈgorod/ → [ˈgorət]");
+    expect(russianKgx?.keywords.map((entry) => entry.word)).not.toContain("год");
+    expect(russianSz?.keywords.map((entry) => entry.word)).not.toContain("зуб");
+    expect(russianSoftSign?.keywords.map((entry) => entry.word)).not.toContain(
+      "любовь",
+    );
+  });
+
   it("ships Spanish beta as real content, not only a language toggle", () => {
     const profile = getLanguageProfile("es-ES");
     const pack = getLanguageContentPack("es-ES");
