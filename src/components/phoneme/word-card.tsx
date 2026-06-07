@@ -34,6 +34,7 @@ export function WordCard({
 }: WordCardProps) {
   const mw = useMwPronunciation();
   const [direction, setDirection] = useState<number>(1);
+  const isLongWord = currentWord.word.length >= 14;
 
   const handlePrev = useCallback(() => {
     if (hasPrevious) {
@@ -83,12 +84,13 @@ export function WordCard({
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               <Card className="border-2 shadow-md hover:shadow-lg transition-shadow">
-                <CardContent className="flex flex-col items-center gap-1 p-3">
+                <CardContent className="flex min-w-0 flex-col items-center gap-1 p-3 text-center">
                   <motion.span
                     animate={{ scale: isActive ? 1.08 : 1 }}
                     transition={springTransition}
                     className={cn(
-                      "text-3xl font-bold rounded-lg px-3 py-0.5 transition-colors duration-200",
+                      "max-w-full whitespace-normal break-words rounded-lg px-3 py-0.5 font-bold leading-tight transition-colors duration-200 [overflow-wrap:anywhere]",
+                      isLongWord ? "text-2xl" : "text-3xl",
                       isActive && "bg-primary/15 text-primary",
                     )}
                   >
@@ -96,7 +98,7 @@ export function WordCard({
                   </motion.span>
                   <span
                     className={cn(
-                      "font-mono text-base transition-colors duration-200",
+                      "max-w-full whitespace-normal break-words font-mono text-sm leading-snug transition-colors duration-200 [overflow-wrap:anywhere]",
                       isActive ? "text-primary/70" : "text-muted-foreground",
                     )}
                   >

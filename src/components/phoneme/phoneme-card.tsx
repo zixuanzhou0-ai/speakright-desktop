@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { UseAudioPlayerReturn } from "@/hooks/use-audio-player";
+import { cn } from "@/lib/utils";
 import {
   getPhonemeCategoryLabel,
   getSoundUnitTypeLabel,
@@ -47,6 +48,8 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
   const word = phoneme.chartWord ?? phoneme.example;
   const image = phoneme.chartImage;
   const keywordIpa = phoneme.chartIpa ?? phoneme.keywords[0]?.ipa;
+  const isLongPhoneme = phoneme.ipa.length >= 8;
+  const isVeryLongPhoneme = phoneme.ipa.length >= 14;
 
   const handlePlayPhoneme = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -68,13 +71,20 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
     <Link href={`/phonemes/${phoneme.slug}`} className="block">
       <Card className="relative h-full cursor-pointer p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
         {/* Top row: IPA + difficulty badge */}
-        <div className="mb-4 flex items-start justify-between">
+        <div className="mb-4 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
           <motion.span
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
             transition={springTransition}
             onClick={handlePlayPhoneme}
-            className="cursor-pointer select-none font-mono text-4xl font-bold"
+            className={cn(
+              "min-w-0 cursor-pointer select-none whitespace-normal break-words font-mono font-bold leading-tight [overflow-wrap:anywhere]",
+              isVeryLongPhoneme
+                ? "text-xl"
+                : isLongPhoneme
+                  ? "text-2xl"
+                  : "text-4xl",
+            )}
           >
             {phoneme.ipa}
           </motion.span>
@@ -100,7 +110,7 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
 
         {/* Bottom: image + word + play */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 items-center gap-3">
             {image && (
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -118,10 +128,14 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
                 />
               </motion.div>
             )}
-            <div>
-              {word && <p className="font-semibold capitalize">{word}</p>}
+            <div className="min-w-0">
+              {word && (
+                <p className="min-w-0 truncate font-semibold capitalize">
+                  {word}
+                </p>
+              )}
               {keywordIpa && (
-                <p className="text-sm text-muted-foreground font-mono">
+                <p className="min-w-0 truncate text-sm text-muted-foreground font-mono">
                   {keywordIpa}
                 </p>
               )}

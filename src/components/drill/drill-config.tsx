@@ -7,6 +7,7 @@ import { useCoachMode, useLanguageConfig } from "@/hooks/use-api-keys";
 import { getAvailableWordCount, getPassThreshold } from "@/lib/drill-utils";
 import { getLanguagePhonemes } from "@/lib/language-phonemes";
 import { getPhonemeDisplayGroups } from "@/lib/phoneme-display";
+import { cn } from "@/lib/utils";
 import type { DrillKind } from "@/types/drill";
 import type { PhonemeData } from "@/types/phoneme";
 
@@ -158,20 +159,35 @@ function PhonemeChip({
   selected: boolean;
   onClick: () => void;
 }) {
+  const isLongPhoneme = phoneme.ipa.length >= 8;
+  const isVeryLongPhoneme = phoneme.ipa.length >= 14;
+
   return (
     <motion.button
       type="button"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       onClick={onClick}
-      className={`flex flex-col items-center gap-0.5 rounded-lg border p-2 text-center transition-colors cursor-pointer ${
+      className={cn(
+        "flex min-h-20 flex-col items-center justify-center gap-1 rounded-lg border p-2 text-center transition-colors cursor-pointer",
         selected
           ? "border-primary bg-primary/10 text-primary"
-          : "border-border hover:border-primary/50"
-      }`}
+          : "border-border hover:border-primary/50",
+      )}
     >
-      <span className="font-mono text-lg font-bold">{phoneme.ipa}</span>
-      <span className="text-[10px] text-muted-foreground truncate w-full">
+      <span
+        className={cn(
+          "w-full min-w-0 whitespace-normal break-words font-mono font-bold leading-tight [overflow-wrap:anywhere]",
+          isVeryLongPhoneme
+            ? "text-[11px]"
+            : isLongPhoneme
+              ? "text-sm"
+              : "text-lg",
+        )}
+      >
+        {phoneme.ipa}
+      </span>
+      <span className="w-full min-w-0 truncate text-[10px] text-muted-foreground">
         {phoneme.example}
       </span>
     </motion.button>

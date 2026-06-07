@@ -10,6 +10,7 @@ import {
 import { getLanguagePhonemes } from "@/lib/language-phonemes";
 import { DEFAULT_LANGUAGE_ID } from "@/lib/language-profiles";
 import { getPhonemeDisplayGroups } from "@/lib/phoneme-display";
+import { cn } from "@/lib/utils";
 import type { LanguageId } from "@/types/language";
 
 interface PhonemeHealthMapProps {
@@ -54,26 +55,26 @@ export function PhonemeHealthMap({
         renderedCount += group.phonemes.length;
         return (
           <div key={group.id}>
-          <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
-            {group.label}（{group.phonemes.length}）
-          </h3>
-          <div className="grid grid-cols-8 gap-1.5">
-            {group.phonemes.map((p, i) => {
-              const normalized = normalizeScore(scores[p.slug]);
-              return (
-                <PhonemeCell
-                  key={p.slug}
-                  ipa={p.ipa}
-                  slug={p.slug}
-                  name={p.name}
-                score={normalized.score}
-                sampleCount={normalized.sampleCount}
-                  delay={(startIndex + i) * 0.03}
-              />
-            );
-          })}
+            <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
+              {group.label}（{group.phonemes.length}）
+            </h3>
+            <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-6 lg:grid-cols-8">
+              {group.phonemes.map((p, i) => {
+                const normalized = normalizeScore(scores[p.slug]);
+                return (
+                  <PhonemeCell
+                    key={p.slug}
+                    ipa={p.ipa}
+                    slug={p.slug}
+                    name={p.name}
+                    score={normalized.score}
+                    sampleCount={normalized.sampleCount}
+                    delay={(startIndex + i) * 0.03}
+                  />
+                );
+              })}
+            </div>
           </div>
-        </div>
         );
       })}
     </div>
@@ -95,6 +96,9 @@ function PhonemeCell({
   sampleCount: number;
   delay: number;
 }) {
+  const isLongPhoneme = ipa.length >= 8;
+  const isVeryLongPhoneme = ipa.length >= 14;
+
   return (
     <Tooltip>
       <TooltipTrigger
@@ -111,9 +115,20 @@ function PhonemeCell({
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}
           transition={{ delay, type: "spring", stiffness: 300, damping: 20 }}
-          className={`flex flex-col items-center justify-center rounded-lg p-1.5 text-center cursor-pointer transition-shadow hover:shadow-md ${getColor(score)}`}
+          className={`flex min-h-14 flex-col items-center justify-center rounded-lg p-1.5 text-center cursor-pointer transition-shadow hover:shadow-md ${getColor(score)}`}
         >
-          <span className="font-mono text-sm font-bold">{ipa}</span>
+          <span
+            className={cn(
+              "max-w-full whitespace-normal break-words font-mono font-bold leading-tight [overflow-wrap:anywhere]",
+              isVeryLongPhoneme
+                ? "text-[10px]"
+                : isLongPhoneme
+                  ? "text-xs"
+                  : "text-sm",
+            )}
+          >
+            {ipa}
+          </span>
           <span className="text-[10px] tabular-nums">
             {score > 0 ? score : "—"}
           </span>
