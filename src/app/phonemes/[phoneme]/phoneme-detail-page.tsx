@@ -364,6 +364,13 @@ export function PhonemeDetailPage() {
             </div>
           )}
 
+          {phoneme.scoringPolicy?.singlePhonemeScore === "no" && (
+            <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+              这个发音单位更适合做听辨、跟读或规则训练，不适合用单次音素分判断掌握。
+              {phoneme.scoringPolicy.notes ? ` ${phoneme.scoringPolicy.notes}` : ""}
+            </div>
+          )}
+
           {/* ── 练习区 ── */}
           <div className="shrink-0 rounded-xl border bg-card px-4 py-4 shadow-sm">
             <div className="flex flex-col items-center gap-2">

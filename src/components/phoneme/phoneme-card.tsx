@@ -8,6 +8,10 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { UseAudioPlayerReturn } from "@/hooks/use-audio-player";
+import {
+  getPhonemeCategoryLabel,
+  getSoundUnitTypeLabel,
+} from "@/lib/phoneme-display";
 import type { Difficulty, PhonemeData } from "@/types/phoneme";
 
 interface PhonemeCardProps {
@@ -39,23 +43,25 @@ const DIFFICULTY_VARIANT: Record<
 export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
   const [lastWordPlay, setLastWordPlay] = useState<"normal" | "slow">("slow");
 
-  const word = phoneme.chartWord;
+  const localChartWord = phoneme.chartWord;
+  const word = phoneme.chartWord ?? phoneme.example;
   const image = phoneme.chartImage;
+  const keywordIpa = phoneme.chartIpa ?? phoneme.keywords[0]?.ipa;
 
   const handlePlayPhoneme = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!word) return;
-    player.play(`/audio/ipa/phoneme/${word}.mp3`);
+    if (!localChartWord) return;
+    player.play(`/audio/ipa/phoneme/${localChartWord}.mp3`);
   };
 
   const handlePlayWord = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!word) return;
+    if (!localChartWord) return;
     const next = lastWordPlay === "slow" ? "normal" : "slow";
     setLastWordPlay(next);
-    player.play(`/audio/ipa/${next}/${word}.mp3`);
+    player.play(`/audio/ipa/${next}/${localChartWord}.mp3`);
   };
 
   return (
@@ -83,7 +89,7 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
         {/* Category + description */}
         <div className="mb-5">
           <p className="text-sm font-semibold">
-            {phoneme.category === "vowel" ? "元音" : "辅音"}
+            {getPhonemeCategoryLabel(phoneme)} · {getSoundUnitTypeLabel(phoneme)}
           </p>
           {phoneme.description && (
             <p className="mt-1 text-sm leading-snug text-muted-foreground line-clamp-2">
@@ -114,22 +120,24 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
             )}
             <div>
               {word && <p className="font-semibold capitalize">{word}</p>}
-              {phoneme.chartIpa && (
+              {keywordIpa && (
                 <p className="text-sm text-muted-foreground font-mono">
-                  {phoneme.chartIpa}
+                  {keywordIpa}
                 </p>
               )}
             </div>
           </div>
-          <motion.div
-            whileHover={{ scale: 1.15 }}
-            whileTap={{ scale: 0.95 }}
-            transition={springTransition}
-            onClick={handlePlayPhoneme}
-            className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-muted transition-colors hover:bg-primary hover:text-primary-foreground"
-          >
-            <Play className="h-5 w-5" />
-          </motion.div>
+          {localChartWord && (
+            <motion.div
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.95 }}
+              transition={springTransition}
+              onClick={handlePlayPhoneme}
+              className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-muted transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              <Play className="h-5 w-5" />
+            </motion.div>
+          )}
         </div>
       </Card>
     </Link>

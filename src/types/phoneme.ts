@@ -1,8 +1,26 @@
 import type { LanguageId } from "@/types/language";
 
-export type PhonemeCategory = "vowel" | "consonant" | "prosody" | "cluster";
+export type PhonemeCategory =
+  | "vowel"
+  | "consonant"
+  | "semivowel"
+  | "prosody"
+  | "cluster";
 export type Difficulty = "high" | "medium" | "easy";
-export type SoundUnitType = "phoneme" | "contrast" | "prosody" | "cluster";
+export type SoundUnitType =
+  | "phoneme"
+  | "allophone"
+  | "contrast"
+  | "prosody"
+  | "cluster";
+export type RolloutPriority = "must" | "should" | "later";
+
+export interface ScoringPolicy {
+  singlePhonemeScore: "yes" | "caution" | "no";
+  recommendedMode: "phoneme" | "word" | "phrase" | "sentence" | "rule";
+  azureRisk: "low" | "medium" | "high";
+  notes: string;
+}
 
 export interface KeywordEntry {
   word: string;
@@ -16,8 +34,12 @@ export interface PhonemeData {
   symbol: string;
   slug: string;
   name: string;
+  displayNameZh?: string;
   category: PhonemeCategory;
   soundUnitType?: SoundUnitType;
+  rolloutPriority?: RolloutPriority;
+  commonMistakesZh?: string[];
+  scoringPolicy?: ScoringPolicy;
   example: string;
   keywords: KeywordEntry[];
   difficulty: Difficulty;

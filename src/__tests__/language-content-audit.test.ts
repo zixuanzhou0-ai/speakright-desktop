@@ -45,6 +45,100 @@ describe("language content audit", () => {
     }
   });
 
+  it("ships expanded sound-unit maps for Spanish, French, and Russian", () => {
+    const requiredByLanguage = {
+      "es-ES": [
+        "es-p",
+        "es-t",
+        "es-k",
+        "es-tch",
+        "es-y",
+        "es-bdg-lenition",
+        "es-r-contrast",
+        "es-s-theta",
+        "es-n-ny",
+        "es-stress",
+      ],
+      "fr-FR": [
+        "fr-a",
+        "fr-o-close",
+        "fr-o-open",
+        "fr-p",
+        "fr-b",
+        "fr-sh",
+        "fr-zh",
+        "fr-j",
+        "fr-hui",
+        "fr-w",
+        "fr-silent-finals",
+        "fr-enchainement",
+      ],
+      "ru-RU": [
+        "ru-e",
+        "ru-td-pair",
+        "ru-l-hard-soft",
+        "ru-r-hard-soft",
+        "ru-j",
+        "ru-sh",
+        "ru-zh",
+        "ru-ts",
+        "ru-ch",
+        "ru-shch",
+        "ru-stress",
+        "ru-vowel-reduction",
+        "ru-final-devoicing",
+      ],
+    } as const;
+
+    expect(auditLanguageCoverage("es-ES").soundUnits).toBeGreaterThanOrEqual(35);
+    expect(auditLanguageCoverage("fr-FR").soundUnits).toBeGreaterThanOrEqual(40);
+    expect(auditLanguageCoverage("ru-RU").soundUnits).toBeGreaterThanOrEqual(30);
+
+    for (const [languageId, slugs] of Object.entries(requiredByLanguage)) {
+      for (const slug of slugs) {
+        expect(getLanguagePhonemeBySlug(languageId as keyof typeof requiredByLanguage, slug)).toBeDefined();
+      }
+    }
+  });
+
+  it("keeps reviewed IPA details and avoids legacy combined Russian starter pages", () => {
+    const spanishTrill = getLanguagePhonemeBySlug("es-ES", "es-trill-r");
+    const spanishHiatus = getLanguagePhonemeBySlug("es-ES", "es-diphthong-hiatus");
+    const frenchLiaison = getLanguagePhonemeBySlug("fr-FR", "fr-liaison");
+    const russianI = getLanguagePhonemeBySlug("ru-RU", "ru-i");
+    const russianTs = getLanguagePhonemeBySlug("ru-RU", "ru-ts");
+    const russianCh = getLanguagePhonemeBySlug("ru-RU", "ru-ch");
+    const russianFinalDevoicing = getLanguagePhonemeBySlug(
+      "ru-RU",
+      "ru-final-devoicing",
+    );
+
+    expect(
+      spanishTrill?.keywords.find((entry) => entry.word === "rápido")?.ipa,
+    ).toBe("/ˈrapido/");
+    expect(
+      spanishTrill?.keywords.find((entry) => entry.word === "río")?.ipa,
+    ).toBe("/ˈri.o/");
+    expect(
+      spanishHiatus?.keywords.find((entry) => entry.word === "río")?.ipa,
+    ).toBe("/ˈri.o/");
+
+    expect(frenchLiaison?.name).toBe("liaison");
+    expect(frenchLiaison?.keywords[0]?.ipa).toBe("/le.z‿a.mi/");
+    expect(getLanguagePhonemeBySlug("fr-FR", "fr-enchainement")).toBeDefined();
+    expect(getLanguagePhonemeBySlug("fr-FR", "fr-silent-finals")).toBeDefined();
+
+    expect(russianI?.keywords.find((entry) => entry.word === "мир")?.ipa).toBe(
+      "/mʲir/",
+    );
+    expect(russianTs?.ipa).toBe("/t͡s/");
+    expect(russianCh?.ipa).toBe("/t͡ɕ/");
+    expect(russianFinalDevoicing?.keywords[0]?.ipa).toBe("/drug/ → [druk]");
+    expect(getLanguagePhonemeBySlug("ru-RU", "ru-sh-zh")).toBeUndefined();
+    expect(getLanguagePhonemeBySlug("ru-RU", "ru-ts-ch-shch")).toBeUndefined();
+    expect(getLanguagePhonemeBySlug("ru-RU", "ru-stress-reduction")).toBeUndefined();
+  });
+
   it("ships Spanish beta as real content, not only a language toggle", () => {
     const profile = getLanguageProfile("es-ES");
     const pack = getLanguageContentPack("es-ES");

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useCoachMode, useLanguageConfig } from "@/hooks/use-api-keys";
 import { getAvailableWordCount, getPassThreshold } from "@/lib/drill-utils";
 import { getLanguagePhonemes } from "@/lib/language-phonemes";
-import { getLanguageProfile } from "@/lib/language-profiles";
+import { getPhonemeDisplayGroups } from "@/lib/phoneme-display";
 import type { DrillKind } from "@/types/drill";
 import type { PhonemeData } from "@/types/phoneme";
 
@@ -27,13 +27,8 @@ export function DrillConfig({ kind, onStart }: DrillConfigProps) {
   const [itemCount, setItemCount] = useState(kind === "word" ? 10 : 5);
 
   const { languageId } = useLanguageConfig();
-  const profile = getLanguageProfile(languageId);
   const phonemes = getLanguagePhonemes(languageId);
-  const vowels = phonemes.filter((p) => p.category === "vowel");
-  const consonants = phonemes.filter((p) => p.category === "consonant");
-  const otherUnits = phonemes.filter(
-    (p) => p.category !== "vowel" && p.category !== "consonant",
-  );
+  const groups = getPhonemeDisplayGroups(phonemes);
   const countOptions =
     kind === "word" ? WORD_COUNT_OPTIONS : SENTENCE_COUNT_OPTIONS;
   const coachMode = useCoachMode();
@@ -59,45 +54,13 @@ export function DrillConfig({ kind, onStart }: DrillConfigProps) {
   return (
     <div className="space-y-6">
       {/* Phoneme selection */}
-      <div>
-        <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
-          元音（{vowels.length}）
-        </h3>
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-8">
-          {vowels.map((p) => (
-            <PhonemeChip
-              key={p.slug}
-              phoneme={p}
-              selected={selectedSlug === p.slug}
-              onClick={() => setSelectedSlug(p.slug)}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
-          辅音（{consonants.length}）
-        </h3>
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-8">
-          {consonants.map((p) => (
-            <PhonemeChip
-              key={p.slug}
-              phoneme={p}
-              selected={selectedSlug === p.slug}
-              onClick={() => setSelectedSlug(p.slug)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {otherUnits.length > 0 && (
-        <div>
+      {groups.map((group) => (
+        <div key={group.id}>
           <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
-            {profile.soundUnitLabel}补充（{otherUnits.length}）
+            {group.label}（{group.phonemes.length}）
           </h3>
           <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 lg:grid-cols-8">
-            {otherUnits.map((p) => (
+            {group.phonemes.map((p) => (
               <PhonemeChip
                 key={p.slug}
                 phoneme={p}
@@ -107,7 +70,7 @@ export function DrillConfig({ kind, onStart }: DrillConfigProps) {
             ))}
           </div>
         </div>
-      )}
+      ))}
 
       {/* Count selection + start */}
       {selectedSlug && (

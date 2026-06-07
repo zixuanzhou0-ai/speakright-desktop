@@ -67,7 +67,7 @@ export const LANGUAGE_PROFILES: Record<LanguageId, LanguageProfile> = {
       "/x/",
     ],
     knownGaps: [
-      "西语已有第一版单词、句子、最小对立和诊断 beta，但还没有 native speaker Azure fixture 校准。",
+      "西语发音单位目录已扩展到第一版完整地图；单词、句子、最小对立和诊断仍是 beta，还没有 native speaker Azure fixture 校准。",
       "当前 profile 是 es-ES；拉美西语 seseo、yeísmo 等变体需要单独 profile 或方言开关。",
       "单词发音暂走在线发音/TTS fallback，尚未建立西语专用本地缓存和 evidence mastery gate。",
     ],
@@ -100,7 +100,7 @@ export const LANGUAGE_PROFILES: Record<LanguageId, LanguageProfile> = {
       "liaison and enchaînement",
     ],
     knownGaps: [
-      "法语现在只到核心元音/鼻化元音/法语 r/连诵 starter list，远没达到完整课程。",
+      "法语发音单位目录已扩展，但单词训练、句子训练、诊断、缓存音频和本地视频仍未形成完整课程。",
       "鼻化元音需要专门的听辨和录音质量门槛，不能用英语式音素评分直接升级 mastery。",
       "连诵和静音词尾是句子层规则，需要单独内容引擎。",
     ],
@@ -134,7 +134,7 @@ export const LANGUAGE_PROFILES: Record<LanguageId, LanguageProfile> = {
       "consonant clusters",
     ],
     knownGaps: [
-      "俄语现在把硬软辅音、重音、辅音丛作为训练单位显示，不应叫单纯音标表。",
+      "俄语发音单位目录已扩展，但硬软辅音、重音、弱化和辅音丛仍需要专门训练内容，不应叫单纯音标表。",
       "需要把硬/软辅音拆成更细的成对训练，否则学习路径仍然太粗。",
       "俄语重音会改变元音质量，诊断必须先有重音标注和词级 evidence。",
     ],

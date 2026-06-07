@@ -5,8 +5,9 @@ import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useLanguageConfig } from "@/hooks/use-api-keys";
-import { getLanguagePhonemesByCategory } from "@/lib/language-phonemes";
+import { getLanguagePhonemes } from "@/lib/language-phonemes";
 import { getLanguageProfile } from "@/lib/language-profiles";
+import { getPhonemeDisplayGroups } from "@/lib/phoneme-display";
 import { getBestScoreForPhoneme } from "@/lib/score-history";
 import { cn } from "@/lib/utils";
 import type { LanguageId } from "@/types/language";
@@ -102,7 +103,7 @@ function PhonemeGroup({
                     {p.ipa}
                   </span>
                   <span className="flex-1 truncate capitalize text-muted-foreground">
-                    {p.chartWord}
+                    {p.chartWord ?? p.example}
                   </span>
                   <ScoreBadge score={scores[p.slug] ?? null} />
                 </Link>
@@ -118,49 +119,23 @@ function PhonemeGroup({
 export function SidebarPhonemeList({ currentSlug }: SidebarPhonemeListProps) {
   const { languageId } = useLanguageConfig();
   const profile = getLanguageProfile(languageId);
-  const vowels = getLanguagePhonemesByCategory(languageId, "vowel");
-  const consonants = getLanguagePhonemesByCategory(languageId, "consonant");
-  const prosody = getLanguagePhonemesByCategory(languageId, "prosody");
-  const clusters = getLanguagePhonemesByCategory(languageId, "cluster");
-
-  const currentIsVowel = vowels.some((p) => p.slug === currentSlug);
-  const currentIsProsody = prosody.some((p) => p.slug === currentSlug);
-  const currentIsCluster = clusters.some((p) => p.slug === currentSlug);
+  const groups = getPhonemeDisplayGroups(getLanguagePhonemes(languageId));
 
   return (
     <div className="flex flex-col gap-0.5">
-      <PhonemeGroup
-        label="元音"
-        phonemes={vowels}
-        currentSlug={currentSlug}
-        defaultOpen={currentIsVowel || !currentSlug}
-        languageId={languageId}
-      />
-      <PhonemeGroup
-        label="辅音"
-        phonemes={consonants}
-        currentSlug={currentSlug}
-        defaultOpen={!currentIsVowel && !currentIsProsody && !currentIsCluster && !!currentSlug}
-        languageId={languageId}
-      />
-      {prosody.length > 0 && (
+      {groups.map((group, index) => (
         <PhonemeGroup
-          label="重音/连读"
-          phonemes={prosody}
+          key={group.id}
+          label={group.label}
+          phonemes={group.phonemes}
           currentSlug={currentSlug}
-          defaultOpen={currentIsProsody}
+          defaultOpen={
+            group.phonemes.some((p) => p.slug === currentSlug) ||
+            (!currentSlug && index === 0)
+          }
           languageId={languageId}
         />
-      )}
-      {clusters.length > 0 && (
-        <PhonemeGroup
-          label="辅音丛"
-          phonemes={clusters}
-          currentSlug={currentSlug}
-          defaultOpen={currentIsCluster}
-          languageId={languageId}
-        />
-      )}
+      ))}
       <div className="px-2 pt-2 text-[11px] text-muted-foreground/60">
         {profile.shortLabel} · {profile.soundUnitLabel}
       </div>

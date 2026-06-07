@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import { getLanguagePhonemes } from "@/lib/language-phonemes";
 import { DEFAULT_LANGUAGE_ID } from "@/lib/language-profiles";
+import { getPhonemeDisplayGroups } from "@/lib/phoneme-display";
 import type { LanguageId } from "@/types/language";
 
 interface PhonemeHealthMapProps {
@@ -43,64 +44,21 @@ export function PhonemeHealthMap({
   scores,
   languageId = DEFAULT_LANGUAGE_ID,
 }: PhonemeHealthMapProps) {
-  const phonemes = getLanguagePhonemes(languageId);
-  const vowels = phonemes.filter((p) => p.category === "vowel");
-  const consonants = phonemes.filter((p) => p.category === "consonant");
-  const otherUnits = phonemes.filter(
-    (p) => p.category !== "vowel" && p.category !== "consonant",
-  );
+  const groups = getPhonemeDisplayGroups(getLanguagePhonemes(languageId));
+  let renderedCount = 0;
 
   return (
     <div className="space-y-4">
-      <div>
-        <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
-          元音（{vowels.length}）
-        </h3>
-        <div className="grid grid-cols-8 gap-1.5">
-          {vowels.map((p, i) => {
-            const normalized = normalizeScore(scores[p.slug]);
-            return (
-              <PhonemeCell
-                key={p.slug}
-                ipa={p.ipa}
-                slug={p.slug}
-                name={p.name}
-                score={normalized.score}
-                sampleCount={normalized.sampleCount}
-                delay={i * 0.03}
-              />
-            );
-          })}
-        </div>
-      </div>
-      <div>
-        <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
-          辅音（{consonants.length}）
-        </h3>
-        <div className="grid grid-cols-8 gap-1.5">
-          {consonants.map((p, i) => {
-            const normalized = normalizeScore(scores[p.slug]);
-            return (
-              <PhonemeCell
-                key={p.slug}
-                ipa={p.ipa}
-                slug={p.slug}
-                name={p.name}
-                score={normalized.score}
-                sampleCount={normalized.sampleCount}
-                delay={(vowels.length + i) * 0.03}
-              />
-            );
-          })}
-        </div>
-      </div>
-      {otherUnits.length > 0 && (
-        <div>
+      {groups.map((group) => {
+        const startIndex = renderedCount;
+        renderedCount += group.phonemes.length;
+        return (
+          <div key={group.id}>
           <h3 className="mb-2 text-sm font-semibold text-muted-foreground">
-            其他发音单位（{otherUnits.length}）
+            {group.label}（{group.phonemes.length}）
           </h3>
           <div className="grid grid-cols-8 gap-1.5">
-            {otherUnits.map((p, i) => {
+            {group.phonemes.map((p, i) => {
               const normalized = normalizeScore(scores[p.slug]);
               return (
                 <PhonemeCell
@@ -108,15 +66,16 @@ export function PhonemeHealthMap({
                   ipa={p.ipa}
                   slug={p.slug}
                   name={p.name}
-                  score={normalized.score}
-                  sampleCount={normalized.sampleCount}
-                  delay={(vowels.length + consonants.length + i) * 0.03}
-                />
-              );
-            })}
+                score={normalized.score}
+                sampleCount={normalized.sampleCount}
+                  delay={(startIndex + i) * 0.03}
+              />
+            );
+          })}
           </div>
         </div>
-      )}
+        );
+      })}
     </div>
   );
 }
