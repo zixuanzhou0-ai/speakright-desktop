@@ -198,7 +198,10 @@ export function DesktopReadinessCard({
   };
 
   return (
-    <section className="mb-5 rounded-xl border bg-card p-4 shadow-sm">
+    <section
+      className="mb-5 rounded-xl border bg-card p-4 shadow-sm"
+      data-smoke="desktop-readiness-checklist"
+    >
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <div className="mb-2 flex items-center gap-2">
@@ -241,7 +244,7 @@ export function DesktopReadinessCard({
 
         <div className="flex shrink-0 flex-wrap gap-2">
           {!azureReady && (
-            <Link href="/settings">
+            <Link data-smoke="configure-azure-scoring-key" href="/settings">
               <Button variant="outline" className="gap-2">
                 <KeyRound className="h-4 w-4" />
                 配置 Azure Speech 评分密钥
@@ -261,6 +264,7 @@ export function DesktopReadinessCard({
               onClick={handleMicCheck}
               disabled={micStatus === "checking" || micStatus === "unsupported"}
               className="gap-2"
+              data-smoke="check-microphone"
             >
               {micStatus === "checking" ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -276,7 +280,7 @@ export function DesktopReadinessCard({
             </Button>
           )}
           {!hasDiagnosis && (
-            <Link href="/assessment">
+            <Link data-smoke="start-three-minute-diagnosis" href="/assessment">
               <Button className="gap-2">
                 <ClipboardList className="h-4 w-4" />
                 开始 3 分钟诊断

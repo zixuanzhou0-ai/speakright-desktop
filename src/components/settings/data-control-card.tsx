@@ -148,7 +148,7 @@ export function DataControlCard() {
 
   return (
     <>
-      <Card key={summaryVersion}>
+      <Card data-smoke="data-privacy-center" key={summaryVersion}>
         <CardHeader>
           <div className="flex items-center gap-2">
             <Database className="h-4 w-4 text-primary" />

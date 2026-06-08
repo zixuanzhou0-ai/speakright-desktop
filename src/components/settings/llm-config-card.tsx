@@ -168,7 +168,10 @@ export function LlmConfigCard() {
         </div>
 
         {isDesktop && (
-          <div className="flex gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-900 dark:text-amber-200">
+          <div
+            className="flex gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-900 dark:text-amber-200"
+            data-smoke="desktop-llm-policy"
+          >
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
             <p>{DESKTOP_LLM_POLICY_MESSAGE}</p>
           </div>

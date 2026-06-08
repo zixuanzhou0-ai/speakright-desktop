@@ -19,7 +19,6 @@ const root = process.cwd();
 const expectedTitle = "SpeakRight";
 const appIdentifier = "com.speakright.desktop";
 const expectedRuntimeLogLine = "SpeakRight desktop runtime initialized";
-const desktopLlmPolicyMarker = "桌面版出于安全只允许预设 LLM provider";
 const timeoutMs = Number(process.env.SPEAKRIGHT_SMOKE_TIMEOUT_MS ?? 15_000);
 
 function executablePath() {
@@ -441,6 +440,31 @@ async function waitForBodyText(cdp, expectedText) {
   );
 }
 
+async function waitForSelector(cdp, selector) {
+  const deadline = Date.now() + 8_000;
+  let bodyText = "";
+  while (Date.now() < deadline) {
+    const result = await evaluate(
+      cdp,
+      `
+(() => {
+  const element = document.querySelector(${JSON.stringify(selector)});
+  return {
+    found: !!element,
+    bodyText: document.body ? document.body.innerText : ""
+  };
+})()
+`,
+    );
+    if (result?.found) return true;
+    bodyText = result?.bodyText ?? "";
+    await delay(250);
+  }
+  throw new Error(
+    `Desktop route did not render expected selector "${selector}". Last body text: ${bodyText.slice(0, 400)}`,
+  );
+}
+
 async function clickVisibleButtonByText(
   cdp,
   text,
@@ -551,10 +575,10 @@ async function captureInteractiveEvidence(debuggingPort) {
   try {
     await cdp.send("Runtime.enable");
     await cdp.send("Page.enable");
-    await waitForBodyText(cdp, "今日学习计划");
-    await waitForBodyText(cdp, "开始前设置清单");
-    await waitForBodyText(cdp, "检测麦克风");
-    await waitForBodyText(cdp, "开始 3 分钟诊断");
+    await waitForSelector(cdp, '[data-smoke="drill-page"]');
+    await waitForSelector(cdp, '[data-smoke="desktop-readiness-checklist"]');
+    await waitForSelector(cdp, '[data-smoke="check-microphone"]');
+    await waitForSelector(cdp, '[data-smoke="start-three-minute-diagnosis"]');
     const runtimePolicy = await evaluate(
       cdp,
       `
@@ -585,11 +609,14 @@ async function captureInteractiveEvidence(debuggingPort) {
       cdp,
       'window.location.assign(new URL("/settings", window.location.href).href); "navigating";',
     );
-    await waitForBodyText(cdp, "数据与隐私中心");
-    await waitForBodyText(cdp, desktopLlmPolicyMarker);
-    await waitForBodyText(cdp, "internal");
-    await waitForBodyText(cdp, "NotSigned");
-    await waitForBodyText(cdp, "可控内测");
+    await waitForSelector(cdp, '[data-smoke="settings-page"]');
+    await waitForSelector(cdp, '[data-smoke="data-privacy-center"]');
+    await waitForSelector(cdp, '[data-smoke="desktop-llm-policy"]');
+    await waitForSelector(
+      cdp,
+      '[data-smoke="release-status"][data-release-channel="internal"][data-signature-status="NotSigned"]',
+    );
+    await waitForSelector(cdp, '[data-smoke="release-unsigned-warning"]');
 
     const llmPolicy = await evaluate(
       cdp,
@@ -600,7 +627,7 @@ async function captureInteractiveEvidence(debuggingPort) {
   );
   return {
     customButtonDisabled: customButton?.disabled === true,
-    policyVisible: document.body.innerText.includes("${desktopLlmPolicyMarker}")
+    policyVisible: !!document.querySelector('[data-smoke="desktop-llm-policy"]')
   };
 })()
 `,

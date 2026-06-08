@@ -176,14 +176,18 @@ async function assertStaticExport() {
     {
       file: "drill.html",
       markers: [
-        "今日学习计划",
-        "开始前设置清单",
-        "配置 Azure Speech 评分密钥",
+        'data-smoke="drill-page"',
+        'data-smoke="desktop-readiness-checklist"',
+        'data-smoke="configure-azure-scoring-key"',
       ],
     },
     {
       file: "settings.html",
-      markers: ["设置", "数据与隐私中心", "Azure Speech"],
+      markers: [
+        'data-smoke="settings-page"',
+        'data-smoke="data-privacy-center"',
+        'data-smoke="azure-scoring-card"',
+      ],
     },
     {
       file: "assessment.html",

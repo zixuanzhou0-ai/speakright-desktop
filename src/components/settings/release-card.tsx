@@ -26,7 +26,12 @@ export function ReleaseCard() {
   const release = DESKTOP_RELEASE_INFO;
 
   return (
-    <Card className="border-primary/15 bg-primary/[0.03]">
+    <Card
+      className="border-primary/15 bg-primary/[0.03]"
+      data-release-channel={release.channel}
+      data-signature-status={release.build.signatureStatus}
+      data-smoke="release-status"
+    >
       <CardHeader>
         <div className="flex items-center gap-2">
           <PackageCheck className="size-5 text-primary" />
@@ -65,7 +70,10 @@ export function ReleaseCard() {
           />
         </div>
 
-        <div className="rounded-lg border border-amber-500/25 bg-amber-500/10 p-3 text-sm text-amber-900 dark:text-amber-200">
+        <div
+          className="rounded-lg border border-amber-500/25 bg-amber-500/10 p-3 text-sm text-amber-900 dark:text-amber-200"
+          data-smoke="release-unsigned-warning"
+        >
           <div className="flex gap-2">
             <ShieldAlert className="mt-0.5 size-4 shrink-0" />
             <p>{release.notes.unsigned}</p>

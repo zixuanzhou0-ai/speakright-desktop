@@ -14,7 +14,10 @@ import { UsageMonitor } from "@/components/settings/usage-monitor";
 
 export default function SettingsPage() {
   return (
-    <div className="h-full overflow-y-auto scrollbar-thin">
+    <div
+      className="h-full overflow-y-auto scrollbar-thin"
+      data-smoke="settings-page"
+    >
       <div className="max-w-5xl mx-auto px-6 py-4">
         <h1 className="mb-2 text-2xl font-bold">设置</h1>
         <p className="mb-6 text-muted-foreground">

@@ -84,7 +84,7 @@ export function AzureConfigCard() {
   };
 
   return (
-    <Card>
+    <Card data-smoke="azure-scoring-card">
       <CardHeader>
         <CardTitle>录音评分 Azure</CardTitle>
         <CardDescription>

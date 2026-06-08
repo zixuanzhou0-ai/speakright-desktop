@@ -230,7 +230,10 @@ export default function DrillPage() {
 
   return (
     <LanguageModuleGate moduleName="刻意练习" readinessKey="wordPractice">
-      <div className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin">
+      <div
+        className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin"
+        data-smoke="drill-page"
+      >
       <div className="mb-5 flex items-start justify-between gap-4 shrink-0">
         <div>
           <h1 className="text-2xl font-bold">今日学习计划</h1>
@@ -245,7 +248,7 @@ export default function DrillPage() {
               错题本
             </Button>
           </Link>
-          <Link href="/assessment">
+          <Link data-smoke="start-three-minute-diagnosis" href="/assessment">
             <Button variant="outline" className="gap-2 cursor-pointer">
               <ClipboardList className="h-4 w-4" />
               {report ? "重新 3 分钟诊断" : "开始 3 分钟诊断"}
