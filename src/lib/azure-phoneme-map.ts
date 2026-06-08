@@ -160,75 +160,220 @@ const slugToAzure: Record<string, string> = {
   h: "hh",
 };
 
-const slugToAzureAliases: Record<string, string[]> = {
-  ...Object.fromEntries(
-    Object.entries(slugToAzure).map(([slug, azureCode]) => [slug, [azureCode]]),
-  ),
+export interface AssessmentExemption {
+  reason: string;
+  suggestedEvidence: string;
+}
+
+type AssessmentAliasMap = Record<string, string[]>;
+
+const englishAssessmentAliases: AssessmentAliasMap = Object.fromEntries(
+  Object.entries(slugToAzure).map(([slug, azureCode]) => [slug, [azureCode]]),
+);
+
+export const phonemeAssessmentAliases: AssessmentAliasMap = {
+  ...englishAssessmentAliases,
+
+  // Spanish: only current es-ES sound-unit slugs. Orthographic-only rule units
+  // live in phonemeAssessmentExemptions below.
   "es-a": ["a"],
   "es-e": ["e"],
   "es-i": ["i"],
   "es-o": ["o"],
   "es-u": ["u"],
-  "es-p": ["p"],
-  "es-t": ["t"],
-  "es-k": ["k", "c"],
-  "es-s": ["s"],
-  "es-f": ["f"],
-  "es-ch": ["ch", "tʃ"],
-  "es-l": ["l"],
-  "es-m": ["m"],
-  "es-n": ["n"],
-  "es-tap-r": ["ɾ"],
-  "es-trill-r": ["r"],
+  "es-bv": ["b", "v", "β", "β̞"],
+  "es-d": ["d", "ð", "ð̞"],
+  "es-g": ["g", "ɡ", "ɣ", "ɣ̞"],
+  "es-theta": ["θ"],
   "es-x": ["x", "h"],
   "es-ny": ["ɲ", "ny"],
-  "es-ll-y": ["ʝ", "ʎ", "j", "y"],
-  "es-bv": ["b", "v", "β"],
-  "es-d": ["d", "ð"],
-  "es-g": ["g", "ɡ", "ɣ"],
-  "fr-a": ["a"],
+  "es-tap-r": ["ɾ"],
+  "es-trill-r": ["r"],
+  "es-s": ["s"],
+  "es-ch": ["ch", "tʃ", "t͡ʃ"],
+  "es-y-ll": ["ʝ", "ʎ", "j", "y"],
+  "es-l": ["l"],
+  "es-nasal-place": ["m", "n", "ŋ", "ɱ", "ɲ"],
+  "es-diphthongs-j": ["j", "i̯"],
+  "es-diphthongs-w": ["w", "u̯"],
+
+  // French current fr-FR sound units.
   "fr-i": ["i"],
-  "fr-u": ["u"],
   "fr-y": ["y"],
+  "fr-u": ["u"],
   "fr-e": ["e"],
-  "fr-epsilon": ["ɛ", "eh"],
-  "fr-schwa": ["ə", "ax"],
+  "fr-e-open": ["ɛ", "eh"],
   "fr-eu-close": ["ø"],
   "fr-eu-open": ["œ"],
+  "fr-an": ["ɑ̃", "ã"],
+  "fr-in": ["ɛ̃"],
+  "fr-on": ["ɔ̃", "õ"],
+  "fr-a": ["a"],
+  "fr-schwa": ["ə", "ax"],
   "fr-o-close": ["o"],
   "fr-o-open": ["ɔ"],
-  "fr-an": ["ɑ̃", "an", "ɑ"],
-  "fr-in": ["ɛ̃", "in"],
-  "fr-on": ["ɔ̃", "on"],
-  "fr-un": ["œ̃", "un"],
-  "fr-p": ["p"],
-  "fr-b": ["b"],
-  "fr-t": ["t"],
-  "fr-d": ["d"],
-  "fr-k": ["k", "c"],
-  "fr-g": ["g", "ɡ"],
-  "fr-f": ["f"],
-  "fr-v": ["v"],
-  "fr-s": ["s"],
-  "fr-z": ["z"],
+  "fr-un": ["œ̃"],
+  "fr-r": ["ʁ", "r", "χ"],
   "fr-sh": ["ʃ", "sh"],
   "fr-zh": ["ʒ", "zh"],
-  "fr-m": ["m"],
-  "fr-n": ["n"],
   "fr-ny": ["ɲ", "ny"],
-  "fr-l": ["l"],
-  "fr-r": ["ʁ", "r"],
-  "fr-j": ["j"],
-  "fr-hui": ["ɥ"],
-  "fr-w": ["w"],
+  "fr-glide-j": ["j"],
+  "fr-glide-hui": ["ɥ"],
+  "fr-glide-w": ["w"],
+
+  // Russian segment and contrast units. Rule/prosody-only units are explicit
+  // exemptions so they cannot silently use a whole-word pronunciation score.
+  "ru-a": ["a"],
+  "ru-o": ["o"],
+  "ru-i": ["i"],
+  "ru-y": ["ɨ"],
+  "ru-u": ["u"],
+  "ru-e": ["e", "ɛ"],
+  "ru-r": ["r"],
+  "ru-x": ["x"],
+  "ru-sh-zh": ["ʂ", "ʐ", "ʃ", "ʒ"],
+  "ru-ts-ch-shch": ["ts", "t͡s", "tɕ", "t͡ɕ", "ɕː"],
+  "ru-hard-soft": [
+    "t",
+    "tʲ",
+    "d",
+    "dʲ",
+    "s",
+    "sʲ",
+    "z",
+    "zʲ",
+    "n",
+    "nʲ",
+    "l",
+    "lʲ",
+    "r",
+    "rʲ",
+    "p",
+    "pʲ",
+    "b",
+    "bʲ",
+    "m",
+    "mʲ",
+    "f",
+    "fʲ",
+    "v",
+    "vʲ",
+  ],
+  "ru-soft-t-d": ["tʲ", "dʲ"],
+  "ru-soft-s-z": ["sʲ", "zʲ"],
+  "ru-soft-n-l-r": ["nʲ", "lʲ", "rʲ"],
+  "ru-soft-labials": ["pʲ", "bʲ", "mʲ", "fʲ", "vʲ"],
+  "ru-ts": ["ts", "t͡s"],
+  "ru-ch": ["tɕ", "t͡ɕ", "tʃ"],
+  "ru-shch": ["ɕː", "ʃː"],
+  "ru-j": ["j"],
+  "ru-iotated-vowels": ["j"],
 };
 
-function normalizeAssessmentPhoneme(phoneme: string) {
+export const phonemeAssessmentExemptions: Record<string, AssessmentExemption> =
+  {
+    "es-lexical-stress": {
+      reason:
+        "Spanish lexical stress is a suprasegmental rule/context target, not a single stable segment alias.",
+      suggestedEvidence:
+        "Use word-level stress placement, syllable timing, and repeated minimal stress pairs.",
+    },
+    "es-syllable-rhythm": {
+      reason:
+        "Spanish syllable rhythm is a prosody/timing target and cannot be represented by one phoneme alias.",
+      suggestedEvidence:
+        "Use phrase-level timing evidence across multiple syllables and recordings.",
+    },
+    "fr-liaison": {
+      reason:
+        "French liaison is a context-dependent sandhi rule, not an independent phoneme target.",
+      suggestedEvidence:
+        "Use phrase-level before/after-vowel contexts and alignment confidence.",
+    },
+    "fr-final-consonant-silence": {
+      reason:
+        "French final-consonant silence is an orthography-to-speech rule/context target.",
+      suggestedEvidence:
+        "Use word/phrase completion plus expected silent-letter checks, not segment score fallback.",
+    },
+    "fr-enchainement": {
+      reason:
+        "French enchainement is a connected-speech rule across word boundaries.",
+      suggestedEvidence:
+        "Use phrase-level boundary timing and repeated connected-speech examples.",
+    },
+    "fr-elision": {
+      reason:
+        "French elision is a rule/context target involving orthography and vowel contact.",
+      suggestedEvidence:
+        "Use phrase-level examples such as j'aime/l'ami with alignment review.",
+    },
+    "ru-soft-sign": {
+      reason:
+        "Russian soft sign is an orthographic palatalization marker, not an independent segment.",
+      suggestedEvidence:
+        "Use neighboring consonant palatalization evidence instead of a soft-sign phoneme score.",
+    },
+    "ru-stress-reduction": {
+      reason:
+        "Russian stress reduction is a word-level prosody and vowel-reduction rule.",
+      suggestedEvidence:
+        "Use stressed/unstressed vowel pairs and word-level stress evidence.",
+    },
+    "ru-unstressed-o-a": {
+      reason:
+        "Russian unstressed о/а reduction is a vowel-reduction rule tied to stress context.",
+      suggestedEvidence:
+        "Use stress-aware word contexts and avoid single-segment promotion.",
+    },
+    "ru-unstressed-e-ya": {
+      reason:
+        "Russian unstressed е/я reduction depends on stress and palatalizing context.",
+      suggestedEvidence:
+        "Use stress-aware words with soft-context checks.",
+    },
+    "ru-final-devoicing": {
+      reason:
+        "Russian final devoicing is a position/context rule rather than one phoneme target.",
+      suggestedEvidence:
+        "Use final-position word pairs and word-final voicing checks.",
+    },
+    "ru-voicing-assimilation": {
+      reason:
+        "Russian voicing assimilation is a consonant-cluster context rule.",
+      suggestedEvidence:
+        "Use cluster/phrase contexts with explicit neighboring-consonant evidence.",
+    },
+    "ru-clusters": {
+      reason:
+        "Russian consonant clusters are a sequence-level articulation target, not a single phoneme.",
+      suggestedEvidence:
+        "Use word/phrase-level cluster fluency and completeness evidence.",
+    },
+  };
+
+export function normalizeAssessmentPhoneme(phoneme: string): string {
   return phoneme
     .trim()
     .toLowerCase()
+    .normalize("NFC")
     .replace(/[/[\]]/g, "")
-    .replace(/[ˈˌ.]/g, "");
+    .replace(/[ˈˌ.]/g, "")
+    .replace(/[͜͡]/g, "");
+}
+
+export function getAssessmentAliasesForSlug(slug: string): string[] {
+  return [
+    ...new Set(
+      (phonemeAssessmentAliases[slug] ?? []).map(normalizeAssessmentPhoneme),
+    ),
+  ];
+}
+
+export function getAssessmentExemptionForSlug(
+  slug: string,
+): AssessmentExemption | undefined {
+  return phonemeAssessmentExemptions[slug];
 }
 
 /**
@@ -249,9 +394,7 @@ export function getPhonemeAccuracy(
   },
   phonemeSlug: string,
 ): number | null {
-  const targetCodes = slugToAzureAliases[phonemeSlug]?.map(
-    normalizeAssessmentPhoneme,
-  );
+  const targetCodes = getAssessmentAliasesForSlug(phonemeSlug);
   if (!targetCodes?.length) return null;
 
   const scores: number[] = [];

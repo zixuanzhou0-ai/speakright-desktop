@@ -75,6 +75,16 @@ describe("language content audit", () => {
     }
   });
 
+  it("keeps every non-English sound unit assessment-mapped or explicitly exempted", () => {
+    for (const languageId of ["es-ES", "fr-FR", "ru-RU"] as const) {
+      const audit = auditLanguageCoverage(languageId);
+
+      expect(audit.unitsWithoutAssessmentMapping).toEqual([]);
+      expect(audit.unitsWithAssessmentExemptions.length).toBeGreaterThan(0);
+      expect(audit.missingCapabilities).toContain("证据驱动 mastery");
+    }
+  });
+
   it("marks every required Russian core word with visible stress text", () => {
     const russianAudit = auditLanguageCoverage("ru-RU");
     expect(russianAudit.russianKeywordsWithoutStress).toEqual([]);

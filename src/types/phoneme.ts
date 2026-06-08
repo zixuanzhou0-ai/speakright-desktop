@@ -65,5 +65,10 @@ export interface PhonemeData {
     localSrc?: string;
     status: "ready" | "planned";
     label?: string;
+    source?: string;
+    sourceUrl?: string;
+    license?: string;
+    attribution?: string;
+    notes?: string[];
   };
 }

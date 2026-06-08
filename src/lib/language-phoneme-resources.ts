@@ -565,6 +565,11 @@ export function attachLanguagePhonemeResources(
           languageResources[0]?.title ??
           phoneme.video?.label ??
           "外部授权教学资源",
+        source: localAsset?.source ?? phoneme.video?.source,
+        sourceUrl: localAsset?.sourceUrl ?? phoneme.video?.sourceUrl,
+        license: localAsset?.license ?? phoneme.video?.license,
+        attribution: localAsset?.attribution ?? phoneme.video?.attribution,
+        notes: localAsset?.notes ?? phoneme.video?.notes,
       },
     };
   });

@@ -103,6 +103,52 @@ describe("non-English phoneme resource parity", () => {
     expect(unresolvedLocalUnits).toEqual([]);
   });
 
+  it("surfaces local asset notes and known source metadata through video metadata", () => {
+    const missingVideoMetadata = LOCAL_LANGUAGE_PHONEME_ASSETS.flatMap(
+      (asset) => {
+        const soundUnit = getLanguagePhonemes(asset.languageId).find(
+          (candidate) => candidate.slug === asset.slug,
+        );
+
+        return soundUnit?.video?.source &&
+          soundUnit.video.sourceUrl &&
+          soundUnit.video.notes?.length &&
+          (!asset.license || soundUnit.video.license === asset.license) &&
+          (!asset.attribution ||
+            soundUnit.video.attribution === asset.attribution)
+          ? []
+          : [`${asset.languageId}:${asset.slug}`];
+      },
+    );
+
+    expect(missingVideoMetadata).toEqual([]);
+  });
+
+  it("keeps Russian proxy and rule assets visibly marked in video notes", () => {
+    const markedRussianUnits = getLanguagePhonemes("ru-RU")
+      .filter((soundUnit) =>
+        soundUnit.video?.notes?.some((note) =>
+          /proxy|rule\/prosody|cluster unit|final devoicing|voicing assimilation|soft consonants|soft sign|iotated vowels/i.test(
+            note,
+          ),
+        ),
+      )
+      .map((soundUnit) => soundUnit.slug);
+
+    expect(markedRussianUnits).toEqual(
+      expect.arrayContaining([
+        "ru-ch",
+        "ru-shch",
+        "ru-hard-soft",
+        "ru-soft-sign",
+        "ru-stress-reduction",
+        "ru-final-devoicing",
+        "ru-voicing-assimilation",
+        "ru-clusters",
+      ]),
+    );
+  });
+
   it("preserves Russian Seeing Speech attribution metadata", () => {
     const russianAssets = LOCAL_LANGUAGE_PHONEME_ASSETS.filter(
       (asset) => asset.languageId === "ru-RU",

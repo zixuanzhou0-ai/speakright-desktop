@@ -1,4 +1,9 @@
-import { toIpa } from "@/lib/azure-phoneme-map";
+import {
+  getAssessmentAliasesForSlug,
+  normalizeAssessmentPhoneme,
+  toIpa,
+} from "@/lib/azure-phoneme-map";
+import { getLanguagePhonemes } from "@/lib/language-phonemes";
 import type { AzureAssessmentResult, AzureWord } from "@/types/azure";
 import type {
   DiagnosisEvidence,
@@ -7,6 +12,7 @@ import type {
   EvidenceStrength,
   RecordingQualitySnapshot,
 } from "@/types/diagnosis";
+import type { LanguageId } from "@/types/language";
 
 export interface EvidenceQualityCheck {
   score: number;
@@ -65,6 +71,7 @@ interface AnalyzeAssessmentEvidenceInput {
   referenceText: string;
   label: string;
   source: DiagnosisEvidence["source"];
+  languageId?: LanguageId;
   recordingQuality?: RecordingQualitySnapshot;
 }
 
@@ -123,7 +130,7 @@ function avg(values: number[]): number {
 }
 
 function wordsIn(text: string): string[] {
-  return text.match(/[A-Za-z]+(?:'[A-Za-z]+)?/g) ?? [];
+  return text.match(/[\p{L}\p{M}]+(?:[’'-][\p{L}\p{M}]+)*/gu) ?? [];
 }
 
 function tierFromScore(score: number): EvidenceQualityCheck["tier"] {
@@ -235,8 +242,28 @@ function alignmentFromWords(
   };
 }
 
-function slugFromAzure(code: string): string | null {
-  return AZURE_TO_SLUG[code.toLowerCase()] ?? null;
+function slugFromAssessmentCode(
+  code: string,
+  languageId: LanguageId,
+): string | null {
+  if (languageId === "en-US") {
+    return AZURE_TO_SLUG[code.toLowerCase()] ?? null;
+  }
+
+  const normalizedCode = normalizeAssessmentPhoneme(code);
+  const matchingSlugs = getLanguagePhonemes(languageId)
+    .map((phoneme) => phoneme.slug)
+    .filter((slug) =>
+      getAssessmentAliasesForSlug(slug).includes(normalizedCode),
+    );
+
+  if (matchingSlugs.length !== 1) return null;
+  return matchingSlugs[0];
+}
+
+function ipaForAssessmentCode(code: string, languageId: LanguageId): string {
+  if (languageId === "en-US") return toIpa(code);
+  return `/${normalizeAssessmentPhoneme(code)}/`;
 }
 
 function validWordForEvidence(word: AzureWord): boolean {
@@ -246,6 +273,7 @@ function validWordForEvidence(word: AzureWord): boolean {
 function buildTokens(
   result: AzureAssessmentResult,
   source: DiagnosisEvidence["source"],
+  languageId: LanguageId,
   recordingUsable: boolean,
   invalidationReason?: string,
 ): EvidenceToken[] {
@@ -254,13 +282,13 @@ function buildTokens(
     const wordValid = recordingUsable && validWordForEvidence(word);
     for (let index = 0; index < word.phonemes.length; index++) {
       const phoneme = word.phonemes[index];
-      const slug = slugFromAzure(phoneme.phoneme);
+      const slug = slugFromAssessmentCode(phoneme.phoneme, languageId);
       if (!slug) continue;
       tokens.push({
         text: word.word,
         score: Math.round(phoneme.accuracyScore),
         phoneme: slug,
-        ipa: toIpa(phoneme.phoneme),
+        ipa: ipaForAssessmentCode(phoneme.phoneme, languageId),
         position: positionFor(index, word.phonemes.length),
         source,
         valid: wordValid,
@@ -335,6 +363,7 @@ export function analyzeAssessmentEvidence({
   referenceText,
   label,
   source,
+  languageId = "en-US",
   recordingQuality,
 }: AnalyzeAssessmentEvidenceInput): AssessmentEvidenceAnalysis {
   const audioQuality = qualityFromCompleteness(result, recordingQuality);
@@ -343,7 +372,13 @@ export function analyzeAssessmentEvidence({
   const invalidationReason = usable
     ? undefined
     : ([...audioQuality.reasons, ...alignment.reasons][0] ?? "证据不可用");
-  const tokens = buildTokens(result, source, usable, invalidationReason);
+  const tokens = buildTokens(
+    result,
+    source,
+    languageId,
+    usable,
+    invalidationReason,
+  );
   const phonemeEvidence = summarizePhonemeEvidence(tokens);
   const strength = recordingStrength(tokens, usable);
   const notes = [...audioQuality.reasons, ...alignment.reasons];

@@ -1,3 +1,7 @@
+import {
+  getAssessmentAliasesForSlug,
+  getAssessmentExemptionForSlug,
+} from "@/lib/azure-phoneme-map";
 import { LANGUAGE_PROFILES } from "@/lib/language-profiles";
 import { REQUIRED_LANGUAGE_UNITS } from "@/lib/language-critical-units";
 import { getLanguageResourceSite } from "@/lib/language-resource-sites";
@@ -18,6 +22,8 @@ export interface LanguageCoverageAudit {
   unitsWithoutLocalVideo: string[];
   unitsWithoutTeachingResources: string[];
   unitsWithoutPhonemeAudio: string[];
+  unitsWithoutAssessmentMapping: string[];
+  unitsWithAssessmentExemptions: string[];
   unitsWithoutSourceRefs: string[];
   unitsWithUnknownSourceRefs: string[];
   unitsWithoutLearnerNotes: string[];
@@ -83,6 +89,16 @@ function auditUnits(languageId: LanguageId, phonemes: PhonemeData[]) {
           !phoneme.phonemeAudio?.url &&
           !phoneme.phonemeAudio?.text,
       )
+      .map((phoneme) => phoneme.slug),
+    unitsWithoutAssessmentMapping: phonemes
+      .filter(
+        (phoneme) =>
+          getAssessmentAliasesForSlug(phoneme.slug).length === 0 &&
+          !getAssessmentExemptionForSlug(phoneme.slug),
+      )
+      .map((phoneme) => phoneme.slug),
+    unitsWithAssessmentExemptions: phonemes
+      .filter((phoneme) => getAssessmentExemptionForSlug(phoneme.slug))
       .map((phoneme) => phoneme.slug),
     unitsWithoutSourceRefs: phonemes
       .filter((phoneme) => isNonEnglish && !phoneme.sourceRefs?.length)
@@ -159,6 +175,8 @@ export function auditLanguageCoverage(
     unitsWithoutLocalVideo: unitAudit.unitsWithoutLocalVideo,
     unitsWithoutTeachingResources: unitAudit.unitsWithoutTeachingResources,
     unitsWithoutPhonemeAudio: unitAudit.unitsWithoutPhonemeAudio,
+    unitsWithoutAssessmentMapping: unitAudit.unitsWithoutAssessmentMapping,
+    unitsWithAssessmentExemptions: unitAudit.unitsWithAssessmentExemptions,
     unitsWithoutSourceRefs: unitAudit.unitsWithoutSourceRefs,
     unitsWithUnknownSourceRefs: unitAudit.unitsWithUnknownSourceRefs,
     unitsWithoutLearnerNotes: unitAudit.unitsWithoutLearnerNotes,

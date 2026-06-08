@@ -64,6 +64,11 @@ export function PhonemeStudyCard({
         available={phoneme.video?.status === "ready"}
         label={phoneme.video?.label}
         localSrc={phoneme.video?.localSrc}
+        source={phoneme.video?.source}
+        sourceUrl={phoneme.video?.sourceUrl}
+        license={phoneme.video?.license}
+        attribution={phoneme.video?.attribution}
+        notes={phoneme.video?.notes}
         resources={phoneme.teachingResources}
       />
       <div className="px-4 py-3">

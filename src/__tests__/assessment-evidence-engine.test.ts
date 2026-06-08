@@ -128,4 +128,53 @@ describe("assessment evidence engine", () => {
     expect(summary.lowConfidenceFeatures).toContain("th");
     expect(summary.recommendedAction).toBe("request-more-samples");
   });
+
+  it("uses Unicode tokenization for non-English diagnosis text", () => {
+    const analysis = analyzeAssessmentEvidence({
+      label: "法语短句",
+      referenceText: "Été très bon.",
+      source: "paragraph",
+      languageId: "fr-FR",
+      result: result([
+        word("Été", [
+          { phoneme: "e", accuracyScore: 74 },
+          { phoneme: "t", accuracyScore: 86 },
+          { phoneme: "e", accuracyScore: 76 },
+        ]),
+        word("très", [{ phoneme: "ɛ", accuracyScore: 70 }]),
+        word("bon", [{ phoneme: "ɔ̃", accuracyScore: 68 }]),
+      ]),
+    });
+
+    expect(analysis.alignment.expectedWordCount).toBe(3);
+    expect(analysis.alignment.observedWordCount).toBe(3);
+    expect(analysis.phonemeEvidence["fr-e"].sampleCount).toBe(2);
+    expect(analysis.phonemeEvidence["fr-e-open"].sampleCount).toBe(1);
+    expect(analysis.phonemeEvidence["fr-on"].sampleCount).toBe(1);
+    expect(analysis.phonemeEvidence.eh).toBeUndefined();
+  });
+
+  it("outputs language-specific slugs for Russian evidence instead of English slugs", () => {
+    const analysis = analyzeAssessmentEvidence({
+      label: "俄语补测",
+      referenceText: "ты сыр",
+      source: "coverage-probe",
+      languageId: "ru-RU",
+      result: result([
+        word("ты", [
+          { phoneme: "t", accuracyScore: 82 },
+          { phoneme: "ɨ", accuracyScore: 62 },
+        ]),
+        word("сыр", [
+          { phoneme: "s", accuracyScore: 80 },
+          { phoneme: "ɨ", accuracyScore: 64 },
+          { phoneme: "r", accuracyScore: 86 },
+        ]),
+      ]),
+    });
+
+    expect(analysis.phonemeEvidence["ru-y"].sampleCount).toBe(2);
+    expect(analysis.phonemeEvidence.ih).toBeUndefined();
+    expect(analysis.phonemeEvidence.r).toBeUndefined();
+  });
 });
