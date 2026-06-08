@@ -552,9 +552,9 @@ async function captureInteractiveEvidence(debuggingPort) {
     await cdp.send("Runtime.enable");
     await cdp.send("Page.enable");
     await waitForBodyText(cdp, "今日学习计划");
-    await waitForBodyText(cdp, "桌面端准备状态");
+    await waitForBodyText(cdp, "开始前设置清单");
     await waitForBodyText(cdp, "检测麦克风");
-    await waitForBodyText(cdp, "建立诊断");
+    await waitForBodyText(cdp, "开始 3 分钟诊断");
     const runtimePolicy = await evaluate(
       cdp,
       `

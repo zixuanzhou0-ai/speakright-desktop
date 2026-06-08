@@ -93,9 +93,9 @@ describe("desktop artifact smoke wiring", () => {
     expect(smokeScript).toContain("locationProtocol");
     expect(smokeScript).toContain("locationHostname");
     expect(smokeScript).toContain("releaseServedFromDevServer");
-    expect(smokeScript).toContain("桌面端准备状态");
+    expect(smokeScript).toContain("开始前设置清单");
     expect(smokeScript).toContain("检测麦克风");
-    expect(smokeScript).toContain("建立诊断");
+    expect(smokeScript).toContain("开始 3 分钟诊断");
     expect(smokeScript).toContain("导出学习数据");
     expect(smokeScript).toContain("speakright-data-");
     expect(smokeScript).toContain("desktop-smoke-secret");

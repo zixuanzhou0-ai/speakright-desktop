@@ -175,7 +175,11 @@ async function assertStaticExport() {
   const requiredPages = [
     {
       file: "drill.html",
-      markers: ["今日学习计划", "桌面端准备状态", "配置评分密钥"],
+      markers: [
+        "今日学习计划",
+        "开始前设置清单",
+        "配置 Azure Speech 评分密钥",
+      ],
     },
     {
       file: "settings.html",
