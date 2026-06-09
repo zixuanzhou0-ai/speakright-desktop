@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { PhonemePlayButton } from "@/components/phoneme/phoneme-play-button";
 import { VideoPlayer } from "@/components/phoneme/video-player";
 import { Button } from "@/components/ui/button";
+import { getSoundUnitCardLabel } from "@/lib/language-sound-unit-groups";
 import type { PhonemeData } from "@/types/phoneme";
 
 interface DrillPhonemeLessonProps {
@@ -50,7 +51,7 @@ export function DrillPhonemeLesson({
           <div className="flex-1">
             <p className="text-sm font-medium">{phoneme.name}</p>
             <p className="text-xs text-muted-foreground">
-              {phoneme.category === "vowel" ? "元音" : "辅音"} ·{" "}
+              {getSoundUnitCardLabel(phoneme)} ·{" "}
               {phoneme.difficulty === "easy"
                 ? "简单"
                 : phoneme.difficulty === "medium"

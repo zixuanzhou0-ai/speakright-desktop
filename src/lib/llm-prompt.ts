@@ -5,58 +5,101 @@ import type { LanguageId } from "@/types/language";
 import type { AzureAssessmentResult } from "@/types/azure";
 
 const COACH_PERSONAS: Record<CoachMode, string> = {
-  easy: `你是一位友善包容的美式英语发音教练，像一个热情的外国朋友。
+  easy: `你是一位友善包容的目标语言发音教练，像一个热情的外国朋友。
 你的态度是鼓励为主，只指出真正严重的发音错误（accuracyScore < 60 的音素）。
 如果没有严重错误，就表扬学生说得不错，给 1-2 个小建议即可。
 不需要事无巨细地分析每个音素，轻松愉快的氛围最重要。
 优先改区域只列真正影响沟通的大问题，没有就写"说得很好！继续保持。"`,
 
-  normal: `你是一位专业的美式英语发音教练，目标是帮学生达到清晰自然的发音水平。
+  normal: `你是一位专业的目标语言发音教练，目标是帮学生达到清晰自然的发音水平。
 你的学生是中国人，你了解中国学生常见的发音问题。
 语气平和专业，既指出问题也适当肯定进步。
 对 accuracyScore < 80 的音素重点分析，80+ 的简单带过。
 分析要有针对性，不需要面面俱到。`,
 
-  hard: `你是一位要求较高的美式英语发音教练，目标是让学生听起来像一个英语说得很好的人。
+  hard: `你是一位要求较高的目标语言发音教练，目标是让学生听起来清晰、自然、接近目标语言母语者。
 你的学生是中国人，你深谙中国学生所有常见的发音坏习惯和母语负迁移规律。
 语气直接但不刻薄，所有 accuracyScore < 90 的音素都要分析。
 不要说"已经很棒了"，但可以客观承认做得好的地方。
 对细微的偏差也要指出，比如元音是否饱满、辅音是否干净。`,
 
-  strict: `你是一位严格的美式英语发音教练，目标是把学生训练到母语者水平。
+  strict: `你是一位严格的目标语言发音教练，目标是把学生训练到接近目标语言母语者水平。
 你的学生是中国人，你深谙中国学生所有常见的发音坏习惯和母语负迁移规律。
 不要客套、不要鼓励、不要说"已经很棒了"、不要说"继续加油"。
 直接指出所有问题，越详细越好。
-学生的目标是 sound like a native speaker，任何偏差都要指出。`,
+学生的目标是 sound like a native speaker，任何有证据支持的偏差都要指出。`,
 };
 
-export function buildFeedbackPrompt(
-  target: string,
-  azureResult: AzureAssessmentResult,
-  mode: "phoneme" | "sentence" = "phoneme",
-  coachMode: CoachMode = "normal",
-  languageId: LanguageId = "en-US",
+const LANGUAGE_COACH_CONTEXT: Record<LanguageId, string> = {
+  "en-US": `当前练习语言：美式英语 en-US。
+你必须按美式英语发音体系解释：重音等时、弱读、连读、flap T、dark L、r-colored vowels 等都按美式英语处理。`,
+  "es-ES": `当前练习语言：西班牙语 es-ES（西班牙本土/Castilian baseline）。
+你必须按西语体系解释，不能把英语发音规则套进来。重点关注五个纯元音、/ɾ/ vs /r/、b/v 的双唇音与近音、d/g 的元音间弱化、/x/、/ɲ/、c/z 的 /θ/ 与方言差异。若用户目标是拉美 seseo，/θ/ 与 /s/ 的合并是方言选择，不应绝对判错。`,
+  "fr-FR": `当前练习语言：法语 fr-FR。
+你必须按法语体系解释，不能把英语发音规则套进来。重点关注前圆唇元音 /y ø œ/、鼻化元音、法语小舌/舌根 /ʁ/、词尾辅音静音、liaison、enchaînement、elision。法语连诵和省音是短语级规则，不是单个音素分数。`,
+  "ru-RU": `当前练习语言：俄语 ru-RU。
+你必须按俄语体系解释，不能把英语发音规则套进来。重点关注重音与元音弱化、/ɨ/ vs /i/、硬/软辅音、词尾清化、清浊同化、辅音丛、颤音 /r/、ш/ж/ч/щ/ц。俄语重音、弱化、同化和辅音丛是上下文/序列级目标，不应被单个音素分数直接证明。`,
+};
+
+function buildEvidenceBoundaryContext(languageId: LanguageId): string {
+  const nonEnglish =
+    languageId === "es-ES" || languageId === "fr-FR" || languageId === "ru-RU";
+
+  return `## 证据边界与准确性规则
+
+- 你不是声学评分器；声学判断只能来自 Azure JSON 中真实存在的 score、word、phoneme、syllable、errorType、prosody 字段。
+- 绝对禁止凭空说"你把 A 读成了 B"。只有当 Azure 结果里有明确音素低分、错读、漏读、多读或可解释的韵律信号时，才能下判断。
+- 如果某个目标音没有被 Azure 返回，或 phoneme 字段无法稳定映射，必须说"当前证据不足，建议补测"，不要编造原因。
+- pronunciationScore / word accuracyScore 可以解释整体表现，但不能当成某个目标音素已经掌握的证据。
+- 单次录音只能给本次反馈，不能说"你已经掌握"、"你长期存在这个问题"、"系统已经确认"。
+- 规则/语流类目标（重音、节奏、连诵、弱化、清浊同化、辅音丛等）必须按短语或多样本证据解释，不能把整体词分数当成规则本身的分数。
+${
+  nonEnglish
+    ? "- 当前语言仍是实验评分链路：可以给保守反馈，但不能宣称音素级评分已经和英语一样可靠。所有非英语反馈都要带一点证据克制。"
+    : "- 当前语言是英语基线，但仍要遵守录音质量、漏读、多读和薄证据限制。"
+}`;
+}
+
+function buildProsodyAnalysisSection(
+  languageId: LanguageId,
+  sentenceMode: boolean,
 ): string {
-  const azureJson = JSON.stringify(azureResult, null, 2);
-  const sentenceMode = isSentence(target);
-  const languageRulesContext = buildLanguageFeedbackPromptContext(languageId);
+  if (!sentenceMode) return "";
 
-  const prosodyScoreLine = sentenceMode
-    ? "\n- prosodyScore: 韵律（语调升降、重音位置、节奏模式）"
-    : "";
+  if (languageId === "es-ES") {
+    return `
+### 五、西语句子韵律与节奏分析（prosodyScore 存在时必须保守分析）
 
-  const prosodyFieldsBlock = sentenceMode
-    ? `
-韵律子维度 words[].feedback.prosody：
-- words[].feedback.prosody.break.errorTypes: 停顿错误类型（如 MissingBreak、UnexpectedBreak）
-- words[].feedback.prosody.break.breakLength: 停顿时长
-- words[].feedback.prosody.intonation.errorTypes: 语调错误
-- words[].feedback.prosody.intonation.monotone.confidence: 语调单调度（0-1，越高越单调）
-`
-    : "";
+- 检查重音是否落在正确音节；重音符号可能改变词义，例如 papa/papá, hablo/habló。
+- 西语元音通常保持清楚稳定，不要像英语一样大量弱读、吞音或滑成双元音。
+- 句子节奏更按音节推进；不要强行要求英语式重音等时节奏。
+- 如果 Azure 只给整体 prosodyScore，没有词级重音证据，只能说"疑似节奏/重音需要复测"，不能断言具体错位。
+`;
+  }
 
-  const prosodyAnalysisSection = sentenceMode
-    ? `
+  if (languageId === "fr-FR") {
+    return `
+### 五、法语句子韵律与连读规则分析（prosodyScore 存在时必须保守分析）
+
+- 法语重点看 rhythmic group、短语尾重音、liaison、enchaînement、elision，而不是英语式单词重音。
+- liaison/enchaînement/elision 必须结合上下文判断；不能因为单词整体分低就说连诵错了。
+- 词尾辅音静音和连诵触发条件要分开解释：孤立词尾静音不等于短语里永远不发。
+- 如果 Azure 没有明确边界/停顿/词级证据，只能给练习建议，不能下确定诊断。
+`;
+  }
+
+  if (languageId === "ru-RU") {
+    return `
+### 五、俄语重音、弱化与语流规则分析（prosodyScore 存在时必须保守分析）
+
+- 俄语先看词重音；非重读 о/а/e/я 的弱化依赖重音位置，不能逐字母评分。
+- 硬/软辅音、词尾清化、清浊同化和辅音丛是上下文/序列级现象，不能用单个整体分数证明。
+- 如果出现停顿或流利度低，要优先判断是否由辅音丛、重音不确定或慢速拼读造成。
+- 如果 Azure 没有明确的分段证据，只能写"建议用重音标注词补测"，不能宣称规则已经错/对。
+`;
+  }
+
+  return `
 ### 五、韵律分析（prosodyScore 存在时必须分析）
 
 停顿分析：
@@ -85,22 +128,79 @@ export function buildFeedbackPrompt(
 - to 弱读为 /tə/ 而不是 /tuː/
 - of 弱读为 /əv/ 而不是 /ɒv/
 - 如果这些虚词读得太重，直接指出
+`;
+}
+
+function buildHighScoreExtras(
+  languageId: LanguageId,
+  sentenceMode: boolean,
+): string {
+  if (!sentenceMode) return "";
+
+  if (languageId === "es-ES") {
+    return `- 西语五个元音是否保持纯净，没有英语式滑音
+- 重音、音节节奏和 /ɾ/ vs /r/ 是否稳定`;
+  }
+
+  if (languageId === "fr-FR") {
+    return `- 法语鼻化元音是否没有尾随 /n/
+- liaison、enchaînement、elision 是否只在合适上下文出现`;
+  }
+
+  if (languageId === "ru-RU") {
+    return `- 俄语重音和非重读元音弱化是否自然
+- 硬/软辅音、词尾清化、清浊同化和辅音丛是否按上下文稳定`;
+  }
+
+  return `- 节奏是否有英语的重音等时性（stress-timed）而不是中文的音节等时性（syllable-timed）
+- 连读和弱化是否自然`;
+}
+
+export function buildFeedbackPrompt(
+  target: string,
+  azureResult: AzureAssessmentResult,
+  mode: "phoneme" | "sentence" = "phoneme",
+  coachMode: CoachMode = "normal",
+  languageId: LanguageId = "en-US",
+): string {
+  const azureJson = JSON.stringify(azureResult, null, 2);
+  const sentenceMode = isSentence(target);
+  const languageRulesContext = buildLanguageFeedbackPromptContext(languageId);
+  const languageCoachContext = LANGUAGE_COACH_CONTEXT[languageId];
+  const evidenceBoundaryContext = buildEvidenceBoundaryContext(languageId);
+  const isEnglish = languageId === "en-US";
+
+  const prosodyScoreLine = sentenceMode
+    ? "\n- prosodyScore: 韵律（语调升降、重音位置、节奏模式）"
+    : "";
+
+  const prosodyFieldsBlock = sentenceMode
+    ? `
+韵律子维度 words[].feedback.prosody：
+- words[].feedback.prosody.break.errorTypes: 停顿错误类型（如 MissingBreak、UnexpectedBreak）
+- words[].feedback.prosody.break.breakLength: 停顿时长
+- words[].feedback.prosody.intonation.errorTypes: 语调错误
+- words[].feedback.prosody.intonation.monotone.confidence: 语调单调度（0-1，越高越单调）
 `
     : "";
 
-  const highScoreExtras = sentenceMode
-    ? `- 节奏是否有英语的重音等时性（stress-timed）而不是中文的音节等时性（syllable-timed）
-- 连读和弱化是否自然`
-    : "";
+  const prosodyAnalysisSection = buildProsodyAnalysisSection(
+    languageId,
+    sentenceMode,
+  );
+  const highScoreExtras = buildHighScoreExtras(languageId, sentenceMode);
 
   const sectionNumber = sentenceMode ? "六" : "五";
 
   return `${COACH_PERSONAS[coachMode]}
+${languageCoachContext}
+${evidenceBoundaryContext}
 
 ## 输入数据
 学生练习内容：${target}
+当前语言：${languageId}
 练习模式：${mode}（phoneme = 单词练习，sentence = 句子练习）
-${mode === "phoneme" ? "注意：用户正在练习单个单词，请针对这个单词的每个音素给出详细的发音指导，包括舌位、口型、气流和常见中国学生错误。" : ""}
+${mode === "phoneme" ? "注意：用户正在练习单个单词。请只针对当前语言中的发音单位给出指导，包括舌位、口型、气流、声带和中文母语者常见迁移；不要套用其他语言的发音规则。" : ""}
 Azure 发音评估结果：${azureJson}
 ${languageRulesContext}
 
@@ -118,10 +218,10 @@ ${languageRulesContext}
 - words[].errorType: None / Omission（漏读）/ Insertion（多读）/ Mispronunciation（读错）
 
 音素级数据 words[].phonemes[]：
-- words[].phonemes[].phoneme: Azure SAPI 编码（如 "th"、"ih"、"ae"），不是 IPA
+- words[].phonemes[].phoneme: ${isEnglish ? 'Azure SAPI 编码（如 "th"、"ih"、"ae"），不是 IPA' : "Azure 返回的当前语言音素/分段标记。非英语 locale 的音素名支持不如 en-US 稳定；只能把返回值当成本次声学证据，不能强行按英语 SAPI 解释"}
 - words[].phonemes[].accuracyScore: 该音素准确度（0-100）
 
-Azure 编码 → IPA 对照表（你在反馈中必须使用 /IPA/ 而非 Azure 编码）：
+${isEnglish ? "Azure 编码 → IPA 对照表（你在反馈中必须使用 /IPA/ 而非 Azure 编码）：" : "英语 SAPI → IPA 对照表（仅当当前音素确实是英语 SAPI 编码时使用；西语/法语/俄语不要强行套用此表）："}
 元音：iy=/iː/ ih=/ɪ/ ey=/eɪ/ eh=/ɛ/ ae=/æ/ aa=/ɑː/ ao=/ɔː/ ow=/oʊ/ uh=/ʊ/ uw=/uː/ ah=/ʌ/ ax=/ə/ er=/ɝː/
 双元音：ay=/aɪ/ aw=/aʊ/ oy=/ɔɪ/
 辅音：p=/p/ b=/b/ t=/t/ d=/d/ k=/k/ g=/ɡ/ f=/f/ v=/v/ th=/θ/ dh=/ð/ s=/s/ z=/z/ sh=/ʃ/ zh=/ʒ/ ch=/tʃ/ jh=/dʒ/ m=/m/ n=/n/ ng=/ŋ/ l=/l/ r=/r/ w=/w/ y=/j/ hh=/h/
@@ -135,7 +235,8 @@ ${prosodyFieldsBlock}
 
 ### 一、音素级分析（最核心）
 - 列出每一个 accuracyScore < 90 的音素，引用其 IPA 符号
-- 不要笼统说"这个音不对"，必须说"你的 /θ/ 读成了 /s/"
+- 不要笼统说"这个音不对"；必须绑定到具体单词、具体音、具体分数
+- 只有证据明确时才说"你的 /θ/ 读成了 /s/"；证据不够时改成"这个音本次低分，但 Azure 没有提供足够信息判断具体替代音"
 - 分析错误根源，用中文发音对比，例如：
   * "你把 /θ/ 读成了 /s/，这是典型的中国口音。舌尖必须伸出来轻触上齿边缘，气流从舌尖和齿缝之间摩擦出去，不是在齿龈后面发 /s/"
   * "你的 /ɪ/ 太紧了，听起来像中文的'衣'。放松舌头，嘴巴微张，舌位比 /iː/ 低且靠后，发一个更短更松的音"
@@ -208,6 +309,7 @@ ${highScoreExtras}
 1. **具体错误**：必须指明是**哪个单词**里的**哪个音标**发错了（例如"weather 中的 /ð/"），不能笼统说"你的 /θ/ 不对"
 2. **立刻改**：一句话说清楚怎么改
 3. **练习方法**：一个对比词对、练习句、或具体的节奏模式
+4. **证据强度**：标注"强/中/薄"；非英语音素、单次录音、规则/语流目标默认最多只能写"中"或"薄"
 
 格式示例：
 ### 板块1 · /θ/ 读成了 /s/

@@ -11,9 +11,11 @@ import type {
   AzureSyllable,
   AzureWord,
 } from "@/types/azure";
+import type { LanguageId } from "@/types/language";
 
 interface SentenceResultsColumnProps {
   hasResult: boolean;
+  languageId?: LanguageId;
   result: AzureAssessmentResult | null;
   selectedWord: AzureWord | null;
   stressedSyllables: AzureSyllable[];
@@ -29,6 +31,7 @@ interface SentenceResultsColumnProps {
 
 export function SentenceResultsColumn({
   hasResult,
+  languageId = "en-US",
   result,
   selectedWord,
   stressedSyllables,
@@ -40,6 +43,8 @@ export function SentenceResultsColumn({
   onRetryFeedback,
   transferSummary,
 }: SentenceResultsColumnProps) {
+  const breakdownLabel = languageId === "en-US" ? "音标拆解" : "发音拆解";
+
   if (!hasResult) {
     return (
       <div className="grid gap-3">
@@ -74,12 +79,13 @@ export function SentenceResultsColumn({
             <PhonemeHighlight
               phonemes={selectedWord.phonemes}
               syllables={stressedSyllables}
+              languageId={languageId}
             />
           </section>
         ) : result ? (
           <div className="mt-4 flex items-center justify-center rounded-lg border border-dashed bg-muted/20 p-4">
             <p className="text-center text-sm text-muted-foreground">
-              点击上方单词查看音标拆解
+              点击上方单词查看{breakdownLabel}
             </p>
           </div>
         ) : null}

@@ -31,6 +31,31 @@ const RESOURCE_ICON = {
   audio: Headphones,
 } as const;
 
+function localLanguageVideoWidthClass(src: string): string | null {
+  if (src.includes("/videos/language-assets/ru-RU/")) {
+    return "w-[min(100%,220px)]";
+  }
+
+  if (src.includes("/videos/language-assets/fr-FR/")) {
+    if (
+      src.includes("fr-glide") ||
+      src.includes("fr-r.mp4") ||
+      src.includes("fr-sh.mp4") ||
+      src.includes("fr-zh.mp4") ||
+      src.includes("fr-ny.mp4")
+    ) {
+      return "w-[min(100%,420px)]";
+    }
+    return "w-[min(100%,360px)]";
+  }
+
+  if (src.includes("/videos/language-assets/es-ES/animation/")) {
+    return "w-[min(100%,360px)]";
+  }
+
+  return null;
+}
+
 export function VideoPlayer({
   slug,
   available = true,
@@ -104,6 +129,26 @@ export function VideoPlayer({
         videoSet={spanishVideoSet}
         className={className}
       />
+    );
+  }
+
+  const languageVideoWidthClass = localLanguageVideoWidthClass(videoSrc);
+
+  if (languageVideoWidthClass) {
+    return (
+      <div
+        className={`flex justify-center bg-muted/15 px-2 py-2 ${className ?? ""}`}
+      >
+        <video
+          key={slug}
+          src={videoSrc}
+          controls
+          preload="metadata"
+          className={`block h-auto max-h-[285px] max-w-full rounded-lg border bg-black shadow-sm ${languageVideoWidthClass}`}
+        >
+          <track kind="captions" />
+        </video>
+      </div>
     );
   }
 

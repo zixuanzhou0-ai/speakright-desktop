@@ -84,7 +84,7 @@ export const LANGUAGE_PROFILES: Record<LanguageId, LanguageProfile> = {
       "/x/",
     ],
     knownGaps: [
-      "西语单词音频通过 ElevenLabs 多语言发音包安装到本地缓存；未安装时仍退回实验性在线音源。",
+      "西语单词/短语音频已内置为桌面端静态资源；缺失长句时才退回实验性在线 TTS。",
       "证据驱动 mastery 还没有完整覆盖多语言 languageId + soundUnitSlug 晋级闭环。",
       "核心音素已接入 Sounds of Speech Spanish 本地口型/舌位素材；重音、音节节奏等韵律单元仍需要本地教学素材。",
       "当前 profile 是 es-ES；拉美西语 seseo、yeísmo 等变体需要单独 profile 或方言开关。",
@@ -128,7 +128,7 @@ export const LANGUAGE_PROFILES: Record<LanguageId, LanguageProfile> = {
       "liaison and enchaînement",
     ],
     knownGaps: [
-      "法语单词音频通过 ElevenLabs 多语言发音包安装到本地缓存；未安装时仍退回实验性在线音源。",
+      "法语单词/短语音频已内置为桌面端静态资源；缺失长句时才退回实验性在线 TTS。",
       "鼻化元音、连诵、enchaînement、elision 已作为 beta 训练单位开放，但 mastery 晋级仍需语言专属证据规则。",
       "核心元音、辅音和 glide 已接入 Phonétique.ca / Sheffield 本地口型视频；liaison、enchaînement、elision、词尾静音仍需要短语级教学素材。",
     ],
@@ -172,7 +172,7 @@ export const LANGUAGE_PROFILES: Record<LanguageId, LanguageProfile> = {
       "consonant clusters",
     ],
     knownGaps: [
-      "俄语单词音频通过 ElevenLabs 多语言发音包安装到本地缓存；未安装时仍退回实验性在线音源。",
+      "俄语单词/短语音频已内置为桌面端静态资源；缺失长句时才退回实验性在线 TTS。",
       "俄语重音、弱化、硬软辅音和清浊同化已作为 beta 训练单位开放，但 mastery 晋级仍需语言专属证据规则。",
       "当前 27 个俄语 sound units 已接入 Seeing Speech / Wikimedia Commons 本地视频与音频；硬软辅音、重音弱化、词尾清化、清浊同化和辅音丛仍需要 SpeakRight 自制规则讲解视频。",
     ],

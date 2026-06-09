@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { UseAudioPlayerReturn } from "@/hooks/use-audio-player";
 import { openDesktopExternalUrl } from "@/lib/desktop-external-url";
+import { getSoundUnitCardLabel } from "@/lib/language-sound-unit-groups";
 import type { Difficulty, PhonemeData } from "@/types/phoneme";
 
 interface PhonemeCardProps {
@@ -41,7 +42,10 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
   const [lastWordPlay, setLastWordPlay] = useState<"normal" | "slow">("slow");
 
   const word = phoneme.chartWord;
+  const displayWord = word ?? phoneme.example;
+  const displayIpa = phoneme.chartIpa ?? phoneme.keywords[0]?.ipa;
   const image = phoneme.chartImage;
+  const unitLabel = getSoundUnitCardLabel(phoneme);
 
   const handlePlayPhoneme = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -95,9 +99,7 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
 
         {/* Category + description */}
         <div className="mb-5">
-          <p className="text-sm font-semibold">
-            {phoneme.category === "vowel" ? "元音" : "辅音"}
-          </p>
+          <p className="text-sm font-semibold">{unitLabel}</p>
           {phoneme.description && (
             <p className="mt-1 text-sm leading-snug text-muted-foreground line-clamp-2">
               {phoneme.description}
@@ -126,10 +128,12 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
               </motion.div>
             )}
             <div>
-              {word && <p className="font-semibold capitalize">{word}</p>}
-              {phoneme.chartIpa && (
+              {displayWord && (
+                <p className="font-semibold capitalize">{displayWord}</p>
+              )}
+              {displayIpa && (
                 <p className="text-sm text-muted-foreground font-mono">
-                  {phoneme.chartIpa}
+                  {displayIpa}
                 </p>
               )}
             </div>

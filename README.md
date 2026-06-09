@@ -1,37 +1,49 @@
 # SpeakRight Desktop
 
-SpeakRight Desktop 是面向中文学习者的多语言发音训练桌面端。当前英语
-`en-US` 是稳定基线，西班牙语 `es-ES`、法语 `fr-FR`、俄语 `ru-RU`
-是实验板块；日语本轮不做。
+SpeakRight Desktop is a Tauri desktop pronunciation-training app for Chinese
+learners. American English (`en-US`) is the stable baseline. Spanish (`es-ES`),
+French (`fr-FR`), and Russian (`ru-RU`) are experimental modules. Japanese is
+not included in this release track.
 
-## 一键启动
+## Current Product Boundary
+
+- Desktop-only release track. Do not mix this repository with older browser-app workspaces.
+- The installed app loads the static Tauri bundle, not a localhost dev server.
+- API keys are stored through the desktop secure/local credential layer where
+  supported; they are never committed and are excluded from learning-data
+  exports.
+- Spanish, French, and Russian word/phrase audio is bundled under
+  `public/audio/language-packs/`; users do not install these packs separately.
+- Local articulation assets live under `public/videos/language-assets/`.
+
+## Development
 
 ```bat
-cd /d E:\SpeakRight
-npm run codex:start
+cd /d E:\SpeakRightDesktopRepo
+npm run tauri:dev
 ```
 
-该命令会同时启动网页端和桌面端，并把日志写入 `E:\SpeakRight\.runlogs\`。
+The dev build uses the Tauri `devUrl` configured in `src-tauri/tauri.conf.json`.
+Release builds must use the static export in `out/`.
 
-Tauri 桌面端独立入口如下。
+For the daily desktop startup checklist, see
+`docs/operations/DESKTOP_STARTUP_RUNBOOK.md`.
 
-## 启动
+## Validation
 
 ```bat
-cd /d E:\SpeakRight\apps\desktop
-npm run dev
+npm run test
+npm run typecheck
+npm run lint
+npm run validate:desktop
 ```
 
-Tauri 会通过 `src-tauri/tauri.conf.json` 启动桌面壳，并把前端开发服务放在
-http://localhost:3002。
+Use `npm run desktop:build` when you need fresh Windows artifacts.
 
-注意：桌面端使用 3002 端口；网页端使用 3000 端口，两者不要混用。不要再使用 1420；当前 Windows 环境保留了 1321-1520 端口段，1420 会导致 `EACCES: permission denied`。
+## Release Notes
 
-## 当前桌面端 API 与资源边界
-
-- 录音评分：Azure Speech，密钥保存在桌面端 secure store/系统凭据。
-- 标准示范 TTS：ElevenLabs 或当前语言的本地发音包。
-- 单词词典发音：有道/韦氏只负责单词复读，不负责句子示范。
-- AI 教练：LLM provider 只生成中文反馈，不参与评分。
-- 多语言素材：`public/videos/language-assets/` 和
-  `public/audio/language-packs/` 包含 es-ES/fr-FR/ru-RU 的本地素材。
+- The current Windows artifacts are for controlled testing unless code signing
+  is complete.
+- Non-English pronunciation scoring remains experimental; `evidenceMastery`
+  stays disabled for `es-ES`, `fr-FR`, and `ru-RU` until provider probes and
+  language-specific evidence gates are finished.

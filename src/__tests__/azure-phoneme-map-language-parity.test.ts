@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  getAssessmentPhonemeLabel,
   getAssessmentAliasesForSlug,
   getAssessmentExemptionForSlug,
+  getPhonemeAudioUrl,
   getPhonemeAccuracy,
   normalizeAssessmentPhoneme,
 } from "@/lib/azure-phoneme-map";
@@ -112,6 +114,29 @@ describe("multilingual Azure phoneme map parity", () => {
         "ru-ch",
       ),
     ).toBe(64);
+  });
+
+  it("resolves multilingual assessment phonemes to local playback assets", () => {
+    expect(getPhonemeAudioUrl("a", "es-ES")).toMatch(
+      /^\/(?:audio|videos)\/language-assets\/es-ES\//,
+    );
+    expect(getPhonemeAudioUrl("ʁ", "fr-FR")).toMatch(
+      /^\/(?:audio|videos)\/language-assets\/fr-FR\//,
+    );
+    expect(getPhonemeAudioUrl("ɨ", "ru-RU")).toMatch(
+      /^\/(?:audio|videos)\/language-assets\/ru-RU\//,
+    );
+    expect(getPhonemeAudioUrl("iy", "en-US")).toBe(
+      "/audio/ipa/phoneme/green.mp3",
+    );
+    expect(getPhonemeAudioUrl("not-a-real-code", "es-ES")).toBeNull();
+  });
+
+  it("keeps non-English assessment phoneme labels visible instead of empty slashes", () => {
+    expect(getAssessmentPhonemeLabel("ʁ", "fr-FR")).toBe("/ʁ/");
+    expect(getAssessmentPhonemeLabel("ˈɛ̃", "fr-FR")).toBe("/ɛ̃/");
+    expect(getAssessmentPhonemeLabel("[ɕː]", "ru-RU")).toBe("/ɕː/");
+    expect(getAssessmentPhonemeLabel("th", "en-US")).toBe("/θ/");
   });
 
   it("keeps rule/prosody units explicit instead of pretending they are single phonemes", () => {

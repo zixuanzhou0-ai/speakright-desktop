@@ -32,6 +32,7 @@ import {
   getDefaultPhonemeSlug,
   getLanguageProfile,
 } from "@/lib/language-profiles";
+import { isRuleLikeSoundUnit } from "@/lib/language-sound-unit-groups";
 import {
   getPracticedWordsForLanguage,
   markWordPracticedForLanguage,
@@ -330,12 +331,13 @@ export function PhonemeDetailPage() {
   };
 
   if (!phoneme) {
+    const unitLabel = languageId === "en-US" ? "音标" : "发音单位";
     return (
       <div className="container mx-auto px-4 py-8 text-center">
-        <p className="text-muted-foreground">音标未找到</p>
+        <p className="text-muted-foreground">{unitLabel}未找到</p>
         <Link href="/phonemes">
           <Button variant="link" className="mt-2">
-            返回音标列表
+            返回{unitLabel}列表
           </Button>
         </Link>
       </div>
@@ -343,8 +345,9 @@ export function PhonemeDetailPage() {
   }
 
   const isWordActive = mw.isPlaying || mw.isLoading;
-  const isExperimentalLanguage = languageProfile.status !== "stable";
-  const hasCurrentUnitLocalVideo = Boolean(phoneme.video?.localSrc);
+  const breakdownLabel = languageId === "en-US" ? "音标拆解" : "发音拆解";
+  const showRuleEvidenceNote =
+    languageId !== "en-US" && isRuleLikeSoundUnit(phoneme);
 
   return (
     <div className="h-full flex flex-col px-6 py-4 overflow-hidden">
@@ -379,16 +382,9 @@ export function PhonemeDetailPage() {
             }
           />
 
-          {isExperimentalLanguage && (
-            <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/5 px-4 py-3 text-sm text-muted-foreground">
-              {languageProfile.displayName}当前是
-              {languageProfile.status === "experimental" ? "实验" : "草案"}
-              板块：发音单位和示例词可练习，
-              {hasCurrentUnitLocalVideo
-                ? "当前发音单位的本地口型/舌位素材已接入；"
-                : "本地授权教学视频仍在补齐；"}
-              可评分和可复读的部分会继续开放，但 mastery
-              晋级不会被当作完整闭环。下一步建议先用单词/短语练习收集稳定样本。
+          {showRuleEvidenceNote && (
+            <div className="rounded-lg border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+              这是规则/语流训练，评分以词或短语证据为准，不会用单个音素分数直接晋级掌握状态。
             </div>
           )}
 
@@ -455,11 +451,12 @@ export function PhonemeDetailPage() {
               <PhonemeHighlight
                 phonemes={selectedWordPhonemes}
                 syllables={stressedSyllables}
+                languageId={languageId}
               />
             ) : (
               <div className="flex h-20 items-center justify-center rounded-lg border border-dashed bg-muted/20">
                 <p className="text-center text-sm text-muted-foreground">
-                  录音并评分后将在此显示音标拆解
+                  录音并评分后将在此显示{breakdownLabel}
                 </p>
               </div>
             )}

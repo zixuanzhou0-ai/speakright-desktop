@@ -35,6 +35,12 @@ function clipLabel(clip: SpanishPanelClip): string {
   return clip.word ?? clip.label;
 }
 
+function videoWidthClassForClip(clip: SpanishPanelClip): string {
+  return clip.kind === "animation"
+    ? "w-[min(100%,360px)]"
+    : "w-[min(100%,370px)]";
+}
+
 export function SpanishSoundsOfSpeechVideoPanel({
   videoSet,
   className,
@@ -106,36 +112,39 @@ export function SpanishSoundsOfSpeechVideoPanel({
                 : `例词视频 · ${selectedClip.word ?? selectedClip.label}`}
           </p>
         </div>
-
-        <div className="flex shrink-0 items-center gap-1">
-          <button
-            type="button"
-            aria-label="上一个西语视频"
-            onClick={() => moveSelection(-1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border bg-background text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            aria-label="下一个西语视频"
-            onClick={() => moveSelection(1)}
-            className="flex h-8 w-8 items-center justify-center rounded-full border bg-background text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
       </div>
 
-      <video
-        key={selectedClip.localSrc}
-        src={selectedClip.localSrc}
-        controls
-        preload="metadata"
-        className="aspect-video w-full bg-black"
-      >
-        <track kind="captions" />
-      </video>
+      <div className="grid grid-cols-[2rem_minmax(0,1fr)_2rem] items-center gap-2 bg-muted/15 px-2 py-2">
+        <button
+          type="button"
+          aria-label="上一个西语视频"
+          onClick={() => moveSelection(-1)}
+          className="flex h-8 w-8 items-center justify-center rounded-full border bg-background/95 text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-primary"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+
+        <div className="flex min-w-0 justify-center">
+          <video
+            key={selectedClip.localSrc}
+            src={selectedClip.localSrc}
+            controls
+            preload="metadata"
+            className={`block h-auto max-h-[285px] max-w-full rounded-md border bg-black shadow-sm ${videoWidthClassForClip(selectedClip)}`}
+          >
+            <track kind="captions" />
+          </video>
+        </div>
+
+        <button
+          type="button"
+          aria-label="下一个西语视频"
+          onClick={() => moveSelection(1)}
+          className="flex h-8 w-8 items-center justify-center rounded-full border bg-background/95 text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-primary"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
 
       <div className="flex gap-2 overflow-x-auto border-t bg-gradient-to-b from-muted/20 to-background px-3 py-2 sm:flex-wrap sm:overflow-visible">
         {clips.map((clip) => {

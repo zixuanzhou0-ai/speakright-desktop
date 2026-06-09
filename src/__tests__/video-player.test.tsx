@@ -66,6 +66,9 @@ describe("VideoPlayer", () => {
       "src",
       "/videos/language-assets/es-ES/examples/es-a/sound.mp4",
     );
+    const video = document.querySelector("video");
+    expect(video).not.toHaveClass("aspect-video");
+    expect(video).toHaveClass("w-[min(100%,370px)]");
   });
 
   it("switches Spanish video between animation and official example clips", () => {
@@ -133,5 +136,19 @@ describe("VideoPlayer", () => {
     expect(
       screen.getByText("External Spanish pronunciation resource"),
     ).toBeInTheDocument();
+  });
+
+  it("sizes non-Spanish local language videos without forcing 16:9", () => {
+    render(
+      <VideoPlayer
+        slug="fr-i"
+        available
+        localSrc="/videos/language-assets/fr-FR/articulation/fr-i.mp4"
+      />,
+    );
+
+    const video = document.querySelector("video");
+    expect(video).not.toHaveClass("aspect-video");
+    expect(video).toHaveClass("w-[min(100%,360px)]");
   });
 });

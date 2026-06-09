@@ -1,0 +1,88 @@
+import { describe, expect, it } from "vitest";
+import { buildFeedbackPrompt } from "@/lib/llm-prompt";
+import type { AzureAssessmentResult } from "@/types/azure";
+
+const SAMPLE_RESULT: AzureAssessmentResult = {
+  pronunciationScore: 78,
+  accuracyScore: 76,
+  fluencyScore: 84,
+  completenessScore: 100,
+  prosodyScore: 82,
+  words: [
+    {
+      word: "sample",
+      accuracyScore: 76,
+      errorType: "None",
+      phonemes: [
+        { phoneme: "a", accuracyScore: 72 },
+        { phoneme: "m", accuracyScore: 88 },
+      ],
+      syllables: [{ syllable: "sample", accuracyScore: 76 }],
+    },
+  ],
+};
+
+describe("LLM feedback prompt", () => {
+  it("keeps English feedback on the American English baseline", () => {
+    const prompt = buildFeedbackPrompt(
+      "think",
+      SAMPLE_RESULT,
+      "phoneme",
+      "normal",
+      "en-US",
+    );
+
+    expect(prompt).toContain("当前练习语言：美式英语 en-US");
+    expect(prompt).toContain("Azure SAPI 编码");
+    expect(prompt).not.toContain("当前语言仍是实验评分链路");
+  });
+
+  it("makes Spanish feedback language-specific and evidence-bound", () => {
+    const prompt = buildFeedbackPrompt(
+      "Buenos días.",
+      SAMPLE_RESULT,
+      "sentence",
+      "normal",
+      "es-ES",
+    );
+
+    expect(prompt).toContain("当前练习语言：西班牙语 es-ES");
+    expect(prompt).toContain("不能把英语发音规则套进来");
+    expect(prompt).toContain("当前语言仍是实验评分链路");
+    expect(prompt).toContain("不能强行按英语 SAPI 解释");
+    expect(prompt).toContain("papa/papá");
+    expect(prompt).not.toContain("stress-timed");
+  });
+
+  it("uses French prosody and rule constraints instead of English weak forms", () => {
+    const prompt = buildFeedbackPrompt(
+      "Les amis arrivent.",
+      SAMPLE_RESULT,
+      "sentence",
+      "normal",
+      "fr-FR",
+    );
+
+    expect(prompt).toContain("当前练习语言：法语 fr-FR");
+    expect(prompt).toContain("liaison");
+    expect(prompt).toContain("enchaînement");
+    expect(prompt).toContain("法语连诵和省音是短语级规则");
+    expect(prompt).not.toContain("want to →");
+  });
+
+  it("uses Russian stress and palatalization constraints conservatively", () => {
+    const prompt = buildFeedbackPrompt(
+      "Привет, Москва.",
+      SAMPLE_RESULT,
+      "sentence",
+      "normal",
+      "ru-RU",
+    );
+
+    expect(prompt).toContain("当前练习语言：俄语 ru-RU");
+    expect(prompt).toContain("重音与元音弱化");
+    expect(prompt).toContain("硬/软辅音");
+    expect(prompt).toContain("不能用单个整体分数证明");
+    expect(prompt).toContain("当前证据不足");
+  });
+});

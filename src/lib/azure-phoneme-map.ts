@@ -1,3 +1,6 @@
+import { getLanguagePhonemes } from "@/lib/language-phonemes";
+import type { LanguageId } from "@/types/language";
+
 /**
  * Azure Speech 美式英语音素编码 → IPA 符号映射表
  *
@@ -108,9 +111,31 @@ export const azureToChartWord: Record<string, string> = {
  * 获取 Azure 音素编码对应的 IPA Chart 音频 URL
  * @returns 音频 URL 或 null（未映射的音素）
  */
-export function getPhonemeAudioUrl(azureCode: string): string | null {
+export function getPhonemeAudioUrl(
+  azureCode: string,
+  languageId: LanguageId = "en-US",
+): string | null {
+  if (languageId !== "en-US") {
+    const normalizedCode = normalizeAssessmentPhoneme(azureCode);
+    const matchingUnit = getLanguagePhonemes(languageId).find((unit) =>
+      getAssessmentAliasesForSlug(unit.slug).includes(normalizedCode),
+    );
+
+    return matchingUnit?.phonemeAudio?.localSrc ?? null;
+  }
+
   const chartWord = azureToChartWord[azureCode.toLowerCase()];
   return chartWord ? `/audio/ipa/phoneme/${chartWord}.mp3` : null;
+}
+
+export function getAssessmentPhonemeLabel(
+  azureCode: string,
+  languageId: LanguageId = "en-US",
+): string {
+  if (languageId === "en-US") return toIpa(azureCode);
+
+  const normalized = normalizeAssessmentPhoneme(azureCode);
+  return normalized ? `/${normalized}/` : `/${azureCode}/`;
 }
 
 /**

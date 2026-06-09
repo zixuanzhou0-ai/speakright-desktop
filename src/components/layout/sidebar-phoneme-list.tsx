@@ -5,12 +5,16 @@ import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useLanguageConfig } from "@/hooks/use-api-keys";
-import { getLanguagePhonemesByCategory } from "@/lib/language-phonemes";
+import {
+  getLanguageSoundUnitGroups,
+  getSoundUnitDisplayTypeLabel,
+} from "@/lib/language-sound-unit-groups";
 import { getLanguageProfile } from "@/lib/language-profiles";
 import { getBestScoreForPhoneme } from "@/lib/score-history";
 import { cn } from "@/lib/utils";
 import type { LanguageId } from "@/types/language";
 import type { PhonemeData } from "@/types/phoneme";
+import type { SoundUnitDisplayType } from "@/lib/language-sound-unit-groups";
 
 interface SidebarPhonemeListProps {
   currentSlug: string | null;
@@ -36,21 +40,83 @@ function ScoreBadge({ score }: { score: number | null }) {
   );
 }
 
+function SidebarSoundUnitItem({
+  phoneme,
+  isActive,
+  score,
+  compact,
+}: {
+  phoneme: PhonemeData;
+  isActive: boolean;
+  score: number | null;
+  compact: boolean;
+}) {
+  const example = phoneme.chartWord ?? phoneme.example;
+
+  if (compact) {
+    return (
+      <Link
+        href={`/phonemes/${phoneme.slug}`}
+        className={cn(
+          "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs whitespace-nowrap transition-colors",
+          isActive
+            ? "bg-primary/10 text-foreground border-l-2 border-primary pl-1.5"
+            : "hover:bg-accent/50 text-sidebar-foreground/70",
+        )}
+      >
+        <span className="w-10 shrink-0 font-mono text-sm text-primary text-center inline-block">
+          {phoneme.ipa}
+        </span>
+        <span className="flex-1 truncate capitalize text-muted-foreground">
+          {example}
+        </span>
+        <ScoreBadge score={score} />
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href={`/phonemes/${phoneme.slug}`}
+      className={cn(
+        "grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-x-2 gap-y-0.5 rounded-md px-2 py-2 text-xs transition-colors",
+        isActive
+          ? "bg-primary/10 text-foreground border-l-2 border-primary pl-1.5"
+          : "hover:bg-accent/50 text-sidebar-foreground/70",
+      )}
+    >
+      <span className="min-w-0 break-words font-mono text-sm leading-tight text-primary">
+        {phoneme.ipa}
+      </span>
+      <ScoreBadge score={score} />
+      <span className="col-span-2 min-w-0 break-words leading-snug text-muted-foreground">
+        {example}
+      </span>
+    </Link>
+  );
+}
+
 function PhonemeGroup({
   label,
   phonemes,
   currentSlug,
   defaultOpen,
   languageId,
+  displayType,
 }: {
   label: string;
   phonemes: PhonemeData[];
   currentSlug: string | null;
   defaultOpen: boolean;
   languageId: LanguageId;
+  displayType: SoundUnitDisplayType;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const [scores, setScores] = useState<Record<string, number | null>>({});
+
+  useEffect(() => {
+    if (defaultOpen) setOpen(true);
+  }, [defaultOpen]);
 
   useEffect(() => {
     const s: Record<string, number | null> = {};
@@ -59,6 +125,8 @@ function PhonemeGroup({
     }
     setScores(s);
   }, [languageId, phonemes]);
+
+  const useCompactRows = languageId === "en-US";
 
   return (
     <div>
@@ -74,6 +142,9 @@ function PhonemeGroup({
           )}
         />
         {label} ({phonemes.length})
+        <span className="ml-auto rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium normal-case tracking-normal text-muted-foreground/70">
+          {getSoundUnitDisplayTypeLabel(displayType)}
+        </span>
       </button>
 
       <AnimatePresence initial={false}>
@@ -88,24 +159,13 @@ function PhonemeGroup({
             {phonemes.map((p) => {
               const isActive = p.slug === currentSlug;
               return (
-                <Link
+                <SidebarSoundUnitItem
                   key={p.slug}
-                  href={`/phonemes/${p.slug}`}
-                  className={cn(
-                    "flex items-center gap-2 rounded-md px-2 py-1.5 text-xs whitespace-nowrap transition-colors",
-                    isActive
-                      ? "bg-primary/10 text-foreground border-l-2 border-primary pl-1.5"
-                      : "hover:bg-accent/50 text-sidebar-foreground/70",
-                  )}
-                >
-                  <span className="w-10 shrink-0 font-mono text-sm text-primary text-center inline-block">
-                    {p.ipa}
-                  </span>
-                  <span className="flex-1 truncate capitalize text-muted-foreground">
-                    {p.chartWord}
-                  </span>
-                  <ScoreBadge score={scores[p.slug] ?? null} />
-                </Link>
+                  phoneme={p}
+                  isActive={isActive}
+                  score={scores[p.slug] ?? null}
+                  compact={useCompactRows}
+                />
               );
             })}
           </motion.div>
@@ -118,49 +178,28 @@ function PhonemeGroup({
 export function SidebarPhonemeList({ currentSlug }: SidebarPhonemeListProps) {
   const { languageId } = useLanguageConfig();
   const profile = getLanguageProfile(languageId);
-  const vowels = getLanguagePhonemesByCategory(languageId, "vowel");
-  const consonants = getLanguagePhonemesByCategory(languageId, "consonant");
-  const prosody = getLanguagePhonemesByCategory(languageId, "prosody");
-  const clusters = getLanguagePhonemesByCategory(languageId, "cluster");
-
-  const currentIsVowel = vowels.some((p) => p.slug === currentSlug);
-  const currentIsProsody = prosody.some((p) => p.slug === currentSlug);
-  const currentIsCluster = clusters.some((p) => p.slug === currentSlug);
+  const groups = getLanguageSoundUnitGroups(languageId).filter(
+    (group) => group.units.length > 0,
+  );
+  const currentGroupId = groups.find((group) =>
+    group.units.some((unit) => unit.slug === currentSlug),
+  )?.id;
 
   return (
     <div className="flex flex-col gap-0.5">
-      <PhonemeGroup
-        label="元音"
-        phonemes={vowels}
-        currentSlug={currentSlug}
-        defaultOpen={currentIsVowel || !currentSlug}
-        languageId={languageId}
-      />
-      <PhonemeGroup
-        label="辅音"
-        phonemes={consonants}
-        currentSlug={currentSlug}
-        defaultOpen={!currentIsVowel && !currentIsProsody && !currentIsCluster && !!currentSlug}
-        languageId={languageId}
-      />
-      {prosody.length > 0 && (
+      {groups.map((group, index) => (
         <PhonemeGroup
-          label="重音/连读"
-          phonemes={prosody}
+          key={group.id}
+          label={group.label}
+          phonemes={group.units}
           currentSlug={currentSlug}
-          defaultOpen={currentIsProsody}
+          defaultOpen={
+            currentGroupId ? currentGroupId === group.id : index === 0
+          }
           languageId={languageId}
+          displayType={group.displayType}
         />
-      )}
-      {clusters.length > 0 && (
-        <PhonemeGroup
-          label="辅音丛"
-          phonemes={clusters}
-          currentSlug={currentSlug}
-          defaultOpen={currentIsCluster}
-          languageId={languageId}
-        />
-      )}
+      ))}
       <div className="px-2 pt-2 text-[11px] text-muted-foreground/60">
         {profile.shortLabel} · {profile.soundUnitLabel}
       </div>

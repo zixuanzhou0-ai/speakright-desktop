@@ -13,7 +13,7 @@ interface UseTtsReturn {
 }
 
 const STANDARD_TTS_UNAVAILABLE_MESSAGE =
-  "无法播放标准示范：请配置 TTS provider（如 ElevenLabs）或安装当前语言的本地发音包。单词词典发音只负责单词复读；后续可接入更多 TTS provider。";
+  "无法播放标准示范：请配置 TTS provider（如 ElevenLabs），或确认当前桌面端包含内置发音资源。单词词典发音只负责单词复读；后续可接入更多 TTS provider。";
 
 export function useTts(): UseTtsReturn {
   const [isLoading, setIsLoading] = useState(false);

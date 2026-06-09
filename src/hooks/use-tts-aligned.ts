@@ -1,6 +1,6 @@
 "use client";
 
-import { Howl } from "howler";
+import { Howl, Howler } from "howler";
 import { useCallback, useRef, useState } from "react";
 import { elevenLabsTtsAligned } from "@/lib/api-client";
 import { getElevenLabsConfig } from "@/lib/api-keys";
@@ -46,7 +46,16 @@ interface AlignmentData {
 }
 
 const STANDARD_TTS_UNAVAILABLE_MESSAGE =
-  "无法播放标准示范：请配置 TTS provider（如 ElevenLabs）或安装当前语言的本地发音包。单词词典发音只负责单词复读；后续可接入更多 TTS provider。";
+  "无法播放标准示范：请配置 TTS provider（如 ElevenLabs），或确认当前桌面端包含内置发音资源。单词词典发音只负责单词复读；后续可接入更多 TTS provider。";
+
+function resumeHowlerAudioContext(): void {
+  const ctx = Howler.ctx;
+  if (ctx?.state === "suspended") {
+    void ctx.resume().catch(() => {
+      // The next explicit user gesture will get another chance to unlock audio.
+    });
+  }
+}
 
 function aggregateToWordTimings(
   _text: string,
@@ -183,6 +192,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
       const howl = new Howl({
         src: [url],
         format: ["mp3"],
+        html5: true,
         onplay: () => {
           setIsPlaying(true);
           startTimeTracking();
@@ -231,34 +241,34 @@ export function useTtsAligned(): UseTtsAlignedReturn {
 
   const speak = useCallback(
     async (text: string, speedOrOptions?: number | TtsAlignedSpeakOptions) => {
+      resumeHowlerAudioContext();
       const requestId = requestIdRef.current + 1;
       requestIdRef.current = requestId;
       const { languageId, languagePack, speed } =
         resolveSpeakOptions(speedOrOptions);
       const config = getElevenLabsConfig();
-      if (!config) {
-        cleanup();
-        setError(null);
-        setIsLoading(true);
-        const localBlob = await loadLocalLanguagePackBlob(languageId, text);
-        if (requestIdRef.current !== requestId) return;
-        if (localBlob) {
-          lastAudioBlobRef.current = localBlob;
-          lastWordTimingsRef.current = [];
-          setIsLoading(false);
-          playBlob(localBlob, []);
-          return;
-        }
-        setIsLoading(false);
-        setError(STANDARD_TTS_UNAVAILABLE_MESSAGE);
-        return;
-      }
 
       cleanup();
       setError(null);
       setIsLoading(true);
       setWordTimings([]);
       setCurrentTime(0);
+
+      const localBlob = await loadLocalLanguagePackBlob(languageId, text);
+      if (requestIdRef.current !== requestId) return;
+      if (localBlob) {
+        lastAudioBlobRef.current = localBlob;
+        lastWordTimingsRef.current = [];
+        setIsLoading(false);
+        playBlob(localBlob, []);
+        return;
+      }
+
+      if (!config) {
+        setIsLoading(false);
+        setError(STANDARD_TTS_UNAVAILABLE_MESSAGE);
+        return;
+      }
 
       try {
         // Check cache first

@@ -28,7 +28,6 @@ npm run lint         # Biome check
 npx biome check --fix .  # Auto-fix lint + format
 npx shadcn@latest add <component>  # Add shadcn component
 npx vitest run           # Run unit tests (score-utils, word-selector, utils, tts-cache)
-npm run generate:audio   # Batch generate ElevenLabs word audio (needs API key)
 node scripts/download-word-emoji.mjs  # Download Fluent Emoji 3D PNGs for keyword words
 ```
 
@@ -37,7 +36,7 @@ node scripts/download-word-emoji.mjs  # Download Fluent Emoji 3D PNGs for keywor
 External services are separated by purpose:
 
 1. **Azure Speech** → Pronunciation assessment (scoring + phoneme + syllable + prosody analysis，韵律仅句子模式启用)
-2. **ElevenLabs / 本地发音包** → 标准示范 TTS、句子/短语朗读、逐词高亮、本地多语言语音包
+2. **ElevenLabs / 内置发音资源** → 标准示范 TTS、句子/短语朗读、逐词高亮、随桌面端发布的多语言音频
 3. **LLM (multi-provider)** → Chinese text feedback from Azure scores
 4. **单词词典发音** → 有道词典/韦氏词典仅负责单词复读，不负责标准示范 TTS
 5. **韦氏词典** → `/api/merriam-webster/` 下 `pronunciation/`、`stress/`、`test/` 三个子路由

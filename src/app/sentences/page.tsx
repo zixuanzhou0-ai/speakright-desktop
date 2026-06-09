@@ -432,6 +432,7 @@ export default function SentencesPage() {
         <div className="flex flex-col gap-3 min-h-0 lg:overflow-y-auto scrollbar-thin lg:pb-4">
           <SentenceResultsColumn
             hasResult={hasResult}
+            languageId={languageId}
             result={azure.result}
             selectedWord={selectedWord}
             stressedSyllables={stressedSyllables}

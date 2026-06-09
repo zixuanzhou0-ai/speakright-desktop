@@ -30,7 +30,6 @@ import {
   isElevenLabsPackLanguageId,
   type ElevenLabsPackLanguageId,
 } from "@/lib/elevenlabs-language-packs";
-import { getLanguageAudioPackStatus } from "@/lib/language-audio-pack-cache";
 import { getLanguageProfile } from "@/lib/language-profiles";
 import {
   getStaticLanguageAudioPackSummary,
@@ -55,10 +54,10 @@ function recommendation(rows: AvailabilityRow[]): string {
   if (!missing) return "可以直接开始今日训练。";
   if (missing.id === "azure") return "下一步：配置 Azure Speech 评分密钥。";
   if (missing.id === "tts") {
-    return "下一步：配置 ElevenLabs，或安装/确认当前语言的本地发音包。";
+    return "下一步：配置 ElevenLabs；内置资源之外的长句示范需要 TTS。";
   }
   if (missing.id === "local-pack") {
-    return "下一步：安装当前语言的本地发音包，单词复读会更稳定。";
+    return "当前构建缺少内置发音资源，请重新安装最新版桌面端。";
   }
   return "下一步：配置 AI 教练 LLM；没有它仍可评分训练。";
 }
@@ -71,9 +70,6 @@ export function LanguageAvailabilityCard() {
   const profile = getLanguageProfile(languageConfig.languageId);
   const [staticPack, setStaticPack] =
     useState<StaticLanguageAudioPackSummary | null>(null);
-  const [installedPackCount, setInstalledPackCount] = useState<number | null>(
-    null,
-  );
   const packLanguageId = isElevenLabsPackLanguageId(languageConfig.languageId)
     ? (languageConfig.languageId as ElevenLabsPackLanguageId)
     : null;
@@ -81,17 +77,12 @@ export function LanguageAvailabilityCard() {
   useEffect(() => {
     let cancelled = false;
     setStaticPack(null);
-    setInstalledPackCount(null);
 
     if (!packLanguageId) return;
 
-    void Promise.all([
-      getStaticLanguageAudioPackSummary(packLanguageId),
-      getLanguageAudioPackStatus(packLanguageId),
-    ]).then(([staticSummary, installedStatus]) => {
+    void getStaticLanguageAudioPackSummary(packLanguageId).then((staticSummary) => {
       if (cancelled) return;
       setStaticPack(staticSummary);
-      setInstalledPackCount(installedStatus?.installedCount ?? null);
     });
 
     return () => {
@@ -103,8 +94,7 @@ export function LanguageAvailabilityCard() {
     const azureReady = isAzureConfigReady(azureConfig);
     const ttsConfigured = hasSecret(elevenLabsConfig?.apiKey);
     const localPackReady =
-      languageConfig.languageId === "en-US" ||
-      Boolean(staticPack || installedPackCount);
+      languageConfig.languageId === "en-US" || Boolean(staticPack);
     const llmReady = hasSecret(llmConfig?.apiKey);
 
     return [
@@ -122,24 +112,22 @@ export function LanguageAvailabilityCard() {
         status: ttsConfigured
           ? "ElevenLabs 已配置"
           : localPackReady
-            ? "可用本地发音包"
+            ? "内置资源可用"
             : "未配置",
-        detail: "负责句子/短语示范朗读；不同于单词词典发音。",
+        detail: "负责长句示范；短词/短语优先使用桌面端内置资源。",
         ready: ttsConfigured || localPackReady,
         icon: Cloud,
       },
       {
         id: "local-pack",
-        label: "本地发音包",
+        label: "内置发音资源",
         status:
           languageConfig.languageId === "en-US"
             ? "英语内置"
             : staticPack
               ? `内置 ${staticPack.itemCount} 条`
-              : installedPackCount
-                ? `已安装 ${installedPackCount} 条`
-                : "缺失",
-        detail: "负责单词/短语复读，减少反复调用 TTS 的成本。",
+              : "缺失",
+        detail: "负责单词/短语复读，随桌面端发布，不需要用户安装。",
         ready: localPackReady,
         icon: Database,
       },
@@ -155,7 +143,6 @@ export function LanguageAvailabilityCard() {
   }, [
     azureConfig,
     elevenLabsConfig,
-    installedPackCount,
     languageConfig.languageId,
     llmConfig,
     staticPack,

@@ -168,7 +168,7 @@ export async function buildLocalDataExport(): Promise<LocalDataExport> {
     excluded: [
       "API keys",
       "ElevenLabs TTS audio cache",
-      "ElevenLabs language audio packs",
+      "Legacy generated language audio cache",
       "Theme preference",
     ],
   };

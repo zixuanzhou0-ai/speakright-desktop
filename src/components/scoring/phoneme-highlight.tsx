@@ -10,13 +10,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
+  getAssessmentPhonemeLabel,
   getPhonemeAudioUrl,
   syllableToIpa,
-  toIpa,
 } from "@/lib/azure-phoneme-map";
 import { getBarColor } from "@/lib/score-utils";
 import { cn } from "@/lib/utils";
 import type { AzurePhoneme, AzureSyllable } from "@/types/azure";
+import type { LanguageId } from "@/types/language";
 
 /* ---- Shared phoneme audio player (one Howl instance at a time) ---- */
 let activeHowl: Howl | null = null;
@@ -24,11 +25,12 @@ let activePhonemeKey = "";
 
 function playPhonemeAudio(
   azureCode: string,
+  languageId: LanguageId,
   key: string,
   onStart: () => void,
   onEnd: () => void,
 ) {
-  const url = getPhonemeAudioUrl(azureCode);
+  const url = getPhonemeAudioUrl(azureCode, languageId);
   if (!url) return;
 
   // Stop any currently playing phoneme
@@ -42,7 +44,7 @@ function playPhonemeAudio(
 
   activeHowl = new Howl({
     src: [url],
-    format: ["mp3"],
+    html5: true,
     onend: () => {
       activePhonemeKey = "";
       onEnd();
@@ -63,13 +65,15 @@ function playPhonemeAudio(
 export function PhonemeBlock({
   ph,
   index,
+  languageId = "en-US",
 }: {
   ph: AzurePhoneme;
   index: number;
+  languageId?: LanguageId;
 }) {
   const score = Math.round(ph.accuracyScore);
   const isGood = ph.accuracyScore >= 60;
-  const audioUrl = getPhonemeAudioUrl(ph.phoneme);
+  const audioUrl = getPhonemeAudioUrl(ph.phoneme, languageId);
   const hasAudio = !!audioUrl;
   const [isPlaying, setIsPlaying] = useState(false);
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -78,11 +82,12 @@ export function PhonemeBlock({
   const handlePlay = useCallback(() => {
     playPhonemeAudio(
       ph.phoneme,
+      languageId,
       blockKey,
       () => setIsPlaying(true),
       () => setIsPlaying(false),
     );
-  }, [ph.phoneme, blockKey]);
+  }, [ph.phoneme, languageId, blockKey]);
 
   const handleClick = useCallback(() => {
     if (!hasAudio) return;
@@ -127,7 +132,8 @@ export function PhonemeBlock({
           whileTap={{ scale: 0.92 }}
           onClick={handleClick}
           className={cn(
-            "flex w-14 cursor-pointer flex-col items-center rounded-lg p-1.5 transition-colors",
+            "flex w-14 flex-col items-center rounded-lg p-1.5 transition-colors",
+            hasAudio ? "cursor-pointer" : "cursor-default",
             isPlaying
               ? "ring-2 ring-primary bg-primary/25"
               : isGood
@@ -141,7 +147,7 @@ export function PhonemeBlock({
               isGood ? "text-primary" : "text-destructive",
             )}
           >
-            {toIpa(ph.phoneme)}
+            {getAssessmentPhonemeLabel(ph.phoneme, languageId)}
           </span>
           <span
             className={cn(
@@ -169,6 +175,11 @@ export function PhonemeBlock({
             · 点击播放
           </span>
         )}
+        {!hasAudio && (
+          <span className="ml-1.5 text-xs text-muted-foreground">
+            · 暂无本地音频
+          </span>
+        )}
       </TooltipContent>
     </Tooltip>
   );
@@ -177,24 +188,37 @@ export function PhonemeBlock({
 interface PhonemeHighlightProps {
   phonemes: AzurePhoneme[];
   syllables?: AzureSyllable[];
+  languageId?: LanguageId;
 }
 
 export function PhonemeHighlight({
   phonemes,
   syllables,
+  languageId = "en-US",
 }: PhonemeHighlightProps) {
+  const hasAnyAudio = phonemes.some((ph) =>
+    getPhonemeAudioUrl(ph.phoneme, languageId),
+  );
+  const breakdownLabel = languageId === "en-US" ? "音标拆解" : "发音拆解";
+
   return (
     <div className="space-y-4 rounded-xl border bg-card p-4">
       {/* Phoneme view */}
       <div>
         <div className="mb-2 flex items-center gap-2">
           <p className="text-sm font-semibold text-muted-foreground">
-            音标拆解
+            {breakdownLabel}
           </p>
-          <span className="inline-flex items-center gap-0.5 text-xs text-muted-foreground/60">
-            <Volume2 className="h-3 w-3" />
-            点击可听发音
-          </span>
+          {hasAnyAudio ? (
+            <span className="inline-flex items-center gap-0.5 text-xs text-muted-foreground/60">
+              <Volume2 className="h-3 w-3" />
+              点击可听发音
+            </span>
+          ) : (
+            <span className="text-xs text-muted-foreground/60">
+              暂无本地音频
+            </span>
+          )}
         </div>
         <div className="flex flex-wrap gap-2">
           {phonemes.map((ph, i) => (
@@ -202,6 +226,7 @@ export function PhonemeHighlight({
               key={`${ph.phoneme}-${ph.accuracyScore}`}
               ph={ph}
               index={i}
+              languageId={languageId}
             />
           ))}
         </div>

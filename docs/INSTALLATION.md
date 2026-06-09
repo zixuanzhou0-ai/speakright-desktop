@@ -43,11 +43,15 @@ Required values:
 
 ### ElevenLabs
 
-Used for standard pronunciation demos and read-along audio.
+Used for standard pronunciation demos and read-along audio that are not already
+covered by bundled local resources.
 
 Required value:
 
 - ElevenLabs API key
+
+Spanish, French, and Russian word/phrase audio is already bundled in the desktop
+app. Users do not install language audio packs separately.
 
 ### LLM Provider
 
@@ -67,7 +71,7 @@ Required values:
 
 ## Local Data
 
-Phase 1 stores user data locally. API keys are stored through the desktop
+This release stores user data locally. API keys are stored through the desktop
 credential store where supported; learning data stays local to the app.
 
 - usage tracking
@@ -76,9 +80,13 @@ credential store where supported; learning data stays local to the app.
 - training mastery profile
 - training sessions and review queue
 
-No Supabase backend is required for this release.
+No cloud backend is required for this release.
 
 ## Troubleshooting
+
+For developer startup issues, especially `localhost refused`, first check
+`docs/operations/DESKTOP_STARTUP_RUNBOOK.md` and confirm you are using
+`E:\SpeakRightDesktopRepo`.
 
 If recording does not work:
 
@@ -95,4 +103,5 @@ If TTS fails:
 
 - Confirm ElevenLabs key.
 - Check quota/usage.
-- Try the default voice first.
+- Confirm the installed desktop build includes `audio/language-packs` assets.
+- Try a short bundled word before testing a long free-form sentence.
