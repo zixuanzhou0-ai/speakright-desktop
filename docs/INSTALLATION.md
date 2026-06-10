@@ -93,6 +93,7 @@ No cloud backend is required for this release.
 ## Current Internal-Test Status
 
 Last controlled-test verification: 2026-06-11, commit `94be1d4`.
+Prior pushed handoff baseline before the 2026-06-12 checklist: `49b0c33`.
 
 - Recommended launch path: `npm run desktop:launch-release`.
 - Build shape: Tauri static bundle, not `localhost`.
@@ -101,6 +102,10 @@ Last controlled-test verification: 2026-06-11, commit `94be1d4`.
 - Azure live validation: `220/220` sampled pronunciation assessments passed.
 - ElevenLabs validation usage: usage query only, `0` generated TTS characters.
 - Public-release blocker: Windows EXE/MSI/NSIS artifacts are still unsigned.
+
+For the 2026-06-12 internal-test pass, use the installed app or Release EXE
+first. Only rebuild if the executable is missing, stale after code changes, or
+manual QA finds a bug that needs a code fix.
 
 ## Troubleshooting
 

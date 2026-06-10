@@ -13,19 +13,49 @@ current desktop app. If Microsoft Edge shows `localhost refused`, that is not th
 desktop app by itself; it usually means a browser tab is pointed at a dev URL
 while the dev server is not running.
 
-## Start Tomorrow
+## Start Tomorrow: 2026-06-12
 
 For user testing and release acceptance, start the static Release EXE. This is
 the same runtime shape as the packaged desktop app and does not depend on
 `localhost` or the Next dev server.
+
+1. Confirm the repository is clean and on the current desktop repo:
+
+```bat
+cd /d E:\SpeakRightDesktopRepo
+git status --short --branch
+```
+
+Expected result:
+
+```text
+## main...origin/main
+```
+
+2. Start the already-built Release EXE:
 
 ```bat
 cd /d E:\SpeakRightDesktopRepo
 npm run desktop:launch-release
 ```
 
-If the release executable is missing or you need fresh artifacts, build and
-launch it in one step:
+3. Use the app window that opens from Tauri. Do not use a browser tab pointed at
+   `localhost`.
+
+4. Begin manual QA with this order:
+
+- Settings: confirm language switch, Azure, ElevenLabs, LLM, data/privacy, and
+  release info are visible.
+- English: open phoneme list, then five phoneme detail pages; play target sound,
+  example word, record, replay the recording, and score once.
+- Spanish, French, and Russian: switch each language, open the sound-unit list,
+  then three detail pages; play target sound, example word, video, record,
+  replay the recording, and score once.
+- Drill, free practice, and diagnosis: check that missing/low evidence never
+  presents a confident perfect diagnosis for experimental languages.
+
+If the release executable is missing or you intentionally need fresh artifacts,
+build and launch it in one step:
 
 ```bat
 cd /d E:\SpeakRightDesktopRepo
@@ -110,6 +140,10 @@ This command validates bundled audio/video paths and a high-coverage Azure
 sample. It queries ElevenLabs usage but does not generate audio in the normal
 release checklist.
 
+Do not run ElevenLabs TTS smoke or any audio generation scripts during routine
+startup or manual QA. If bundled audio is missing, record the missing item first
+and ask for confirmation before generating replacement audio.
+
 Use the public release gate only after Windows code signing is configured:
 
 ```bat
@@ -168,3 +202,15 @@ release notes and installation guide keep the unsigned warning visible.
   and estimated generated characters used were `0`.
 - Keep using `npm run desktop:launch-release` for tomorrow's manual testing;
   dev mode remains debug-only.
+
+## 2026-06-12 First Task
+
+- Start with `npm run desktop:launch-release`.
+- If the window does not appear, check for an existing `speakright.exe` process,
+  close it, then run `npm run desktop:launch-release` again.
+- If the app opens, spend the first pass on manual QA rather than new features:
+  settings, English, Spanish, French, Russian, drill, free practice, diagnosis.
+- If a bug appears, capture the language, page, sound unit or word, action taken,
+  and whether it is audio, video, scoring, recording replay, layout, or wording.
+- Only rebuild with `npm run desktop:run-release` after code changes or if the
+  release executable is missing.

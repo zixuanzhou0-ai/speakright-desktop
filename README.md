@@ -42,6 +42,11 @@ npm run desktop:run-release
 For the daily desktop startup checklist, see
 `docs/operations/DESKTOP_STARTUP_RUNBOOK.md`.
 
+For the next manual-testing pass on 2026-06-12, start with the runbook's
+`Start Tomorrow: 2026-06-12` checklist. The first pass should use the Release EXE
+and cover Settings, English, Spanish, French, Russian, drill, free practice, and
+diagnosis before adding new work.
+
 ## Validation
 
 ```bat
@@ -67,6 +72,8 @@ release checklist.
   is complete.
 - Last controlled-test verification: 2026-06-11, from commit `94be1d4`
   (`chore: tighten desktop release validation`).
+- Prior pushed handoff baseline before the 2026-06-12 checklist was `49b0c33`
+  (`docs: record desktop validation status`).
 - Verified bundled assets: English word audio `1464/1464`, Spanish language-pack
   audio `398/398`, French language-pack audio `509/509`, Russian language-pack
   audio `407/407`, local videos `210/210`.
