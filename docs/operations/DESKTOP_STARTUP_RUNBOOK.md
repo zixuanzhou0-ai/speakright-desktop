@@ -68,6 +68,8 @@ the release-readiness or user-testing entrypoint.
 
 ## Current Resource Boundary
 
+- English word-card audio is bundled in `public/audio/words/` with `blue` and
+  `pink` voice variants; Youdao is only the online fallback.
 - Spanish, French, and Russian word/phrase audio is bundled in
   `public/audio/language-packs/`.
 - Multilingual audio packs are not installed from Settings anymore.
@@ -112,6 +114,19 @@ release notes and installation guide keep the unsigned warning visible.
   for non-English sound units to avoid overlapping long rule labels.
 - Spanish Sounds of Speech videos use original-ratio sizing with small side
   previous/next controls.
+- `desktop:artifact-smoke` scans source policy and static artifacts for retired
+  pronunciation sources while ignoring build directories such as `target`,
+  `.next`, and `out`.
 - Manual testing should start from `npm run desktop:launch-release` or
   `npm run desktop:run-release`, not `npm run desktop:dev`.
 - No real API key was found in the repository during the final secret scan.
+
+## 2026-06-10 Stabilization Result
+
+- GitHub Actions passed for pushed commit `78118e9`.
+- A clean rebuild was done after removing the old `src-tauri\target` directory.
+- `npm.cmd run validate:desktop` passed after the clean rebuild.
+- `npm.cmd run validate:release` ran through desktop validation and failed only
+  at the public release gate because EXE/MSI/NSIS artifacts are unsigned.
+- Current public-release blocker remains Windows code signing; controlled
+  internal testing may continue with the unsigned warning visible.

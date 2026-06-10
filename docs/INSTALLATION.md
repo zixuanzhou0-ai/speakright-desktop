@@ -50,8 +50,10 @@ Required value:
 
 - ElevenLabs API key
 
-Spanish, French, and Russian word/phrase audio is already bundled in the desktop
-app. Users do not install language audio packs separately.
+English word-card audio is bundled in the desktop app under `audio/words` and
+uses the online dictionary only as a fallback. Spanish, French, and Russian
+word/phrase audio is already bundled in the desktop app. Users do not install
+language audio packs separately.
 
 ### LLM Provider
 
@@ -105,5 +107,6 @@ If TTS fails:
 
 - Confirm ElevenLabs key.
 - Check quota/usage.
-- Confirm the installed desktop build includes `audio/language-packs` assets.
+- Confirm the installed desktop build includes `audio/words` and
+  `audio/language-packs` assets.
 - Try a short bundled word before testing a long free-form sentence.

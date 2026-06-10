@@ -12,6 +12,38 @@ const tauriReleaseBuildDir = path.join(
   "release",
   "build",
 );
+const sourcePolicyRootNames = ["src", "docs", "scripts", "src-tauri"];
+const excludedSourceDirectories = new Set([
+  ".git",
+  ".next",
+  "node_modules",
+  "out",
+  "target",
+]);
+const sourcePolicyExtensions = new Set([
+  ".css",
+  ".html",
+  ".js",
+  ".json",
+  ".md",
+  ".mjs",
+  ".rs",
+  ".toml",
+  ".ts",
+  ".tsx",
+]);
+const sourcePolicyAllowlist = new Set([
+  path.normalize("scripts/desktop-artifact-smoke.mjs"),
+  path.normalize("scripts/desktop-smoke.mjs"),
+]);
+const retiredPronunciationMarkers = [
+  "/api/merriam-webster",
+  "dictionaryapi.com",
+  "media.merriam-webster.com",
+  "Merriam-Webster",
+  "merriam-webster",
+  "韦氏",
+];
 
 function fail(message) {
   throw new Error(`Desktop artifact smoke failed: ${message}`);
@@ -62,6 +94,24 @@ function textArtifactFiles(dirPath) {
     if (entry.isDirectory()) {
       files.push(...textArtifactFiles(itemPath));
     } else if ([".css", ".html", ".js", ".json", ".txt"].includes(path.extname(entry.name))) {
+      files.push(itemPath);
+    }
+  }
+  return files;
+}
+
+function sourcePolicyFiles(dirPath) {
+  if (!existsSync(dirPath)) return [];
+  const files = [];
+  for (const entry of readdirSync(dirPath, { withFileTypes: true })) {
+    const itemPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      if (!excludedSourceDirectories.has(entry.name)) {
+        files.push(...sourcePolicyFiles(itemPath));
+      }
+      continue;
+    }
+    if (sourcePolicyExtensions.has(path.extname(entry.name))) {
       files.push(itemPath);
     }
   }
@@ -126,6 +176,27 @@ async function assertTauriConfig() {
   }
   if (mainWindow?.dragDropEnabled !== false) {
     fail("Tauri main window drag and drop must remain disabled");
+  }
+}
+
+async function assertSourcePolicy() {
+  const files = sourcePolicyRootNames.flatMap((rootName) =>
+    sourcePolicyFiles(path.join(root, rootName)),
+  );
+
+  for (const filePath of files) {
+    const relativePath = path.normalize(path.relative(root, filePath));
+    if (sourcePolicyAllowlist.has(relativePath)) {
+      continue;
+    }
+    const text = await readFile(filePath, "utf8");
+    for (const marker of retiredPronunciationMarkers) {
+      if (text.includes(marker)) {
+        fail(
+          `${relativePath} contains retired pronunciation source marker "${marker}"`,
+        );
+      }
+    }
   }
 }
 
@@ -232,7 +303,10 @@ async function assertStaticExportPolicy() {
     "/api/azure",
     "/api/elevenlabs",
     "/api/llm",
+    "/api/merriam-webster",
     "/api/pronunciation",
+    "dictionaryapi.com",
+    "media.merriam-webster.com",
   ];
 
   for (const filePath of textArtifactFiles(outDir)) {
@@ -248,6 +322,7 @@ async function assertStaticExportPolicy() {
 }
 
 async function main() {
+  await assertSourcePolicy();
   await assertTauriConfig();
   await assertGeneratedCapabilities();
   await assertStaticExport();
