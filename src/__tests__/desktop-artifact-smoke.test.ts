@@ -100,6 +100,7 @@ describe("desktop artifact smoke wiring", () => {
     expect(smokeScript).toContain('data-smoke="phoneme-detail-page"');
     expect(smokeScript).toContain("findNewestGeneratedCapabilities");
     expect(smokeScript).toContain("generated Tauri capabilities.json");
+    expect(smokeScript).toContain("desktop-ui-smoke.mjs");
     expect(smokeScript).toContain("devtools");
     expect(smokeScript).toContain("assertStaticExportPolicy");
     expect(smokeScript).toContain("fonts.googleapis.com");

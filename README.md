@@ -30,6 +30,7 @@ For manual QA and user testing, launch the Release EXE instead of dev mode:
 
 ```bat
 cd /d E:\SpeakRightDesktopRepo
+npm run desktop:preflight
 npm run desktop:launch-release
 ```
 
@@ -54,6 +55,8 @@ npm run test
 npm run typecheck
 npm run lint
 npm run build:desktop-frontend
+npm run desktop:preflight
+npm run desktop:ui-smoke
 npm run desktop:live-validation
 npm run validate:internal-release
 ```
@@ -66,20 +69,36 @@ Azure pronunciation-assessment sample. It queries ElevenLabs usage only; it does
 not generate new audio unless an explicit smoke flag is set outside the normal
 release checklist.
 
+`desktop:preflight` checks the active workspace, release executable, and running
+`speakright.exe` process before release-style testing. It never closes the app
+for you; close SpeakRight manually before building. `desktop:ui-smoke` launches
+the Release EXE, opens Settings, English, Spanish, French, Russian, drill, free
+practice, and diagnosis routes, and confirms the runtime is not served from
+`localhost`.
+
+GitHub Actions are split by change type: source, public asset, script,
+`src-tauri`, or package changes still run the full Windows desktop build, while
+README/docs-only changes run the lightweight Docs Check workflow.
+
 ## Release Notes
 
 - The current Windows artifacts are for controlled testing unless code signing
   is complete.
-- Last controlled-test verification: 2026-06-11, from commit `94be1d4`
+- Last controlled-test verification: 2026-06-11, after the preflight/UI-smoke
+  hardening pass.
+- Previous release-validation baseline: `94be1d4`
   (`chore: tighten desktop release validation`).
-- Prior pushed handoff baseline before the 2026-06-12 checklist was `49b0c33`
-  (`docs: record desktop validation status`).
+- Latest release-hardening pass added non-English low-evidence diagnosis gates,
+  `desktop:preflight`, `desktop:ui-smoke`, and docs-only CI path filtering; the
+  final local `validate:desktop` pass completed successfully.
 - Verified bundled assets: English word audio `1464/1464`, Spanish language-pack
   audio `398/398`, French language-pack audio `509/509`, Russian language-pack
   audio `407/407`, local videos `210/210`.
 - Verified Azure live sample: `220/220` pronunciation-assessment calls passed.
 - ElevenLabs was usage-checked only during validation; estimated TTS characters
   used were `0`.
+- Public release gate still fails only because EXE/MSI/NSIS artifacts are
+  unsigned.
 - Non-English pronunciation scoring remains experimental; `evidenceMastery`
   stays disabled for `es-ES`, `fr-FR`, and `ru-RU` until provider probes and
   language-specific evidence gates are finished.

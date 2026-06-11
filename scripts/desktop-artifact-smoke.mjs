@@ -35,6 +35,7 @@ const sourcePolicyExtensions = new Set([
 const sourcePolicyAllowlist = new Set([
   path.normalize("scripts/desktop-artifact-smoke.mjs"),
   path.normalize("scripts/desktop-smoke.mjs"),
+  path.normalize("scripts/desktop-ui-smoke.mjs"),
 ]);
 const retiredPronunciationMarkers = [
   "/api/merriam-webster",

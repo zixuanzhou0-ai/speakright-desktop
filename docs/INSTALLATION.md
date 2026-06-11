@@ -92,8 +92,8 @@ No cloud backend is required for this release.
 
 ## Current Internal-Test Status
 
-Last controlled-test verification: 2026-06-11, commit `94be1d4`.
-Prior pushed handoff baseline before the 2026-06-12 checklist: `49b0c33`.
+Last controlled-test verification: 2026-06-11, after the preflight/UI-smoke
+hardening pass. Previous release-validation baseline: `94be1d4`.
 
 - Recommended launch path: `npm run desktop:launch-release`.
 - Build shape: Tauri static bundle, not `localhost`.
@@ -101,11 +101,26 @@ Prior pushed handoff baseline before the 2026-06-12 checklist: `49b0c33`.
   `509/509`, Russian `407/407`, videos `210/210`.
 - Azure live validation: `220/220` sampled pronunciation assessments passed.
 - ElevenLabs validation usage: usage query only, `0` generated TTS characters.
+- Release UI smoke: Settings, English, Spanish, French, Russian, drill, free
+  practice, and diagnosis opened from the Release EXE; runtime was not
+  `localhost`.
 - Public-release blocker: Windows EXE/MSI/NSIS artifacts are still unsigned.
 
 For the 2026-06-12 internal-test pass, use the installed app or Release EXE
 first. Only rebuild if the executable is missing, stale after code changes, or
 manual QA finds a bug that needs a code fix.
+
+Recommended developer launch order for release-style testing:
+
+```bat
+cd /d E:\SpeakRightDesktopRepo
+npm run desktop:preflight
+npm run desktop:launch-release
+```
+
+If `desktop:preflight` reports that `speakright.exe` is already running, close
+the app window first. The preflight command is intentionally non-destructive and
+does not stop the process for you.
 
 ## Troubleshooting
 
@@ -114,6 +129,15 @@ For developer startup issues, especially `localhost refused`, first check
 `E:\SpeakRightDesktopRepo`. For release-style testing, use
 `npm run desktop:launch-release` or `npm run desktop:run-release`; do not treat a
 browser `localhost` tab as the desktop app.
+
+For automated release-window smoke, run:
+
+```bat
+npm run desktop:ui-smoke
+```
+
+The UI smoke opens the Release EXE, checks key pages, verifies the runtime is
+not `localhost`, and does not record audio or call ElevenLabs TTS.
 
 If recording does not work:
 

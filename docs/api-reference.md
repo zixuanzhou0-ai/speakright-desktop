@@ -15,6 +15,11 @@ shown in release artifacts.
 - Assessment granularity: phoneme where the provider returns usable alignment.
 - Non-English caveat: Spanish, French, and Russian feedback must stay
   conservative until per-language probes prove specific sound-unit reliability.
+- Non-English diagnosis reports must withhold trusted overall scores when Azure
+  returns static/silence, partial reading, too few word-level items, text that
+  does not match the target-language prompt, or no usable phoneme alignment.
+  The UI should show "evidence insufficient / retest recommended / training
+  reference only" instead of "no obvious issue".
 
 ## ElevenLabs
 
@@ -45,6 +50,8 @@ shown in release artifacts.
 - The LLM is not the acoustic scorer.
 - For `es-ES`, `fr-FR`, and `ru-RU`, prompts must explicitly label evidence
   limits and avoid claiming mastery from a single recording.
+- LLM feedback should treat low-evidence non-English reports as coaching hints,
+  not validated diagnostic conclusions.
 
 ## Local Data
 

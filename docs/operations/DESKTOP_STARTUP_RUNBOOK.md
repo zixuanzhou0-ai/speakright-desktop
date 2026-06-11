@@ -24,12 +24,14 @@ the same runtime shape as the packaged desktop app and does not depend on
 ```bat
 cd /d E:\SpeakRightDesktopRepo
 git status --short --branch
+npm run desktop:preflight
 ```
 
 Expected result:
 
 ```text
 ## main...origin/main
+Desktop preflight passed.
 ```
 
 2. Start the already-built Release EXE:
@@ -59,14 +61,17 @@ build and launch it in one step:
 
 ```bat
 cd /d E:\SpeakRightDesktopRepo
+npm run desktop:preflight:build
 npm run desktop:run-release
 ```
 
 Before rebuilding release artifacts, close any currently running SpeakRight
 window. On Windows, a running `speakright.exe` locks the executable and Tauri
 cannot overwrite it during `npm run desktop:build` or `npm run validate:desktop`.
-If needed, close the window from the taskbar or stop the `speakright` process
-before starting the build.
+`desktop:preflight` and `desktop:preflight:build` report this condition and then
+stop; they do not automatically close the user's app window. If needed, close
+the window from the taskbar or stop the `speakright` process before starting the
+build.
 
 Expected process after startup:
 
@@ -121,6 +126,8 @@ npm run test
 npm run typecheck
 npm run lint
 npm run build:desktop-frontend
+npm run desktop:preflight
+npm run desktop:ui-smoke
 ```
 
 Use this full controlled-internal release gate before publishing internal-test
@@ -139,6 +146,11 @@ npm run desktop:live-validation
 This command validates bundled audio/video paths and a high-coverage Azure
 sample. It queries ElevenLabs usage but does not generate audio in the normal
 release checklist.
+
+Use `desktop:ui-smoke` for release-window page coverage. It opens Settings,
+English, Spanish, French, Russian, drill, free practice, and diagnosis routes,
+checks that the runtime is not `localhost`, and avoids recording, Azure live
+scoring, and ElevenLabs TTS generation.
 
 Do not run ElevenLabs TTS smoke or any audio generation scripts during routine
 startup or manual QA. If bundled audio is missing, record the missing item first
@@ -203,9 +215,39 @@ release notes and installation guide keep the unsigned warning visible.
 - Keep using `npm run desktop:launch-release` for tomorrow's manual testing;
   dev mode remains debug-only.
 
+## 2026-06-11 Preflight/UI-Smoke Hardening Result
+
+- Added `npm run desktop:preflight`; it detected an already-running
+  `speakright.exe` process during validation and failed with an actionable
+  "close the app first" message instead of silently killing the window.
+- Added `npm run desktop:ui-smoke`; it launched the Release EXE and verified
+  Settings, English `/phonemes/ee`, Spanish `/phonemes/es-a`, French
+  `/phonemes/fr-i`, Russian `/phonemes/ru-a`, drill, free practice, and
+  diagnosis from the Tauri runtime.
+- Added docs-only GitHub Actions path filtering: README/docs-only changes use
+  the lightweight Docs Check workflow; code/resource/Tauri/package changes still
+  run the Windows desktop build.
+- Non-English diagnosis now withholds trusted overall scores for silence, too
+  few word-level items, target-text mismatch, missing phoneme alignment, invalid
+  recordings, or partial/low-evidence readings.
+- Validation results after the fixes:
+  - `npm.cmd run test`: 74 files and 374 tests passed.
+  - `npm.cmd run typecheck`: passed.
+  - `npm.cmd run lint`: passed; Biome checked 312 files.
+  - `npm.cmd run build:desktop-frontend`: passed; 144 static pages generated.
+  - `npm.cmd run desktop:preflight`: passed after closing the stale release
+    process.
+  - `npm.cmd run desktop:ui-smoke`: passed, not served from `localhost`.
+  - `npm.cmd run desktop:live-validation`: passed; English `1464`, Spanish
+    `398`, French `509`, Russian `407`, videos `210`, Azure `220/220`,
+    ElevenLabs generated characters `0`.
+  - `npm.cmd run validate:desktop`: passed.
+- `npm.cmd run desktop:release-gate`: failed only because EXE/MSI/NSIS
+    artifacts are unsigned, which remains the public-release blocker.
+
 ## 2026-06-12 First Task
 
-- Start with `npm run desktop:launch-release`.
+- Start with `npm run desktop:preflight`, then `npm run desktop:launch-release`.
 - If the window does not appear, check for an existing `speakright.exe` process,
   close it, then run `npm run desktop:launch-release` again.
 - If the app opens, spend the first pass on manual QA rather than new features:

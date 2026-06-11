@@ -2,11 +2,17 @@ name: Build Windows Desktop
 
 on:
   pull_request:
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
   push:
     branches:
       - main
     tags:
       - "v*"
+    paths-ignore:
+      - "README.md"
+      - "docs/**"
   workflow_dispatch:
 
 concurrency:

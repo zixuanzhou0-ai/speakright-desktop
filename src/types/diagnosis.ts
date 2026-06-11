@@ -43,6 +43,11 @@ export interface DiagnosisEvidenceSummary {
   recommendedAction: EvidenceRecommendedAction;
   usableRecordings: number;
   invalidRecordings: number;
+  totalExpectedWords: number;
+  totalObservedWords: number;
+  wordLevelEvidenceCount: number;
+  matchedReferenceWords: number;
+  referenceMatchRatio: number;
   thinFeatureCount: number;
   lowConfidenceFeatures: string[];
   notes: string[];

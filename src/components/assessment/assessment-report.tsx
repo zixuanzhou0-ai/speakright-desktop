@@ -85,7 +85,9 @@ export function AssessmentReport({ result, onRetake }: AssessmentReportProps) {
   const primaryPackId = displayPrescription.days[0]?.items[0]?.packId;
   const primaryLevelId = displayPrescription.days[0]?.items[0]?.levelId;
   const primaryPack = primaryPackId ? getTrainingPack(primaryPackId) : null;
-  const primaryHref = primaryPack
+  const primaryHref = !hasScore
+    ? "/drill"
+    : primaryPack
     ? `/drill/pack/${primaryPack.id}${
         primaryLevelId ? `?level=${encodeURIComponent(primaryLevelId)}` : ""
       }`
@@ -375,7 +377,11 @@ export function AssessmentReport({ result, onRetake }: AssessmentReportProps) {
         </Button>
         <Link href={primaryHref}>
           <Button className="gap-2 cursor-pointer">
-            {primaryPack ? `开始：${primaryPack.title}` : "开始训练处方"}
+            {!hasScore
+              ? "先练基础词/短语"
+              : primaryPack
+                ? `开始：${primaryPack.title}`
+                : "开始训练处方"}
             <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>

@@ -52,6 +52,9 @@ export interface AssessmentEvidenceAnalysis {
   alignment: EvidenceQualityCheck & {
     expectedWordCount: number;
     observedWordCount: number;
+    wordLevelEvidenceCount: number;
+    matchedReferenceWordCount: number;
+    referenceMatchRatio: number;
     miscueRate: number;
     omissionCount: number;
     insertionCount: number;
@@ -133,6 +136,14 @@ function wordsIn(text: string): string[] {
   return text.match(/[\p{L}\p{M}]+(?:[’'-][\p{L}\p{M}]+)*/gu) ?? [];
 }
 
+function normalizeWordForMatch(word: string): string {
+  return word
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLocaleLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "");
+}
+
 function tierFromScore(score: number): EvidenceQualityCheck["tier"] {
   if (score < 55) return "poor";
   if (score < 78) return "fair";
@@ -205,6 +216,20 @@ function alignmentFromWords(
 ): AssessmentEvidenceAnalysis["alignment"] {
   const expectedWordCount = Math.max(wordsIn(referenceText).length, 1);
   const observedWordCount = result.words.length;
+  const referenceWords = new Set(
+    wordsIn(referenceText)
+      .map(normalizeWordForMatch)
+      .filter(Boolean),
+  );
+  const scoredWords = result.words.filter(validWordForEvidence);
+  const wordLevelEvidenceCount = scoredWords.length;
+  const matchedReferenceWordCount = scoredWords.filter((word) =>
+    referenceWords.has(normalizeWordForMatch(word.word)),
+  ).length;
+  const referenceMatchRatio =
+    wordLevelEvidenceCount > 0
+      ? matchedReferenceWordCount / wordLevelEvidenceCount
+      : 0;
   const omissionCount = result.words.filter(
     (word) => word.errorType === "Omission",
   ).length;
@@ -224,6 +249,12 @@ function alignmentFromWords(
   if (miscueRate > 0.35)
     reasons.push("漏读或多读比例过高，不能直接诊断发音弱点");
   if (wordCountDrift > 0.45) reasons.push("识别词数和参考文本差异过大");
+  if (expectedWordCount >= 3 && referenceMatchRatio < 0.35) {
+    reasons.push("识别文本和目标语言材料匹配度过低，可能读错语言或读错文本");
+  }
+  if (wordLevelEvidenceCount === 0) {
+    reasons.push("Azure 未返回可用 word-level 证据");
+  }
   if (miscueRate > 0.15 && miscueRate <= 0.35) {
     reasons.push("有一定漏读或多读，证据强度会降低");
   }
@@ -231,10 +262,17 @@ function alignmentFromWords(
   return {
     score,
     tier: tierFromScore(score),
-    invalid: miscueRate > 0.35 || wordCountDrift > 0.45,
+    invalid:
+      miscueRate > 0.35 ||
+      wordCountDrift > 0.45 ||
+      wordLevelEvidenceCount === 0 ||
+      (expectedWordCount >= 3 && referenceMatchRatio < 0.35),
     reasons,
     expectedWordCount,
     observedWordCount,
+    wordLevelEvidenceCount,
+    matchedReferenceWordCount,
+    referenceMatchRatio,
     miscueRate,
     omissionCount,
     insertionCount,
@@ -427,6 +465,26 @@ export function summarizeAssessmentAnalyses(
   const totalValidTokens = analyses.flatMap((analysis) =>
     analysis.tokens.filter((token) => token.valid),
   ).length;
+  const totalExpectedWords = analyses.reduce(
+    (sum, analysis) => sum + analysis.alignment.expectedWordCount,
+    0,
+  );
+  const totalObservedWords = analyses.reduce(
+    (sum, analysis) => sum + analysis.alignment.observedWordCount,
+    0,
+  );
+  const wordLevelEvidenceCount = analyses.reduce(
+    (sum, analysis) => sum + analysis.alignment.wordLevelEvidenceCount,
+    0,
+  );
+  const matchedReferenceWords = analyses.reduce(
+    (sum, analysis) => sum + analysis.alignment.matchedReferenceWordCount,
+    0,
+  );
+  const referenceMatchRatio =
+    wordLevelEvidenceCount > 0
+      ? matchedReferenceWords / wordLevelEvidenceCount
+      : 0;
   const overallStrength: EvidenceStrength =
     usableRecordings === 0
       ? "invalid"
@@ -449,6 +507,11 @@ export function summarizeAssessmentAnalyses(
           : actionFromStrength(overallStrength),
     usableRecordings,
     invalidRecordings,
+    totalExpectedWords,
+    totalObservedWords,
+    wordLevelEvidenceCount,
+    matchedReferenceWords,
+    referenceMatchRatio,
     thinFeatureCount,
     lowConfidenceFeatures,
     notes: notes.slice(0, 6),

@@ -50,6 +50,9 @@ export function LanguageConfigCard() {
             <button
               key={profile.id}
               type="button"
+              data-smoke="language-option"
+              data-language-id={profile.id}
+              data-selected={selected ? "true" : "false"}
               onClick={() => handleSelect(profile.id)}
               className={cn(
                 "rounded-lg border p-4 text-left transition-colors",

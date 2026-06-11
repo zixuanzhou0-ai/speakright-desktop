@@ -263,6 +263,17 @@ function scoreStatusForReport(
     (sum, item) => sum + item.sampleCount,
     0,
   );
+  if (
+    summary.wordLevelEvidenceCount >= 4 &&
+    summary.totalExpectedWords >= 4 &&
+    summary.referenceMatchRatio < 0.45
+  ) {
+    return {
+      scoreStatus: "insufficient-evidence",
+      scoreStatusReason:
+        "证据不足：识别文本和目标语言材料不匹配，可能漏读、乱读或读错语言，请重新测试。",
+    };
+  }
   if (summary.overallStrength === "invalid") {
     return {
       scoreStatus: "insufficient-evidence",
@@ -274,6 +285,16 @@ function scoreStatusForReport(
       scoreStatus: "insufficient-evidence",
       scoreStatusReason:
         "证据不足：存在漏读、多读或低质量录音，本次不生成综合分。",
+    };
+  }
+  if (
+    summary.wordLevelEvidenceCount < 4 ||
+    summary.totalObservedWords < 4
+  ) {
+    return {
+      scoreStatus: "insufficient-evidence",
+      scoreStatusReason:
+        "证据不足：Azure 返回的可用 word-level 证据太少，请先练基础词/短语后复测。",
     };
   }
   if (summary.overallStrength === "thin" || mappedTokenCount < 8) {
