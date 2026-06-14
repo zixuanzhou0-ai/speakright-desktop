@@ -206,9 +206,27 @@ describe("useTtsAligned", () => {
     });
 
     expect(result.current.error).toContain("无法播放标准示范");
-    expect(result.current.error).toContain("TTS provider");
+    expect(result.current.error).toContain("设置页配置 ElevenLabs");
     expect(result.current.error).toContain("内置发音资源");
     expect(result.current.error).toContain("单词词典发音只负责单词复读");
+  });
+
+  it("shows Chinese ElevenLabs provider errors when online TTS fails", async () => {
+    mocks.elevenLabsTtsAligned.mockRejectedValueOnce(
+      new Error(
+        "ElevenLabs 请求过于频繁或额度不足，请稍后重试或检查 ElevenLabs 用量。",
+      ),
+    );
+    const { result } = renderHook(() => useTtsAligned());
+
+    await act(async () => {
+      await result.current.speak("This is an online sentence.", {
+        languageId: "en-US",
+      });
+    });
+
+    expect(result.current.error).toContain("无法播放标准示范");
+    expect(result.current.error).toContain("ElevenLabs 请求过于频繁或额度不足");
   });
 
   it("uses an installed local language pack when TTS provider is missing", async () => {

@@ -47,7 +47,7 @@ interface AlignmentData {
 }
 
 const STANDARD_TTS_UNAVAILABLE_MESSAGE =
-  "无法播放标准示范：请配置 TTS provider（如 ElevenLabs），或确认当前桌面端包含内置发音资源。单词词典发音只负责单词复读；后续可接入更多 TTS provider。";
+  "无法播放标准示范：请先在设置页配置 ElevenLabs，或改用已内置发音资源的练习内容。单词词典发音只负责单词复读。";
 
 function resumeHowlerAudioContext(): void {
   const ctx = Howler.ctx;
@@ -104,9 +104,7 @@ function aggregateToWordTimings(
   return timings;
 }
 
-function resolveSpeakOptions(
-  speedOrOptions?: number | TtsAlignedSpeakOptions,
-) {
+function resolveSpeakOptions(speedOrOptions?: number | TtsAlignedSpeakOptions) {
   const languageId =
     typeof speedOrOptions === "object"
       ? (speedOrOptions.languageId ?? "en-US")
@@ -159,7 +157,9 @@ export function useTtsAligned(): UseTtsAlignedReturn {
   const blobUrlRef = useRef<string | null>(null);
   const lastAudioBlobRef = useRef<Blob | null>(null);
   const lastWordTimingsRef = useRef<WordTiming[]>([]);
-  const lastPlaybackOptionsRef = useRef<{ volume?: number; html5?: boolean }>({});
+  const lastPlaybackOptionsRef = useRef<{ volume?: number; html5?: boolean }>(
+    {},
+  );
   const requestIdRef = useRef(0);
 
   const cleanup = useCallback(() => {
@@ -223,7 +223,9 @@ export function useTtsAligned(): UseTtsAlignedReturn {
         },
         onloaderror: () => {
           setIsPlaying(false);
-          setError("音频加载失败");
+          setError(
+            "标准示范音频加载失败，请重试；如果持续失败，请检查本地音频资源或 ElevenLabs 配置。",
+          );
         },
       });
 
@@ -329,7 +331,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
         const { audio_base64, alignment } = data;
 
         if (!audio_base64) {
-          throw new Error("No audio returned from TTS");
+          throw new Error("ElevenLabs 没有返回可播放音频，请稍后重试。");
         }
 
         // Aggregate character timings to word timings

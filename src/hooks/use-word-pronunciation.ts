@@ -57,6 +57,14 @@ function getSharedAudioContext(): AudioContext | null {
   return ctx;
 }
 
+function getPronunciationFallbackErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message.trim() : "";
+  if (message && /[\u4e00-\u9fff]/.test(message)) {
+    return `在线发音兜底失败：${message}`;
+  }
+  return "在线发音兜底失败，请检查网络后重试。";
+}
+
 export function useWordPronunciation(): UseWordPronunciationReturn {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -261,7 +269,10 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
         setSafeIsLoading(false);
         setSafeIsPlaying(false);
         setSafeError("音频加载失败，请稍后重试。");
-        console.warn(`[Pronunciation] Local audio failed to play: ${src}`, error);
+        console.warn(
+          `[Pronunciation] Local audio failed to play: ${src}`,
+          error,
+        );
       }
     },
     [playHowl, setSafeError, setSafeIsLoading, setSafeIsPlaying],
@@ -282,8 +293,11 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
       } catch (error) {
         setSafeIsLoading(false);
         setSafeIsPlaying(false);
-        setSafeError("在线发音兜底失败。");
-        console.warn(`[Pronunciation] Youdao fallback failed for "${word}":`, error);
+        setSafeError(getPronunciationFallbackErrorMessage(error));
+        console.warn(
+          `[Pronunciation] Youdao fallback failed for "${word}":`,
+          error,
+        );
       }
     },
     [cleanup, playHowl, setSafeError, setSafeIsLoading, setSafeIsPlaying],
@@ -329,7 +343,10 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
           return;
         }
 
-        const cached = await getLanguageAudioPackEntry(languageId, normalizedWord);
+        const cached = await getLanguageAudioPackEntry(
+          languageId,
+          normalizedWord,
+        );
         if (cached) {
           const url = URL.createObjectURL(cached.audioBlob);
           blobUrlRef.current = url;

@@ -265,8 +265,75 @@ export interface ElevenLabsVoiceSummary {
 
 function assertElevenLabsVoiceId(voiceId: string): void {
   if (!/^[A-Za-z0-9_-]{10,80}$/.test(voiceId)) {
-    throw new Error("Invalid ElevenLabs voice ID");
+    throw new Error(
+      "ElevenLabs Voice ID 格式无效，请在设置页重新选择或填写声音。",
+    );
   }
+}
+
+function buildElevenLabsHttpErrorMessage(
+  action: "auth" | "usage" | "voices" | "voiceSearch" | "tts",
+  status: number,
+  body = "",
+): string {
+  const detail = truncateServiceDetail(body);
+  const suffix = detail ? `（${detail}）` : "";
+
+  if (status === 400) {
+    return `ElevenLabs 请求配置无效，请检查 Voice、Model 和文本长度。${suffix}`;
+  }
+
+  if (status === 401 || status === 403) {
+    return "ElevenLabs 认证失败，请检查设置页里的 API Key 是否正确。";
+  }
+
+  if (status === 404) {
+    return "ElevenLabs 声音或模型不可用，请检查 Voice ID 和 Model。";
+  }
+
+  if (status === 408 || status === 504) {
+    return "ElevenLabs 请求超时，请检查网络后重试。";
+  }
+
+  if (status === 429) {
+    return "ElevenLabs 请求过于频繁或额度不足，请稍后重试或检查 ElevenLabs 用量。";
+  }
+
+  if (status >= 500) {
+    return `ElevenLabs 服务暂时不可用，请稍后重试。${suffix}`;
+  }
+
+  if (action === "usage") {
+    return `ElevenLabs 用量查询失败（HTTP ${status}）。${suffix}`;
+  }
+
+  if (action === "voices" || action === "voiceSearch") {
+    return `ElevenLabs 声音列表查询失败（HTTP ${status}）。${suffix}`;
+  }
+
+  if (action === "auth") {
+    return `ElevenLabs 连接测试失败（HTTP ${status}）。${suffix}`;
+  }
+
+  return `ElevenLabs 标准示范生成失败（HTTP ${status}）。${suffix}`;
+}
+
+function buildElevenLabsNetworkErrorMessage(error: unknown): string {
+  if (error instanceof DOMException && error.name === "AbortError") {
+    return "ElevenLabs 请求已取消，请重试。";
+  }
+
+  const message = error instanceof Error ? error.message : String(error);
+  if (
+    error instanceof TypeError ||
+    /fetch|network|dns|timeout|timed out|connection|offline|refused/i.test(
+      message,
+    )
+  ) {
+    return "无法连接 ElevenLabs，请检查网络、代理或 ElevenLabs 配置后重试。";
+  }
+
+  return `ElevenLabs 请求失败：${truncateServiceDetail(message) || "未知错误"}`;
 }
 
 function buildElevenLabsBody(
@@ -296,11 +363,20 @@ async function audioBlobFromResponse(res: Response): Promise<Blob> {
 export async function testElevenLabs(
   apiKey: string,
 ): Promise<{ success: boolean; error?: string }> {
-  const res = await apiFetch("https://api.elevenlabs.io/v1/voices", {
-    headers: { "xi-api-key": apiKey },
-  });
+  let res: Response;
+  try {
+    res = await apiFetch("https://api.elevenlabs.io/v1/voices", {
+      headers: { "xi-api-key": apiKey },
+    });
+  } catch (error) {
+    return { success: false, error: buildElevenLabsNetworkErrorMessage(error) };
+  }
   if (!res.ok) {
-    return { success: false, error: `ElevenLabs auth failed (${res.status})` };
+    const text = await res.text();
+    return {
+      success: false,
+      error: buildElevenLabsHttpErrorMessage("auth", res.status, text),
+    };
   }
   return { success: true };
 }
@@ -311,12 +387,19 @@ export async function fetchElevenLabsUsage(apiKey: string): Promise<{
   characterLimit: number;
   nextResetUnix: number;
 }> {
-  const res = await apiFetch("https://api.elevenlabs.io/v1/user/subscription", {
-    headers: { "xi-api-key": apiKey },
-  });
+  let res: Response;
+  try {
+    res = await apiFetch("https://api.elevenlabs.io/v1/user/subscription", {
+      headers: { "xi-api-key": apiKey },
+    });
+  } catch (error) {
+    throw new Error(buildElevenLabsNetworkErrorMessage(error));
+  }
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`ElevenLabs usage error (${res.status}): ${errText}`);
+    throw new Error(
+      buildElevenLabsHttpErrorMessage("usage", res.status, errText),
+    );
   }
   const data = await res.json();
   return {
@@ -330,12 +413,19 @@ export async function fetchElevenLabsUsage(apiKey: string): Promise<{
 export async function fetchElevenLabsVoices(
   apiKey: string,
 ): Promise<{ voices: { voice_id: string; name: string }[] }> {
-  const res = await apiFetch("https://api.elevenlabs.io/v1/voices", {
-    headers: { "xi-api-key": apiKey },
-  });
+  let res: Response;
+  try {
+    res = await apiFetch("https://api.elevenlabs.io/v1/voices", {
+      headers: { "xi-api-key": apiKey },
+    });
+  } catch (error) {
+    throw new Error(buildElevenLabsNetworkErrorMessage(error));
+  }
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`ElevenLabs voices error (${res.status}): ${errText}`);
+    throw new Error(
+      buildElevenLabsHttpErrorMessage("voices", res.status, errText),
+    );
   }
   const data = await res.json();
   const voices = (data.voices ?? []).map(
@@ -359,13 +449,18 @@ export async function searchElevenLabsVoices(
     url.searchParams.set("search", search.trim());
   }
 
-  const res = await apiFetch(url.toString(), {
-    headers: { "xi-api-key": apiKey },
-  });
+  let res: Response;
+  try {
+    res = await apiFetch(url.toString(), {
+      headers: { "xi-api-key": apiKey },
+    });
+  } catch (error) {
+    throw new Error(buildElevenLabsNetworkErrorMessage(error));
+  }
   if (!res.ok) {
     const errText = await res.text();
     throw new Error(
-      `ElevenLabs voice search error (${res.status}): ${errText}`,
+      buildElevenLabsHttpErrorMessage("voiceSearch", res.status, errText),
     );
   }
 
@@ -399,27 +494,36 @@ export async function elevenLabsTts(
   speedOrOptions?: number | ElevenLabsTtsOptions,
 ): Promise<Blob> {
   assertElevenLabsVoiceId(voiceId);
-  if (text.length > 500) throw new Error("Text too long (max 500 chars)");
+  if (text.length > 500) {
+    throw new Error("标准示范文本过长，请控制在 500 个字符以内。");
+  }
   const options =
     typeof speedOrOptions === "number"
       ? { speed: speedOrOptions }
       : (speedOrOptions ?? {});
 
-  const res = await apiFetch(
-    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
-    {
-      method: "POST",
-      headers: {
-        "xi-api-key": apiKey,
-        "Content-Type": "application/json",
+  let res: Response;
+  try {
+    res = await apiFetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+      {
+        method: "POST",
+        headers: {
+          "xi-api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(buildElevenLabsBody(text, modelId, options)),
       },
-      body: JSON.stringify(buildElevenLabsBody(text, modelId, options)),
-    },
-  );
+    );
+  } catch (error) {
+    throw new Error(buildElevenLabsNetworkErrorMessage(error));
+  }
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`ElevenLabs TTS error (${res.status}): ${errText}`);
+    throw new Error(
+      buildElevenLabsHttpErrorMessage("tts", res.status, errText),
+    );
   }
   return audioBlobFromResponse(res);
 }
@@ -433,27 +537,36 @@ export async function elevenLabsTtsAligned(
   speedOrOptions?: number | ElevenLabsTtsOptions,
 ): Promise<{ audio_base64: string; alignment: unknown }> {
   assertElevenLabsVoiceId(voiceId);
-  if (text.length > 500) throw new Error("Text too long (max 500 chars)");
+  if (text.length > 500) {
+    throw new Error("标准示范文本过长，请控制在 500 个字符以内。");
+  }
   const options =
     typeof speedOrOptions === "number"
       ? { speed: speedOrOptions }
       : (speedOrOptions ?? {});
 
-  const res = await apiFetch(
-    `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/with-timestamps`,
-    {
-      method: "POST",
-      headers: {
-        "xi-api-key": apiKey,
-        "Content-Type": "application/json",
+  let res: Response;
+  try {
+    res = await apiFetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/with-timestamps`,
+      {
+        method: "POST",
+        headers: {
+          "xi-api-key": apiKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(buildElevenLabsBody(text, modelId, options)),
       },
-      body: JSON.stringify(buildElevenLabsBody(text, modelId, options)),
-    },
-  );
+    );
+  } catch (error) {
+    throw new Error(buildElevenLabsNetworkErrorMessage(error));
+  }
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new Error(`ElevenLabs TTS aligned error (${res.status}): ${errText}`);
+    throw new Error(
+      buildElevenLabsHttpErrorMessage("tts", res.status, errText),
+    );
   }
   return res.json();
 }
@@ -798,18 +911,59 @@ export function streamLlmFeedback(
 
 // ─── Pronunciation (Youdao online fallback) ───────────
 
+function buildPronunciationNetworkErrorMessage(error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  if (
+    error instanceof TypeError ||
+    /fetch|network|dns|timeout|timed out|connection|offline|refused/i.test(
+      message,
+    )
+  ) {
+    return "无法连接在线词典发音，请检查网络后重试；已内置的本地音频不受影响。";
+  }
+
+  return `在线词典发音失败：${truncateServiceDetail(message) || "未知错误"}`;
+}
+
+function buildPronunciationHttpErrorMessage(status: number): string {
+  if (status === 404) {
+    return "在线词典没有找到这个词的发音，请换一个词或使用内置练习词。";
+  }
+
+  if (status === 408 || status === 504) {
+    return "在线词典发音请求超时，请检查网络后重试。";
+  }
+
+  if (status === 429) {
+    return "在线词典发音请求过于频繁，请稍后重试。";
+  }
+
+  if (status >= 500) {
+    return "在线词典发音服务暂时不可用，请稍后重试。";
+  }
+
+  return `在线词典发音失败（HTTP ${status}），请稍后重试。`;
+}
+
 /** Fetch pronunciation audio — returns blob */
 export async function fetchPronunciation(word: string): Promise<Blob> {
   const w = word.trim().normalize("NFC").toLowerCase();
-  if (!w) throw new Error("Missing word");
-  if (w.length > 80) throw new Error("Text too long (max 80 chars)");
+  if (!w) throw new Error("请输入要播放发音的单词。");
+  if (w.length > 80) {
+    throw new Error("单词发音文本过长，请控制在 80 个字符以内。");
+  }
 
   return fetchYoudaoAudio(w);
 }
 
 async function fetchYoudaoAudio(word: string): Promise<Blob> {
   const url = `https://dict.youdao.com/dictvoice?type=0&audio=${encodeURIComponent(word)}`;
-  const res = await apiFetch(url);
-  if (!res.ok) throw new Error(`Youdao returned ${res.status}`);
+  let res: Response;
+  try {
+    res = await apiFetch(url);
+  } catch (error) {
+    throw new Error(buildPronunciationNetworkErrorMessage(error));
+  }
+  if (!res.ok) throw new Error(buildPronunciationHttpErrorMessage(res.status));
   return audioBlobFromResponse(res);
 }

@@ -225,6 +225,13 @@ git status --short --branch
   blocks. `useLlmFeedback` now handles `data: {"error": ...}` SSE chunks, so a
   provider failure no longer finishes silently with no feedback and no visible
   error.
+- ElevenLabs and online dictionary audio failures now surface Chinese action
+  messages. Standard-demo TTS separates missing configuration, invalid key,
+  unavailable voice/model, network/proxy, timeout, quota/rate-limit, service
+  failure, and too-long text. English online dictionary fallback separates empty
+  text, too-long text, missing dictionary entry, network failure, timeout,
+  rate-limit, and provider outage while keeping bundled local audio as the
+  first-choice path.
 
 ## Latest Verification
 
@@ -252,8 +259,11 @@ Current gate summary:
 - Focused LLM failure-message tests passed: `3` files and `20` tests, covering
   Chinese Settings connection errors, stream provider/network errors, and
   visible `useLlmFeedback` error handling for SSE error chunks.
-- Full tests passed: `97` files and `543` tests.
-- Typecheck, lint (`353` files checked), and static desktop frontend build
+- Focused audio failure-message tests passed: `3` files and `23` tests,
+  covering Chinese ElevenLabs connection/TTS errors, no-provider standard-demo
+  guidance, and online dictionary fallback failure reasons.
+- Full tests passed: `98` files and `549` tests.
+- Typecheck, lint (`354` files checked), and static desktop frontend build
   passed.
 - Release EXE build passed and rebuilt EXE, MSI, and NSIS artifacts.
 - Release EXE preflight passed; no localhost startup is part of the release

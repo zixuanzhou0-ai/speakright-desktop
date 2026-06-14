@@ -222,8 +222,14 @@ If AI coach feedback fails:
 
 If TTS fails:
 
+- Read the in-app Chinese error message first. It distinguishes missing
+  ElevenLabs configuration, invalid key, unavailable voice/model, network/proxy
+  failure, timeout, quota/rate-limit, service failure, and too-long text.
 - Confirm ElevenLabs key.
-- Check quota/usage.
+- Check quota/usage in Settings.
 - Confirm the installed desktop build includes `audio/words` and
   `audio/language-packs` assets.
 - Try a short bundled word before testing a long free-form sentence.
+- Online dictionary fallback for English words can fail separately; when it
+  does, bundled local word audio and bundled language-pack audio are still the
+  first-choice resources.

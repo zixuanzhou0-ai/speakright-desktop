@@ -48,8 +48,7 @@ vi.mock("@/lib/audio-normalization", () => ({
   getLocalAudioPlaybackVolume: mocks.getLocalAudioPlaybackVolume,
   selectPeakSafePlaybackGain: mocks.selectPeakSafePlaybackGain,
   shouldNormalizeLocalAudioSrc: (src: string) =>
-    src.startsWith("/audio/words/") ||
-    src.startsWith("/audio/language-packs/"),
+    src.startsWith("/audio/words/") || src.startsWith("/audio/language-packs/"),
 }));
 
 vi.mock("howler", () => ({
@@ -135,7 +134,10 @@ describe("useWordPronunciation", () => {
       "fetch",
       vi.fn(async (src: string) => {
         mocks.fetchSources.push(String(src));
-        if (mocks.failNextLocalAudio && String(src).startsWith("/audio/words/")) {
+        if (
+          mocks.failNextLocalAudio &&
+          String(src).startsWith("/audio/words/")
+        ) {
           mocks.failNextLocalAudio = false;
           return {
             ok: false,
@@ -188,7 +190,9 @@ describe("useWordPronunciation", () => {
     expect(URL.createObjectURL).not.toHaveBeenCalled();
     expect(mocks.getLanguageAudioPackEntry).not.toHaveBeenCalled();
     expect(mocks.fetchPronunciation).not.toHaveBeenCalled();
-    expect(mocks.fetchSources).toEqual(["/audio/language-packs/es-ES/hola.mp3"]);
+    expect(mocks.fetchSources).toEqual([
+      "/audio/language-packs/es-ES/hola.mp3",
+    ]);
     expect(mocks.webAudioSources).toHaveLength(1);
     expect(mocks.webAudioGainNodes[0]?.gain.value).toBe(3);
     expect(mocks.howlSources).toEqual([]);
@@ -374,5 +378,24 @@ describe("useWordPronunciation", () => {
     });
     expect(mocks.fetchSources).toEqual(["/audio/words/blue/hello.mp3"]);
     expect(mocks.howlSources).toEqual(["blob:pronunciation"]);
+  });
+
+  it("shows the online dictionary failure reason when English fallback fails", async () => {
+    mocks.failNextLocalAudio = true;
+    mocks.fetchPronunciation.mockRejectedValueOnce(
+      new Error(
+        "无法连接在线词典发音，请检查网络后重试；已内置的本地音频不受影响。",
+      ),
+    );
+    const { result } = renderHook(() => useWordPronunciation());
+
+    await act(async () => {
+      result.current.playWord("hello", "blue", "en-US");
+    });
+
+    await waitFor(() => {
+      expect(result.current.error).toContain("在线发音兜底失败");
+    });
+    expect(result.current.error).toContain("无法连接在线词典发音");
   });
 });
