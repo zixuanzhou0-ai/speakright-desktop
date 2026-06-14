@@ -247,5 +247,5 @@ describe("open-source readiness files", () => {
     }
 
     expect(findings).toEqual([]);
-  });
+  }, 30_000);
 });

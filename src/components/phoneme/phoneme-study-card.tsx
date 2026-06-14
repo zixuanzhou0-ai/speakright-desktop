@@ -35,6 +35,7 @@ interface PhonemeStudyCardProps {
   practicedCount: number;
   isWordActive: boolean;
   wordIsLoading: boolean;
+  wordAudioError?: string | null;
   lastChartPlay: "normal" | "slow";
   onPrevious: () => void;
   onNext: () => void;
@@ -55,6 +56,7 @@ interface NonEnglishPracticeTaskProps {
   wordDirection: number;
   isWordActive: boolean;
   wordIsLoading: boolean;
+  audioError?: string | null;
   selectedVoice: "blue" | "pink";
   previousEnabled: boolean;
   onPrevious: () => void;
@@ -72,6 +74,7 @@ function NonEnglishPracticeTask({
   wordDirection,
   isWordActive,
   wordIsLoading,
+  audioError,
   selectedVoice,
   previousEnabled,
   onPrevious,
@@ -225,6 +228,15 @@ function NonEnglishPracticeTask({
           </Button>
         </motion.div>
       </div>
+      {audioError && (
+        <p
+          role="alert"
+          data-smoke="practice-word-audio-error"
+          className="mt-2 text-center text-xs text-destructive"
+        >
+          {audioError}
+        </p>
+      )}
     </div>
   );
 }
@@ -238,6 +250,7 @@ export function PhonemeStudyCard({
   practicedCount,
   isWordActive,
   wordIsLoading,
+  wordAudioError,
   lastChartPlay,
   onPrevious,
   onNext,
@@ -389,6 +402,7 @@ export function PhonemeStudyCard({
               wordDirection={wordDirection}
               isWordActive={isWordActive}
               wordIsLoading={wordIsLoading}
+              audioError={wordAudioError}
               selectedVoice={selectedVoice}
               previousEnabled={previousEnabled}
               onPrevious={onPrevious}
@@ -400,105 +414,127 @@ export function PhonemeStudyCard({
               onStopChartAudio={onStopChartAudio}
             />
           ) : (
-            <div className="mt-3 flex items-center gap-2">
-            <motion.div whileTap={{ scale: 0.9 }}>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  onSetWordDirection(-1);
-                  onPrevious();
-                }}
-                disabled={!previousEnabled}
-                className="h-7 w-7 shrink-0 rounded-full cursor-pointer disabled:opacity-30"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-            </motion.div>
-
-            <div className="relative flex-1 overflow-hidden">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={currentWord.word}
-                  initial={{ x: wordDirection > 0 ? 120 : -120, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: wordDirection > 0 ? -120 : 120, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  className="flex min-w-0 flex-col items-center justify-center gap-0.5 px-1"
-                >
-                  <motion.span
-                    animate={{ scale: isWordActive ? 1.05 : 1 }}
-                    className={`font-bold transition-colors ${getCenteredReadableTextClassName(practiceText.density)} ${isWordActive ? "text-primary" : ""}`}
+            <>
+              <div className="mt-3 flex items-center gap-2">
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      onSetWordDirection(-1);
+                      onPrevious();
+                    }}
+                    disabled={!previousEnabled}
+                    className="h-7 w-7 shrink-0 rounded-full cursor-pointer disabled:opacity-30"
                   >
-                    {displayWord}
-                  </motion.span>
-                  <span
-                    className={`font-mono ${getCenteredMonoTextClassName(practiceText.density)} ${isWordActive ? "text-primary/70" : "text-muted-foreground"}`}
-                  >
-                    {currentWord.ipa}
-                  </span>
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
                 </motion.div>
-              </AnimatePresence>
-            </div>
 
-            <div
-              className="flex shrink-0 overflow-hidden rounded-full border bg-muted/30 p-0.5"
-              data-smoke="practice-voice-selector"
-            >
-              {(["blue", "pink"] as const).map((voice) => (
-                <button
-                  type="button"
-                  key={voice}
-                  data-smoke={`practice-voice-${voice === "blue" ? "a" : "b"}`}
-                  aria-label={`使用${voice === "blue" ? "A" : "B"}声线`}
-                  title={`标准发音 ${voice === "blue" ? "A" : "B"}`}
-                  onClick={() => setSelectedVoice(voice)}
-                  className={`h-6 w-6 rounded-full text-[11px] font-semibold transition-colors ${
-                    selectedVoice === voice
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-background"
-                  }`}
+                <div className="relative flex-1 overflow-hidden">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={currentWord.word}
+                      initial={{
+                        x: wordDirection > 0 ? 120 : -120,
+                        opacity: 0,
+                      }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{
+                        x: wordDirection > 0 ? -120 : 120,
+                        opacity: 0,
+                      }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 30,
+                      }}
+                      className="flex min-w-0 flex-col items-center justify-center gap-0.5 px-1"
+                    >
+                      <motion.span
+                        animate={{ scale: isWordActive ? 1.05 : 1 }}
+                        className={`font-bold transition-colors ${getCenteredReadableTextClassName(practiceText.density)} ${isWordActive ? "text-primary" : ""}`}
+                      >
+                        {displayWord}
+                      </motion.span>
+                      <span
+                        className={`font-mono ${getCenteredMonoTextClassName(practiceText.density)} ${isWordActive ? "text-primary/70" : "text-muted-foreground"}`}
+                      >
+                        {currentWord.ipa}
+                      </span>
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+
+                <div
+                  className="flex shrink-0 overflow-hidden rounded-full border bg-muted/30 p-0.5"
+                  data-smoke="practice-voice-selector"
                 >
-                  {voice === "blue" ? "A" : "B"}
-                </button>
-              ))}
-            </div>
+                  {(["blue", "pink"] as const).map((voice) => (
+                    <button
+                      type="button"
+                      key={voice}
+                      data-smoke={`practice-voice-${voice === "blue" ? "a" : "b"}`}
+                      aria-label={`使用${voice === "blue" ? "A" : "B"}声线`}
+                      title={`标准发音 ${voice === "blue" ? "A" : "B"}`}
+                      onClick={() => setSelectedVoice(voice)}
+                      className={`h-6 w-6 rounded-full text-[11px] font-semibold transition-colors ${
+                        selectedVoice === voice
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:bg-background"
+                      }`}
+                    >
+                      {voice === "blue" ? "A" : "B"}
+                    </button>
+                  ))}
+                </div>
 
-            <motion.button
-              type="button"
-              data-smoke="practice-word-audio"
-              aria-label="播放单词发音"
-              whileHover={{ scale: 1.15 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => {
-                onStopPlayback();
-                onStopChartAudio();
-                onPlayWord(currentWord.word, selectedVoice);
-              }}
-              disabled={wordIsLoading}
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full cursor-pointer hover:bg-primary/10 hover:text-primary text-muted-foreground disabled:opacity-50"
-            >
-              {wordIsLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
-                <Volume2 className="h-5 w-5" />
+                <motion.button
+                  type="button"
+                  data-smoke="practice-word-audio"
+                  aria-label="播放单词发音"
+                  whileHover={{ scale: 1.15 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => {
+                    onStopPlayback();
+                    onStopChartAudio();
+                    onPlayWord(currentWord.word, selectedVoice);
+                  }}
+                  disabled={wordIsLoading}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full cursor-pointer hover:bg-primary/10 hover:text-primary text-muted-foreground disabled:opacity-50"
+                >
+                  {wordIsLoading ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <Volume2 className="h-5 w-5" />
+                  )}
+                </motion.button>
+
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      onSetWordDirection(1);
+                      onNext();
+                    }}
+                    className="h-7 w-7 shrink-0 rounded-full cursor-pointer"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </motion.div>
+              </div>
+
+              {wordAudioError && (
+                <p
+                  role="alert"
+                  data-smoke="practice-word-audio-error"
+                  className="mt-2 text-center text-xs text-destructive"
+                >
+                  {wordAudioError}
+                </p>
               )}
-            </motion.button>
-
-            <motion.div whileTap={{ scale: 0.9 }}>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  onSetWordDirection(1);
-                  onNext();
-                }}
-                className="h-7 w-7 shrink-0 rounded-full cursor-pointer"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </motion.div>
-            </div>
+            </>
           )
         ) : (
           <div className="mt-3 h-8" />

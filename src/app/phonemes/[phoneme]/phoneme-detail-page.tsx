@@ -191,8 +191,16 @@ export function PhonemeDetailPage() {
     recorder.reset();
     azure.reset();
     llm.reset();
+    wordAudio.clearError();
     autoAssessTriggered.current = false;
-  }, [recorder, azure, llm, setSelectedWordPhonemes, setSelectedWordSyllables]);
+  }, [
+    recorder,
+    azure,
+    llm,
+    wordAudio.clearError,
+    setSelectedWordPhonemes,
+    setSelectedWordSyllables,
+  ]);
 
   // Right arrow → random next word
   const handleNext = useCallback(() => {
@@ -405,6 +413,7 @@ export function PhonemeDetailPage() {
             practicedCount={practicedCount}
             isWordActive={isWordActive}
             wordIsLoading={wordAudio.isLoading}
+            wordAudioError={wordAudio.error}
             lastChartPlay={lastChartPlay}
             onPrevious={handlePrevious}
             onNext={handleNext}

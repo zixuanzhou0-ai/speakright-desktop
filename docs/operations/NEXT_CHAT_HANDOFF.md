@@ -103,6 +103,10 @@ git status --short --branch
   to an external page. The `PhonemePlayButton` component now enforces this too:
   external-only references and browser-TTS fallback audio render no header
   speaker.
+- Detail-page practice speakers now render `wordAudio.error` inline under the
+  word/phrase/sentence controls. Missing non-English local pack audio and
+  English online dictionary fallback failures should be visible to learners
+  instead of looking like a no-op.
 - Spanish `词重音` and `音节节奏`, and French `词尾静音`, had duplicate examples
   reduced. Continue auditing all Spanish/French/Russian units for repeated text.
 - Spanish video buttons were shortened and allowed to wrap so they do not crowd

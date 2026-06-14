@@ -32,9 +32,11 @@ const spanishRhythmUnit: PhonemeData = {
 function renderCard({
   phoneme,
   currentWord,
+  wordAudioError,
 }: {
   phoneme: PhonemeData;
   currentWord: { word: string; ipa: string; stressText?: string };
+  wordAudioError?: string | null;
 }) {
   render(
     <PhonemeStudyCard
@@ -46,6 +48,7 @@ function renderCard({
       practicedCount={3}
       isWordActive={false}
       wordIsLoading={false}
+      wordAudioError={wordAudioError}
       lastChartPlay="normal"
       onPrevious={noop}
       onNext={noop}
@@ -165,6 +168,45 @@ describe("PhonemeStudyCard non-English reading layout", () => {
     expect(
       screen.queryByRole("button", { name: "播放发音" }),
     ).not.toBeInTheDocument();
+  });
+
+  it("shows non-English missing local audio errors below the practice controls", () => {
+    renderCard({
+      phoneme: spanishRhythmUnit,
+      currentWord: {
+        word: "perdon",
+        ipa: "/peɾˈdon/",
+      },
+      wordAudioError: "暂无「perdon」的本地标准发音。",
+    });
+
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("暂无「perdon」的本地标准发音。");
+    expect(alert).toHaveAttribute("data-smoke", "practice-word-audio-error");
+  });
+
+  it("shows English dictionary fallback errors below the practice controls", () => {
+    renderCard({
+      phoneme: {
+        languageId: "en-US",
+        ipa: "/ae/",
+        symbol: "ae",
+        slug: "ae",
+        name: "AA",
+        category: "vowel",
+        example: "cat",
+        chartWord: "cat",
+        chartImage: "cat",
+        keywords: [{ word: "cat", ipa: "/kaet/" }],
+        difficulty: "medium",
+      },
+      currentWord: { word: "cat", ipa: "/kaet/" },
+      wordAudioError: "在线发音兜底失败，请检查网络后重试。",
+    });
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "在线发音兜底失败，请检查网络后重试。",
+    );
   });
 
   it("keeps exact local header audio for non-English units with target assets", () => {
