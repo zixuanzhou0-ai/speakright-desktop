@@ -155,11 +155,11 @@ README/docs-only changes run the lightweight Docs Check workflow.
 - Latest local RC handoff on 2026-06-14 tightened non-English practice-card
   readability, one-shot sound-unit speakers across detail and list cards,
   exact scoring-breakdown sound-unit audio,
-  local A/B word-audio gain, and formal mastery gating. Long words, phrases,
-  sentences, and IPA are shown in full; rule units use Chinese labels; speaker
-  buttons are hidden when no local target audio exists, and the header speaker
-  component now refuses external-only or browser-TTS fallback audio. This pass
-  is documented in `docs/operations/NEXT_CHAT_HANDOFF.md`.
+  local A/B word-audio gain, and formal mastery/progress-archive gating. Long
+  words, phrases, sentences, and IPA are shown in full; rule units use Chinese
+  labels; speaker buttons are hidden when no local target audio exists, and the
+  header speaker component now refuses external-only or browser-TTS fallback
+  audio. This pass is documented in `docs/operations/NEXT_CHAT_HANDOFF.md`.
 - The current RC evidence audit is tracked in
   `docs/operations/RC_EVIDENCE_AUDIT.md`. It records the proof matrix for
   Release EXE testing, experimental-language boundaries, non-English audio and
@@ -173,8 +173,8 @@ README/docs-only changes run the lightweight Docs Check workflow.
   wrapping/no-overlap runtime checks, A/B voice selector and word-audio button
   visibility/clickability/label runtime checks, scoring-breakdown
   visibility/readability/no-overflow runtime checks plus scoring-tile
-  short-audio policy checks including narrow-window and low-height detail
-  passes, and
+  short-audio policy checks, the non-English progress-archive blocker, including
+  narrow-window and low-height detail passes, and
   `releaseServedFromDevServer=false`.
 - Non-English diagnosis now treats omission/insertion miscues as insufficient
   evidence for a trusted overall score while preserving practice feedback.
@@ -199,8 +199,9 @@ README/docs-only changes run the lightweight Docs Check workflow.
   through the shared header playback policy.
 - Recording replay and benchmark playback now use the shared audio-player hook,
   so repeated replay clicks stop the previous blob and cleanup stays centralized.
-- Direct advanced pack-runner routes now show an experimental-language blocker
-  instead of loading English training packs for Spanish, French, or Russian.
-  HVPT perception and formal mastery writes remain gated by the English-only
-  formal mastery policy, so Spanish, French, and Russian stay
-  practice/feedback-only experimental modules.
+- Direct advanced pack-runner routes and direct progress-archive access now show
+  experimental-language blockers instead of loading English training packs or
+  formal English mastery archives for Spanish, French, or Russian. HVPT
+  perception and formal mastery writes remain gated by the English-only formal
+  mastery policy, so Spanish, French, and Russian stay practice/feedback-only
+  experimental modules.

@@ -486,7 +486,7 @@ async function forceNavigate(cdp, pathname) {
   await delay(800);
 }
 
-async function navigate(cdp, pathname, expectedSelector) {
+async function navigate(cdp, pathname, expectedSelector, options = {}) {
   if ((await currentPathname(cdp)) !== pathname) {
     if (pathname.startsWith("/phonemes/")) {
       const current = await currentPathname(cdp);
@@ -511,7 +511,11 @@ async function navigate(cdp, pathname, expectedSelector) {
     }
     if ((await currentPathname(cdp)) !== pathname) {
       try {
-        await clickRouteLink(cdp, pathname);
+        if (options.direct) {
+          await forceNavigate(cdp, pathname);
+        } else {
+          await clickRouteLink(cdp, pathname);
+        }
       } catch (error) {
         if (!pathname.startsWith("/phonemes/")) throw error;
         await forceNavigate(cdp, pathname);
@@ -1061,10 +1065,15 @@ async function assertMainRoutes(cdp) {
     { path: "/drill", selector: '[data-smoke="drill-page"]' },
     { path: "/sentences", selector: "body" },
     { path: "/assessment", selector: '[data-smoke="assessment-page"]' },
+    {
+      path: "/progress",
+      selector: '[data-smoke="progress-experimental-blocker"]',
+      direct: true,
+    },
   ];
 
   for (const route of routes) {
-    await navigate(cdp, route.path, route.selector);
+    await navigate(cdp, route.path, route.selector, route);
     const result = await evaluate(
       cdp,
       `
@@ -1173,8 +1182,13 @@ async function assertNarrowViewportRoutes(cdp) {
       { path: "/drill", selector: '[data-smoke="drill-page"]' },
       { path: "/sentences", selector: "body" },
       { path: "/assessment", selector: '[data-smoke="assessment-page"]' },
+      {
+        path: "/progress",
+        selector: '[data-smoke="progress-experimental-blocker"]',
+        direct: true,
+      },
     ]) {
-      await navigate(cdp, route.path, route.selector);
+      await navigate(cdp, route.path, route.selector, route);
       const result = await evaluate(
         cdp,
         `
@@ -1323,8 +1337,13 @@ async function assertLowHeightViewportRoutes(cdp) {
       { path: "/drill", selector: '[data-smoke="drill-page"]' },
       { path: "/sentences", selector: "body" },
       { path: "/assessment", selector: '[data-smoke="assessment-page"]' },
+      {
+        path: "/progress",
+        selector: '[data-smoke="progress-experimental-blocker"]',
+        direct: true,
+      },
     ]) {
-      await navigate(cdp, route.path, route.selector);
+      await navigate(cdp, route.path, route.selector, route);
       const result = await evaluate(
         cdp,
         `
@@ -1473,7 +1492,7 @@ async function smoke() {
         `details=${details
           .map((item) => `${item.languageId}:${item.slug}`)
           .join(",")}`,
-        "routes=/drill,/sentences,/assessment",
+        "routes=/drill,/sentences,/assessment,/progress",
         "scoringTileAudioPolicy=ok",
         "narrowViewport=ok",
         "lowHeightViewport=ok",
