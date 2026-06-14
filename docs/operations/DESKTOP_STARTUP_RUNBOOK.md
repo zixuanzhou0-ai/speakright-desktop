@@ -341,9 +341,10 @@ release notes and installation guide keep the unsigned warning visible.
   not write formal mastery/evidenceMastery.
 - `desktop:ui-smoke` is the authoritative Release EXE smoke for UI regressions:
   it checks Settings, English, Spanish, French, Russian, drill, free practice,
-  diagnosis, detail task text readability, expected header-audio
-  visibility/clickability readiness, no practice-button overlap, wrapping video
-  selector labels, and that the app is not served from localhost.
+  diagnosis, direct progress-archive access, detail task text readability,
+  expected header-audio visibility/clickability readiness, no practice-button
+  overlap, wrapping video selector labels, and that the app is not served from
+  localhost.
 - Use `audio:parity:dry-run` for the non-English audio gate; it must remain a
   zero-generation audit.
 
@@ -386,6 +387,9 @@ release notes and installation guide keep the unsigned warning visible.
 - Advanced pack-runner and HVPT perception mastery writes are now gated by
   `canRecordFormalMastery(languageId)`, keeping Spanish, French, and Russian
   practice/feedback-only while experimental.
+- Direct progress-archive access is also language-gated: English can show the
+  formal archive, while Spanish, French, and Russian see an experimental blocker
+  instead of English mastery archive wording.
 - Latest local verification:
   - Focused exact scoring-audio tests: `6` files and `57` tests passed,
     including left/right header-clip parity, Spanish/French/Russian exact alias
@@ -402,6 +406,9 @@ release notes and installation guide keep the unsigned warning visible.
   - Additional audio/resource/mastery focused tests: `6` files and `44` tests,
     then `6` files and `28` tests, passed.
   - Mastery/HVPT policy focused tests: `4` files and `22` tests passed.
+  - Progress-archive boundary focused tests: `3` files and `13` tests passed,
+    including the direct `/progress` experimental blocker and updated Release
+    smoke route coverage.
   - Latest settled-main validation results are centralized in
     `docs/operations/RC_EVIDENCE_AUDIT.md` to avoid stale counts across
     multiple handoff documents.
@@ -413,6 +420,7 @@ release notes and installation guide keep the unsigned warning visible.
   - `npm.cmd run desktop:ui-smoke`: passed from Release EXE with centered target
     text assertions, scoring-breakdown visibility/readability checks in normal,
     narrow, and low-height detail windows,
+    `/progress` experimental blocker route coverage,
     `scoringTileAudioPolicy=ok`,
     Settings/usage wrapping,
     `narrowViewport=ok`, `lowHeightViewport=ok`, and

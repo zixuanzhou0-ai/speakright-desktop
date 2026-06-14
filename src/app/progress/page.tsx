@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import {
   type BenchmarkRecordingMeta,
@@ -25,11 +26,15 @@ import {
   summarizeBenchmarkGroups,
   summarizeBenchmarkTrend,
 } from "@/lib/benchmark-archive";
+import { getLanguageProfile } from "@/lib/language-profiles";
+import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
 import { loadMasteryProfile } from "@/lib/mastery-profile";
 import { TRAINING_PACKS } from "@/lib/training-packs";
 import type { MasteryProfile } from "@/types/training";
 
 export default function ProgressPage() {
+  const { languageId } = useLanguageConfig();
+  const languageProfile = getLanguageProfile(languageId);
   const [recordings, setRecordings] = useState<BenchmarkRecordingMeta[]>([]);
   const [profile, setProfile] = useState<MasteryProfile | null>(null);
   const playback = useAudioPlayer();
@@ -68,6 +73,60 @@ export default function ProgressPage() {
     playback.playBlob(blob);
   };
 
+  if (!canRecordFormalMastery(languageId)) {
+    return (
+      <div
+        className="h-full overflow-y-auto px-6 py-4 scrollbar-thin"
+        data-smoke="progress-experimental-blocker"
+      >
+        <div className="mb-5 flex items-center gap-3">
+          <Link
+            href="/drill"
+            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold">
+              {languageProfile.shortLabel}进步档案
+            </h1>
+            <p className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
+              当前语言仍为 experimental，不显示正式英语 mastery 档案。
+            </p>
+          </div>
+        </div>
+
+        <div className="mx-auto flex min-h-[calc(100vh-12rem)] w-full max-w-2xl flex-col justify-center">
+          <div className="rounded-xl border bg-card p-6 text-center shadow-sm">
+            <ShieldCheck className="mx-auto h-10 w-10 text-primary" />
+            <h2 className="mt-3 break-words text-2xl font-bold [overflow-wrap:anywhere]">
+              {languageProfile.shortLabel}暂不生成正式进步档案
+            </h2>
+            <p className="mt-2 break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
+              西语、法语、俄语目前只保留练习反馈和复测建议；这里不会把英语阶段记录或正式
+              mastery 结果混入当前语言。
+            </p>
+            <div className="mt-5 flex flex-wrap justify-center gap-2">
+              <Link href="/drill">
+                <Button className="cursor-pointer">返回当前语言训练</Button>
+              </Link>
+              <Link href="/assessment">
+                <Button variant="outline" className="cursor-pointer">
+                  做当前语言诊断
+                </Button>
+              </Link>
+              <Link href="/settings">
+                <Button variant="outline" className="cursor-pointer">
+                  检查语言设置
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleDeleteRecording = async (id: string) => {
     if (!window.confirm("删除这条本机录音记录？")) return;
     await deleteBenchmarkRecording(id);
@@ -83,7 +142,10 @@ export default function ProgressPage() {
   };
 
   return (
-    <div className="h-full overflow-y-auto px-6 py-4 scrollbar-thin">
+    <div
+      className="h-full overflow-y-auto px-6 py-4 scrollbar-thin"
+      data-smoke="progress-page"
+    >
       <div className="mb-5 flex items-center gap-3">
         <Link
           href="/drill"

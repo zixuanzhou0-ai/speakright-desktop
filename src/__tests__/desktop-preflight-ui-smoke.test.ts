@@ -74,6 +74,10 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("/drill");
     expect(script).toContain("/sentences");
     expect(script).toContain("/assessment");
+    expect(script).toContain("/progress");
+    expect(script).toContain("direct: true");
+    expect(script).toContain("progress-experimental-blocker");
+    expect(script).toContain("routes=/drill,/sentences,/assessment,/progress");
     expect(script).toContain("releaseServedFromDevServer=false");
     expect(script).toContain("data-smoke=\"language-option\"");
     expect(script).toContain("textIsCentered");

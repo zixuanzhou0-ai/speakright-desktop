@@ -185,6 +185,10 @@ git status --short --branch
   loading English pack content in an experimental-language context. HVPT
   perception writes and any remaining formal mastery writes are gated by
   `canRecordFormalMastery(languageId)`.
+- Direct progress-archive access is language-gated too: English still shows the
+  formal archive, while Spanish/French/Russian show
+  `progress-experimental-blocker` instead of English mastery archive metrics or
+  stage wording.
 
 ## Latest Verification
 
@@ -198,15 +202,19 @@ Current gate summary:
   non-English full-score guard against `完美` / `已掌握` overclaims.
 - Focused advanced-training boundary tests passed: `2` files and `7` tests,
   including direct English pack-route blocking for experimental languages.
+- Focused progress-archive boundary tests passed: `3` files and `13` tests,
+  including the direct `/progress` experimental blocker and updated Release
+  smoke route coverage.
 - Open-source handoff/readiness plus IPA audit export drift tests passed.
-- Full tests passed: `93` files and `516` tests.
+- Full tests passed: `94` files and `518` tests.
 - Typecheck, lint, and static desktop frontend build passed.
 - Release EXE preflight passed; no localhost startup is part of the release
   path.
 - Release EXE build passed and rebuilt EXE, MSI, and NSIS artifacts.
 - Release EXE UI smoke passed with `scoringTileAudioPolicy=ok`,
   `narrowViewport=ok`, `lowHeightViewport=ok`, and
-  `releaseServedFromDevServer=false`.
+  `releaseServedFromDevServer=false`; the smoke script now includes `/progress`
+  in the main, narrow-window, and low-height route passes.
 - Release EXE launch passed from the static Tauri bundle, and the test process
   was closed after verification.
 - No ElevenLabs generation or TTS spend is part of this validation path.

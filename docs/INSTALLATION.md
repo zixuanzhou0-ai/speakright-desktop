@@ -114,7 +114,8 @@ before the local RC audit: `94be1d4`.
   The approved one-time secondary-voice expansion is separate from routine
   validation and is not rerun during installer testing.
 - Release UI smoke: Settings, English, Spanish, French, Russian, drill, free
-  practice, and diagnosis opened from the Release EXE; runtime was not
+  practice, diagnosis, and direct progress-archive access opened from the
+  Release EXE; runtime was not
   `localhost`. The current smoke also checks detail task text readability,
   centered reading targets, expected header-audio visibility, no
   practice-button overlap, wrapping video selector labels, Settings/usage
@@ -135,9 +136,10 @@ before the local RC audit: `94be1d4`.
   conservative: it may report that no obvious issue was found in the recording,
   but it must not call the result perfect or mastered.
 - Spanish, French, and Russian advanced training remains feedback-only for
-  formal mastery; direct English pack-runner routes show an experimental
-  blocker for these languages, and HVPT perception plus formal mastery writes
-  stay gated by the English-only formal mastery policy.
+  formal mastery; direct English pack-runner routes and direct progress-archive
+  access show experimental blockers for these languages, and HVPT perception
+  plus formal mastery writes stay gated by the English-only formal mastery
+  policy.
 - Public-release blocker: Windows EXE/MSI/NSIS artifacts are still unsigned.
 
 For the 2026-06-14 internal-test pass, use the installed app or Release EXE
