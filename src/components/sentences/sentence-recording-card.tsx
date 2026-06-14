@@ -63,7 +63,10 @@ export function SentenceRecordingCard({
     : "这段录音无效，请先重录";
 
   return (
-    <div className="shrink-0 rounded-xl border bg-card px-4 py-4 shadow-sm">
+    <div
+      className="shrink-0 rounded-xl border bg-card px-4 py-4 shadow-sm"
+      data-smoke="sentence-recording-card"
+    >
       <div className="flex flex-col items-center gap-2">
         <RecordButton
           isRecording={isRecording}

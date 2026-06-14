@@ -1088,7 +1088,7 @@ async function assertScoringTileAudioPolicy(cdp) {
 async function assertMainRoutes(cdp) {
   const routes = [
     { path: "/drill", selector: '[data-smoke="drill-page"]' },
-    { path: "/sentences", selector: "body" },
+    { path: "/sentences", selector: '[data-smoke="sentences-page"]' },
     { path: "/assessment", selector: '[data-smoke="assessment-page"]' },
     {
       path: "/progress",
@@ -1104,12 +1104,20 @@ async function assertMainRoutes(cdp) {
       `
 (() => {
   const bodyText = document.body?.innerText ?? "";
+  const routePath = ${JSON.stringify(route.path)};
+  const sentenceHooksReady =
+    routePath !== "/sentences" ||
+    (Boolean(document.querySelector('[data-smoke="sentences-page"]')) &&
+      Boolean(document.querySelector('[data-smoke="sentence-input-card"]')) &&
+      Boolean(document.querySelector('[data-smoke="sentence-recording-card"]')));
   return {
     ok:
       bodyText.trim().length > 20 &&
+      sentenceHooksReady &&
       !bodyText.includes("Merriam-Webster") &&
       !bodyText.includes("多语言发音包") &&
       !bodyText.includes("无法访问此页面"),
+    sentenceHooksReady,
     bodyText: bodyText.slice(0, 800)
   };
 })()
@@ -1205,7 +1213,7 @@ async function assertNarrowViewportRoutes(cdp) {
 
     for (const route of [
       { path: "/drill", selector: '[data-smoke="drill-page"]' },
-      { path: "/sentences", selector: "body" },
+      { path: "/sentences", selector: '[data-smoke="sentences-page"]' },
       { path: "/assessment", selector: '[data-smoke="assessment-page"]' },
       {
         path: "/progress",
@@ -1219,6 +1227,12 @@ async function assertNarrowViewportRoutes(cdp) {
         `
 (() => {
   const bodyText = document.body?.innerText ?? "";
+  const routePath = ${JSON.stringify(route.path)};
+  const sentenceHooksReady =
+    routePath !== "/sentences" ||
+    (Boolean(document.querySelector('[data-smoke="sentences-page"]')) &&
+      Boolean(document.querySelector('[data-smoke="sentence-input-card"]')) &&
+      Boolean(document.querySelector('[data-smoke="sentence-recording-card"]')));
   const visibleButtons = [...document.querySelectorAll("button,a")].filter((element) => {
     const rect = element.getBoundingClientRect();
     return rect.width > 0 && rect.height > 0;
@@ -1230,8 +1244,10 @@ async function assertNarrowViewportRoutes(cdp) {
   return {
     ok:
       bodyText.trim().length > 20 &&
+      sentenceHooksReady &&
       buttonTextReadable &&
       document.documentElement.scrollWidth <= window.innerWidth + 24,
+    sentenceHooksReady,
     buttonTextReadable,
     scrollWidth: document.documentElement.scrollWidth,
     innerWidth: window.innerWidth,
@@ -1360,7 +1376,7 @@ async function assertLowHeightViewportRoutes(cdp) {
 
     for (const route of [
       { path: "/drill", selector: '[data-smoke="drill-page"]' },
-      { path: "/sentences", selector: "body" },
+      { path: "/sentences", selector: '[data-smoke="sentences-page"]' },
       { path: "/assessment", selector: '[data-smoke="assessment-page"]' },
       {
         path: "/progress",
@@ -1374,6 +1390,12 @@ async function assertLowHeightViewportRoutes(cdp) {
         `
 (() => {
   const bodyText = document.body?.innerText ?? "";
+  const routePath = ${JSON.stringify(route.path)};
+  const sentenceHooksReady =
+    routePath !== "/sentences" ||
+    (Boolean(document.querySelector('[data-smoke="sentences-page"]')) &&
+      Boolean(document.querySelector('[data-smoke="sentence-input-card"]')) &&
+      Boolean(document.querySelector('[data-smoke="sentence-recording-card"]')));
   const visibleInteractive = [...document.querySelectorAll("button,a")].filter((element) => {
     const rect = element.getBoundingClientRect();
     return rect.width > 0 && rect.height > 0;
@@ -1386,8 +1408,10 @@ async function assertLowHeightViewportRoutes(cdp) {
     ok:
       window.innerHeight === 560 &&
       bodyText.trim().length > 20 &&
+      sentenceHooksReady &&
       interactiveTextReadable &&
       document.documentElement.scrollWidth <= window.innerWidth + 24,
+    sentenceHooksReady,
     interactiveTextReadable,
     scrollWidth: document.documentElement.scrollWidth,
     innerWidth: window.innerWidth,
@@ -1520,6 +1544,7 @@ async function smoke() {
         "routes=/drill,/sentences,/assessment,/progress",
         "scoringTileAudioPolicy=ok",
         "practiceAudioLabels=ok",
+        "freePracticeSmoke=ok",
         "narrowViewport=ok",
         "lowHeightViewport=ok",
         "releaseServedFromDevServer=false",

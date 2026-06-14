@@ -70,7 +70,10 @@ export function SentenceInputCard({
   const ipaDensity = getPracticeTextDensity(wordIpa ?? "", "phrase");
 
   return (
-    <div className="rounded-xl border bg-card px-4 py-4 shadow-sm space-y-3 min-h-0 overflow-hidden">
+    <div
+      className="rounded-xl border bg-card px-4 py-4 shadow-sm space-y-3 min-h-0 overflow-hidden"
+      data-smoke="sentence-input-card"
+    >
       <div className="flex gap-3 items-start">
         <div className="relative flex-1">
           <Textarea

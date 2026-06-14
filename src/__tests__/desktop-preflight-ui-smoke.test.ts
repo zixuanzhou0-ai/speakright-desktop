@@ -73,6 +73,10 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("/phonemes/ru-a");
     expect(script).toContain("/drill");
     expect(script).toContain("/sentences");
+    expect(script).toContain('selector: \'[data-smoke="sentences-page"]\'');
+    expect(script).toContain("sentenceHooksReady");
+    expect(script).toContain("sentence-input-card");
+    expect(script).toContain("sentence-recording-card");
     expect(script).toContain("/assessment");
     expect(script).toContain("/progress");
     expect(script).toContain("direct: true");
@@ -117,6 +121,7 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("expectedPracticeAudioLabelIncludes");
     expect(script).toContain('ariaLabel !== "播放单词发音"');
     expect(script).toContain("practiceAudioLabels=ok");
+    expect(script).toContain("freePracticeSmoke=ok");
     expect(script).toContain("aria-disabled");
     expect(script).toContain("videoSelectorReady");
     expect(script).toContain("videoSelectorCount");

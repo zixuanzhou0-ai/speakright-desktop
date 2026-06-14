@@ -372,7 +372,10 @@ export default function SentencesPage() {
 
   return (
     <LanguageModuleGate moduleName="自由练习" readinessKey="sentencePractice">
-      <div className="h-full flex flex-col px-6 py-4 overflow-hidden">
+      <div
+        className="h-full flex flex-col px-6 py-4 overflow-hidden"
+        data-smoke="sentences-page"
+      >
       <div className="mb-2 flex shrink-0 items-center justify-between">
         <h1 className="text-2xl font-bold">自由练习</h1>
         {(azure.result || llm.hasFeedback) && (

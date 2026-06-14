@@ -291,9 +291,11 @@ Current gate summary:
   path. During the pre-commit verification run it correctly reported the
   expected dirty worktree from this local fix.
 - Release EXE UI smoke passed with `scoringTileAudioPolicy=ok`,
-  `practiceAudioLabels=ok`, `narrowViewport=ok`, `lowHeightViewport=ok`, and
-  `releaseServedFromDevServer=false`; the smoke script now includes `/progress`
-  in the main, narrow-window, and low-height route passes.
+  `practiceAudioLabels=ok`, `freePracticeSmoke=ok`, `narrowViewport=ok`,
+  `lowHeightViewport=ok`, and `releaseServedFromDevServer=false`; the smoke
+  script now includes `/progress` in the main, narrow-window, and low-height
+  route passes, and `/sentences` waits for the actual free-practice page plus
+  input/recording cards instead of only checking `body`.
 - Release EXE launch passed from the static Tauri bundle, and the test process
   was closed after verification.
 - No ElevenLabs generation or TTS spend is part of this validation path.
