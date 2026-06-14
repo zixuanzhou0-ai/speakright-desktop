@@ -1,0 +1,26 @@
+## Summary
+
+- 
+
+## Validation
+
+- [ ] `npm run test`
+- [ ] `npm run typecheck`
+- [ ] `npm run lint`
+- [ ] `npm run build:desktop-frontend`
+- [ ] `npm run desktop:preflight`
+- [ ] `npm run desktop:ui-smoke`
+- [ ] Release EXE manual check, if user-visible desktop behavior changed
+
+## Release And Safety Checks
+
+- [ ] I did not use localhost/dev server as the release acceptance path.
+- [ ] I did not generate ElevenLabs audio or spend TTS credits.
+- [ ] Spanish, French, and Russian remain experimental.
+- [ ] Any IPA update has source evidence, or is marked `needs-review`.
+- [ ] I did not add API keys, tokens, recordings, private user data, or
+      unreviewed third-party media.
+
+## Notes
+
+Known limits or follow-up work:

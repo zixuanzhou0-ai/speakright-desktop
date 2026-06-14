@@ -2,6 +2,15 @@
   "name": "speakright-desktop",
   "version": "1.0.1",
   "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zixuanzhou0-ai/speakright-desktop.git"
+  },
+  "homepage": "https://github.com/zixuanzhou0-ai/speakright-desktop#readme",
+  "bugs": {
+    "url": "https://github.com/zixuanzhou0-ai/speakright-desktop/issues"
+  },
   "scripts": {
     "dev": "tauri dev",
     "desktop:dev": "tauri dev",

@@ -31,6 +31,10 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - Windows artifacts are still unsigned; this remains the public-release blocker.
 - The current Release Candidate evidence matrix is
   `docs/operations/RC_EVIDENCE_AUDIT.md`.
+- Public repository governance files now exist: `LICENSE`, `CONTRIBUTING.md`,
+  `SECURITY.md`, `THIRD_PARTY_NOTICES.md`, issue templates, PR template, and
+  `.env.example`. The MIT license covers source code and source documentation;
+  bundled media assets are explicitly documented as a separate rights boundary.
 
 ## Current Local Worktree
 

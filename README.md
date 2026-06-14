@@ -9,6 +9,9 @@ not included in this release track.
 
 - Desktop-only release track. Do not mix this repository with older browser-app workspaces.
 - The installed app loads the static Tauri bundle, not a localhost dev server.
+- This repository is public source code. `package.json` remains `private: true`
+  to prevent accidental npm publication; releases are desktop artifacts, not an
+  npm package.
 - API keys are stored through the desktop secure/local credential layer where
   supported; they are never committed and are excluded from learning-data
   exports.
@@ -53,6 +56,18 @@ adding new work.
 
 For the current Release Candidate evidence matrix, see
 `docs/operations/RC_EVIDENCE_AUDIT.md`.
+
+## Open Source
+
+- Code and source documentation are licensed under the MIT license. See
+  `LICENSE`.
+- Bundled audio, video, image, voice, and third-party educational media assets
+  are not automatically relicensed by MIT. See `THIRD_PARTY_NOTICES.md` before
+  redistributing packaged builds.
+- Contribution rules are in `CONTRIBUTING.md`.
+- Security reporting and secret-handling guidance are in `SECURITY.md`.
+- `.env.example` is documentation only; do not commit real API keys, recordings,
+  learning-data exports, tokens, or private user data.
 
 ## Validation
 
