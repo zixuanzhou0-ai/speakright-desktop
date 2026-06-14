@@ -28,6 +28,7 @@ interface SentenceInputCardProps {
   // Word pronunciation
   wordAudioIsPlaying: boolean;
   wordAudioIsLoading: boolean;
+  wordAudioError?: string | null;
   onWordAudioPlay: (word: string) => void;
   // TTS
   ttsIsPlaying: boolean;
@@ -52,6 +53,7 @@ export function SentenceInputCard({
   hasPlayedWord,
   wordAudioIsPlaying,
   wordAudioIsLoading,
+  wordAudioError,
   onWordAudioPlay,
   ttsIsPlaying,
   ttsIsLoading,
@@ -182,6 +184,16 @@ export function SentenceInputCard({
           {isWordMode
             ? "单词模式 · 本地音频优先，有道兜底"
             : "句子模式 · 发音来自 ElevenLabs"}
+        </p>
+      )}
+
+      {isWordMode && wordAudioError && (
+        <p
+          role="alert"
+          data-smoke="free-practice-word-audio-error"
+          className="text-sm text-red-500"
+        >
+          {wordAudioError}
         </p>
       )}
 

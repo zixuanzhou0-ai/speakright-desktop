@@ -183,6 +183,43 @@ describe("settings key hydration", () => {
         screen.getByText("单词模式 · 本地音频优先，有道兜底"),
       ).toBeInTheDocument();
     });
+  }, 30_000);
+
+  it("shows free-practice word audio failures inline", async () => {
+    const { SentenceInputCard } = await import(
+      "@/components/sentences/sentence-input-card"
+    );
+
+    render(
+      <SentenceInputCard
+        sentence="hello"
+        onSentenceChange={vi.fn()}
+        speed={0.85}
+        onSpeedChange={vi.fn()}
+        isWordMode={true}
+        trimmedText="hello"
+        wordIpa={null}
+        hasPlayedWord={false}
+        wordAudioIsPlaying={false}
+        wordAudioIsLoading={false}
+        wordAudioError="在线发音兜底失败，请检查网络后重试。"
+        onWordAudioPlay={vi.fn()}
+        ttsIsPlaying={false}
+        ttsIsLoading={false}
+        ttsError={null}
+        ttsWordTimings={[]}
+        ttsCurrentTime={0}
+        onTtsReplay={vi.fn()}
+        onListen={vi.fn()}
+      />,
+    );
+
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("在线发音兜底失败，请检查网络后重试。");
+    expect(alert).toHaveAttribute(
+      "data-smoke",
+      "free-practice-word-audio-error",
+    );
   });
 
   it("updates the coach mode card after store hydration", async () => {

@@ -155,6 +155,7 @@ export default function SentencesPage() {
     recorder.reset();
     tts.reset();
     wordAudio.stop();
+    wordAudio.clearError();
     playback.stop();
     setTransferSummary(null);
     recordingQuality.reset();
@@ -177,6 +178,7 @@ export default function SentencesPage() {
     previousTrimmedTextRef.current = trimmedText;
     tts.reset();
     wordAudio.stop();
+    wordAudio.clearError();
     playback.stop();
     setHasPlayedWord(false);
   }, [trimmedText, tts, wordAudio, playback]);
@@ -407,6 +409,7 @@ export default function SentencesPage() {
             hasPlayedWord={hasPlayedWord}
             wordAudioIsPlaying={wordAudio.isPlaying}
             wordAudioIsLoading={wordAudio.isLoading}
+            wordAudioError={wordAudio.error}
             onWordAudioPlay={handleWordAudioPlay}
             ttsIsPlaying={tts.isPlaying}
             ttsIsLoading={tts.isLoading}

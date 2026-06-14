@@ -111,6 +111,9 @@ git status --short --branch
   word/phrase/sentence controls. Missing non-English local pack audio and
   English online dictionary fallback failures should be visible to learners
   instead of looking like a no-op.
+- Free-practice word mode now also renders `wordAudio.error` inline under the
+  input/listen controls and clears stale word-audio errors when the learner
+  changes text or clears the session.
 - Spanish `词重音` and `音节节奏`, and French `词尾静音`, had duplicate examples
   reduced. Continue auditing all Spanish/French/Russian units for repeated text.
 - Spanish video buttons were shortened and allowed to wrap so they do not crowd

@@ -126,6 +126,9 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain('ariaLabel !== "播放单词发音"');
     expect(script).toContain("practiceAudioLabels=ok");
     expect(script).toContain("freePracticeSmoke=ok");
+    expect(
+      readProjectFile("src/components/sentences/sentence-input-card.tsx"),
+    ).toContain("free-practice-word-audio-error");
     expect(script).toContain("assessmentSmoke=ok");
     expect(script).toContain("aria-disabled");
     expect(script).toContain("videoSelectorReady");
