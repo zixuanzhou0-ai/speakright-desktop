@@ -43,12 +43,10 @@ Desktop preflight passed.
 ```
 
 If `git status` shows local edits, preserve them unless the user explicitly asks
-to discard them. The 2026-06-12 handoff intentionally records local UI/content
-work that should continue in the next chat.
-
-Current RC-handoff state may instead show `main...origin/main [ahead 5]` plus
-the documented uncommitted release-tightening files. That is expected for this
-local handoff; do not clean or revert the worktree just to make preflight quiet.
+to discard them. Current settled handoffs should normally show
+`main...origin/main`; if a future handoff records local edits, treat that
+handoff as the source of truth and continue the work rather than cleaning it for
+cosmetic reasons.
 
 3. Start the already-built Release EXE:
 

@@ -150,7 +150,8 @@ docs/operations/DESKTOP_STARTUP_RUNBOOK.md
 ```
 
 That handoff records the latest local non-English layout fixes, the validation
-commands already run, and the known uncommitted work that must not be reverted.
+commands already run, and any current local worktree caveats. A settled RC
+branch should show `main...origin/main` before you start new changes.
 
 Recommended developer launch order for release-style testing:
 

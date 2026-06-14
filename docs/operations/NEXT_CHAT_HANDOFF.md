@@ -38,36 +38,11 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 
 ## Current Local Worktree
 
-At the time of this handoff, the branch was ahead of `origin/main` by local
-commits and also had uncommitted work for non-English practice-card readability.
-Do not revert these changes unless the user explicitly asks.
-
-Expected modified areas:
-
-- `docs/operations/RC_EVIDENCE_AUDIT.md`
-- `src/components/phoneme/phoneme-study-card.tsx`
-- `src/components/layout/sidebar-phoneme-list.tsx`
-- `src/components/phoneme/video-player.tsx`
-- `src/components/phoneme/spanish-sounds-of-speech-video-panel.tsx`
-- `src/components/scoring/phoneme-highlight.tsx`
-- `src/components/settings/language-config-card.tsx`
-- `src/components/settings/usage-monitor.tsx`
-- `src/hooks/use-audio-player.ts`
-- `src/hooks/use-word-pronunciation.ts`
-- `src/app/drill/pack/[packId]/pack-runner-client.tsx`
-- `src/lib/audio-normalization.ts`
-- `src/lib/audio-playback-policy.ts`
-- `src/lib/practice-text-presentation.ts`
-- `src/lib/mastery-language-policy.ts`
-- `src/lib/detail-assessment-breakdown.ts`
-- `src/lib/assessment-evidence-engine.ts`
-- `src/lib/diagnosis-engine.ts`
-- `src/lib/language-keyword-expansions.ts`
-- `src/lib/language-sound-units/spanish.ts`
-- `src/lib/language-sound-units/french.ts`
-- `src/lib/language-source-alignment.ts`
-- `src/types/diagnosis.ts`
-- focused tests under `src/__tests__/`
+At the time of the latest settled handoff, `main` was aligned with
+`origin/main` and no local `speakright.exe` process was expected to be running.
+If `git status --short --branch` shows local edits in a future chat, preserve
+them unless the user explicitly asks to discard them; do not clean the worktree
+just to make the status look tidy.
 
 Run this first in the next chat:
 

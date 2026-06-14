@@ -45,4 +45,18 @@ describe("open-source readiness files", () => {
     expect(contributing).toContain("Spanish, French, and Russian are experimental");
     expect(security).toContain("Windows artifacts are currently unsigned");
   });
+
+  it("keeps current handoff docs from claiming stale local dirty state", () => {
+    const docs = [
+      read("docs/INSTALLATION.md"),
+      read("docs/operations/DESKTOP_STARTUP_RUNBOOK.md"),
+      read("docs/operations/NEXT_CHAT_HANDOFF.md"),
+      read("docs/operations/RC_EVIDENCE_AUDIT.md"),
+    ].join("\n");
+
+    expect(docs).not.toContain("known uncommitted work");
+    expect(docs).not.toContain("ahead of `origin/main` by local commits");
+    expect(docs).not.toContain("main...origin/main [ahead 5]");
+    expect(docs).not.toContain("documented uncommitted release-tightening");
+  });
 });

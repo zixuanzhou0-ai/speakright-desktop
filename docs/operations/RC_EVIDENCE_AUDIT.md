@@ -56,35 +56,26 @@ rerun during this playback/UI RC pass.
 
 ## Latest Local Command Results
 
-Latest local RC pass for tomorrow's manual testing:
+Latest settled-main RC pass for tomorrow's manual testing:
 
 ```text
 git status --short --branch
-  main...origin/main [ahead 5], with documented dirty release-tightening work
+  main...origin/main
 
-npm.cmd exec vitest run src/__tests__/assessment-segment-audio.test.ts src/__tests__/phoneme-highlight.test.tsx src/__tests__/azure-phoneme-map-language-parity.test.ts src/__tests__/language-phoneme-resources.test.ts src/__tests__/phoneme-play-button.test.tsx src/__tests__/audio-playback-policy.test.ts --reporter=verbose
-  6 files / 57 tests passed
-
-npm.cmd exec vitest run src/__tests__/desktop-preflight-ui-smoke.test.ts --reporter=verbose
-  1 file / 7 tests passed
-
-npm.cmd exec vitest run src/__tests__/desktop-preflight-ui-smoke.test.ts src/__tests__/language-source-alignment.test.ts src/__tests__/phoneme-study-card.test.tsx src/__tests__/practice-text-presentation.test.ts --reporter=verbose
-  4 files / 18 tests passed
+npm.cmd exec vitest run src/__tests__/open-source-readiness.test.ts src/__tests__/non-english-ipa-audit.test.ts --reporter=verbose
+  2 files / 8 tests passed
 
 npm.cmd run test
-  89 files / 489 tests passed
+  91 files / 500 tests passed
 
 npm.cmd run typecheck
   passed
 
 npm.cmd run lint
-  passed; 341 files checked
+  passed; 346 files checked
 
 npm.cmd run build:desktop-frontend
   passed; 144 static pages generated
-
-npm.cmd run desktop:build
-  passed; rebuilt speakright.exe, MSI, and NSIS artifacts
 
 npm.cmd run desktop:preflight
   passed; Release EXE exists, no running speakright.exe, no localhost startup
@@ -109,7 +100,7 @@ npm.cmd run audio:parity:dry-run
   Russian 920 existing / 0 missing; no ElevenLabs calls
 
 npm.cmd run desktop:launch-release
-  passed; latest manual-test process PID 70112
+  passed; Release EXE opened from the static Tauri bundle
 ```
 
 For tomorrow, start from:
