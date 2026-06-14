@@ -23,6 +23,8 @@
       evidence.
 - [ ] I did not add API keys, tokens, recordings, private user data, or
       unreviewed third-party media.
+- [ ] I followed `CODE_OF_CONDUCT.md` for learner, accent, IPA, and privacy
+      discussion.
 
 ## Notes
 

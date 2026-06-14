@@ -3,6 +3,7 @@
 Thanks for helping tighten SpeakRight Desktop. This project is a desktop
 pronunciation-training app, so small correctness issues can directly affect a
 learner's trust. Please prefer small, well-evidenced changes over broad edits.
+All project participation follows `CODE_OF_CONDUCT.md`.
 
 ## Repository
 
@@ -82,6 +83,15 @@ Only apply IPA edits that have reliable source evidence:
   expert review is available.
 - `deck-focus-hint` rows are focus cues, not full sentence IPA, unless a later
   sourced audit explicitly promotes them.
+
+## Community And Privacy
+
+Pronunciation review can be personal. Keep feedback about accents and learner
+recordings respectful, evidence-based, and scoped to the product issue.
+
+Do not post API keys, raw private recordings, private learning-data exports, or
+vulnerability details in public issues or pull requests. Use `SECURITY.md` for
+private vulnerability or credential reports.
 
 ## Pull Request Checklist
 

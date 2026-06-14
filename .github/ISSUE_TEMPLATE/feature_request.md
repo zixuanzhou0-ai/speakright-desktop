@@ -34,3 +34,6 @@ Mention any audio, video, scoring, or privacy implications.
 For release-facing desktop behavior, acceptance should be checked through the
 Release EXE, not a localhost/dev-server tab. Do not request new ElevenLabs
 audio generation unless the need and expected quota impact are explicit.
+
+Please keep discussion aligned with `CODE_OF_CONDUCT.md`, especially for
+accent, IPA, and experimental-language proposals.

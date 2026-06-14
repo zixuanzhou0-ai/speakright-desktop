@@ -65,6 +65,7 @@ For the current Release Candidate evidence matrix, see
   are not automatically relicensed by MIT. See `THIRD_PARTY_NOTICES.md` before
   redistributing packaged builds.
 - Contribution rules are in `CONTRIBUTING.md`.
+- Community behavior expectations are in `CODE_OF_CONDUCT.md`.
 - Security reporting and secret-handling guidance are in `SECURITY.md`.
 - `.env.example` is documentation only; do not commit real API keys, recordings,
   learning-data exports, tokens, or private user data.

@@ -40,6 +40,9 @@ exports. If the issue affects Spanish, French, or Russian, note that those
 modules are currently experimental and describe the specific misleading or
 broken behavior.
 
+Please keep discussion aligned with `CODE_OF_CONDUCT.md`, especially when the
+issue involves accent, region, or learner recordings.
+
 ## Checks
 
 - [ ] I tested with the Release EXE when reporting a release/user issue.

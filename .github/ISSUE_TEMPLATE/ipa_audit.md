@@ -49,3 +49,7 @@ and the source that makes the current learner-facing display acceptable.
 For `deck-focus-hint`, explain whether the hint is misleading as a focus cue;
 do not treat it as a full sentence IPA unless a later sourced audit explicitly
 promotes it.
+
+Keep IPA discussion aligned with `CODE_OF_CONDUCT.md`: evidence-first,
+respectful toward accents and regions, and clear when a result remains
+experimental or `needs-review`.

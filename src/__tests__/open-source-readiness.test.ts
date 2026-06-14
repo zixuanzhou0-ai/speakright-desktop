@@ -63,6 +63,7 @@ describe("open-source readiness files", () => {
   it("keeps the core public repository governance files present", () => {
     for (const path of [
       "LICENSE",
+      "CODE_OF_CONDUCT.md",
       "CONTRIBUTING.md",
       "SECURITY.md",
       "THIRD_PARTY_NOTICES.md",
@@ -88,9 +89,14 @@ describe("open-source readiness files", () => {
   });
 
   it("keeps contribution rules aligned with release constraints", () => {
+    const codeOfConduct = read("CODE_OF_CONDUCT.md");
     const contributing = read("CONTRIBUTING.md");
     const security = read("SECURITY.md");
 
+    expect(codeOfConduct).toContain("evidence-first");
+    expect(codeOfConduct).toContain("Do not post API keys");
+    expect(codeOfConduct).toContain("Spanish, French, and Russian");
+    expect(contributing).toContain("CODE_OF_CONDUCT.md");
     expect(contributing).toContain("Release EXE");
     expect(contributing).toContain("Do not generate ElevenLabs audio");
     expect(contributing).toContain("Spanish, French, and Russian are experimental");
@@ -106,19 +112,23 @@ describe("open-source readiness files", () => {
     expect(bugReport).toContain("Release EXE");
     expect(bugReport).toContain("Spanish, French, or Russian");
     expect(bugReport).toContain("Do not attach API keys");
+    expect(bugReport).toContain("CODE_OF_CONDUCT.md");
     expect(featureRequest).toContain("Release EXE");
     expect(featureRequest).toContain("experimental-language boundary");
     expect(featureRequest).toContain("ElevenLabs");
+    expect(featureRequest).toContain("CODE_OF_CONDUCT.md");
     expect(ipaAudit).toContain("Audit role");
     expect(ipaAudit).toContain("one primary");
     expect(ipaAudit).toContain("dictionary/textbook corroboration");
     expect(ipaAudit).toContain("deck-focus-hint");
     expect(ipaAudit).toContain("needs-review");
+    expect(ipaAudit).toContain("CODE_OF_CONDUCT.md");
     expect(pullRequest).toContain("I did not use localhost/dev server");
     expect(pullRequest).toContain("I did not generate ElevenLabs audio");
     expect(pullRequest).toContain("Spanish, French, and Russian remain experimental");
     expect(pullRequest).toContain("two independent sources");
     expect(pullRequest).toContain("I did not change `needs-review` IPA rows");
+    expect(pullRequest).toContain("I followed `CODE_OF_CONDUCT.md`");
   });
 
   it("keeps current handoff docs from claiming stale local dirty state", () => {
