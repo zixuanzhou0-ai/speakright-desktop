@@ -88,7 +88,10 @@ npm run ipa:audit:export
 npm run validate:internal-release
 ```
 
-Use `npm run desktop:build` when you need fresh Windows artifacts. Use
+Use `npm run desktop:build` when you need fresh Windows artifacts. The build
+wrapper defaults `CARGO_BUILD_JOBS=1` on Windows to reduce Rust/LLVM memory
+spikes; set `CARGO_BUILD_JOBS` yourself before running the command if your
+machine or CI runner can safely use more parallelism. Use
 `npm run validate:public-release` only after Windows code signing is configured.
 
 The live validation command checks bundled audio/video assets and a high-coverage

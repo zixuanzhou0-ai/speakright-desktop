@@ -207,6 +207,8 @@ describe("open-source readiness files", () => {
     }
 
     expect(scripts["desktop:preflight"]).toContain("desktop-preflight");
+    expect(scripts.build).toContain("desktop-build");
+    expect(scripts["desktop:build"]).toContain("desktop-build");
     expect(scripts["desktop:launch-release"]).toContain(
       "desktop-launch-release",
     );

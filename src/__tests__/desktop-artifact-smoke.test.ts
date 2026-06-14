@@ -10,6 +10,10 @@ describe("desktop artifact smoke wiring", () => {
       readFileSync(join(projectRoot, "package.json"), "utf8"),
     ) as { scripts: Record<string, string> };
 
+    expect(packageJson.scripts.build).toContain("desktop-build.mjs");
+    expect(packageJson.scripts["desktop:build"]).toContain(
+      "desktop-build.mjs",
+    );
     expect(packageJson.scripts["desktop:launch-release"]).toContain(
       "desktop-launch-release.mjs",
     );
@@ -26,6 +30,21 @@ describe("desktop artifact smoke wiring", () => {
         "desktop:launch-release",
       ),
     );
+  });
+
+  it("uses a Windows-safe desktop build wrapper instead of bare tauri build", () => {
+    const buildScript = readFileSync(
+      join(projectRoot, "scripts/desktop-build.mjs"),
+      "utf8",
+    );
+
+    expect(buildScript).toContain("CARGO_BUILD_JOBS");
+    expect(buildScript).toContain('env.CARGO_BUILD_JOBS = "1"');
+    expect(buildScript).toContain("process.platform === \"win32\"");
+    expect(buildScript).toContain("tauri.cmd");
+    expect(buildScript).toContain('["build", ...process.argv.slice(2)]');
+    expect(buildScript).not.toContain("audio:parity:generate");
+    expect(buildScript).not.toContain("generate-word-audio");
   });
 
   it("launches the release executable without starting the dev server", () => {

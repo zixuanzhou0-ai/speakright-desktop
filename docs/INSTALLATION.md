@@ -189,6 +189,12 @@ npm run desktop:ui-smoke
 The UI smoke opens the Release EXE, checks key pages, verifies the runtime is
 not `localhost`, and does not record audio or call ElevenLabs TTS.
 
+If `npm run desktop:build` fails with a Rust/LLVM out-of-memory error on a
+Windows workstation, retry the same command after closing other memory-heavy
+apps. The project build wrapper already defaults `CARGO_BUILD_JOBS=1` on
+Windows; advanced users can override that environment variable explicitly when a
+larger CI runner can tolerate more parallel Rust jobs.
+
 If recording does not work:
 
 - Read the in-app Chinese error message first. It distinguishes denied

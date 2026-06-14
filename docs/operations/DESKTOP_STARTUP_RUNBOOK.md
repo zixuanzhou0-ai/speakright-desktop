@@ -82,6 +82,12 @@ npm run desktop:preflight:build
 npm run desktop:run-release
 ```
 
+On Windows, `desktop:build` and `desktop:run-release` go through
+`scripts/desktop-build.mjs`, which defaults `CARGO_BUILD_JOBS=1` when the
+variable is not already set. This keeps Rust/LLVM release builds less likely to
+hit workstation memory spikes while still allowing CI or developers to opt into
+more parallelism explicitly.
+
 Before rebuilding release artifacts, close any currently running SpeakRight
 window. On Windows, a running `speakright.exe` locks the executable and Tauri
 cannot overwrite it during `npm run desktop:build` or `npm run validate:desktop`.

@@ -58,6 +58,10 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
   scripts, including `test`, `typecheck`, `lint`, `desktop:preflight`,
   `desktop:launch-release`, dry-run audio audits, and the public release gate.
   Routine validation scripts are checked so they do not call audio generation.
+- `npm run build` and `npm run desktop:build` now route through
+  `scripts/desktop-build.mjs`. On Windows it defaults `CARGO_BUILD_JOBS=1`
+  unless the environment already sets a value, reducing Rust/LLVM release-build
+  memory spikes while still allowing CI/developers to opt into more parallelism.
 - Issue and PR templates now keep the same public-maintenance boundaries visible:
   Release EXE for user-facing desktop checks, no API keys/raw recordings/private
   exports, no unconfirmed ElevenLabs generation, and Spanish/French/Russian as
