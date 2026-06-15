@@ -339,10 +339,18 @@ export default function TrainingPackPage() {
         className="h-full flex flex-col overflow-y-auto px-6 py-4 scrollbar-thin"
         data-smoke="pack-runner-experimental-blocker"
       >
-        <Link href="/drill" className="mb-4 inline-flex items-center gap-2">
-          <ArrowLeft className="h-4 w-4" />
-          返回刻意练习
-        </Link>
+        <div className="mb-4 flex flex-wrap items-start gap-3">
+          <Link
+            href="/drill"
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-muted"
+            aria-label="返回刻意练习"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
+          <p className="min-w-0 flex-1 break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
+            返回刻意练习
+          </p>
+        </div>
         <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center">
           <div className="rounded-xl border bg-card p-6 text-center shadow-sm">
             <Target className="mx-auto h-10 w-10 text-primary" />
@@ -909,17 +917,24 @@ export default function TrainingPackPage() {
     !["perception", "articulation"].includes(currentLevel.kind);
 
   return (
-    <div className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin">
-      <div className="mb-4 flex items-center gap-3 shrink-0">
+    <div
+      className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin"
+      data-smoke="pack-runner-page"
+    >
+      <div className="mb-4 flex flex-wrap items-start gap-3 shrink-0">
         <Link
           href="/drill"
-          className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <div className="min-w-0">
-          <h1 className="text-2xl font-bold">{pack.title}</h1>
-          <p className="text-sm text-muted-foreground">{pack.focus}</p>
+        <div className="min-w-0 flex-1">
+          <h1 className="break-words text-2xl font-bold [overflow-wrap:anywhere]">
+            {pack.title}
+          </h1>
+          <p className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
+            {pack.focus}
+          </p>
         </div>
       </div>
 
@@ -1094,6 +1109,7 @@ function IntroCard({
   const redirected = courseMap?.redirectedByGate;
   return (
     <motion.div
+      data-smoke="pack-runner-intro-card"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="rounded-xl border bg-card p-6 shadow-sm"
@@ -1115,10 +1131,10 @@ function IntroCard({
           <Badge variant="secondary">先补 {courseMap.startLevelTitle}</Badge>
         )}
       </div>
-      <h2 className="mt-4 text-xl font-bold">
+      <h2 className="mt-4 break-words text-xl font-bold [overflow-wrap:anywhere]">
         {brief?.headline ?? "教练式微课程"}
       </h2>
-      <p className="mt-2 text-sm text-muted-foreground">
+      <p className="mt-2 break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
         {brief?.reason ??
           "听辨 → 动作 → 音节 → 单词 → 对比 → 句子 → 影子跟读 → 混合复测。失败会进入慢速拆解，训练总结会记录 stuck 错因。"}
       </p>
@@ -1228,6 +1244,7 @@ function CourseMapPanel({
 
   return (
     <div
+      data-smoke="pack-runner-course-map"
       className={cn(
         "rounded-xl border bg-card shadow-sm",
         compact ? "p-3" : "mt-4 p-4",

@@ -935,7 +935,7 @@ async function assertSettings(cdp) {
 `,
   );
   if (!result?.ok) {
-    throw new Error(`Settings UI smoke failed: ${result?.bodyText ?? ""}`);
+    throw new Error(`Settings UI smoke failed: ${JSON.stringify(result)}`);
   }
 
   const openedResetDialog = await evaluate(
@@ -1611,6 +1611,12 @@ async function assertAdvancedDirectRoutes(cdp) {
       pageSmoke: "evidence-page",
       requiredSmokes: ["evidence-summary-stats"],
     },
+    {
+      path: "/drill/pack/ee-ih",
+      selector: '[data-smoke="pack-runner-page"]',
+      pageSmoke: "pack-runner-page",
+      requiredSmokes: ["pack-runner-intro-card", "pack-runner-course-map"],
+    },
   ];
 
   for (const route of englishRoutes) {
@@ -1673,6 +1679,11 @@ async function assertAdvancedDirectRoutes(cdp) {
       selector: '[data-smoke="evidence-experimental-blocker"]',
       blockerSmoke: "evidence-experimental-blocker",
     },
+    {
+      path: "/drill/pack/ee-ih",
+      selector: '[data-smoke="pack-runner-experimental-blocker"]',
+      blockerSmoke: "pack-runner-experimental-blocker",
+    },
   ];
 
   for (const route of experimentalRoutes) {
@@ -1700,6 +1711,8 @@ async function assertAdvancedDirectRoutes(cdp) {
       bodyText.includes("mastery") &&
       !bodyText.includes("训练证据库\\n汇总训练中的错题") &&
       !bodyText.includes("完整朗读稿") &&
+      !bodyText.includes("词尾别吞") &&
+      !bodyText.includes("课前任务单") &&
       readableText &&
       document.documentElement.scrollWidth <= window.innerWidth + 24,
     hasBlocker: Boolean(blocker),
@@ -2209,7 +2222,7 @@ async function smoke() {
         `details=${details
           .map((item) => `${item.languageId}:${item.slug}`)
           .join(",")}`,
-        "routes=/drill,/drill/word,/drill/sentence,/drill/contrast,/drill/prosody,/drill/perception,/drill/evidence,/sentences,/assessment,/assessment/passage,/progress",
+        "routes=/drill,/drill/word,/drill/sentence,/drill/contrast,/drill/prosody,/drill/perception,/drill/evidence,/drill/pack/ee-ih,/sentences,/assessment,/assessment/passage,/progress",
         "scoringTileAudioPolicy=ok",
         "englishTransferRoutes=ok",
         "englishCoreDrillRoutes=ok",

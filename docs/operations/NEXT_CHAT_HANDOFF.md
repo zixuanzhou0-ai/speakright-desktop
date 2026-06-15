@@ -200,6 +200,10 @@ git status --short --branch
   blockers instead of loading English coverage passages, English training-pack
   evidence, or formal mastery archives; English direct routes keep page hooks
   and wrap-ready headers for Release smoke.
+- English training-pack direct routes now have page/intro/course-map smoke hooks
+  and wrap-ready headers. Release EXE smoke opens `/drill/pack/ee-ih` in English
+  and checks French direct access shows `pack-runner-experimental-blocker`
+  instead of English pack content.
 - Quick diagnosis word and paragraph recording cards now show recorder startup
   errors and Azure scoring errors inline with `role="alert"`, so missing
   microphone permission, missing Azure keys, network failure, or quota failure
@@ -397,10 +401,10 @@ Current gate summary:
 - Focused perception-drill action-row tests passed: `2` files and `14` tests,
   covering inline ABX audio errors, wrap-ready result actions, and Release smoke
   route coverage for the experimental-language blocker path.
-- Focused advanced direct-route blocker tests passed: `2` files and `19` tests,
-  covering word/sentence/contrast smoke hooks, full-passage/evidence direct
-  hooks, wrap-ready page headers, and experimental-language blockers for English
-  coverage/evidence surfaces.
+- Focused advanced direct-route blocker tests passed: `3` files and `22` tests,
+  covering word/sentence/contrast smoke hooks, full-passage/evidence/pack-runner
+  direct hooks, wrap-ready page headers, and experimental-language blockers for
+  English coverage/evidence/pack surfaces.
 - Open-source handoff/readiness plus IPA audit export drift tests passed.
 - Static language-pack manifest IPA drift tests passed for the applied French
   and Russian reviewed findings.
@@ -438,8 +442,8 @@ Current gate summary:
   `releaseServedFromDevServer=false`; the smoke script now includes `/progress`
   and `/drill/perception` in the main, narrow-window, and low-height route
   passes, checks English `/drill/word`, `/drill/sentence`, `/drill/contrast`,
-  `/assessment/passage`, `/drill/evidence`, `/drill/scenarios`, and
-  `/drill/spontaneous` pages in main/narrow/low-height
+  `/assessment/passage`, `/drill/evidence`, `/drill/pack/ee-ih`,
+  `/drill/scenarios`, and `/drill/spontaneous` pages in main/narrow/low-height
   passes, `/sentences` waits for the actual
   free-practice page plus input/recording cards, and `/assessment` waits for the
   intro card plus start/passage actions instead of only checking the page

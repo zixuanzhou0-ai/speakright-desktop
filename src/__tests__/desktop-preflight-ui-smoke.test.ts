@@ -93,8 +93,13 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("scenario-prompt-card");
     expect(script).toContain("spontaneous-recording-card");
     expect(script).toContain("/drill/evidence");
+    expect(script).toContain("/drill/pack/ee-ih");
     expect(script).toContain("evidence-page");
     expect(script).toContain("evidence-experimental-blocker");
+    expect(script).toContain("pack-runner-page");
+    expect(script).toContain("pack-runner-intro-card");
+    expect(script).toContain("pack-runner-course-map");
+    expect(script).toContain("pack-runner-experimental-blocker");
     expect(script).toContain("assertAdvancedDirectRoutes");
     expect(script).toContain("advancedDirectRoutes=ok");
     expect(script).toContain("/sentences");
@@ -122,7 +127,7 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("direct: true");
     expect(script).toContain("progress-experimental-blocker");
     expect(script).toContain(
-      "routes=/drill,/drill/word,/drill/sentence,/drill/contrast,/drill/prosody,/drill/perception,/drill/evidence,/sentences,/assessment,/assessment/passage,/progress",
+      "routes=/drill,/drill/word,/drill/sentence,/drill/contrast,/drill/prosody,/drill/perception,/drill/evidence,/drill/pack/ee-ih,/sentences,/assessment,/assessment/passage,/progress",
     );
     expect(script).toContain("releaseServedFromDevServer=false");
     expect(script).toContain("data-smoke=\"language-option\"");
@@ -446,6 +451,9 @@ describe("desktop preflight and UI smoke", () => {
     expect(packRunner).toContain(
       'data-smoke="pack-runner-perception-audio-error"',
     );
+    expect(packRunner).toContain('data-smoke="pack-runner-page"');
+    expect(packRunner).toContain('data-smoke="pack-runner-intro-card"');
+    expect(packRunner).toContain('data-smoke="pack-runner-course-map"');
     expect(packRunner).toContain(
       'data-smoke="pack-runner-reference-audio-error"',
     );
@@ -464,6 +472,8 @@ describe("desktop preflight and UI smoke", () => {
     expect(packRunner).toContain("clearReferenceAudioState");
     expect(packRunner).toContain("wordAudio.clearError()");
     expect(packRunner).toContain("tts.reset()");
+    expect(packRunner).toContain("flex flex-wrap items-start gap-3 shrink-0");
+    expect(packRunner).toContain("min-w-0 flex-1");
     expect(packRunner).toContain('role="alert"');
   });
 

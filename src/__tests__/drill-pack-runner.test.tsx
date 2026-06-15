@@ -84,10 +84,19 @@ describe("drill pack runner start flow", () => {
   });
 
   it("starts final-consonants from the intro primary action", () => {
-    render(<TrainingPackPage />);
+    const { container } = render(<TrainingPackPage />);
 
     expect(screen.getByText("词尾别吞")).toBeInTheDocument();
     expect(screen.getByText("课前任务单")).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-smoke="pack-runner-page"]'),
+    ).toBeTruthy();
+    expect(
+      container.querySelector('[data-smoke="pack-runner-intro-card"]'),
+    ).toBeTruthy();
+    expect(
+      container.querySelector('[data-smoke="pack-runner-course-map"]'),
+    ).toBeTruthy();
 
     fireEvent.click(screen.getByRole("button", { name: "从 听辨 ABX 开始" }));
 
@@ -113,10 +122,13 @@ describe("drill pack runner start flow", () => {
   it("blocks direct English pack routes for experimental languages", () => {
     mocks.languageId = "es-ES";
 
-    render(<TrainingPackPage />);
+    const { container } = render(<TrainingPackPage />);
 
     expect(screen.getByText("西语暂不使用英语训练包")).toBeInTheDocument();
     expect(screen.getByText(/这里不会混入英语训练包/)).toBeInTheDocument();
+    expect(
+      container.querySelector('[data-smoke="pack-runner-experimental-blocker"]'),
+    ).toBeTruthy();
     expect(
       screen.getByRole("button", { name: "当前语言单词训练" }),
     ).toBeInTheDocument();
