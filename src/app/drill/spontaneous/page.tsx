@@ -30,6 +30,7 @@ import {
   type FreePracticeTransferSummary,
   recordFreePracticeTransfer,
 } from "@/lib/free-practice-transfer";
+import { LOCAL_MASTERY_SAVE_WARNING } from "@/lib/local-save-warning";
 import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
 import { loadMasteryProfile, saveMasteryProfile } from "@/lib/mastery-profile";
 import {
@@ -69,6 +70,7 @@ export default function SpontaneousPage() {
   );
   const [error, setError] = useState<string | null>(null);
   const [archiveWarning, setArchiveWarning] = useState<string | null>(null);
+  const [localSaveWarning, setLocalSaveWarning] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const recorder = useRecorder({ maxDurationMs: 60_000 });
   const replayAudio = useAudioPlayer();
@@ -112,6 +114,7 @@ export default function SpontaneousPage() {
     setSummary(null);
     setError(null);
     setArchiveWarning(null);
+    setLocalSaveWarning(null);
   };
 
   const startRecording = async () => {
@@ -122,14 +125,18 @@ export default function SpontaneousPage() {
   const submit = async () => {
     const config = getAzureConfig();
     if (!config) {
-      setError("请先到设置页配置 Azure Speech API 密钥和区域；配置后回到本页重新评分。");
+      setError(
+        "请先到设置页配置 Azure Speech API 密钥和区域；配置后回到本页重新评分。",
+      );
       setArchiveWarning(null);
+      setLocalSaveWarning(null);
       return;
     }
     if (!recorder.audioBlob || !quality.report?.canSubmit) return;
 
     setError(null);
     setArchiveWarning(null);
+    setLocalSaveWarning(null);
     setIsProcessing(true);
     try {
       const nextTranscript = await transcribeSpeech(
@@ -145,11 +152,11 @@ export default function SpontaneousPage() {
         config.region,
       );
       const transferSummary = {
-          ...analyzeFreePracticeTransfer({
-            profile: transferProfile,
-            result,
-            text: nextTranscript,
-            mode: "sentence",
+        ...analyzeFreePracticeTransfer({
+          profile: transferProfile,
+          result,
+          text: nextTranscript,
+          mode: "sentence",
         }),
         transferLayer: "spontaneous" as const,
       };
@@ -171,10 +178,12 @@ export default function SpontaneousPage() {
           transferSummary,
           reliability,
         );
-        saveMasteryProfile(recorded.profile);
+        const profileSaved = saveMasteryProfile(recorded.profile);
+        setLocalSaveWarning(profileSaved ? null : LOCAL_MASTERY_SAVE_WARNING);
         setProfile(recorded.profile);
         setSummary(recorded.summary);
       } else {
+        setLocalSaveWarning(null);
         setSummary(transferSummary);
       }
       try {
@@ -310,7 +319,8 @@ export default function SpontaneousPage() {
                 isPlaying={replayAudio.isPlaying}
                 isAssessing={isProcessing}
                 onReplay={() => {
-                  if (recorder.audioBlob) replayAudio.playBlob(recorder.audioBlob);
+                  if (recorder.audioBlob)
+                    replayAudio.playBlob(recorder.audioBlob);
                 }}
                 onClear={resetRecording}
                 onAssess={submit}
@@ -340,6 +350,15 @@ export default function SpontaneousPage() {
                 className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
               >
                 {archiveWarning}
+              </p>
+            )}
+            {localSaveWarning && (
+              <p
+                role="alert"
+                data-smoke="spontaneous-local-save-warning"
+                className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
+              >
+                {localSaveWarning}
               </p>
             )}
           </section>

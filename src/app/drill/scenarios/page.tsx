@@ -33,6 +33,7 @@ import {
   recordFreePracticeTransfer,
 } from "@/lib/free-practice-transfer";
 import { getLanguageProfile } from "@/lib/language-profiles";
+import { LOCAL_MASTERY_SAVE_WARNING } from "@/lib/local-save-warning";
 import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
 import { loadMasteryProfile, saveMasteryProfile } from "@/lib/mastery-profile";
 import {
@@ -56,6 +57,7 @@ export default function ScenariosPage() {
     null,
   );
   const [archiveWarning, setArchiveWarning] = useState<string | null>(null);
+  const [localSaveWarning, setLocalSaveWarning] = useState<string | null>(null);
   const recorder = useRecorder({ maxDurationMs: 45_000 });
   const assessment = useAzureAssessment();
   const tts = useTtsAligned();
@@ -86,11 +88,13 @@ export default function ScenariosPage() {
     quality.reset();
     setSummary(null);
     setArchiveWarning(null);
+    setLocalSaveWarning(null);
   };
 
   const startRecording = async () => {
     setSummary(null);
     setArchiveWarning(null);
+    setLocalSaveWarning(null);
     assessment.reset();
     quality.reset();
     await recorder.startRecording();
@@ -129,9 +133,12 @@ export default function ScenariosPage() {
         transferSummary,
         reliability,
       );
-      saveMasteryProfile(recorded.profile);
+      const profileSaved = saveMasteryProfile(recorded.profile);
+      setLocalSaveWarning(profileSaved ? null : LOCAL_MASTERY_SAVE_WARNING);
       setProfile(recorded.profile);
       setSummary(recorded.summary);
+    } else {
+      setLocalSaveWarning(null);
     }
     try {
       await saveBenchmarkRecording(recorder.audioBlob, {
@@ -315,7 +322,8 @@ export default function ScenariosPage() {
                 isPlaying={replayAudio.isPlaying}
                 isAssessing={assessment.isLoading}
                 onReplay={() => {
-                  if (recorder.audioBlob) replayAudio.playBlob(recorder.audioBlob);
+                  if (recorder.audioBlob)
+                    replayAudio.playBlob(recorder.audioBlob);
                 }}
                 onClear={resetRecording}
                 onAssess={submit}
@@ -339,6 +347,15 @@ export default function ScenariosPage() {
                 className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
               >
                 {archiveWarning}
+              </p>
+            )}
+            {localSaveWarning && (
+              <p
+                role="alert"
+                data-smoke="scenario-local-save-warning"
+                className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
+              >
+                {localSaveWarning}
               </p>
             )}
           </section>

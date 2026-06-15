@@ -27,23 +27,24 @@ import {
   getBenchmarkArchiveSaveErrorMessage,
   saveBenchmarkRecording,
 } from "@/lib/benchmark-archive";
+import { getLanguageProfile } from "@/lib/language-profiles";
+import { LOCAL_MASTERY_SAVE_WARNING } from "@/lib/local-save-warning";
+import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
 import {
   loadMasteryProfile,
   recordTrainingSession,
   saveMasteryProfile,
 } from "@/lib/mastery-profile";
 import {
+  getCenteredReadableTextClassName,
+  getPracticeTextDensity,
+} from "@/lib/practice-text-presentation";
+import {
   analyzeProsodyAttempt,
   buildProsodyTrainingSession,
   PROSODY_EXERCISES,
   type ProsodyAnalysis,
 } from "@/lib/prosody-training";
-import { getLanguageProfile } from "@/lib/language-profiles";
-import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
-import {
-  getCenteredReadableTextClassName,
-  getPracticeTextDensity,
-} from "@/lib/practice-text-presentation";
 
 export default function ProsodyPage() {
   const { languageId } = useLanguageConfig();
@@ -51,6 +52,7 @@ export default function ProsodyPage() {
   const [selectedId, setSelectedId] = useState(PROSODY_EXERCISES[0].id);
   const [analysis, setAnalysis] = useState<ProsodyAnalysis | null>(null);
   const [archiveWarning, setArchiveWarning] = useState<string | null>(null);
+  const [localSaveWarning, setLocalSaveWarning] = useState<string | null>(null);
   const recorder = useRecorder({ maxDurationMs: 35_000 });
   const assessment = useAzureAssessment();
   const tts = useTtsAligned();
@@ -66,7 +68,10 @@ export default function ProsodyPage() {
       PROSODY_EXERCISES[0],
     [selectedId],
   );
-  const exerciseDensity = getPracticeTextDensity(exercise.displayText, "sentence");
+  const exerciseDensity = getPracticeTextDensity(
+    exercise.displayText,
+    "sentence",
+  );
 
   const resetRecording = () => {
     replayAudio.stop();
@@ -75,11 +80,13 @@ export default function ProsodyPage() {
     quality.reset();
     setAnalysis(null);
     setArchiveWarning(null);
+    setLocalSaveWarning(null);
   };
 
   const startRecording = async () => {
     setAnalysis(null);
     setArchiveWarning(null);
+    setLocalSaveWarning(null);
     assessment.reset();
     quality.reset();
     await recorder.startRecording();
@@ -100,7 +107,10 @@ export default function ProsodyPage() {
         loadMasteryProfile(),
         buildProsodyTrainingSession(exercise, nextAnalysis),
       );
-      saveMasteryProfile(profile);
+      const profileSaved = saveMasteryProfile(profile);
+      setLocalSaveWarning(profileSaved ? null : LOCAL_MASTERY_SAVE_WARNING);
+    } else {
+      setLocalSaveWarning(null);
     }
     try {
       await saveBenchmarkRecording(recorder.audioBlob, {
@@ -278,7 +288,8 @@ export default function ProsodyPage() {
                 isPlaying={replayAudio.isPlaying}
                 isAssessing={assessment.isLoading}
                 onReplay={() => {
-                  if (recorder.audioBlob) replayAudio.playBlob(recorder.audioBlob);
+                  if (recorder.audioBlob)
+                    replayAudio.playBlob(recorder.audioBlob);
                 }}
                 onClear={resetRecording}
                 onAssess={submit}
@@ -302,6 +313,15 @@ export default function ProsodyPage() {
                 className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
               >
                 {archiveWarning}
+              </p>
+            )}
+            {localSaveWarning && (
+              <p
+                role="alert"
+                data-smoke="prosody-local-save-warning"
+                className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
+              >
+                {localSaveWarning}
               </p>
             )}
           </section>

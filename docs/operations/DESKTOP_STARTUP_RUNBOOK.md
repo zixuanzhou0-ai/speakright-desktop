@@ -86,7 +86,11 @@ reminder that it does not start localhost or the Next dev server.
 - Local storage failures: if score trend or practice-history persistence is
   blocked by quota/permissions, phoneme detail, free practice, and drill scoring
   should still show the current result and display a Chinese warning that local
-  history or transfer evidence was not saved.
+  history or transfer evidence was not saved. Advanced English training
+  surfaces should do the same for mastery/profile writes: pack-runner,
+  perception, prosody, scenario transfer, and spontaneous transfer may keep the
+  completed result visible, but must show a Chinese warning if local mastery,
+  review queue, or transfer evidence cannot be saved.
 - English: open phoneme list, then five phoneme detail pages; play target sound,
   example word, record, replay the recording, and score once.
 - Spanish, French, and Russian: switch each language, open the sound-unit list,

@@ -30,4 +30,45 @@ describe("local-save warning wiring", () => {
     expect(wordPage).toContain('data-smoke="drill-local-save-error"');
     expect(sentencePage).toContain('data-smoke="drill-local-save-error"');
   });
+
+  it("wires advanced mastery persistence failures into visible drill warnings", () => {
+    const warning = readProjectFile("src/lib/local-save-warning.ts");
+    const pages = [
+      {
+        path: "src/app/drill/pack/[packId]/pack-runner-client.tsx",
+        marker: 'data-smoke="pack-runner-local-save-warning"',
+        saveCall: "const profileSaved = saveMasteryProfile(profile)",
+      },
+      {
+        path: "src/app/drill/perception/page.tsx",
+        marker: 'data-smoke="perception-local-save-warning"',
+        saveCall: "const profileSaved = saveMasteryProfile(nextProfile)",
+      },
+      {
+        path: "src/app/drill/prosody/page.tsx",
+        marker: 'data-smoke="prosody-local-save-warning"',
+        saveCall: "const profileSaved = saveMasteryProfile(profile)",
+      },
+      {
+        path: "src/app/drill/scenarios/page.tsx",
+        marker: 'data-smoke="scenario-local-save-warning"',
+        saveCall: "const profileSaved = saveMasteryProfile(recorded.profile)",
+      },
+      {
+        path: "src/app/drill/spontaneous/page.tsx",
+        marker: 'data-smoke="spontaneous-local-save-warning"',
+        saveCall: "const profileSaved = saveMasteryProfile(recorded.profile)",
+      },
+    ];
+
+    expect(warning).toContain("本机掌握度、复习队列或迁移证据未保存");
+
+    for (const page of pages) {
+      const source = readProjectFile(page.path);
+      expect(source).toContain("LOCAL_MASTERY_SAVE_WARNING");
+      expect(source).toContain(page.saveCall);
+      expect(source).toContain("setLocalSaveWarning(");
+      expect(source).toContain(page.marker);
+    }
+  });
 });

@@ -16,11 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { useWordPronunciation } from "@/hooks/use-word-pronunciation";
-import { getLanguageProfile } from "@/lib/language-profiles";
-import {
-  getCenteredReadableTextClassName,
-  getPracticeTextDensity,
-} from "@/lib/practice-text-presentation";
 import {
   buildHvptSession,
   buildHvptTrainingSession,
@@ -35,12 +30,18 @@ import {
   recommendedHvptContrastIds,
   summarizeHvptSession,
 } from "@/lib/hvpt-training";
+import { getLanguageProfile } from "@/lib/language-profiles";
+import { LOCAL_MASTERY_SAVE_WARNING } from "@/lib/local-save-warning";
+import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
 import {
   loadMasteryProfile,
   recordTrainingSession,
   saveMasteryProfile,
 } from "@/lib/mastery-profile";
-import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
+import {
+  getCenteredReadableTextClassName,
+  getPracticeTextDensity,
+} from "@/lib/practice-text-presentation";
 
 type PlayingSlot = "A" | "B" | "X" | null;
 
@@ -69,6 +70,7 @@ export default function PerceptionDrillPage() {
   const [responses, setResponses] = useState<HvptResponse[]>([]);
   const [trials, setTrials] = useState<HvptTrial[]>([]);
   const [activeSlot, setActiveSlot] = useState<PlayingSlot>(null);
+  const [localSaveWarning, setLocalSaveWarning] = useState<string | null>(null);
   const { languageId } = useLanguageConfig();
   const languageProfile = getLanguageProfile(languageId);
   const canRecordHvptMastery = canRecordFormalMastery(languageId);
@@ -92,6 +94,7 @@ export default function PerceptionDrillPage() {
     setTrials(nextTrials);
     setResponses([]);
     setActiveSlot(null);
+    setLocalSaveWarning(null);
     setPhase({ type: "playing", questionIndex: 0 });
   };
 
@@ -153,12 +156,14 @@ export default function PerceptionDrillPage() {
       typeof window === "undefined" ||
       !canRecordHvptMastery
     ) {
+      setLocalSaveWarning(null);
       setPhase({ type: "completed", summary });
       return;
     }
     const session = buildHvptTrainingSession(selectedContrast, summary);
     const nextProfile = recordTrainingSession(loadMasteryProfile(), session);
-    saveMasteryProfile(nextProfile);
+    const profileSaved = saveMasteryProfile(nextProfile);
+    setLocalSaveWarning(profileSaved ? null : LOCAL_MASTERY_SAVE_WARNING);
     setPhase({ type: "completed", summary });
   };
 
@@ -187,6 +192,7 @@ export default function PerceptionDrillPage() {
     setResponses([]);
     setActiveSlot(null);
     pronunciation.clearError();
+    setLocalSaveWarning(null);
     setPhase({ type: "select" });
   };
 
@@ -206,7 +212,8 @@ export default function PerceptionDrillPage() {
               {languageProfile.shortLabel}听辨训练开发中
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              当前高变异 ABX 听辨题库仍是英语专属。西语、法语、俄语保持 experimental，不混入英语听辨材料。
+              当前高变异 ABX 听辨题库仍是英语专属。西语、法语、俄语保持
+              experimental，不混入英语听辨材料。
             </p>
             <div className="mt-5 flex flex-wrap justify-center gap-2">
               <Link href="/drill/contrast">
@@ -452,7 +459,10 @@ export default function PerceptionDrillPage() {
             </p>
             <div className="mt-5 grid gap-3 md:grid-cols-2">
               {phase.trials.map((trial) => (
-                <div key={trial.id} className="rounded-lg border p-3 text-center">
+                <div
+                  key={trial.id}
+                  className="rounded-lg border p-3 text-center"
+                >
                   <p className="break-words text-center text-sm font-semibold [overflow-wrap:anywhere]">
                     {trial.wordA} / {trial.wordB}
                   </p>
@@ -541,6 +551,15 @@ export default function PerceptionDrillPage() {
             <p className="mt-4 text-sm text-muted-foreground">
               {phase.summary.nextAction}
             </p>
+            {localSaveWarning && (
+              <p
+                role="alert"
+                data-smoke="perception-local-save-warning"
+                className="mx-auto mt-4 max-w-xl rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
+              >
+                {localSaveWarning}
+              </p>
+            )}
             {phase.summary.biasDirection && (
               <p className="mt-2 text-sm font-medium text-primary">
                 偏误方向：{phase.summary.biasDirection}

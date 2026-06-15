@@ -167,6 +167,11 @@ git status --short --branch
   visible: if localStorage is full or blocked, the score result and feedback
   flow still continue, and the practice surface shows a Chinese `role="alert"`
   warning that local trend/history or transfer evidence was not saved.
+- Advanced English training surfaces now follow the same visible local-save
+  policy for mastery/profile writes: pack-runner completion, HVPT perception,
+  prosody, scenario transfer, and spontaneous transfer keep the completed result
+  visible but show a Chinese `role="alert"` if local mastery, review queue, or
+  transfer evidence could not be saved.
 - Settings language availability now distinguishes bundled language-pack
   `检查中` from true `缺失或不可读`. Spanish/French/Russian users should not see a
   false missing-pack state while the local manifest is still loading; unreadable

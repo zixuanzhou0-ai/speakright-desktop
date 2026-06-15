@@ -28,10 +28,10 @@ import { Button } from "@/components/ui/button";
 import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { useAzureAssessment } from "@/hooks/use-azure-assessment";
 import { useLlmFeedback } from "@/hooks/use-llm-feedback";
-import { useWordPronunciation } from "@/hooks/use-word-pronunciation";
 import { useRecorder } from "@/hooks/use-recorder";
 import { useRecordingQuality } from "@/hooks/use-recording-quality";
 import { useTtsAligned } from "@/hooks/use-tts-aligned";
+import { useWordPronunciation } from "@/hooks/use-word-pronunciation";
 import { analyzeAttempt } from "@/lib/attempt-analysis";
 import {
   buildCourseMap,
@@ -50,12 +50,13 @@ import {
   buildDeepPracticeCoach,
   type DeepPracticeCoach,
 } from "@/lib/deep-practice-coach";
+import { getLanguageProfile } from "@/lib/language-profiles";
 import {
   buildLessonBrief,
   buildSessionDebrief,
   type LessonBrief,
 } from "@/lib/lesson-brief";
-import { getLanguageProfile } from "@/lib/language-profiles";
+import { LOCAL_MASTERY_SAVE_WARNING } from "@/lib/local-save-warning";
 import {
   canRecordFormalMastery,
   getExperimentalMasteryBlocker,
@@ -233,6 +234,7 @@ export default function TrainingPackPage() {
   const [remediationResults, setRemediationResults] = useState<
     RemediationResult[]
   >([]);
+  const [localSaveWarning, setLocalSaveWarning] = useState<string | null>(null);
 
   const startedAtRef = useRef(Date.now());
   const qualityReportsRef = useRef<RecordingQualityReport[]>([]);
@@ -412,6 +414,7 @@ export default function TrainingPackPage() {
     setRemediationAttempt(null);
     setFailedItems([]);
     setRemediationResults([]);
+    setLocalSaveWarning(null);
     qualityReportsRef.current = [];
     recorder.reset();
     recordingQuality.reset();
@@ -610,13 +613,18 @@ export default function TrainingPackPage() {
     summary.reviewItems = buildSessionReviewItems(summary);
     const mastered = canPromoteMastery && evaluateSessionMastery(summary);
     const completedSummary = { ...summary, mastered };
+    let nextLocalSaveWarning: string | null = null;
     if (canPromoteMastery) {
       const profile = recordTrainingSession(
         loadMasteryProfile(),
         completedSummary,
       );
-      saveMasteryProfile(profile);
+      const profileSaved = saveMasteryProfile(profile);
+      if (!profileSaved) {
+        nextLocalSaveWarning = LOCAL_MASTERY_SAVE_WARNING;
+      }
     }
+    setLocalSaveWarning(nextLocalSaveWarning);
     setPhase({ type: "completed", summary: completedSummary });
   };
 
@@ -1079,6 +1087,7 @@ export default function TrainingPackPage() {
             worstAttempt={worstAttempt}
             llm={llm}
             languageId={languageId}
+            localSaveWarning={localSaveWarning}
             onRestart={() => setPhase({ type: "intro" })}
             onStartLevel={(levelId) => resetSession(levelId)}
           />
@@ -2186,6 +2195,7 @@ function CompletedStep({
   worstAttempt,
   llm,
   languageId,
+  localSaveWarning,
   onRestart,
   onStartLevel,
 }: {
@@ -2194,6 +2204,7 @@ function CompletedStep({
   worstAttempt: AttemptResult | null;
   llm: ReturnType<typeof useLlmFeedback>;
   languageId: LanguageId;
+  localSaveWarning: string | null;
   onRestart: () => void;
   onStartLevel: (levelId: string) => void;
 }) {
@@ -2221,6 +2232,15 @@ function CompletedStep({
           ，目标音素平均 {average(summary.targetScores)} 分，stuck{" "}
           {summary.stuckPatternIds?.length ?? 0} 个。
         </p>
+        {localSaveWarning && (
+          <p
+            role="alert"
+            data-smoke="pack-runner-local-save-warning"
+            className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
+          >
+            {localSaveWarning}
+          </p>
+        )}
         <div className="mt-4 grid gap-2 md:grid-cols-3">
           <div className="rounded-lg border bg-background p-3">
             <p className="text-xs text-muted-foreground">失败证据</p>
