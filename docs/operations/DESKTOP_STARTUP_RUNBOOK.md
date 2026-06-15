@@ -83,6 +83,10 @@ reminder that it does not start localhost or the Next dev server.
   online scoring/TTS/fallback failures, show inline Chinese microphone recovery
   messages, and never replace missing local sound-unit audio with browser TTS,
   proxy rule audio, teaching-video audio, or an unrelated sample.
+- Startup data checks: if local learning-data migration or quarantine cannot
+  read/write local storage, the app should still continue startup, keep API key
+  hydration running, and show a Chinese warning telling the learner to use
+  Settings to export diagnostics or reset local data if problems continue.
 - Local storage failures: if score trend or practice-history persistence is
   blocked by quota/permissions, phoneme detail, free practice, and drill scoring
   should still show the current result and display a Chinese warning that local

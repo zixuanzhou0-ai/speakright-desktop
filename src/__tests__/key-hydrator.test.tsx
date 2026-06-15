@@ -77,4 +77,30 @@ describe("KeyHydrator", () => {
       "本机设置保存失败：settings store unavailable",
     );
   });
+
+  it("warns when corrupt local data is quarantined during startup", () => {
+    mocks.runLocalDataMigrations.mockReturnValueOnce({
+      quarantinedKeys: ["speakright_usage"],
+    });
+
+    render(<KeyHydrator />);
+
+    expect(mocks.toastWarning).toHaveBeenCalledWith(
+      "已隔离 1 个损坏的本地数据项",
+    );
+    expect(mocks.hydrateKeys).toHaveBeenCalled();
+  });
+
+  it("keeps startup hydration running when local data migration fails", () => {
+    mocks.runLocalDataMigrations.mockImplementationOnce(() => {
+      throw new Error("QuotaExceededError");
+    });
+
+    render(<KeyHydrator />);
+
+    expect(mocks.toastError).toHaveBeenCalledWith(
+      "本机学习数据检查失败：本机存储暂时不可用。应用会继续启动；如果设置页仍显示异常，请导出诊断包或重置本机数据后重试。",
+    );
+    expect(mocks.hydrateKeys).toHaveBeenCalled();
+  });
 });

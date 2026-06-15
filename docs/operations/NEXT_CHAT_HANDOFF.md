@@ -162,6 +162,9 @@ git status --short --branch
 - Desktop diagnostics bundles are now schema v2 and include a privacy-safe
   quarantined-data summary (`key`, `reason`, `detectedAt`, `schemaVersion`,
   `rawCharacters`) while still excluding raw quarantined local data values.
+- Startup local-data migration now fails soft: if local storage/quarantine work
+  throws during `KeyHydrator`, the app shows a fixed Chinese warning and still
+  continues API key hydration instead of letting the startup effect abort.
 - Phoneme detail, free practice, and word/sentence drill scoring now treat local
   score-trend/practice-history/mastery-transfer writes as best-effort but
   visible: if localStorage is full or blocked, the score result and feedback
@@ -435,6 +438,9 @@ Current gate summary:
 - Focused local-save warning tests passed: `1` file and `4` tests, covering
   local score/practice warnings, advanced mastery/profile warnings, and
   quick/full-passage diagnosis report or coverage-baseline save warnings.
+- Focused startup hydrator tests passed: `1` file and `4` tests, covering API
+  key/settings storage failure labels, corrupt local-data quarantine warnings,
+  and local-data migration failure soft-start behavior.
 - Focused progress-archive boundary tests passed: `3` files and `13` tests,
   including the direct `/progress` experimental blocker and updated Release
   smoke route coverage.
@@ -479,7 +485,7 @@ Current gate summary:
 - Focused phoneme detail presentation tests passed: `2` files and `9` tests,
   covering non-English full text visibility, Russian long Cyrillic rule text,
   and task-accurate A/B playback labels.
-- Full tests passed: `111` files and `619` tests.
+- Full tests passed: `111` files and `621` tests.
 - Typecheck, lint (`370` files checked), and static desktop frontend build
   passed.
 - Release EXE build passed and rebuilt EXE, MSI, and NSIS artifacts.
@@ -501,7 +507,7 @@ Current gate summary:
   intro card plus start/passage actions instead of only checking the page
   container.
 - Release EXE launch passed from the static Tauri bundle, and the test process
-  was closed after verification; the latest launch PID was `55856`.
+  was closed after verification; the latest launch PID was `25372`.
 - No ElevenLabs generation or TTS spend is part of this validation path.
 
 For tomorrow's manual test session, start with:

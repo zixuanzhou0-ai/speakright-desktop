@@ -10,6 +10,9 @@ import {
 } from "@/lib/api-keys";
 import { runLocalDataMigrations } from "@/lib/local-data-migrations";
 
+const LOCAL_DATA_MIGRATION_FAILURE_MESSAGE =
+  "本机学习数据检查失败：本机存储暂时不可用。应用会继续启动；如果设置页仍显示异常，请导出诊断包或重置本机数据后重试。";
+
 /**
  * Runs once on client mount: pulls API key configs from the Tauri store
  * into localStorage so synchronous readers see persisted values, and
@@ -36,11 +39,15 @@ export function KeyHydrator() {
       toast.error(`${subject}${action}失败：${event.detail.message}`);
     };
     window.addEventListener(API_KEY_STORAGE_ERROR_EVENT, handler);
-    const migration = runLocalDataMigrations();
-    if (migration.quarantinedKeys.length > 0) {
-      toast.warning(
-        `已隔离 ${migration.quarantinedKeys.length} 个损坏的本地数据项`,
-      );
+    try {
+      const migration = runLocalDataMigrations();
+      if (migration.quarantinedKeys.length > 0) {
+        toast.warning(
+          `已隔离 ${migration.quarantinedKeys.length} 个损坏的本地数据项`,
+        );
+      }
+    } catch {
+      toast.error(LOCAL_DATA_MIGRATION_FAILURE_MESSAGE);
     }
     void hydrateKeys();
     return () => {
