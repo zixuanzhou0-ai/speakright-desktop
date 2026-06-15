@@ -171,6 +171,10 @@ git status --short --branch
   title/pass-line stays readable and the `听示范` button no longer competes for
   the same row. Release EXE smoke covers `/drill/prosody` in main, narrow, and
   low-height route passes.
+- Progress benchmark rows now stack score/date above replay/delete controls on
+  narrow screens. Release EXE smoke seeds English benchmark metadata locally,
+  checks those rows in main/narrow/low-height passes, and confirms missing local
+  benchmark audio shows a Chinese warning without generating audio.
 - Quick diagnosis word and paragraph recording cards now show recorder startup
   errors and Azure scoring errors inline with `role="alert"`, so missing
   microphone permission, missing Azure keys, network failure, or quota failure

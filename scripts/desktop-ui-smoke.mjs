@@ -668,6 +668,122 @@ async function seedSettingsSmokeData(cdp) {
   );
 }
 
+async function seedProgressBenchmarkSmokeData(cdp) {
+  await evaluate(
+    cdp,
+    `
+(() => {
+  const items = [
+    {
+      id: "smoke-progress-benchmark-missing-audio",
+      createdAt: Date.now(),
+      source: "prosody",
+      title: "Stress baseline with a deliberately long benchmark title",
+      text: "I think this sentence should keep every benchmark word visible on narrow desktop windows.",
+      score: 82,
+      targetLabel: "/th/, sentence stress, weak forms"
+    }
+  ];
+  localStorage.setItem("speakright_benchmark_recordings_v1", JSON.stringify(items));
+  return { ok: true };
+})()
+`,
+  );
+}
+
+async function assertEnglishProgressArchive(cdp) {
+  await clickLanguage(cdp, "en-US");
+  await seedProgressBenchmarkSmokeData(cdp);
+  await navigate(cdp, "/progress", '[data-smoke="progress-page"]', {
+    direct: true,
+  });
+
+  const result = await evaluate(
+    cdp,
+    `
+(() => {
+  const rows = [...document.querySelectorAll('[data-smoke="progress-benchmark-row"]')];
+  const childrenDoNotOverlap = (element) => {
+    const children = [...element.children].filter((child) => {
+      const rect = child.getBoundingClientRect();
+      return rect.width > 0 && rect.height > 0;
+    });
+    return children.every((child, index) => {
+      const rect = child.getBoundingClientRect();
+      return children.every((other, otherIndex) => {
+        if (index >= otherIndex) return true;
+        const otherRect = other.getBoundingClientRect();
+        return (
+          rect.right <= otherRect.left ||
+          otherRect.right <= rect.left ||
+          rect.bottom <= otherRect.top ||
+          otherRect.bottom <= rect.top
+        );
+      });
+    });
+  };
+  const wraps = (element) => {
+    const style = window.getComputedStyle(element);
+    return (
+      style.textOverflow !== "ellipsis" &&
+      style.whiteSpace !== "nowrap" &&
+      style.webkitLineClamp !== "1" &&
+      element.scrollWidth <= element.clientWidth + 2
+    );
+  };
+  const benchmarkTextNodes = [
+    ...document.querySelectorAll('[data-smoke="progress-benchmark-title"]'),
+    ...document.querySelectorAll('[data-smoke="progress-benchmark-meta"]'),
+    ...document.querySelectorAll('[data-smoke="progress-benchmark-text"]'),
+    ...document.querySelectorAll('[data-smoke="progress-benchmark-date"]'),
+  ].filter((element) => element.innerText.trim().length > 0);
+  return {
+    ok:
+      rows.length > 0 &&
+      rows.every((row) => row.scrollWidth <= row.clientWidth + 2) &&
+      rows.every(childrenDoNotOverlap) &&
+      benchmarkTextNodes.every(wraps) &&
+      document.body.innerText.includes("Stress baseline with a deliberately long benchmark title"),
+    rowCount: rows.length,
+    rowsDoNotOverlap: rows.every(childrenDoNotOverlap),
+    benchmarkTextWraps: benchmarkTextNodes.every(wraps),
+    bodyText: (document.body?.innerText ?? "").slice(0, 1000)
+  };
+})()
+`,
+  );
+  if (!result?.ok) {
+    throw new Error(`English progress archive smoke failed: ${JSON.stringify(result)}`);
+  }
+
+  await evaluate(
+    cdp,
+    `
+(() => {
+  const playButton = document.querySelector('[aria-label^="播放 benchmark 录音"]');
+  playButton?.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+  return { ok: Boolean(playButton) };
+})()
+`,
+  );
+  await waitForCondition(
+    cdp,
+    `
+(() => {
+  const alert = document.querySelector('[data-smoke="progress-benchmark-archive-status"]');
+  return {
+    ok:
+      Boolean(alert) &&
+      alert.getAttribute("role") === "alert" &&
+      alert.innerText.includes("本机音频数据缺失"),
+    bodyText: (document.body?.innerText ?? "").slice(0, 1000)
+  };
+})()
+`,
+    "progress missing benchmark audio warning",
+  );
+}
+
 async function assertSettings(cdp) {
   await navigate(cdp, "/settings", '[data-smoke="settings-page"]');
   await seedSettingsSmokeData(cdp);
@@ -1361,6 +1477,9 @@ async function assertNarrowViewportRoutes(cdp) {
       );
     }
 
+    await assertEnglishProgressArchive(cdp);
+    await clickLanguage(cdp, "fr-FR");
+
     for (const route of [
       { path: "/drill", selector: '[data-smoke="drill-page"]' },
       {
@@ -1543,6 +1662,9 @@ async function assertLowHeightViewportRoutes(cdp) {
       );
     }
 
+    await assertEnglishProgressArchive(cdp);
+    await clickLanguage(cdp, "fr-FR");
+
     for (const route of [
       { path: "/drill", selector: '[data-smoke="drill-page"]' },
       {
@@ -1715,6 +1837,7 @@ async function smoke() {
       details.push(await assertDetail(cdp, language));
     }
     await assertScoringTileAudioPolicy(cdp);
+    await assertEnglishProgressArchive(cdp);
     await clickLanguage(cdp, "fr-FR");
     await assertMainRoutes(cdp);
     await assertNarrowViewportRoutes(cdp);

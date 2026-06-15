@@ -86,6 +86,10 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("assessment-start-button");
     expect(script).toContain("assessment-passage-link");
     expect(script).toContain("/progress");
+    expect(script).toContain("assertEnglishProgressArchive");
+    expect(script).toContain("progress-benchmark-row");
+    expect(script).toContain("speakright_benchmark_recordings_v1");
+    expect(script).toContain("progress missing benchmark audio warning");
     expect(script).toContain("direct: true");
     expect(script).toContain("progress-experimental-blocker");
     expect(script).toContain(
@@ -395,6 +399,13 @@ describe("desktop preflight and UI smoke", () => {
     expect(progressPage).toContain(
       'data-smoke="progress-benchmark-archive-status"',
     );
+    expect(progressPage).toContain('data-smoke="progress-benchmark-row"');
+    expect(progressPage).toContain('data-smoke="progress-benchmark-title"');
+    expect(progressPage).toContain('data-smoke="progress-benchmark-meta"');
+    expect(progressPage).toContain('data-smoke="progress-benchmark-text"');
+    expect(progressPage).toContain('data-smoke="progress-benchmark-date"');
+    expect(progressPage).toContain("flex flex-col gap-3");
+    expect(progressPage).toContain("sm:flex-row sm:items-center sm:justify-between");
     expect(progressPage).toContain("本机音频数据缺失");
     expect(progressPage).toContain("getProgressArchiveErrorMessage");
     expect(progressPage).toContain('role={archiveStatus.tone === "success" ? "status" : "alert"}');

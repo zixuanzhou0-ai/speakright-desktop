@@ -170,6 +170,21 @@ describe("ProgressPage language boundary", () => {
     expect(mocks.playBlob).not.toHaveBeenCalled();
   });
 
+  it("keeps benchmark rows wrap-ready for narrow progress windows", () => {
+    mocks.listBenchmarkRecordings.mockReturnValue([benchmarkRecording]);
+
+    render(<ProgressPage />);
+
+    const row = document.querySelector('[data-smoke="progress-benchmark-row"]');
+
+    expect(row).toHaveClass("flex-col");
+    expect(row).toHaveClass("sm:flex-row");
+    expect(row?.textContent).toContain("82");
+    expect(screen.getByText("Stress baseline")).toBeInTheDocument();
+    expect(document.body.innerHTML).not.toContain("truncate");
+    expect(document.body.innerHTML).not.toContain("line-clamp");
+  });
+
   it("shows a visible error when benchmark deletion fails", async () => {
     mocks.listBenchmarkRecordings.mockReturnValue([benchmarkRecording]);
     mocks.deleteBenchmarkRecording.mockRejectedValueOnce(

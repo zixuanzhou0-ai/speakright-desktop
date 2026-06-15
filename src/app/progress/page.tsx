@@ -274,14 +274,16 @@ export default function ProgressPage() {
 
       <div className="mt-5 grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
         <section className="rounded-xl border bg-card p-5 shadow-sm">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-bold">Before / After 录音</h2>
-              <p className="text-sm text-muted-foreground">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0 text-center sm:text-left">
+              <h2 className="break-words text-lg font-bold [overflow-wrap:anywhere]">
+                Before / After 录音
+              </h2>
+              <p className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
                 只按同一材料、同一目标比较趋势，不把不同任务混算。
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-end">
               {recordings.length > 0 && (
                 <Button
                   type="button"
@@ -335,10 +337,18 @@ export default function ProgressPage() {
             <div className="space-y-3">
               {benchmarkGroups.map((group) => (
                 <div key={group.key} className="rounded-xl border p-4">
-                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <h3 className="font-semibold">{group.title}</h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                  <div className="mb-3 flex flex-wrap items-center justify-center gap-2 sm:justify-between">
+                    <div className="min-w-0 text-center sm:text-left">
+                      <h3
+                        className="break-words font-semibold [overflow-wrap:anywhere]"
+                        data-smoke="progress-benchmark-title"
+                      >
+                        {group.title}
+                      </h3>
+                      <p
+                        className="mt-1 break-words text-xs text-muted-foreground [overflow-wrap:anywhere]"
+                        data-smoke="progress-benchmark-meta"
+                      >
                         {group.source} · {group.targetLabel} ·{" "}
                         {group.trend.count} 次同材料
                       </p>
@@ -354,24 +364,31 @@ export default function ProgressPage() {
                       {group.trend.deltaFromFirst}
                     </Badge>
                   </div>
-                  <p className="mb-3 text-sm text-muted-foreground">
+                  <p
+                    className="mb-3 break-words text-center text-sm text-muted-foreground [overflow-wrap:anywhere] sm:text-left"
+                    data-smoke="progress-benchmark-text"
+                  >
                     {group.text}
                   </p>
                   <div className="space-y-2">
                     {group.recordings.map((item) => (
                       <div
                         key={item.id}
-                        className="flex items-center justify-between gap-3 rounded-lg bg-muted/40 px-3 py-2"
+                        className="flex flex-col gap-3 rounded-lg bg-muted/40 px-3 py-2 sm:flex-row sm:items-center sm:justify-between"
+                        data-smoke="progress-benchmark-row"
                       >
-                        <div>
-                          <div className="flex flex-wrap items-center gap-2">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
                             <Badge variant="secondary">{item.score}</Badge>
-                            <span className="text-xs text-muted-foreground">
+                            <span
+                              className="inline-block max-w-full break-words text-center text-xs text-muted-foreground [overflow-wrap:anywhere] sm:text-left"
+                              data-smoke="progress-benchmark-date"
+                            >
                               {new Date(item.createdAt).toLocaleString()}
                             </span>
                           </div>
                         </div>
-                        <div className="flex shrink-0 items-center gap-2">
+                        <div className="flex shrink-0 items-center justify-center gap-2 sm:justify-end">
                           <Button
                             type="button"
                             variant="outline"
