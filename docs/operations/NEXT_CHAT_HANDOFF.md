@@ -160,6 +160,9 @@ git status --short --branch
 - Shared word pronunciation playback now also ignores stale online-dictionary
   fallback failures after a newer word starts playing, so fast A/B or free
   practice speaker clicks do not inherit an old failed request.
+- Perception ABX now clears stale pronunciation errors when starting/restarting
+  a session, advancing to the next question, or completing the run, so one
+  failed speaker click does not pollute the following question.
 - Recorder runtime interruptions are no longer treated as usable recordings.
   If `MediaRecorder.onerror` fires after recording starts, the hook stops the
   stream, discards any partial audio, and shows a Chinese recovery message about

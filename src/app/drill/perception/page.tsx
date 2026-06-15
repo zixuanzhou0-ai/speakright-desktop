@@ -84,6 +84,7 @@ export default function PerceptionDrillPage() {
 
   const startSession = (contrast: HvptContrast, reviewTrials?: HvptTrial[]) => {
     setSelectedContrast(contrast);
+    pronunciation.clearError();
     const nextTrials =
       reviewTrials && reviewTrials.length > 0
         ? reviewTrials
@@ -102,6 +103,7 @@ export default function PerceptionDrillPage() {
 
   const playSlot = (slot: Exclude<PlayingSlot, null>) => {
     if (!currentTrial) return;
+    pronunciation.clearError();
     setActiveSlot(slot);
     const word =
       slot === "A"
@@ -144,6 +146,8 @@ export default function PerceptionDrillPage() {
   };
 
   const finishWithSummary = (summary: HvptSummary) => {
+    pronunciation.clearError();
+    setActiveSlot(null);
     if (
       !selectedContrast ||
       typeof window === "undefined" ||
@@ -165,6 +169,7 @@ export default function PerceptionDrillPage() {
       completeSession(responses);
       return;
     }
+    pronunciation.clearError();
     setActiveSlot(null);
     setPhase({ type: "playing", questionIndex: nextIndex });
   };
@@ -181,6 +186,7 @@ export default function PerceptionDrillPage() {
     setTrials([]);
     setResponses([]);
     setActiveSlot(null);
+    pronunciation.clearError();
     setPhase({ type: "select" });
   };
 

@@ -307,6 +307,8 @@ describe("desktop preflight and UI smoke", () => {
 
     expect(perceptionPage).toContain('data-smoke="perception-audio-error"');
     expect(perceptionPage).toContain("{pronunciation.error}");
+    expect(perceptionPage).toContain("pronunciation.clearError()");
+    expect(perceptionPage).toContain("setActiveSlot(null)");
     expect(perceptionPage).toContain('role="alert"');
 
     expect(packRunner).toContain(
