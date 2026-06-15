@@ -57,6 +57,9 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
   enchaînement, elision, and final-consonant silence; Russian final-devoicing
   sentence practice now uses `Нож тупой` so the target boundary is a clear
   voiceless-consonant context rather than `Друг ждёт`.
+- The Russian final-devoicing local asset note is now explicitly marked as a
+  proxy anchor and points maintainers to current `Нож тупой /noʂ tʊˈpoj/`
+  practice instead of stale `current example друг` wording.
 - `audio:parity:dry-run` now reports Russian `918` normalized lookup items with
   `0` missing because terminal punctuation is normalized before local-pack
   lookup; the bundled Russian manifest/file total remains `460 x 2`.

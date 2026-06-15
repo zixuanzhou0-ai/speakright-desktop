@@ -221,6 +221,19 @@ describe("non-English phoneme resource parity", () => {
     );
   });
 
+  it("keeps Russian final-devoicing resource notes aligned with current practice", () => {
+    const finalDevoicingAsset = LOCAL_LANGUAGE_PHONEME_ASSETS.find(
+      (asset) =>
+        asset.languageId === "ru-RU" && asset.slug === "ru-final-devoicing",
+    );
+    const notes = finalDevoicingAsset?.notes?.join(" ") ?? "";
+
+    expect(notes).toContain("Final devoicing proxy");
+    expect(notes).toContain("Нож тупой");
+    expect(notes).toContain("/noʂ tʊˈpoj/");
+    expect(notes).not.toContain("current example друг");
+  });
+
   it("preserves Russian Seeing Speech attribution metadata", () => {
     const russianAssets = LOCAL_LANGUAGE_PHONEME_ASSETS.filter(
       (asset) => asset.languageId === "ru-RU",

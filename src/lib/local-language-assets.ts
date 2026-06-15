@@ -432,7 +432,7 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
     isProxyForAssessment: true,
   }),
   russianSeeingSpeechAsset("ru-final-devoicing", "ru-k", [
-    "Final devoicing: /k/ is primary because current example друг ends as /druk/.",
+    "Final devoicing proxy: /k/ is a voiceless-stop anchor for isolated devoiced endings such as друг /druk/; current sentence practice uses Нож тупой /noʂ tʊˈpoj/ to show devoicing before voiceless /t/.",
   ], {
     isProxyForAssessment: true,
   }),
