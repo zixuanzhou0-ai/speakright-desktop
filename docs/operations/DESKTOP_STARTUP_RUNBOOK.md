@@ -106,6 +106,9 @@ reminder that it does not start localhost or the Next dev server.
   full-passage diagnosis should keep the generated report visible if report
   history or the coverage retest baseline cannot be saved, and retake/delete
   failures should show a Chinese warning instead of a raw storage exception.
+  If the `/drill` home page cannot read the saved diagnosis report, it should
+  fall back to the not-yet-diagnosed plan and show a Chinese reset/export
+  warning instead of silently hiding the corrupted report.
 - English: open phoneme list, then five phoneme detail pages; play target sound,
   example word, record, replay the recording, and score once.
 - Spanish, French, and Russian: switch each language, open the sound-unit list,
@@ -449,6 +452,9 @@ release notes and installation guide keep the unsigned warning visible.
   formal archive, while Spanish, French, and Russian see an experimental blocker
   instead of English mastery archive wording.
 - Latest local verification:
+  - Focused drill diagnosis-report storage tests: `2` files and `18` tests
+    passed, covering corrupted/blocked saved report reads and static Release
+    smoke coverage for the `/drill` recovery alert.
   - Focused exact scoring-audio tests: `6` files and `57` tests passed,
     including left/right header-clip parity, Spanish/French/Russian exact alias
     inventory, unclickable unverified tiles, and header/scoring short playback.
@@ -470,7 +476,8 @@ release notes and installation guide keep the unsigned warning visible.
   - Latest settled-main validation results are centralized in
     `docs/operations/RC_EVIDENCE_AUDIT.md` to avoid stale counts across
     multiple handoff documents.
-  - `npm.cmd run test`, `npm.cmd run typecheck`, `npm.cmd run lint`, and
+  - `npm.cmd run test` passed with `113` files and `629` tests;
+    `npm.cmd run typecheck`, `npm.cmd run lint` (`373` files checked), and
     `npm.cmd run build:desktop-frontend` passed in the latest settled-main
     gate.
   - `npm.cmd run desktop:build`: passed; rebuilt Release EXE, MSI, and NSIS.
@@ -479,6 +486,7 @@ release notes and installation guide keep the unsigned warning visible.
     text assertions, scoring-breakdown visibility/readability checks in normal,
     narrow, and low-height detail windows,
     `/progress` experimental blocker route coverage,
+    corrupt `/drill` diagnosis-report storage warning coverage,
     `scoringTileAudioPolicy=ok`,
     Settings/usage wrapping,
     `narrowViewport=ok`, `lowHeightViewport=ok`, and

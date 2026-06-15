@@ -130,11 +130,14 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("progress-recent-session-row");
     expect(script).toContain("progress-recent-session-title");
     expect(script).toContain("speakright_mastery_profile_v2");
+    expect(script).toContain("speakright_assessment_result_v2:en-US");
     expect(script).toContain("speakright_assessment_result_v2:coverage:en-US");
+    expect(script).toContain("drill-report-storage-warning");
     expect(script).toContain("progress-mastery-storage-warning");
     expect(script).toContain("evidence-mastery-storage-warning");
     expect(script).toContain("assessment-passage-storage-warning");
     expect(script).toContain("本机训练进度数据无法读取");
+    expect(script).toContain("上次诊断报告无法读取");
     expect(script).toContain("上次全音诊断报告无法读取");
     expect(script).toContain("重置本机学习数据");
     expect(script).toContain("speakright_benchmark_recordings_v1");
@@ -368,6 +371,10 @@ describe("desktop preflight and UI smoke", () => {
   });
 
   it("keeps advanced drill provider failures visible inline", () => {
+    const drillPage = readProjectFile("src/app/drill/page.tsx");
+    const drillReportStorage = readProjectFile(
+      "src/lib/drill-report-storage.ts",
+    );
     const prosodyPage = readProjectFile("src/app/drill/prosody/page.tsx");
     const wordPage = readProjectFile("src/app/drill/word/page.tsx");
     const sentencePage = readProjectFile("src/app/drill/sentence/page.tsx");
@@ -377,6 +384,13 @@ describe("desktop preflight and UI smoke", () => {
     );
     const azureHook = readProjectFile("src/hooks/use-azure-assessment.ts");
     const drillSessionHook = readProjectFile("src/hooks/use-drill-session.ts");
+
+    expect(drillPage).toContain('data-smoke="drill-report-storage-warning"');
+    expect(drillPage).toContain('role="alert"');
+    expect(drillPage).toContain("loadDrillReportForLanguage(languageId)");
+    expect(drillReportStorage).toContain("DRILL_REPORT_STORAGE_WARNING");
+    expect(drillReportStorage).toContain("上次诊断报告无法读取");
+    expect(drillReportStorage).toContain("重置本机学习数据");
 
     expect(prosodyPage).toContain('data-smoke="prosody-demo-audio-error"');
     expect(prosodyPage).toContain('data-smoke="prosody-assessment-error"');

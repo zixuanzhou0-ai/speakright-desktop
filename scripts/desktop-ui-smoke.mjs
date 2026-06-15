@@ -357,9 +357,7 @@ async function evaluate(cdp, expression) {
       exception?.value ??
       result.exceptionDetails.text ??
       "unknown exception";
-    throw new Error(
-      `Desktop UI smoke evaluation failed: ${description}`,
-    );
+    throw new Error(`Desktop UI smoke evaluation failed: ${description}`);
   }
   return result.result?.value;
 }
@@ -814,7 +812,9 @@ async function assertEnglishProgressArchive(cdp) {
 `,
   );
   if (!result?.ok) {
-    throw new Error(`English progress archive smoke failed: ${JSON.stringify(result)}`);
+    throw new Error(
+      `English progress archive smoke failed: ${JSON.stringify(result)}`,
+    );
   }
 
   await evaluate(
@@ -1074,11 +1074,7 @@ async function assertSettings(cdp) {
 
 async function assertDetail(cdp, language) {
   await clickLanguage(cdp, language.languageId);
-  await navigate(
-    cdp,
-    language.route,
-    '[data-smoke="phoneme-detail-page"]',
-  );
+  await navigate(cdp, language.route, '[data-smoke="phoneme-detail-page"]');
   const result = await evaluate(
     cdp,
     `
@@ -1761,6 +1757,7 @@ async function assertCorruptLocalDataWarnings(cdp) {
     `
 (() => {
   localStorage.setItem("speakright_mastery_profile_v2", "{broken mastery");
+  localStorage.setItem("speakright_assessment_result_v2:en-US", "{broken drill report");
   localStorage.setItem("speakright_assessment_result_v2:coverage:en-US", "{broken coverage");
   return { ok: true };
 })()
@@ -1779,6 +1776,7 @@ async function assertCorruptLocalDataWarnings(cdp) {
     !!document.querySelector('[data-smoke="settings-page"]') &&
     document.readyState !== "loading",
   masteryStorage: localStorage.getItem("speakright_mastery_profile_v2"),
+  drillReportStorage: localStorage.getItem("speakright_assessment_result_v2:en-US"),
   corruptStorage: localStorage.getItem("speakright_corrupt_data_v1"),
   coverageStorage: localStorage.getItem("speakright_assessment_result_v2:coverage:en-US"),
   bodyText: (document.body?.innerText ?? "").slice(0, 500)
@@ -1788,6 +1786,12 @@ async function assertCorruptLocalDataWarnings(cdp) {
   );
 
   const checks = [
+    {
+      path: "/drill",
+      selector: '[data-smoke="drill-page"]',
+      warningSmoke: "drill-report-storage-warning",
+      expectedText: "上次诊断报告无法读取",
+    },
     {
       path: "/progress",
       selector: '[data-smoke="progress-page"]',
@@ -1836,6 +1840,7 @@ async function assertCorruptLocalDataWarnings(cdp) {
     role: warning?.getAttribute("role"),
     warningText: warning?.innerText ?? "",
     masteryStorage: localStorage.getItem("speakright_mastery_profile_v2"),
+    drillReportStorage: localStorage.getItem("speakright_assessment_result_v2:en-US"),
     corruptStorage: localStorage.getItem("speakright_corrupt_data_v1"),
     coverageStorage: localStorage.getItem("speakright_assessment_result_v2:coverage:en-US"),
     bodyText: bodyText.slice(0, 800)
@@ -1851,6 +1856,7 @@ async function assertCorruptLocalDataWarnings(cdp) {
       `
 (() => {
   localStorage.removeItem("speakright_mastery_profile_v2");
+  localStorage.removeItem("speakright_assessment_result_v2:en-US");
   localStorage.removeItem("speakright_corrupt_data_v1");
   localStorage.removeItem("speakright_assessment_result_v2:coverage:en-US");
   return { ok: true };

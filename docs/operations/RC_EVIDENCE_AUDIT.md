@@ -35,8 +35,8 @@ claimed as complete.
 | Detail-page scoring breakdowns, detail header speakers, and list-card IPA clicks show honest target reference and stable clickable short-audio tiles | `src/lib/detail-assessment-breakdown.ts`, `src/components/scoring/phoneme-highlight.tsx`, `src/components/phoneme/phoneme-play-button.tsx`, `src/components/phoneme/phoneme-card.tsx`, `src/hooks/use-audio-player.ts`, `src/lib/assessment-segment-audio.ts`, `src/lib/azure-phoneme-map.ts`, `src/lib/audio-playback-policy.ts`, `src/lib/language-phoneme-resources.ts`, `src/lib/local-language-assets.ts`, `src/__tests__/detail-assessment-breakdown.test.ts`, `src/__tests__/phoneme-highlight.test.tsx`, `src/__tests__/phoneme-play-button.test.tsx`, `src/__tests__/phoneme-card.test.tsx`, `src/__tests__/assessment-segment-audio.test.ts`, `src/__tests__/audio-playback-policy.test.ts`, `src/__tests__/use-audio-player.test.tsx`, `src/__tests__/azure-phoneme-map-language-parity.test.ts`, `src/__tests__/language-phoneme-resources.test.ts`, `scripts/desktop-ui-smoke.mjs`; non-English scoring tiles reuse the exact same left/detail sound-unit header clip (`phonemeAudio.localSrc`) or stay visible but unclickable, never falling back to word examples, rule/prosody clips, proxy media, or video audio; Spanish `/β/ /ð/ /ɣ/` allophone clips do not masquerade as plain `/b/ /d/ /g/`; English chart clicks are capped at `560ms`, local non-English header/scoring sound-unit clips are capped at `500ms` through the shared header playback policy, and the Russian final-devoicing proxy resource note points maintainers to the current `Нож тупой` sentence practice instead of stale `current example друг` wording |
 | Recording replay and benchmark playback use centralized audio cleanup and missing local benchmark audio is visible | `src/app/drill/prosody/page.tsx`, `src/app/drill/scenarios/page.tsx`, `src/app/drill/spontaneous/page.tsx`, `src/app/progress/page.tsx`, `src/hooks/use-audio-player.ts`, `src/__tests__/progress-page.test.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; source policy forbids raw `new Audio(...)` replay in these user-facing pages, progress-page benchmark playback uses the shared `playBlob` path, missing IndexedDB audio shows a Chinese warning instead of a silent no-op, and benchmark delete/clear failures show inline Chinese archive-status errors |
 | Benchmark recording archive save failures are visible without blocking the completed scoring result | `src/lib/benchmark-archive.ts`, `src/app/drill/prosody/page.tsx`, `src/app/drill/scenarios/page.tsx`, `src/app/drill/spontaneous/page.tsx`, `src/__tests__/benchmark-archive.test.ts`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; prosody, scenario, and spontaneous transfer keep the scored result/feedback after a successful assessment, but if IndexedDB/quota/local storage prevents benchmark audio from being archived, they show a Chinese warning that the recording was not saved instead of only writing `console.warn`; spontaneous transfer also avoids claiming "录音已作为 benchmark 保存" when archive persistence failed |
-| Corrupt local mastery and full-passage diagnosis history is visible and recoverable | `src/lib/mastery-profile.ts`, `src/app/progress/page.tsx`, `src/app/drill/evidence/page.tsx`, `src/app/assessment/passage/page.tsx`, `scripts/desktop-ui-smoke.mjs`, `src/__tests__/mastery-profile.test.ts`, `src/__tests__/progress-page.test.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; corrupt current or legacy mastery profile storage falls back to an empty profile instead of treating the data as valid progress, startup-quarantined malformed mastery data still surfaces a warning, Progress and training-evidence pages show Chinese inline alerts with reset/export guidance, corrupt coverage-passage history is ignored with a Chinese alert, and saving or retaking a valid full-passage report clears the stale warning |
-| Release-window smoke covers likely user-visible regressions | `scripts/desktop-ui-smoke.mjs`: settings, English detail, Spanish `/es-a`, Spanish stress/rhythm, French `/fr-i`, schwa, liaison, enchainement, elision, final consonant silence, Russian `/ru-a`, stress/reduction/rule units, `/drill`, `/drill/word`, `/drill/sentence`, `/drill/contrast`, `/drill/prosody`, `/drill/perception`, `/drill/evidence`, `/drill/pack/ee-ih`, `/drill/scenarios`, `/drill/spontaneous`, `/sentences`, `/assessment`, `/assessment/passage`, `/progress`; verifies not localhost, no text ellipsis/nowrap on detail task text, no practice-button overlap, expected header-audio visibility/clickability readiness, A/B voice selector and word-audio button visibility/clickability/label runtime readiness, rule/prosody A/B playback labels do not regress to word-only labels, free-practice page/input/recording cards render in main, narrow, and low-height route passes, English core word/sentence/contrast drill routes render page/config hooks in main, narrow, and low-height route passes with no horizontal overflow, English `/assessment/passage`, `/drill/evidence`, and `/drill/pack/ee-ih` direct routes render page/intro/summary/course-map hooks in main, narrow, and low-height route passes while French direct access shows experimental blockers instead of English coverage/evidence/pack content, prosody drill renders in main, narrow, and low-height route passes, perception ABX shows the experimental-language blocker in main, narrow, and low-height route passes instead of loading English-only training material, English scenario/spontaneous transfer pages render prompt and recording cards in main, narrow, and low-height route passes with no horizontal overflow, English Progress archive benchmark and recent-session rows are seeded locally and checked in main, narrow, and low-height route passes, seeded missing benchmark audio shows a Chinese warning instead of a silent no-op, corrupt English mastery/coverage localStorage shows Chinese recovery alerts on `/progress`, `/drill/evidence`, and `/assessment/passage`, assessment page/intro card/start/passage actions render in main, narrow, and low-height route passes, video selector visibility/no-overlap/no-overflow and wrapping labels, Settings/usage/pronunciation-test/API-config long-control wrapping and row no-overlap, reset-all-data dialog toggle row readability/no-overlap, scoring-breakdown placeholder or target IPA reference visibility/readability/no-overflow readiness in normal, narrow, and low-height detail windows, scoring tile exact-audio policy runtime readiness with one playable exact header clip, one locked unverified tile, `progress-experimental-blocker`, `englishTransferRoutes=ok`, `englishCoreDrillRoutes=ok`, `advancedDirectRoutes=ok`, `corruptLocalDataWarnings=ok`, `scoringTileAudioPolicy=ok`, `practiceAudioLabels=ok`, `freePracticeSmoke=ok`, `assessmentSmoke=ok`, `narrowViewport=ok`, and `lowHeightViewport=ok` |
+| Corrupt local mastery, drill diagnosis, and full-passage diagnosis history is visible and recoverable | `src/lib/mastery-profile.ts`, `src/lib/drill-report-storage.ts`, `src/app/drill/page.tsx`, `src/app/progress/page.tsx`, `src/app/drill/evidence/page.tsx`, `src/app/assessment/passage/page.tsx`, `scripts/desktop-ui-smoke.mjs`, `src/__tests__/mastery-profile.test.ts`, `src/__tests__/drill-report-storage.test.ts`, `src/__tests__/progress-page.test.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; corrupt current or legacy mastery profile storage falls back to an empty profile instead of treating the data as valid progress, startup-quarantined malformed mastery data still surfaces a warning, Progress and training-evidence pages show Chinese inline alerts with reset/export guidance, corrupt `/drill` diagnosis history falls back to the default not-yet-diagnosed plan with a Chinese reset/export alert instead of silently hiding the problem, corrupt coverage-passage history is ignored with a Chinese alert, and saving or retaking a valid full-passage report clears the stale warning |
+| Release-window smoke covers likely user-visible regressions | `scripts/desktop-ui-smoke.mjs`: settings, English detail, Spanish `/es-a`, Spanish stress/rhythm, French `/fr-i`, schwa, liaison, enchainement, elision, final consonant silence, Russian `/ru-a`, stress/reduction/rule units, `/drill`, `/drill/word`, `/drill/sentence`, `/drill/contrast`, `/drill/prosody`, `/drill/perception`, `/drill/evidence`, `/drill/pack/ee-ih`, `/drill/scenarios`, `/drill/spontaneous`, `/sentences`, `/assessment`, `/assessment/passage`, `/progress`; verifies not localhost, no text ellipsis/nowrap on detail task text, no practice-button overlap, expected header-audio visibility/clickability readiness, A/B voice selector and word-audio button visibility/clickability/label runtime readiness, rule/prosody A/B playback labels do not regress to word-only labels, free-practice page/input/recording cards render in main, narrow, and low-height route passes, English core word/sentence/contrast drill routes render page/config hooks in main, narrow, and low-height route passes with no horizontal overflow, English `/assessment/passage`, `/drill/evidence`, and `/drill/pack/ee-ih` direct routes render page/intro/summary/course-map hooks in main, narrow, and low-height route passes while French direct access shows experimental blockers instead of English coverage/evidence/pack content, prosody drill renders in main, narrow, and low-height route passes, perception ABX shows the experimental-language blocker in main, narrow, and low-height route passes instead of loading English-only training material, English scenario/spontaneous transfer pages render prompt and recording cards in main, narrow, and low-height route passes with no horizontal overflow, English Progress archive benchmark and recent-session rows are seeded locally and checked in main, narrow, and low-height route passes, seeded missing benchmark audio shows a Chinese warning instead of a silent no-op, corrupt English diagnosis/mastery/coverage localStorage shows Chinese recovery alerts on `/drill`, `/progress`, `/drill/evidence`, and `/assessment/passage`, assessment page/intro card/start/passage actions render in main, narrow, and low-height route passes, video selector visibility/no-overlap/no-overflow and wrapping labels, Settings/usage/pronunciation-test/API-config long-control wrapping and row no-overlap, reset-all-data dialog toggle row readability/no-overlap, scoring-breakdown placeholder or target IPA reference visibility/readability/no-overflow readiness in normal, narrow, and low-height detail windows, scoring tile exact-audio policy runtime readiness with one playable exact header clip, one locked unverified tile, `progress-experimental-blocker`, `englishTransferRoutes=ok`, `englishCoreDrillRoutes=ok`, `advancedDirectRoutes=ok`, `corruptLocalDataWarnings=ok`, `scoringTileAudioPolicy=ok`, `practiceAudioLabels=ok`, `freePracticeSmoke=ok`, `assessmentSmoke=ok`, `narrowViewport=ok`, and `lowHeightViewport=ok` |
 | Public repository has basic open-source governance, asset-boundary documentation, support routing, release-script guardrails, issue/PR template guardrails, conduct/privacy expectations, and a tracked-file secret-format guard | `LICENSE`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SUPPORT.md`, `SECURITY.md`, `THIRD_PARTY_NOTICES.md`, `.env.example`, `.github/ISSUE_TEMPLATE/*.md`, `.github/pull_request_template.md`, `README.md`, `package.json`, `scripts/desktop-build.mjs`, `src/__tests__/desktop-artifact-smoke.test.ts`, `src/__tests__/open-source-readiness.test.ts`; source code is MIT-licensed while bundled media is explicitly not automatically relicensed, public developer/release npm scripts remain explicit, the desktop build wrapper defaults Windows release packaging to `CARGO_BUILD_JOBS=1` unless the environment already overrides it, issue and PR templates keep Release EXE/privacy/experimental-language boundaries visible, IPA audit reports require `auditRole` plus sourced update/variant evidence and keep `needs-review` rows unchanged without stronger follow-up evidence, the audio/provider template separates missing bundled audio, wrong clickable audio sources, loudness mismatches, and quota-impacting provider requests from general bugs, `SUPPORT.md` routes Release EXE bugs, IPA audits, audio/provider requests, private reports, and paid-provider boundaries to the correct channel, `CODE_OF_CONDUCT.md` keeps accent/learner/IPA discussion respectful and evidence-first while routing secrets or private recordings away from public issues, routine validation scripts do not call audio generation, and tracked text files are checked for obvious real private-key/API-token formats without printing matched secret text |
 | Public release remains blocked until Windows signing is complete | `README.md`, `docs/INSTALLATION.md`, `docs/operations/DESKTOP_STARTUP_RUNBOOK.md` |
 
@@ -67,7 +67,7 @@ rerun during this playback/UI RC pass.
 
 ## Latest Local Command Results
 
-Latest local focused pass for theme-persistence storage recovery and the full RC gate:
+Latest local focused pass for drill diagnosis-report storage recovery and the full RC gate:
 
 ```text
 git status --short --branch
@@ -75,37 +75,33 @@ git status --short --branch
   If normal `git push` is unavailable, use the documented GitHub API fallback
   and verify the local-vs-remote tree SHA before treating content as pushed
 
-npx.cmd biome check --fix src/components/layout/theme-provider.tsx src/__tests__/theme-provider.test.tsx docs/operations/RC_EVIDENCE_AUDIT.md docs/operations/DESKTOP_STARTUP_RUNBOOK.md docs/operations/NEXT_CHAT_HANDOFF.md
-  passed; no fixes needed after the final docs update
+npx.cmd biome check --fix src/app/drill/page.tsx src/lib/drill-report-storage.ts src/__tests__/drill-report-storage.test.ts src/__tests__/desktop-preflight-ui-smoke.test.ts scripts/desktop-ui-smoke.mjs docs/operations/RC_EVIDENCE_AUDIT.md docs/operations/DESKTOP_STARTUP_RUNBOOK.md docs/operations/NEXT_CHAT_HANDOFF.md
+  passed; 5 files checked, 3 files fixed
 
-npm.cmd run test -- src/__tests__/theme-provider.test.tsx
-  1 file / 2 tests passed; blocked theme reads fall back to `system`, and
-  blocked theme writes still allow the live theme to update
-
-npm.cmd run test -- src/__tests__/theme-provider.test.tsx src/__tests__/open-source-readiness.test.ts
-  2 files / 11 tests passed; theme persistence recovery and the public
-  handoff/evidence GitHub API fallback guard are both locked
+npm.cmd run test -- src/__tests__/drill-report-storage.test.ts src/__tests__/desktop-preflight-ui-smoke.test.ts
+  2 files / 18 tests passed; drill report storage fallback behavior and the
+  Release smoke corrupt-local-data route are locked
 
 npm.cmd run test
-  112 files / 625 tests passed
+  113 files / 629 tests passed
 
 npm.cmd run typecheck
   passed
 
 npm.cmd run lint
-  passed; 371 files checked
+  passed; 373 files checked
 
 npm.cmd run build:desktop-frontend
   passed; 144 static pages generated
 
 npm.cmd run desktop:build
-  passed; rebuilt the Release EXE, MSI, and NSIS artifacts after the theme
-  provider shell change
+  passed; rebuilt the Release EXE, MSI, and NSIS artifacts after the `/drill`
+  page and Release smoke changes
 
 npm.cmd run desktop:preflight
   passed; Release EXE exists, no running speakright.exe, no localhost startup;
   during verification it correctly reported the expected dirty worktree from this
-  theme-persistence recovery fix
+  drill-report storage recovery fix
 
 npm.cmd run desktop:ui-smoke
   passed; Release EXE runtime, centered target text, no target-text ellipsis,
@@ -127,6 +123,8 @@ npm.cmd run desktop:ui-smoke
   route passes,
   exact scoring-tile audio policy with a playable header clip and a locked
   unverified tile,
+  corrupt `/drill` diagnosis-report storage warning included in
+  corruptLocalDataWarnings=ok,
   englishTransferRoutes=ok,
   englishCoreDrillRoutes=ok,
   advancedDirectRoutes=ok,
@@ -137,7 +135,7 @@ npm.cmd run desktop:ui-smoke
 
 npm.cmd run desktop:launch-release
   passed; command printed `SpeakRight release desktop app launch requested`,
-  the Release EXE path, `PID: 27908`, and the no-localhost reminder; the Release
+  the Release EXE path, `PID: 62308`, and the no-localhost reminder; the Release
   EXE opened from `src-tauri\target\release\speakright.exe` and was verified as
   a running `speakright.exe` process
 
@@ -157,7 +155,7 @@ npm.cmd run desktop:launch-release
 ## Limits
 
 - `audio:parity:dry-run` and `audio:loudness:dry-run` were not rerun during the
-  theme-persistence recovery pass; the latest recorded audio
+  drill diagnosis-report storage recovery pass; the latest recorded audio
   dry-runs remain the previous playback-layer audits.
 - `es-ES`, `fr-FR`, and `ru-RU` are experimental and must not be described as
   formally mastered.

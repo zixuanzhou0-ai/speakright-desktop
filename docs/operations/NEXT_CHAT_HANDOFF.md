@@ -246,6 +246,10 @@ git status --short --branch
   Chinese alert, and retaking or saving a valid report clears the stale warning.
   Release EXE smoke seeds corrupt localStorage and expects
   `corruptLocalDataWarnings=ok`.
+- Corrupt `/drill` diagnosis-report storage now follows that same visible
+  recovery standard. The `/drill` home page falls back to the not-yet-diagnosed
+  plan and shows `drill-report-storage-warning` with Chinese reset/export
+  guidance instead of silently treating a broken report as missing.
 - English training-pack direct routes now have page/intro/course-map smoke hooks
   and wrap-ready headers. Release EXE smoke opens `/drill/pack/ee-ih` in English
   and checks French direct access shows `pack-runner-experimental-blocker`
@@ -450,6 +454,10 @@ Current gate summary:
 - Focused theme-provider storage tests passed: `1` file and `2` tests, covering
   blocked theme reads, blocked theme writes, fallback to `system`, and live
   theme updates without a crash.
+- Focused drill diagnosis-report storage tests passed: `2` files and `18`
+  tests, covering English diagnosis fallback behavior, corrupted/blocked report
+  reads, the `/drill` recovery alert, and Release smoke coverage for corrupt
+  drill report localStorage.
 - Focused progress-archive boundary tests passed: `3` files and `13` tests,
   including the direct `/progress` experimental blocker and updated Release
   smoke route coverage.
@@ -460,11 +468,11 @@ Current gate summary:
   covering word/sentence/contrast smoke hooks, full-passage/evidence/pack-runner
   direct hooks, wrap-ready page headers, and experimental-language blockers for
   English coverage/evidence/pack surfaces.
-- Focused corrupt-local-data warning tests passed: `3` files and `30` tests,
+- Focused corrupt-local-data warning tests passed: `4` files and `34` tests,
   covering current, legacy, and startup-quarantined mastery-profile parse
   failures, visible Progress warning rendering, and Release smoke coverage for
-  corrupt mastery/coverage localStorage on `/progress`, `/drill/evidence`, and
-  `/assessment/passage`.
+  corrupt diagnosis/mastery/coverage localStorage on `/drill`, `/progress`,
+  `/drill/evidence`, and `/assessment/passage`.
 - Focused Settings quarantined-data tests passed: `2` files and `23` tests,
   covering the data/privacy center corrupt-data alert plus Release smoke checks
   for text, role, wrapping, and no-overflow behavior.
@@ -497,8 +505,8 @@ Current gate summary:
 - Focused phoneme detail presentation tests passed: `2` files and `9` tests,
   covering non-English full text visibility, Russian long Cyrillic rule text,
   and task-accurate A/B playback labels.
-- Full tests passed: `112` files and `625` tests.
-- Typecheck, lint (`371` files checked), and static desktop frontend build
+- Full tests passed: `113` files and `629` tests.
+- Typecheck, lint (`373` files checked), and static desktop frontend build
   passed.
 - Release EXE build passed and rebuilt EXE, MSI, and NSIS artifacts.
 - Release EXE preflight passed; no localhost startup is part of the release
@@ -519,7 +527,7 @@ Current gate summary:
   intro card plus start/passage actions instead of only checking the page
   container.
 - Release EXE launch passed from the static Tauri bundle, and the test process
-  was closed after verification; the latest launch PID was `27908`.
+  was closed after verification; the latest launch PID was `62308`.
 - No ElevenLabs generation or TTS spend is part of this validation path.
 
 For tomorrow's manual test session, start with:
