@@ -135,6 +135,10 @@ git status --short --branch
   inline, and their recording/assessment error panels are `role="alert"`.
   Spontaneous transfer now also shows `recorder.error` instead of only its own
   transcription/scoring error state, so microphone failure is not invisible.
+- Contrast, perception, and English pack-runner deep-practice pages now render
+  playback, recorder, and Azure assessment failures inline. Pack-runner clears
+  stale reference-audio errors before starting a new reference/perception clip,
+  so an old failed speaker click does not mask the current task.
 - Recorder runtime interruptions are no longer treated as usable recordings.
   If `MediaRecorder.onerror` fires after recording starts, the hook stops the
   stream, discards any partial audio, and shows a Chinese recovery message about

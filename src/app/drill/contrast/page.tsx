@@ -418,7 +418,11 @@ export default function ContrastDrillPage() {
               </div>
               <div className="mt-6 text-center">
                 {wordAudio.error && (
-                  <p className="mb-3 text-xs text-destructive">
+                  <p
+                    role="alert"
+                    data-smoke="contrast-word-audio-error"
+                    className="mb-3 text-xs text-destructive"
+                  >
                     {wordAudio.error}
                   </p>
                 )}
@@ -456,6 +460,15 @@ export default function ContrastDrillPage() {
             {azure.isLoading && (
               <p className="text-sm text-muted-foreground">评分中...</p>
             )}
+            {(recorder.error || azure.error) && (
+              <p
+                role="alert"
+                data-smoke="contrast-assessment-error"
+                className="mx-auto max-w-md break-words text-sm text-destructive [overflow-wrap:anywhere]"
+              >
+                {recorder.error ?? azure.error}
+              </p>
+            )}
           </motion.div>
         )}
 
@@ -484,6 +497,15 @@ export default function ContrastDrillPage() {
             />
             {azure.isLoading && (
               <p className="text-sm text-muted-foreground">评分中...</p>
+            )}
+            {(recorder.error || azure.error) && (
+              <p
+                role="alert"
+                data-smoke="contrast-assessment-error"
+                className="mx-auto max-w-md break-words text-sm text-destructive [overflow-wrap:anywhere]"
+              >
+                {recorder.error ?? azure.error}
+              </p>
             )}
           </motion.div>
         )}

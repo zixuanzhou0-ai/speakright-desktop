@@ -606,6 +606,8 @@ export default function TrainingPackPage() {
 
   const playReference = () => {
     if (!currentItem) return;
+    wordAudio.clearError();
+    tts.reset();
     const reference = getCourseItemPlaybackText(currentItem);
     if (reference.split(/\s+/).length > 1) {
       tts.speak(reference, { speed: 0.85, languageId });
@@ -615,6 +617,8 @@ export default function TrainingPackPage() {
   };
 
   const playRemediationText = (text: string) => {
+    wordAudio.clearError();
+    tts.reset();
     if (text.split(/\s+/).length > 1) {
       tts.speak(text, { speed: 0.75, languageId });
     } else {
@@ -624,6 +628,8 @@ export default function TrainingPackPage() {
 
   const playSlot = (slot: ActiveSlot) => {
     if (!currentItem || !slot) return;
+    wordAudio.clearError();
+    tts.reset();
     const wordA = currentItem.text;
     const wordB = currentItem.contrastText ?? currentItem.text;
     const word =
@@ -986,6 +992,7 @@ export default function TrainingPackPage() {
                 onAnswer={answerPerception}
                 onNext={nextPerception}
                 isPlaying={wordAudio.isPlaying}
+                audioError={wordAudio.error}
               />
             )}
 
@@ -1018,6 +1025,8 @@ export default function TrainingPackPage() {
                 stream={recorder.stream}
                 qualityReport={recordingQuality.report}
                 isAnalyzingQuality={recordingQuality.isAnalyzing}
+                referenceError={wordAudio.error ?? tts.error}
+                assessmentError={recorder.error ?? azure.error}
                 onPlayReference={playReference}
                 onPlayRemediationText={playRemediationText}
                 onStartRecording={() => {
@@ -1473,6 +1482,7 @@ function PerceptionStep({
   onAnswer,
   onNext,
   isPlaying,
+  audioError,
 }: {
   item: TrainingCourseItem;
   activeSlot: ActiveSlot;
@@ -1485,6 +1495,7 @@ function PerceptionStep({
   onAnswer: (answeredA: boolean) => void;
   onNext: () => void;
   isPlaying: boolean;
+  audioError: string | null;
 }) {
   return (
     <motion.div
@@ -1522,6 +1533,15 @@ function PerceptionStep({
           </motion.button>
         ))}
       </div>
+      {audioError && (
+        <p
+          role="alert"
+          data-smoke="pack-runner-perception-audio-error"
+          className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-center text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300"
+        >
+          {audioError}
+        </p>
+      )}
       {answer === null ? (
         <div className="mt-6 flex gap-3">
           <Button
@@ -1633,6 +1653,8 @@ function RecordingStep({
   stream,
   qualityReport,
   isAnalyzingQuality,
+  referenceError,
+  assessmentError,
   onPlayReference,
   onPlayRemediationText,
   onStartRecording,
@@ -1662,6 +1684,8 @@ function RecordingStep({
   stream: MediaStream | null;
   qualityReport: RecordingQualityReport | null;
   isAnalyzingQuality: boolean;
+  referenceError: string | null;
+  assessmentError: string | null;
   onPlayReference: () => void;
   onPlayRemediationText: (text: string) => void;
   onStartRecording: () => void;
@@ -1742,6 +1766,15 @@ function RecordingStep({
       <p className="mt-1 text-xs text-muted-foreground">
         {isPlaying ? "正在播放..." : "先听标准发音"}
       </p>
+      {referenceError && (
+        <p
+          role="alert"
+          data-smoke="pack-runner-reference-audio-error"
+          className="mx-auto mt-3 max-w-md rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300"
+        >
+          {referenceError}
+        </p>
+      )}
 
       {!showRemediation && (
         <div className="mt-5 flex flex-col items-center gap-3">
@@ -1769,6 +1802,15 @@ function RecordingStep({
           {isAssessing && (
             <p className="text-sm text-muted-foreground">
               正在按目标音素评分...
+            </p>
+          )}
+          {assessmentError && (
+            <p
+              role="alert"
+              data-smoke="pack-runner-assessment-error"
+              className="mx-auto max-w-md break-words text-sm text-destructive [overflow-wrap:anywhere]"
+            >
+              {assessmentError}
             </p>
           )}
         </div>
@@ -1899,6 +1941,15 @@ function RecordingStep({
                   {isAssessing && (
                     <p className="mt-2 text-xs text-muted-foreground">
                       正在检查补救动作...
+                    </p>
+                  )}
+                  {assessmentError && (
+                    <p
+                      role="alert"
+                      data-smoke="pack-runner-assessment-error"
+                      className="mx-auto mt-2 max-w-md break-words text-sm text-destructive [overflow-wrap:anywhere]"
+                    >
+                      {assessmentError}
                     </p>
                   )}
                   {remediationAttempt && (

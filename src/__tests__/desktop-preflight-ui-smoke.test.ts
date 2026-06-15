@@ -227,6 +227,38 @@ describe("desktop preflight and UI smoke", () => {
     expect(azureHook).toContain("回到本页重新评分");
   });
 
+  it("keeps contrast, perception, and pack-runner failures visible inline", () => {
+    const contrastPage = readProjectFile("src/app/drill/contrast/page.tsx");
+    const perceptionPage = readProjectFile("src/app/drill/perception/page.tsx");
+    const packRunner = readProjectFile(
+      "src/app/drill/pack/[packId]/pack-runner-client.tsx",
+    );
+
+    expect(contrastPage).toContain('data-smoke="contrast-word-audio-error"');
+    expect(contrastPage).toContain('data-smoke="contrast-assessment-error"');
+    expect(contrastPage).toContain("{recorder.error ?? azure.error}");
+    expect(contrastPage).toContain('role="alert"');
+
+    expect(perceptionPage).toContain('data-smoke="perception-audio-error"');
+    expect(perceptionPage).toContain("{pronunciation.error}");
+    expect(perceptionPage).toContain('role="alert"');
+
+    expect(packRunner).toContain(
+      'data-smoke="pack-runner-perception-audio-error"',
+    );
+    expect(packRunner).toContain(
+      'data-smoke="pack-runner-reference-audio-error"',
+    );
+    expect(packRunner).toContain('data-smoke="pack-runner-assessment-error"');
+    expect(packRunner).toContain("referenceError={wordAudio.error ?? tts.error}");
+    expect(packRunner).toContain(
+      "assessmentError={recorder.error ?? azure.error}",
+    );
+    expect(packRunner).toContain("wordAudio.clearError()");
+    expect(packRunner).toContain("tts.reset()");
+    expect(packRunner).toContain('role="alert"');
+  });
+
   it("keeps recording and benchmark replay on the shared audio player hook", () => {
     const replayPages = [
       "src/app/drill/prosody/page.tsx",
