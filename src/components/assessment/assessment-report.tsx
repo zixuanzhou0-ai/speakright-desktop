@@ -371,7 +371,10 @@ export function AssessmentReport({ result, onRetake }: AssessmentReportProps) {
         </div>
       </motion.div>
 
-      <div className="flex justify-center gap-3 pb-6">
+      <div
+        className="flex max-w-full flex-wrap justify-center gap-3 pb-6"
+        data-smoke="assessment-report-actions"
+      >
         <Button
           variant="outline"
           onClick={onRetake}
@@ -380,8 +383,11 @@ export function AssessmentReport({ result, onRetake }: AssessmentReportProps) {
           <RotateCcw className="h-4 w-4" />
           重新测试
         </Button>
-        <Link href={primaryHref}>
-          <Button className="gap-2 cursor-pointer">
+        <Link href={primaryHref} className="max-w-full">
+          <Button
+            className="h-auto min-h-8 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere] gap-2 cursor-pointer"
+            data-smoke="assessment-report-primary-action"
+          >
             {!hasScore
               ? "先练基础词/短语"
               : primaryPack

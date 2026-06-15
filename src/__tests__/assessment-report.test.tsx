@@ -120,4 +120,24 @@ describe("AssessmentReport mastery display", () => {
     expect(screen.getByText("置信度 medium")).toBeInTheDocument();
     expect(screen.getByText("证据 fair")).toBeInTheDocument();
   });
+
+  it("wraps report actions so long prescription titles stay visible", () => {
+    render(<AssessmentReport result={reportFor("en-US")} onRetake={vi.fn()} />);
+
+    const actions = document.querySelector(
+      '[data-smoke="assessment-report-actions"]',
+    );
+    expect(actions).toHaveClass("flex-wrap");
+    expect(actions).toHaveClass("justify-center");
+    expect(actions).toHaveClass("max-w-full");
+
+    const primaryAction = document.querySelector(
+      '[data-smoke="assessment-report-primary-action"]',
+    );
+    expect(primaryAction).toHaveClass("whitespace-normal");
+    expect(primaryAction).toHaveClass("break-words");
+    expect(primaryAction).toHaveClass("text-center");
+    expect(primaryAction).toHaveClass("max-w-full");
+    expect(screen.getByRole("button", { name: /开始：/ })).toBeInTheDocument();
+  });
 });
