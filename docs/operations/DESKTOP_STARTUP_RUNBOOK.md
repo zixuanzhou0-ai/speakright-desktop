@@ -109,6 +109,9 @@ reminder that it does not start localhost or the Next dev server.
   If the `/drill` home page cannot read the saved diagnosis report, it should
   fall back to the not-yet-diagnosed plan and show a Chinese reset/export
   warning instead of silently hiding the corrupted report.
+  If the quick diagnosis page cannot read the saved current or legacy report, it
+  should show the same kind of Chinese reset/export warning and keep the intro
+  flow usable.
 - English: open phoneme list, then five phoneme detail pages; play target sound,
   example word, record, replay the recording, and score once.
 - Spanish, French, and Russian: switch each language, open the sound-unit list,
@@ -452,6 +455,10 @@ release notes and installation guide keep the unsigned warning visible.
   formal archive, while Spanish, French, and Russian see an experimental blocker
   instead of English mastery archive wording.
 - Latest local verification:
+  - Focused quick diagnosis report storage tests: `3` files and `23` tests
+    passed, covering current report reads, legacy English migration,
+    corrupted/blocked saved report reads, and static Release smoke coverage for
+    the `/assessment` recovery alert.
   - Focused drill diagnosis-report storage tests: `2` files and `18` tests
     passed, covering corrupted/blocked saved report reads and static Release
     smoke coverage for the `/drill` recovery alert.
@@ -476,8 +483,8 @@ release notes and installation guide keep the unsigned warning visible.
   - Latest settled-main validation results are centralized in
     `docs/operations/RC_EVIDENCE_AUDIT.md` to avoid stale counts across
     multiple handoff documents.
-  - `npm.cmd run test` passed with `113` files and `629` tests;
-    `npm.cmd run typecheck`, `npm.cmd run lint` (`373` files checked), and
+  - `npm.cmd run test` passed with `114` files and `634` tests;
+    `npm.cmd run typecheck`, `npm.cmd run lint` (`375` files checked), and
     `npm.cmd run build:desktop-frontend` passed in the latest settled-main
     gate.
   - `npm.cmd run desktop:build`: passed; rebuilt Release EXE, MSI, and NSIS.
@@ -486,6 +493,7 @@ release notes and installation guide keep the unsigned warning visible.
     text assertions, scoring-breakdown visibility/readability checks in normal,
     narrow, and low-height detail windows,
     `/progress` experimental blocker route coverage,
+    corrupt `/assessment` quick diagnosis report storage warning coverage,
     corrupt `/drill` diagnosis-report storage warning coverage,
     `scoringTileAudioPolicy=ok`,
     Settings/usage wrapping,

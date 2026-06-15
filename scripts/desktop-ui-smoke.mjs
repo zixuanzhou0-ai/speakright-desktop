@@ -1787,6 +1787,12 @@ async function assertCorruptLocalDataWarnings(cdp) {
 
   const checks = [
     {
+      path: "/assessment",
+      selector: '[data-smoke="assessment-page"]',
+      warningSmoke: "assessment-storage-warning",
+      expectedText: "上次快速诊断报告无法读取",
+    },
+    {
       path: "/drill",
       selector: '[data-smoke="drill-page"]',
       warningSmoke: "drill-report-storage-warning",

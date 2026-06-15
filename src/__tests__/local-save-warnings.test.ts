@@ -74,21 +74,30 @@ describe("local-save warning wiring", () => {
 
   it("wires assessment report persistence failures into visible warnings without blocking reports", () => {
     const warning = readProjectFile("src/lib/local-save-warning.ts");
+    const reportStorage = readProjectFile(
+      "src/lib/assessment-report-storage.ts",
+    );
     const assessmentPage = readProjectFile("src/app/assessment/page.tsx");
     const passagePage = readProjectFile("src/app/assessment/passage/page.tsx");
 
     expect(warning).toContain("本机历史报告或复测基线未保存");
     expect(warning).toContain("本机历史诊断报告没有删除成功");
+    expect(reportStorage).toContain("ASSESSMENT_REPORT_STORAGE_WARNING");
+    expect(reportStorage).toContain("上次快速诊断报告无法读取");
 
     expect(assessmentPage).toContain("LOCAL_ASSESSMENT_SAVE_WARNING");
+    expect(assessmentPage).toContain("loadAssessmentReportForLanguage");
     expect(assessmentPage).toContain(
       "function saveReport(report: DiagnosisReport, languageId: string): boolean",
     );
     expect(assessmentPage).toContain("const reportSaved = saveReport");
-    expect(assessmentPage).toContain("setSavedReport(report)");
+    expect(assessmentPage).toContain(
+      "setSavedReportLoad({ report, warning: null })",
+    );
     expect(assessmentPage).toContain(
       'data-smoke="assessment-local-save-warning"',
     );
+    expect(assessmentPage).toContain('data-smoke="assessment-storage-warning"');
 
     expect(passagePage).toContain("LOCAL_ASSESSMENT_SAVE_WARNING");
     expect(passagePage).toContain(

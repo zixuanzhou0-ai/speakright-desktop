@@ -26,6 +26,10 @@ import { useRecordingQuality } from "@/hooks/use-recording-quality";
 import { useTtsAligned } from "@/hooks/use-tts-aligned";
 import { useWordPronunciation } from "@/hooks/use-word-pronunciation";
 import {
+  assessmentReportStorageKeyFor,
+  loadAssessmentReportForLanguage,
+} from "@/lib/assessment-report-storage";
+import {
   ADAPTIVE_ASSESSMENT_WORDS,
   ASSESSMENT_PARAGRAPH,
   ASSESSMENT_WORDS,
@@ -52,12 +56,7 @@ import {
   getCenteredReadableTextClassName,
   getPracticeTextDensity,
 } from "@/lib/practice-text-presentation";
-import { buildTrainingPrescription } from "@/lib/training-prescription";
-import type {
-  AssessmentPhase,
-  AssessmentWord,
-  AssessmentResult as LegacyAssessmentResult,
-} from "@/types/assessment";
+import type { AssessmentPhase, AssessmentWord } from "@/types/assessment";
 import type { AzureAssessmentResult } from "@/types/azure";
 import type {
   AssessmentRecording,
@@ -65,80 +64,13 @@ import type {
   RecordingQualitySnapshot,
 } from "@/types/diagnosis";
 
-const STORAGE_KEY_V2 = "speakright_assessment_result_v2";
-const LEGACY_STORAGE_KEY = "speakright_assessment_result";
-
-function storageKeyFor(languageId: string): string {
-  return `${STORAGE_KEY_V2}:${languageId}`;
-}
-
-function migrateLegacyResult(legacy: LegacyAssessmentResult): DiagnosisReport {
-  const phonemeScores: DiagnosisReport["phonemeScores"] = {};
-  for (const [slug, score] of Object.entries(legacy.phonemeScores)) {
-    phonemeScores[slug] = { score, sampleCount: score > 0 ? 1 : 0 };
-  }
-  const issues = legacy.weakPhonemes.slice(0, 3).map((slug) => {
-    const phoneme = getPhonemeBySlug(slug);
-    return {
-      id: `legacy-${slug}`,
-      severity: "major" as const,
-      type: "phoneme" as const,
-      title: `${phoneme?.ipa ?? slug} 需要复测`,
-      targetPhonemes: [slug],
-      evidence: [
-        {
-          text: phoneme?.name ?? slug,
-          score: legacy.phonemeScores[slug] ?? 0,
-          detail: "来自旧版诊断结果，建议重新测试以生成证据和训练处方。",
-        },
-      ],
-      impact: "旧版报告只有平均分，没有足够证据判断错因。",
-      fixCue: phoneme?.description ?? "重新诊断后会生成更具体的发音动作。",
-      recommendedPackIds: [],
-    };
-  });
-
-  return {
-    version: 2,
-    languageId: "en-US",
-    timestamp: legacy.timestamp,
-    overallScore: legacy.overallScore,
-    dimensions: {
-      ...legacy.dimensions,
-      connectedSpeech: Math.round(
-        (legacy.dimensions.rhythm + legacy.dimensions.fluency) / 2,
-      ),
-    },
-    phonemeScores,
-    issues,
-    prescription: buildTrainingPrescription(issues, "diagnosis"),
-    rawEvidence: [],
-  };
-}
-
-function loadSavedReport(languageId: string): DiagnosisReport | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(storageKeyFor(languageId));
-    if (raw) return JSON.parse(raw) as DiagnosisReport;
-
-    if (languageId !== "en-US") return null;
-    const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
-    if (legacyRaw) {
-      return migrateLegacyResult(
-        JSON.parse(legacyRaw) as LegacyAssessmentResult,
-      );
-    }
-  } catch {
-    return null;
-  }
-  return null;
-}
-
 function saveReport(report: DiagnosisReport, languageId: string): boolean {
   if (typeof window === "undefined") return true;
   try {
-    localStorage.setItem(storageKeyFor(languageId), JSON.stringify(report));
+    localStorage.setItem(
+      assessmentReportStorageKeyFor(languageId),
+      JSON.stringify(report),
+    );
     return true;
   } catch {
     return false;
@@ -193,11 +125,13 @@ export default function AssessmentPage() {
     [languageId],
   );
   const [retestIssueId, setRetestIssueId] = useState<string | null>(null);
-  const [savedReport, setSavedReport] = useState<DiagnosisReport | null>(() =>
-    loadSavedReport(languageId),
+  const [savedReportLoad, setSavedReportLoad] = useState(() =>
+    loadAssessmentReportForLanguage(languageId),
   );
   const [localSaveWarning, setLocalSaveWarning] = useState<string | null>(null);
   const [phase, setPhase] = useState<AssessmentPhase>({ type: "intro" });
+  const savedReport = savedReportLoad.report;
+  const savedReportWarning = savedReportLoad.warning;
 
   const recorder = useRecorder({ maxDurationMs: 60_000 });
   const azure = useAzureAssessment();
@@ -221,7 +155,7 @@ export default function AssessmentPage() {
   }, []);
 
   useEffect(() => {
-    setSavedReport(loadSavedReport(languageId));
+    setSavedReportLoad(loadAssessmentReportForLanguage(languageId));
     setLocalSaveWarning(null);
     setPhase({ type: "intro" });
   }, [languageId]);
@@ -237,7 +171,7 @@ export default function AssessmentPage() {
       });
       const reportSaved = saveReport(report, languageId);
       setLocalSaveWarning(reportSaved ? null : LOCAL_ASSESSMENT_SAVE_WARNING);
-      setSavedReport(report);
+      setSavedReportLoad({ report, warning: null });
       setPhase({ type: "report", result: report });
     },
     [languageId, assessmentParagraph],
@@ -257,7 +191,9 @@ export default function AssessmentPage() {
 
   const handleTargetedRetest = useCallback(
     (issueId: string) => {
-      const report = loadSavedReport(languageId);
+      const loadedReport = loadAssessmentReportForLanguage(languageId);
+      setSavedReportLoad(loadedReport);
+      const report = loadedReport.report;
       const issue = report?.issues.find((item) => item.id === issueId);
       const words = issue ? buildTargetedRetestWords(issue) : [];
       if (words.length === 0) {
@@ -407,12 +343,12 @@ export default function AssessmentPage() {
 
   const handleRetake = () => {
     try {
-      localStorage.removeItem(storageKeyFor(languageId));
+      localStorage.removeItem(assessmentReportStorageKeyFor(languageId));
       setLocalSaveWarning(null);
+      setSavedReportLoad({ report: null, warning: null });
     } catch {
       setLocalSaveWarning(LOCAL_ASSESSMENT_DELETE_WARNING);
     }
-    setSavedReport(null);
     recorder.reset();
     recordingQuality.reset();
     azure.reset();
@@ -454,6 +390,15 @@ export default function AssessmentPage() {
             role="alert"
           >
             {localSaveWarning}
+          </div>
+        )}
+        {savedReportWarning && (
+          <div
+            className="mb-4 break-words rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 [overflow-wrap:anywhere] dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100"
+            data-smoke="assessment-storage-warning"
+            role="alert"
+          >
+            {savedReportWarning}
           </div>
         )}
 

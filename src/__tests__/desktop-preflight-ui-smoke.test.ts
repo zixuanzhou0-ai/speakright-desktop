@@ -132,10 +132,12 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("speakright_mastery_profile_v2");
     expect(script).toContain("speakright_assessment_result_v2:en-US");
     expect(script).toContain("speakright_assessment_result_v2:coverage:en-US");
+    expect(script).toContain("assessment-storage-warning");
     expect(script).toContain("drill-report-storage-warning");
     expect(script).toContain("progress-mastery-storage-warning");
     expect(script).toContain("evidence-mastery-storage-warning");
     expect(script).toContain("assessment-passage-storage-warning");
+    expect(script).toContain("上次快速诊断报告无法读取");
     expect(script).toContain("本机训练进度数据无法读取");
     expect(script).toContain("上次诊断报告无法读取");
     expect(script).toContain("上次全音诊断报告无法读取");
@@ -316,6 +318,9 @@ describe("desktop preflight and UI smoke", () => {
 
   it("keeps quick assessment recording and scoring failures visible inline", () => {
     const assessmentPage = readProjectFile("src/app/assessment/page.tsx");
+    const assessmentReportStorage = readProjectFile(
+      "src/lib/assessment-report-storage.ts",
+    );
     const passagePage = readProjectFile("src/app/assessment/passage/page.tsx");
     const azureHook = readProjectFile("src/hooks/use-azure-assessment.ts");
     const recorderAlerts =
@@ -328,6 +333,9 @@ describe("desktop preflight and UI smoke", () => {
     expect(assessmentPage).toContain('role="alert"');
     expect(assessmentPage).toContain("{recorder.error}");
     expect(assessmentPage).toContain("{azure.error}");
+    expect(assessmentPage).toContain('data-smoke="assessment-storage-warning"');
+    expect(assessmentPage).toContain("loadAssessmentReportForLanguage");
+    expect(assessmentReportStorage).toContain("上次快速诊断报告无法读取");
     expect(assessmentPage).not.toContain('message: azure.error || "评估失败"');
 
     expect(passagePage).toContain(
