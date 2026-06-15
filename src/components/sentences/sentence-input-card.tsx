@@ -76,8 +76,11 @@ export function SentenceInputCard({
       className="rounded-xl border bg-card px-4 py-4 shadow-sm space-y-3 min-h-0 overflow-hidden"
       data-smoke="sentence-input-card"
     >
-      <div className="flex gap-3 items-start">
-        <div className="relative flex-1">
+      <div
+        className="flex flex-wrap items-start justify-center gap-3"
+        data-smoke="sentence-input-actions"
+      >
+        <div className="relative min-w-[min(100%,16rem)] flex-1">
           <Textarea
             suppressHydrationWarning
             placeholder="输入单词或句子"
@@ -105,7 +108,7 @@ export function SentenceInputCard({
           </span>
         </div>
         {isWordMode ? (
-          <div className="relative flex h-[100px] w-[100px] shrink-0 items-center justify-center">
+          <div className="relative flex h-[100px] w-[100px] shrink-0 items-center justify-center self-center sm:self-auto">
             {wordAudioIsPlaying && (
               <>
                 <motion.span
@@ -149,6 +152,8 @@ export function SentenceInputCard({
               transition={{ type: "spring", stiffness: 400, damping: 15 }}
               onClick={onListen}
               disabled={!trimmedText || wordAudioIsLoading}
+              aria-label="播放单词发音"
+              data-smoke="free-practice-listen-control"
               className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {wordAudioIsLoading ? (
@@ -165,7 +170,9 @@ export function SentenceInputCard({
             transition={{ type: "spring", stiffness: 400, damping: 15 }}
             onClick={onListen}
             disabled={!trimmedText || ttsIsLoading || ttsIsPlaying}
-            className="flex h-[100px] w-[100px] shrink-0 flex-col items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            aria-label="听标准发音"
+            data-smoke="free-practice-listen-control"
+            className="flex h-[100px] w-[100px] shrink-0 flex-col items-center justify-center gap-2 self-center rounded-xl bg-gradient-to-b from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/25 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer sm:self-auto"
           >
             {ttsIsLoading ? (
               <Loader2 className="h-8 w-8 animate-spin" />

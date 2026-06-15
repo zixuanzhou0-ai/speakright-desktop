@@ -76,6 +76,9 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
   overflow in narrow windows.
 - Diagnosis-report action buttons now wrap as well; long prescription CTA titles
   such as `开始：...` keep `whitespace-normal`, `break-words`, and centered text.
+- Free-practice input/listen controls now use a wrapping action row with a
+  readable textarea minimum width; the word-mode icon button also has the
+  explicit `播放单词发音` accessible label.
 - Installation docs now include a source-build Release EXE path and first-launch
   expectations for no API keys, no network, no microphone permission, and
   missing bundled local audio. The runbook mirrors those degraded-state checks
