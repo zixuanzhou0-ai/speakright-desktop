@@ -101,28 +101,41 @@ export default function SentenceDrillPage() {
 
   return (
     <LanguageModuleGate moduleName="句子训练" readinessKey="sentencePractice">
-      <div className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin">
-        <div className="mb-4 flex items-center gap-3 shrink-0">
+      <div
+        data-smoke="sentence-drill-page"
+        className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin"
+      >
+        <div className="mb-4 flex flex-wrap items-start gap-3 shrink-0">
           <Link
             href="/drill"
-            className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <h1 className="text-2xl font-bold">句子训练</h1>
-          {drill.config &&
-            drill.phase.type !== "configuring" &&
-            drill.phase.type !== "completed" && (
-              <span className="text-sm text-muted-foreground">
-                {getLanguagePhonemeBySlug(languageId, drill.config.phonemeSlug)
-                  ?.ipa ?? getPhonemeBySlug(drill.config.phonemeSlug)?.ipa}
-              </span>
-            )}
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <h1 className="break-words text-2xl font-bold [overflow-wrap:anywhere]">
+                句子训练
+              </h1>
+              {drill.config &&
+                drill.phase.type !== "configuring" &&
+                drill.phase.type !== "completed" && (
+                  <span className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
+                    {getLanguagePhonemeBySlug(
+                      languageId,
+                      drill.config.phonemeSlug,
+                    )?.ipa ?? getPhonemeBySlug(drill.config.phonemeSlug)?.ipa}
+                  </span>
+                )}
+            </div>
+          </div>
         </div>
 
         <div className="flex-1 max-w-2xl mx-auto w-full">
           {drill.phase.type === "configuring" && (
-            <DrillConfig kind="sentence" onStart={handleStart} />
+            <div data-smoke="sentence-drill-config-card">
+              <DrillConfig kind="sentence" onStart={handleStart} />
+            </div>
           )}
 
           {drill.phase.type === "phonemeLesson" && drill.config && (

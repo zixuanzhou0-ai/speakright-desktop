@@ -364,30 +364,39 @@ export default function ContrastDrillPage() {
   };
 
   return (
-    <div className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin">
-      <div className="mb-4 flex items-center gap-3 shrink-0">
+    <div
+      data-smoke="contrast-page"
+      className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin"
+    >
+      <div className="mb-4 flex flex-wrap items-start gap-3 shrink-0">
         <Link
           href="/drill"
-          className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <h1 className="text-2xl font-bold">对比训练</h1>
-        {selectedSet && (
-          <span className="text-sm text-muted-foreground">
-            {selectedSet.label}
-          </span>
-        )}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <h1 className="break-words text-2xl font-bold [overflow-wrap:anywhere]">
+              对比训练
+            </h1>
+            {selectedSet && (
+              <span className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
+                {selectedSet.label}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 max-w-2xl mx-auto w-full">
         {/* Select set */}
         {phase.type === "select" && (
-          <div className="space-y-4">
+          <div data-smoke="contrast-config-card" className="space-y-4">
             <p className="text-sm text-muted-foreground">
               选择一组易混淆音标进行对比训练：
             </p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {availableSets.map((set) => (
                 <motion.button
                   key={set.id}
@@ -416,7 +425,7 @@ export default function ContrastDrillPage() {
             animate={{ opacity: 1 }}
             className="space-y-4"
           >
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted-foreground">
               <span>
                 {phase.pairIndex + 1} / {selectedSet.pairs.length}
               </span>

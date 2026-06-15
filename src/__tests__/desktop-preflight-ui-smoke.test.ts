@@ -72,6 +72,14 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("/phonemes/fr-i");
     expect(script).toContain("/phonemes/ru-a");
     expect(script).toContain("/drill");
+    expect(script).toContain("/drill/word");
+    expect(script).toContain("/drill/sentence");
+    expect(script).toContain("/drill/contrast");
+    expect(script).toContain("assertEnglishCoreDrillRoutes");
+    expect(script).toContain("englishCoreDrillRoutes=ok");
+    expect(script).toContain("word-drill-config-card");
+    expect(script).toContain("sentence-drill-config-card");
+    expect(script).toContain("contrast-config-card");
     expect(script).toContain("/drill/prosody");
     expect(script).toContain("prosodyHooksReady");
     expect(script).toContain("prosody-exercise-header");
@@ -105,7 +113,7 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("direct: true");
     expect(script).toContain("progress-experimental-blocker");
     expect(script).toContain(
-      "routes=/drill,/drill/prosody,/drill/perception,/sentences,/assessment,/progress",
+      "routes=/drill,/drill/word,/drill/sentence,/drill/contrast,/drill/prosody,/drill/perception,/sentences,/assessment,/progress",
     );
     expect(script).toContain("releaseServedFromDevServer=false");
     expect(script).toContain("data-smoke=\"language-option\"");
@@ -307,6 +315,8 @@ describe("desktop preflight and UI smoke", () => {
 
   it("keeps advanced drill provider failures visible inline", () => {
     const prosodyPage = readProjectFile("src/app/drill/prosody/page.tsx");
+    const wordPage = readProjectFile("src/app/drill/word/page.tsx");
+    const sentencePage = readProjectFile("src/app/drill/sentence/page.tsx");
     const scenariosPage = readProjectFile("src/app/drill/scenarios/page.tsx");
     const spontaneousPage = readProjectFile("src/app/drill/spontaneous/page.tsx");
     const azureHook = readProjectFile("src/hooks/use-azure-assessment.ts");
@@ -322,6 +332,16 @@ describe("desktop preflight and UI smoke", () => {
     expect(prosodyPage).toContain("{tts.error}");
     expect(prosodyPage).toContain("{recorder.error ?? assessment.error}");
     expect(prosodyPage).toContain('role="alert"');
+
+    expect(wordPage).toContain('data-smoke="word-drill-page"');
+    expect(wordPage).toContain('data-smoke="word-drill-config-card"');
+    expect(wordPage).toContain("flex flex-wrap items-start gap-3");
+    expect(wordPage).toContain("min-w-0 flex-1");
+
+    expect(sentencePage).toContain('data-smoke="sentence-drill-page"');
+    expect(sentencePage).toContain('data-smoke="sentence-drill-config-card"');
+    expect(sentencePage).toContain("flex flex-wrap items-start gap-3");
+    expect(sentencePage).toContain("min-w-0 flex-1");
 
     expect(scenariosPage).toContain('data-smoke="scenario-demo-audio-error"');
     expect(scenariosPage).toContain('data-smoke="scenario-assessment-error"');
@@ -368,6 +388,10 @@ describe("desktop preflight and UI smoke", () => {
     );
 
     expect(contrastPage).toContain('data-smoke="contrast-word-audio-error"');
+    expect(contrastPage).toContain('data-smoke="contrast-page"');
+    expect(contrastPage).toContain('data-smoke="contrast-config-card"');
+    expect(contrastPage).toContain("flex flex-wrap items-start gap-3");
+    expect(contrastPage).toContain("grid grid-cols-1 gap-3 sm:grid-cols-2");
     expect(contrastPage).toContain('data-smoke="contrast-assessment-error"');
     expect(contrastPage).toContain('data-smoke="contrast-assessment-retry"');
     expect(contrastPage).toContain("CONTRAST_ASSESSMENT_FALLBACK_MESSAGE");
