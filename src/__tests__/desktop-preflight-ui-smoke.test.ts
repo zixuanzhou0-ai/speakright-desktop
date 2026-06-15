@@ -298,7 +298,11 @@ describe("desktop preflight and UI smoke", () => {
 
     expect(contrastPage).toContain('data-smoke="contrast-word-audio-error"');
     expect(contrastPage).toContain('data-smoke="contrast-assessment-error"');
-    expect(contrastPage).toContain("{recorder.error ?? azure.error}");
+    expect(contrastPage).toContain('data-smoke="contrast-assessment-retry"');
+    expect(contrastPage).toContain("CONTRAST_ASSESSMENT_FALLBACK_MESSAGE");
+    expect(contrastPage).toContain("azure.getLastError()");
+    expect(contrastPage).toContain("setAssessmentRetryToken");
+    expect(contrastPage).toContain("{assessmentErrorMessage}");
     expect(contrastPage).toContain('role="alert"');
 
     expect(perceptionPage).toContain('data-smoke="perception-audio-error"');

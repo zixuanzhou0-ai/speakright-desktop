@@ -154,6 +154,9 @@ git status --short --branch
   playback, recorder, and Azure assessment failures inline. Pack-runner clears
   stale reference-audio errors before starting a new reference/perception clip,
   so an old failed speaker click does not mask the current task.
+- Contrast A/B scoring now keeps a failed recording available and shows
+  `重新评分`; after fixing Azure keys/network, the learner can retry the same
+  A/B recording instead of being forced into an immediate re-record.
 - Shared word pronunciation playback now also ignores stale online-dictionary
   fallback failures after a newer word starts playing, so fast A/B or free
   practice speaker clicks do not inherit an old failed request.

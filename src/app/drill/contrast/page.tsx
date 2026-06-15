@@ -1,6 +1,13 @@
 "use client";
 
-import { ArrowLeft, Check, Loader2, SkipForward, Volume2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  Loader2,
+  RotateCcw,
+  SkipForward,
+  Volume2,
+} from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -48,6 +55,9 @@ type ContrastPhase =
     }
   | { type: "completed"; summary: DrillSummary };
 
+const CONTRAST_ASSESSMENT_FALLBACK_MESSAGE =
+  "评分失败：请检查 Azure Speech API 密钥、区域、网络或代理后重试。";
+
 function contrastSetsForLanguage(languageId: string): MinimalPairSet[] {
   if (languageId === "en-US") return MINIMAL_PAIR_SETS;
   const deck = LANGUAGE_LEARNING_DECKS[languageId as DeckLanguageId];
@@ -86,6 +96,8 @@ export default function ContrastDrillPage() {
   const [progress, setProgress] = useState<DrillProgressItem[]>([]);
   const [startedAt] = useState(Date.now());
   const [pendingScoreA, setPendingScoreA] = useState<number>(0);
+  const [assessmentError, setAssessmentError] = useState<string | null>(null);
+  const [assessmentRetryToken, setAssessmentRetryToken] = useState(0);
 
   const recorder = useRecorder();
   const azure = useAzureAssessment();
@@ -97,6 +109,13 @@ export default function ContrastDrillPage() {
   );
 
   const threshold = getPassThreshold(coachMode);
+  const assessmentErrorMessage = recorder.error ?? assessmentError ?? azure.error;
+  const canRetryAssessment =
+    !recorder.error &&
+    !!recorder.audioBlob &&
+    !recorder.isRecording &&
+    !azure.isLoading &&
+    !!(assessmentError ?? azure.error);
 
   // De-dupe assessment trigger: remember the blob we've already processed
   // so the effect doesn't re-assess the same audio if re-rendered.
@@ -105,6 +124,8 @@ export default function ContrastDrillPage() {
   const handleSelectSet = (set: MinimalPairSet) => {
     setSelectedSet(set);
     setProgress([]);
+    setAssessmentError(null);
+    processedBlobRef.current = null;
     setPhase({ type: "listen", pairIndex: 0 });
   };
 
@@ -129,10 +150,18 @@ export default function ContrastDrillPage() {
 
   const handleStartRecordA = () => {
     if (phase.type !== "listen") return;
+    setAssessmentError(null);
+    processedBlobRef.current = null;
     recorder.reset();
     azure.reset();
     setPhase({ type: "recordA", pairIndex: phase.pairIndex });
   };
+
+  const handleStartRecording = useCallback(() => {
+    setAssessmentError(null);
+    azure.reset();
+    void recorder.startRecording();
+  }, [azure, recorder]);
 
   const handleStopA = useCallback(() => {
     recorder.stopRecording();
@@ -141,6 +170,15 @@ export default function ContrastDrillPage() {
   const handleStopB = useCallback(() => {
     recorder.stopRecording();
   }, [recorder]);
+
+  const handleRetryAssessment = useCallback(() => {
+    if (!recorder.audioBlob || recorder.isRecording || azure.isLoading) return;
+
+    processedBlobRef.current = null;
+    setAssessmentError(null);
+    azure.reset();
+    setAssessmentRetryToken((current) => current + 1);
+  }, [azure, recorder.audioBlob, recorder.isRecording]);
 
   // Auto-assess word A when blob is ready.
   //
@@ -173,11 +211,19 @@ export default function ContrastDrillPage() {
         targetWord,
         languageProfile.azureLocale,
       );
-      if (!result) return;
+      if (!result) {
+        setAssessmentError(
+          azure.getLastError() ??
+            azure.error ??
+            CONTRAST_ASSESSMENT_FALLBACK_MESSAGE,
+        );
+        return;
+      }
       const phonemeScore = getPhonemeAccuracy(result, targetPhoneme);
       const scoreA =
         phonemeScore ?? (languageId === "en-US" ? result.pronunciationScore : 0);
       setPendingScoreA(scoreA);
+      setAssessmentError(null);
       processedBlobRef.current = null;
       recorder.reset();
       azure.reset();
@@ -196,6 +242,7 @@ export default function ContrastDrillPage() {
     selectedSet,
     languageProfile.azureLocale,
     languageId,
+    assessmentRetryToken,
   ]);
 
   // Auto-assess word B — same structure as above.
@@ -221,12 +268,20 @@ export default function ContrastDrillPage() {
         targetWord,
         languageProfile.azureLocale,
       );
-      if (!result) return;
+      if (!result) {
+        setAssessmentError(
+          azure.getLastError() ??
+            azure.error ??
+            CONTRAST_ASSESSMENT_FALLBACK_MESSAGE,
+        );
+        return;
+      }
       const phonemeScore = getPhonemeAccuracy(result, targetPhoneme);
       const scoreB =
         phonemeScore ?? (languageId === "en-US" ? result.pronunciationScore : 0);
       const passed =
         priorScoreA >= currentThreshold && scoreB >= currentThreshold;
+      setAssessmentError(null);
       processedBlobRef.current = null;
       setPhase((prev) =>
         prev.type === "recordB"
@@ -251,11 +306,13 @@ export default function ContrastDrillPage() {
     threshold,
     languageProfile.azureLocale,
     languageId,
+    assessmentRetryToken,
   ]);
 
   const handleNext = () => {
     if (phase.type !== "result" || !selectedSet || !currentPair) return;
 
+    setAssessmentError(null);
     const item: DrillProgressItem = {
       item: {
         text: `${currentPair.wordA} / ${currentPair.wordB}`,
@@ -298,6 +355,7 @@ export default function ContrastDrillPage() {
 
   const handleReset = () => {
     processedBlobRef.current = null;
+    setAssessmentError(null);
     setSelectedSet(null);
     setProgress([]);
     setPhase({ type: "select" });
@@ -449,7 +507,7 @@ export default function ContrastDrillPage() {
             </span>
             <RecordButton
               isRecording={recorder.isRecording}
-              onStart={() => recorder.startRecording()}
+              onStart={handleStartRecording}
               onStop={handleStopA}
               disabled={azure.isLoading}
             />
@@ -460,14 +518,27 @@ export default function ContrastDrillPage() {
             {azure.isLoading && (
               <p className="text-sm text-muted-foreground">评分中...</p>
             )}
-            {(recorder.error || azure.error) && (
+            {assessmentErrorMessage && (
               <p
                 role="alert"
                 data-smoke="contrast-assessment-error"
                 className="mx-auto max-w-md break-words text-sm text-destructive [overflow-wrap:anywhere]"
               >
-                {recorder.error ?? azure.error}
+                {assessmentErrorMessage}
               </p>
+            )}
+            {canRetryAssessment && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleRetryAssessment}
+                data-smoke="contrast-assessment-retry"
+                className="cursor-pointer"
+              >
+                <RotateCcw className="mr-2 h-3.5 w-3.5" />
+                重新评分
+              </Button>
             )}
           </motion.div>
         )}
@@ -487,7 +558,7 @@ export default function ContrastDrillPage() {
             </span>
             <RecordButton
               isRecording={recorder.isRecording}
-              onStart={() => recorder.startRecording()}
+              onStart={handleStartRecording}
               onStop={handleStopB}
               disabled={azure.isLoading}
             />
@@ -498,14 +569,27 @@ export default function ContrastDrillPage() {
             {azure.isLoading && (
               <p className="text-sm text-muted-foreground">评分中...</p>
             )}
-            {(recorder.error || azure.error) && (
+            {assessmentErrorMessage && (
               <p
                 role="alert"
                 data-smoke="contrast-assessment-error"
                 className="mx-auto max-w-md break-words text-sm text-destructive [overflow-wrap:anywhere]"
               >
-                {recorder.error ?? azure.error}
+                {assessmentErrorMessage}
               </p>
+            )}
+            {canRetryAssessment && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleRetryAssessment}
+                data-smoke="contrast-assessment-retry"
+                className="cursor-pointer"
+              >
+                <RotateCcw className="mr-2 h-3.5 w-3.5" />
+                重新评分
+              </Button>
             )}
           </motion.div>
         )}
