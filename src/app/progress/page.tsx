@@ -28,7 +28,10 @@ import {
 } from "@/lib/benchmark-archive";
 import { getLanguageProfile } from "@/lib/language-profiles";
 import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
-import { loadMasteryProfile } from "@/lib/mastery-profile";
+import {
+  getMasteryProfileStorageWarning,
+  loadMasteryProfile,
+} from "@/lib/mastery-profile";
 import { TRAINING_PACKS } from "@/lib/training-packs";
 import type { MasteryProfile } from "@/types/training";
 
@@ -68,6 +71,9 @@ export default function ProgressPage() {
   const [profile, setProfile] = useState<MasteryProfile | null>(null);
   const [archiveStatus, setArchiveStatus] =
     useState<ProgressArchiveStatus | null>(null);
+  const [profileStorageWarning, setProfileStorageWarning] = useState<
+    string | null
+  >(null);
   const playback = useAudioPlayer();
   const benchmarkGroups = useMemo(
     () => (canShowFormalProgress ? summarizeBenchmarkGroups(recordings) : []),
@@ -85,9 +91,11 @@ export default function ProgressPage() {
     if (!canShowFormalProgress) {
       setRecordings([]);
       setProfile(null);
+      setProfileStorageWarning(null);
       return;
     }
     setRecordings(listBenchmarkRecordings());
+    setProfileStorageWarning(getMasteryProfileStorageWarning());
     setProfile(loadMasteryProfile());
   }, [canShowFormalProgress]);
 
@@ -248,6 +256,16 @@ export default function ProgressPage() {
           </p>
         </div>
       </div>
+
+      {profileStorageWarning && (
+        <div
+          className="mb-5 break-words rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 [overflow-wrap:anywhere] dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100"
+          data-smoke="progress-mastery-storage-warning"
+          role="alert"
+        >
+          {profileStorageWarning}
+        </div>
+      )}
 
       <div className="grid gap-4 md:grid-cols-4">
         <Metric

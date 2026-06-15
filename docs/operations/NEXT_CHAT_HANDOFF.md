@@ -200,6 +200,13 @@ git status --short --branch
   blockers instead of loading English coverage passages, English training-pack
   evidence, or formal mastery archives; English direct routes keep page hooks
   and wrap-ready headers for Release smoke.
+- Corrupt English mastery profile storage now falls back to a temporary empty
+  profile with a visible Chinese recovery alert instead of silently showing a
+  blank archive. `/progress` and `/drill/evidence` show the alert; corrupt
+  full-passage diagnosis history on `/assessment/passage` is ignored with a
+  Chinese alert, and retaking or saving a valid report clears the stale warning.
+  Release EXE smoke seeds corrupt localStorage and expects
+  `corruptLocalDataWarnings=ok`.
 - English training-pack direct routes now have page/intro/course-map smoke hooks
   and wrap-ready headers. Release EXE smoke opens `/drill/pack/ee-ih` in English
   and checks French direct access shows `pack-runner-experimental-blocker`
@@ -405,6 +412,11 @@ Current gate summary:
   covering word/sentence/contrast smoke hooks, full-passage/evidence/pack-runner
   direct hooks, wrap-ready page headers, and experimental-language blockers for
   English coverage/evidence/pack surfaces.
+- Focused corrupt-local-data warning tests passed: `3` files and `30` tests,
+  covering current, legacy, and startup-quarantined mastery-profile parse
+  failures, visible Progress warning rendering, and Release smoke coverage for
+  corrupt mastery/coverage localStorage on `/progress`, `/drill/evidence`, and
+  `/assessment/passage`.
 - Open-source handoff/readiness plus IPA audit export drift tests passed.
 - Static language-pack manifest IPA drift tests passed for the applied French
   and Russian reviewed findings.
@@ -428,7 +440,7 @@ Current gate summary:
 - Focused phoneme detail presentation tests passed: `2` files and `9` tests,
   covering non-English full text visibility, Russian long Cyrillic rule text,
   and task-accurate A/B playback labels.
-- Full tests passed: `106` files and `598` tests.
+- Full tests passed: `106` files and `602` tests.
 - Typecheck, lint (`364` files checked), and static desktop frontend build
   passed.
 - Release EXE build passed and rebuilt EXE, MSI, and NSIS artifacts.
@@ -437,8 +449,9 @@ Current gate summary:
   expected dirty worktree from this local fix.
 - Release EXE UI smoke passed with `scoringTileAudioPolicy=ok`,
   `englishTransferRoutes=ok`, `englishCoreDrillRoutes=ok`,
-  `advancedDirectRoutes=ok`, `practiceAudioLabels=ok`, `freePracticeSmoke=ok`,
-  `assessmentSmoke=ok`, `narrowViewport=ok`, `lowHeightViewport=ok`, and
+  `advancedDirectRoutes=ok`, `corruptLocalDataWarnings=ok`,
+  `practiceAudioLabels=ok`, `freePracticeSmoke=ok`, `assessmentSmoke=ok`,
+  `narrowViewport=ok`, `lowHeightViewport=ok`, and
   `releaseServedFromDevServer=false`; the smoke script now includes `/progress`
   and `/drill/perception` in the main, narrow-window, and low-height route
   passes, checks English `/drill/word`, `/drill/sentence`, `/drill/contrast`,

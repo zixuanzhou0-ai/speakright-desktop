@@ -1734,6 +1734,112 @@ async function assertAdvancedDirectRoutes(cdp) {
   }
 }
 
+async function assertCorruptLocalDataWarnings(cdp) {
+  await clickLanguage(cdp, "en-US");
+  await evaluate(
+    cdp,
+    `
+(() => {
+  localStorage.setItem("speakright_mastery_profile_v2", "{broken mastery");
+  localStorage.setItem("speakright_assessment_result_v2:coverage:en-US", "{broken coverage");
+  return { ok: true };
+})()
+`,
+  );
+  await navigate(cdp, "/settings", '[data-smoke="settings-page"]', {
+    direct: true,
+  });
+  await cdp.send("Page.reload", { ignoreCache: true });
+  await waitForCondition(
+    cdp,
+    `
+(() => ({
+  ok:
+    window.location.pathname === "/settings" &&
+    !!document.querySelector('[data-smoke="settings-page"]') &&
+    document.readyState !== "loading",
+  masteryStorage: localStorage.getItem("speakright_mastery_profile_v2"),
+  corruptStorage: localStorage.getItem("speakright_corrupt_data_v1"),
+  coverageStorage: localStorage.getItem("speakright_assessment_result_v2:coverage:en-US"),
+  bodyText: (document.body?.innerText ?? "").slice(0, 500)
+}))()
+`,
+    "settings reload after corrupt local data seed",
+  );
+
+  const checks = [
+    {
+      path: "/progress",
+      selector: '[data-smoke="progress-page"]',
+      warningSmoke: "progress-mastery-storage-warning",
+      expectedText: "本机训练进度数据无法读取",
+    },
+    {
+      path: "/drill/evidence",
+      selector: '[data-smoke="evidence-page"]',
+      warningSmoke: "evidence-mastery-storage-warning",
+      expectedText: "本机训练进度数据无法读取",
+    },
+    {
+      path: "/assessment/passage",
+      selector: '[data-smoke="assessment-passage-page"]',
+      warningSmoke: "assessment-passage-storage-warning",
+      expectedText: "上次全音诊断报告无法读取",
+    },
+  ];
+
+  try {
+    for (const check of checks) {
+      await forceNavigate(cdp, check.path);
+      await waitForCondition(
+        cdp,
+        `
+(() => {
+  const page = document.querySelector(${JSON.stringify(check.selector)});
+  const warningSmoke = ${JSON.stringify(check.warningSmoke)};
+  const warning = document.querySelector(\`[data-smoke="\${warningSmoke}"]\`);
+  const bodyText = document.body?.innerText ?? "";
+  const style = warning ? window.getComputedStyle(warning) : null;
+  return {
+    ok:
+      Boolean(page) &&
+      Boolean(warning) &&
+      warning.getAttribute("role") === "alert" &&
+      warning.innerText.includes(${JSON.stringify(check.expectedText)}) &&
+      warning.innerText.includes("重置本机学习数据") &&
+      style?.textOverflow !== "ellipsis" &&
+      style?.whiteSpace !== "nowrap" &&
+      style?.webkitLineClamp !== "1" &&
+      document.documentElement.scrollWidth <= window.innerWidth + 24,
+    hasPage: Boolean(page),
+    hasWarning: Boolean(warning),
+    role: warning?.getAttribute("role"),
+    warningText: warning?.innerText ?? "",
+    masteryStorage: localStorage.getItem("speakright_mastery_profile_v2"),
+    corruptStorage: localStorage.getItem("speakright_corrupt_data_v1"),
+    coverageStorage: localStorage.getItem("speakright_assessment_result_v2:coverage:en-US"),
+    bodyText: bodyText.slice(0, 800)
+  };
+})()
+`,
+        `corrupt local data warning for ${check.path}`,
+      );
+    }
+  } finally {
+    await evaluate(
+      cdp,
+      `
+(() => {
+  localStorage.removeItem("speakright_mastery_profile_v2");
+  localStorage.removeItem("speakright_corrupt_data_v1");
+  localStorage.removeItem("speakright_assessment_result_v2:coverage:en-US");
+  return { ok: true };
+})()
+`,
+    ).catch(() => {});
+  }
+}
+
 async function assertNarrowViewportRoutes(cdp) {
   await setViewport(cdp, 760, 720);
   try {
@@ -2212,6 +2318,7 @@ async function smoke() {
     await assertMainRoutes(cdp);
     await assertNarrowViewportRoutes(cdp);
     await assertLowHeightViewportRoutes(cdp);
+    await assertCorruptLocalDataWarnings(cdp);
     await clickLanguage(cdp, originalLanguageId);
 
     console.log(
@@ -2227,6 +2334,7 @@ async function smoke() {
         "englishTransferRoutes=ok",
         "englishCoreDrillRoutes=ok",
         "advancedDirectRoutes=ok",
+        "corruptLocalDataWarnings=ok",
         "practiceAudioLabels=ok",
         "freePracticeSmoke=ok",
         "assessmentSmoke=ok",

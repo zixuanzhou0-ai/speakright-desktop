@@ -8,6 +8,7 @@ import type {
   TrainingLevelProgress,
   TrainingSessionSummary,
 } from "@/types/training";
+import { readCorruptLocalData } from "./local-data-migrations";
 import { evaluateMasteryStage } from "./mastery-state";
 import { getTrainingPack } from "./training-packs";
 
@@ -16,6 +17,12 @@ export const TRAINING_SESSIONS_STORAGE_KEY = "speakright_training_sessions_v2";
 const LEGACY_MASTERY_STORAGE_KEY = "speakright_mastery_profile_v1";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+export const MASTERY_PROFILE_STORAGE_WARNING =
+  "本机训练进度数据无法读取，已临时使用空档案。可以在设置的数据与隐私中心导出诊断后，重置本机学习数据再继续训练。";
+
+export const LEGACY_MASTERY_PROFILE_STORAGE_WARNING =
+  "旧版训练进度数据无法迁移，已临时使用空档案。可以在设置的数据与隐私中心导出诊断后，重置本机学习数据再继续训练。";
 
 export function createEmptyMasteryProfile(): MasteryProfile {
   return {
@@ -98,6 +105,30 @@ export function loadMasteryProfile(): MasteryProfile {
     return migrated;
   }
   return createEmptyMasteryProfile();
+}
+
+export function getMasteryProfileStorageWarning(): string | null {
+  if (typeof window === "undefined") return null;
+  const rawCurrent = localStorage.getItem(MASTERY_STORAGE_KEY);
+  if (rawCurrent && !parseProfile(rawCurrent)) {
+    return MASTERY_PROFILE_STORAGE_WARNING;
+  }
+  if (!rawCurrent) {
+    const corruptKeys = new Set(
+      readCorruptLocalData().map((item) => item.key),
+    );
+    if (corruptKeys.has(MASTERY_STORAGE_KEY)) {
+      return MASTERY_PROFILE_STORAGE_WARNING;
+    }
+    if (corruptKeys.has(LEGACY_MASTERY_STORAGE_KEY)) {
+      return LEGACY_MASTERY_PROFILE_STORAGE_WARNING;
+    }
+  }
+  const rawLegacy = localStorage.getItem(LEGACY_MASTERY_STORAGE_KEY);
+  if (!rawCurrent && rawLegacy && !migrateLegacyProfile(rawLegacy)) {
+    return LEGACY_MASTERY_PROFILE_STORAGE_WARNING;
+  }
+  return null;
 }
 
 export function saveMasteryProfile(profile: MasteryProfile): void {

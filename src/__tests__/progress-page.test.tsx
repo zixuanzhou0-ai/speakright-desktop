@@ -22,6 +22,7 @@ const mocks = vi.hoisted(() => ({
   listBenchmarkRecordings: vi.fn<() => Array<typeof benchmarkRecording>>(
     () => [],
   ),
+  getMasteryProfileStorageWarning: vi.fn<() => string | null>(() => null),
   loadMasteryProfile: vi.fn<() => MasteryProfile>(() => ({
     version: 2,
     updatedAt: 1_718_000_000_000,
@@ -103,6 +104,7 @@ vi.mock("@/lib/benchmark-archive", () => ({
 }));
 
 vi.mock("@/lib/mastery-profile", () => ({
+  getMasteryProfileStorageWarning: mocks.getMasteryProfileStorageWarning,
   loadMasteryProfile: mocks.loadMasteryProfile,
 }));
 
@@ -115,6 +117,7 @@ describe("ProgressPage language boundary", () => {
       new Blob([new Uint8Array([1, 2, 3])], { type: "audio/webm" }),
     );
     mocks.listBenchmarkRecordings.mockReset().mockReturnValue([]);
+    mocks.getMasteryProfileStorageWarning.mockReset().mockReturnValue(null);
     mocks.loadMasteryProfile.mockClear();
     mocks.playBlob.mockClear();
   });
@@ -127,6 +130,7 @@ describe("ProgressPage language boundary", () => {
     expect(await screen.findByText("已迁移")).toBeInTheDocument();
     expect(mocks.listBenchmarkRecordings).toHaveBeenCalledTimes(1);
     expect(mocks.loadMasteryProfile).toHaveBeenCalledTimes(1);
+    expect(mocks.getMasteryProfileStorageWarning).toHaveBeenCalledTimes(1);
     expect(
       screen.queryByText(/不显示正式英语 mastery 档案/),
     ).not.toBeInTheDocument();
@@ -150,6 +154,25 @@ describe("ProgressPage language boundary", () => {
     expect(screen.queryByText("阶段变化")).not.toBeInTheDocument();
     expect(mocks.listBenchmarkRecordings).not.toHaveBeenCalled();
     expect(mocks.loadMasteryProfile).not.toHaveBeenCalled();
+    expect(mocks.getMasteryProfileStorageWarning).not.toHaveBeenCalled();
+  });
+
+  it("shows a visible warning when mastery profile storage cannot be read", async () => {
+    mocks.getMasteryProfileStorageWarning.mockReturnValueOnce(
+      "本机训练进度数据无法读取，已临时使用空档案。可以在设置的数据与隐私中心导出诊断后，重置本机学习数据再继续训练。",
+    );
+
+    render(<ProgressPage />);
+
+    const alert = await screen.findByRole("alert");
+
+    expect(alert).toHaveAttribute(
+      "data-smoke",
+      "progress-mastery-storage-warning",
+    );
+    expect(alert).toHaveTextContent("本机训练进度数据无法读取");
+    expect(alert).toHaveTextContent("重置本机学习数据");
+    expect(mocks.loadMasteryProfile).toHaveBeenCalledTimes(1);
   });
 
   it("shows a visible warning when benchmark audio is missing", async () => {

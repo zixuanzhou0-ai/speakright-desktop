@@ -102,6 +102,8 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("pack-runner-experimental-blocker");
     expect(script).toContain("assertAdvancedDirectRoutes");
     expect(script).toContain("advancedDirectRoutes=ok");
+    expect(script).toContain("assertCorruptLocalDataWarnings");
+    expect(script).toContain("corruptLocalDataWarnings=ok");
     expect(script).toContain("/sentences");
     expect(script).toContain('selector: \'[data-smoke="sentences-page"]\'');
     expect(script).toContain("sentenceHooksReady");
@@ -122,6 +124,13 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("progress-recent-session-row");
     expect(script).toContain("progress-recent-session-title");
     expect(script).toContain("speakright_mastery_profile_v2");
+    expect(script).toContain("speakright_assessment_result_v2:coverage:en-US");
+    expect(script).toContain("progress-mastery-storage-warning");
+    expect(script).toContain("evidence-mastery-storage-warning");
+    expect(script).toContain("assessment-passage-storage-warning");
+    expect(script).toContain("本机训练进度数据无法读取");
+    expect(script).toContain("上次全音诊断报告无法读取");
+    expect(script).toContain("重置本机学习数据");
     expect(script).toContain("speakright_benchmark_recordings_v1");
     expect(script).toContain("progress missing benchmark audio warning");
     expect(script).toContain("direct: true");
@@ -317,6 +326,11 @@ describe("desktop preflight and UI smoke", () => {
     expect(passagePage).toContain(
       'data-smoke="assessment-passage-experimental-blocker"',
     );
+    expect(passagePage).toContain(
+      'data-smoke="assessment-passage-storage-warning"',
+    );
+    expect(passagePage).toContain("上次全音诊断报告无法读取");
+    expect(passagePage).toContain("重置本机学习数据");
     expect(passagePage).toContain("canRecordFormalMastery(languageId)");
     expect(passagePage).toContain("英语全音覆盖文章");
     expect(passagePage).toContain('data-smoke="assessment-passage-error"');
@@ -483,6 +497,9 @@ describe("desktop preflight and UI smoke", () => {
 
     expect(evidencePage).toContain('data-smoke="evidence-page"');
     expect(evidencePage).toContain('data-smoke="evidence-summary-stats"');
+    expect(evidencePage).toContain(
+      'data-smoke="evidence-mastery-storage-warning"',
+    );
     expect(evidencePage).toContain('data-smoke="evidence-empty-state"');
     expect(evidencePage).toContain(
       'data-smoke="evidence-experimental-blocker"',
@@ -491,6 +508,9 @@ describe("desktop preflight and UI smoke", () => {
     expect(evidencePage).toContain("min-w-0 flex-1");
 
     expect(passagePage).toContain('data-smoke="assessment-passage-page"');
+    expect(passagePage).toContain(
+      'data-smoke="assessment-passage-storage-warning"',
+    );
     expect(passagePage).toContain(
       'data-smoke="assessment-passage-intro-card"',
     );

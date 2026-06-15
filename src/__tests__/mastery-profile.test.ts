@@ -1,10 +1,18 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   createEmptyMasteryProfile,
   evaluateSessionMastery,
+  getMasteryProfileStorageWarning,
+  LEGACY_MASTERY_PROFILE_STORAGE_WARNING,
+  loadMasteryProfile,
+  MASTERY_PROFILE_STORAGE_WARNING,
+  MASTERY_STORAGE_KEY,
   recordTrainingSession,
 } from "@/lib/mastery-profile";
+import { CORRUPT_LOCAL_DATA_KEY } from "@/lib/local-data-migrations";
 import type { TrainingSessionSummary } from "@/types/training";
+
+const LEGACY_MASTERY_STORAGE_KEY = "speakright_mastery_profile_v1";
 
 function session(overrides: Partial<TrainingSessionSummary> = {}) {
   const base: TrainingSessionSummary = {
@@ -59,6 +67,67 @@ function session(overrides: Partial<TrainingSessionSummary> = {}) {
 }
 
 describe("mastery profile", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("warns and falls back to an empty profile when current storage is corrupt", () => {
+    localStorage.setItem(MASTERY_STORAGE_KEY, "{broken mastery");
+
+    expect(getMasteryProfileStorageWarning()).toBe(
+      MASTERY_PROFILE_STORAGE_WARNING,
+    );
+
+    const profile = loadMasteryProfile();
+
+    expect(profile.version).toBe(2);
+    expect(profile.packs).toEqual({});
+    expect(profile.phonemes).toEqual({});
+    expect(profile.errorPatterns).toEqual({});
+    expect(profile.sessions).toEqual([]);
+    expect(localStorage.getItem(MASTERY_STORAGE_KEY)).toBe("{broken mastery");
+  });
+
+  it("warns after corrupt current storage has been quarantined by startup migration", () => {
+    localStorage.setItem(
+      CORRUPT_LOCAL_DATA_KEY,
+      JSON.stringify([
+        {
+          key: MASTERY_STORAGE_KEY,
+          raw: "{broken mastery",
+          reason: "Malformed JSON",
+          detectedAt: new Date().toISOString(),
+          schemaVersion: 2,
+        },
+      ]),
+    );
+
+    expect(getMasteryProfileStorageWarning()).toBe(
+      MASTERY_PROFILE_STORAGE_WARNING,
+    );
+
+    const profile = loadMasteryProfile();
+
+    expect(profile.version).toBe(2);
+    expect(profile.packs).toEqual({});
+    expect(localStorage.getItem(MASTERY_STORAGE_KEY)).toBeNull();
+  });
+
+  it("warns and falls back to an empty profile when legacy storage cannot migrate", () => {
+    localStorage.setItem(LEGACY_MASTERY_STORAGE_KEY, "{broken legacy");
+
+    expect(getMasteryProfileStorageWarning()).toBe(
+      LEGACY_MASTERY_PROFILE_STORAGE_WARNING,
+    );
+
+    const profile = loadMasteryProfile();
+
+    expect(profile.version).toBe(2);
+    expect(profile.packs).toEqual({});
+    expect(profile.sessions).toEqual([]);
+    expect(localStorage.getItem(MASTERY_STORAGE_KEY)).toBeNull();
+  });
+
   it("requires perception, recent word scores, and sentence scores", () => {
     expect(evaluateSessionMastery(session())).toBe(true);
     expect(evaluateSessionMastery(session({ perceptionCorrect: 3 }))).toBe(

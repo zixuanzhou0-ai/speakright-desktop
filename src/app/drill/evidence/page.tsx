@@ -21,7 +21,10 @@ import { Button } from "@/components/ui/button";
 import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { getLanguageProfile } from "@/lib/language-profiles";
 import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
-import { loadMasteryProfile } from "@/lib/mastery-profile";
+import {
+  getMasteryProfileStorageWarning,
+  loadMasteryProfile,
+} from "@/lib/mastery-profile";
 import {
   buildTrainingEvidenceBook,
   type EvidenceCard,
@@ -62,12 +65,17 @@ export default function TrainingEvidencePage() {
   const languageProfile = getLanguageProfile(languageId);
   const canShowFormalEvidence = canRecordFormalMastery(languageId);
   const [profile, setProfile] = useState<MasteryProfile | null>(null);
+  const [profileStorageWarning, setProfileStorageWarning] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     if (!canShowFormalEvidence) {
       setProfile(null);
+      setProfileStorageWarning(null);
       return;
     }
+    setProfileStorageWarning(getMasteryProfileStorageWarning());
     setProfile(loadMasteryProfile());
   }, [canShowFormalEvidence]);
 
@@ -156,6 +164,16 @@ export default function TrainingEvidencePage() {
             </Button>
           </Link>
         </div>
+
+        {profileStorageWarning && (
+          <div
+            className="mb-5 break-words rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 [overflow-wrap:anywhere] dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100"
+            data-smoke="evidence-mastery-storage-warning"
+            role="alert"
+          >
+            {profileStorageWarning}
+          </div>
+        )}
 
         <section
           className="mb-5 grid gap-3 md:grid-cols-4"

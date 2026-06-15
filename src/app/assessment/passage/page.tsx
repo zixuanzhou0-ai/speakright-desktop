@@ -47,6 +47,8 @@ import type {
 } from "@/types/diagnosis";
 
 const STORAGE_KEY_V2 = "speakright_assessment_result_v2";
+const COVERAGE_REPORT_STORAGE_WARNING =
+  "上次全音诊断报告无法读取，已暂时忽略这条本机历史记录。可以重新完成全音诊断，或在设置的数据与隐私中心导出诊断后重置本机学习数据。";
 
 function storageKeyFor(languageId: string): string {
   return `${STORAGE_KEY_V2}:coverage:${languageId}`;
@@ -94,6 +96,20 @@ function loadSavedCoverageReport(languageId: string): DiagnosisReport | null {
   }
 }
 
+function getSavedCoverageReportWarning(languageId: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(storageKeyFor(languageId));
+    if (!raw) return null;
+    const report = JSON.parse(raw) as DiagnosisReport;
+    return report.source === "coverage-passage"
+      ? null
+      : COVERAGE_REPORT_STORAGE_WARNING;
+  } catch {
+    return COVERAGE_REPORT_STORAGE_WARNING;
+  }
+}
+
 function phaseProgress(phase: PassagePhase) {
   if (phase.type === "segment") {
     return {
@@ -125,6 +141,9 @@ export default function CoveragePassageAssessmentPage() {
   const [savedReport, setSavedReport] = useState<DiagnosisReport | null>(() =>
     loadSavedCoverageReport(languageId),
   );
+  const [savedReportWarning, setSavedReportWarning] = useState<string | null>(
+    () => getSavedCoverageReportWarning(languageId),
+  );
   const [phase, setPhase] = useState<PassagePhase>({ type: "intro" });
   const [benchmarkComparison, setBenchmarkComparison] =
     useState<CoverageBenchmarkComparison | null>(null);
@@ -140,6 +159,7 @@ export default function CoveragePassageAssessmentPage() {
 
   useEffect(() => {
     setSavedReport(loadSavedCoverageReport(languageId));
+    setSavedReportWarning(getSavedCoverageReportWarning(languageId));
     setPhase({ type: "intro" });
   }, [languageId]);
 
@@ -150,6 +170,7 @@ export default function CoveragePassageAssessmentPage() {
     saveReport(report, languageId);
     setBenchmarkComparison(saveCoverageBenchmark(report));
     setSavedReport(report);
+    setSavedReportWarning(null);
     setPhase({ type: "report", result: report });
   }, [languageId]);
 
@@ -253,6 +274,7 @@ export default function CoveragePassageAssessmentPage() {
   const handleRetake = () => {
     localStorage.removeItem(storageKeyFor(languageId));
     setSavedReport(null);
+    setSavedReportWarning(null);
     recordingsRef.current = [];
     usedProbeIdsRef.current = [];
     recorder.reset();
@@ -349,6 +371,16 @@ export default function CoveragePassageAssessmentPage() {
           {COVERAGE_PASSAGE.estimatedMinutes} 分钟
         </Badge>
       </div>
+
+      {savedReportWarning && (
+        <div
+          className="mb-4 break-words rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 [overflow-wrap:anywhere] dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100"
+          data-smoke="assessment-passage-storage-warning"
+          role="alert"
+        >
+          {savedReportWarning}
+        </div>
+      )}
 
       <div className="flex-1">
         <AnimatePresence mode="wait">
