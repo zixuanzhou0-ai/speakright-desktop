@@ -99,6 +99,7 @@ export function PhonemeDetailPage() {
   const [selectedWordSyllables, setSelectedWordSyllables] = useSessionState<
     { syllable: string; grapheme?: string; accuracyScore: number }[]
   >(`${sessionPrefix}:syllables`, []);
+  const [localSaveError, setLocalSaveError] = useState<string | null>(null);
 
   // Annotate syllables with stress data (static IPA lookup → legacy local cache).
   const stressedSyllables = useSyllableStress(
@@ -192,6 +193,7 @@ export function PhonemeDetailPage() {
     azure.reset();
     llm.reset();
     wordAudio.clearError();
+    setLocalSaveError(null);
     autoAssessTriggered.current = false;
   }, [
     recorder,
@@ -283,18 +285,29 @@ export function PhonemeDetailPage() {
     );
 
     if (result) {
+      setLocalSaveError(null);
       setSelectedWordPhonemes(
         collectDetailAssessmentPhonemes(result, currentWord?.ipa),
       );
       setSelectedWordSyllables(collectDetailAssessmentSyllables(result));
-      addScore(
+      const scoreSaved = addScore(
         scoreHistoryKey(languageId, phoneme?.slug ?? "", currentWordStr),
         result.pronunciationScore,
       );
+      let practiceSaved = true;
       if (phoneme) {
-        markWordPracticedForLanguage(languageId, phoneme.slug, currentWordStr);
+        practiceSaved = markWordPracticedForLanguage(
+          languageId,
+          phoneme.slug,
+          currentWordStr,
+        );
         setPracticedCount(
           getPracticedWordsForLanguage(languageId, phoneme.slug).length,
+        );
+      }
+      if (!scoreSaved || !practiceSaved) {
+        setLocalSaveError(
+          "本次评分已完成，但本机练习记录或趋势图未保存。可能是本机存储空间不足或系统限制了本地存储；你可以继续练习，稍后清理空间或在设置页导出/重置本机数据后重试。",
         );
       }
       llm.requestFeedback(
@@ -368,6 +381,7 @@ export function PhonemeDetailPage() {
     recorder.reset();
     azure.reset();
     llm.reset();
+    setLocalSaveError(null);
     setSelectedWordPhonemes([]);
     setSelectedWordSyllables([]);
     autoAssessTriggered.current = false;
@@ -471,6 +485,15 @@ export function PhonemeDetailPage() {
               {azure.error && (
                 <p role="alert" className="text-sm text-red-500">
                   {azure.error}
+                </p>
+              )}
+              {localSaveError && (
+                <p
+                  role="alert"
+                  className="text-center text-sm text-amber-600 dark:text-amber-400"
+                  data-smoke="local-practice-save-error"
+                >
+                  {localSaveError}
                 </p>
               )}
             </div>

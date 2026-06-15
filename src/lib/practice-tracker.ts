@@ -17,12 +17,13 @@ function getHistory(): PracticeHistory {
   }
 }
 
-function setHistory(history: PracticeHistory): void {
-  if (typeof window === "undefined") return;
+function setHistory(history: PracticeHistory): boolean {
+  if (typeof window === "undefined") return true;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    return true;
   } catch {
-    // localStorage full — silently ignore
+    return false;
   }
 }
 
@@ -31,7 +32,7 @@ export function getPracticedWords(slug: string): string[] {
   return history[slug]?.words ?? [];
 }
 
-export function markWordPracticed(slug: string, word: string): void {
+export function markWordPracticed(slug: string, word: string): boolean {
   const history = getHistory();
   const entry = history[slug] ?? { words: [], lastUpdated: 0 };
   const lower = word.toLowerCase();
@@ -40,7 +41,7 @@ export function markWordPracticed(slug: string, word: string): void {
   }
   entry.lastUpdated = Date.now();
   history[slug] = entry;
-  setHistory(history);
+  return setHistory(history);
 }
 
 export function practiceHistoryKey(languageId: string, slug: string): string {
@@ -62,6 +63,6 @@ export function markWordPracticedForLanguage(
   languageId: string,
   slug: string,
   word: string,
-): void {
-  markWordPracticed(practiceHistoryKey(languageId, slug), word);
+): boolean {
+  return markWordPracticed(practiceHistoryKey(languageId, slug), word);
 }

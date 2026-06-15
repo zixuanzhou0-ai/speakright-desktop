@@ -162,6 +162,10 @@ git status --short --branch
 - Desktop diagnostics bundles are now schema v2 and include a privacy-safe
   quarantined-data summary (`key`, `reason`, `detectedAt`, `schemaVersion`,
   `rawCharacters`) while still excluding raw quarantined local data values.
+- Phoneme detail scoring now treats local score-trend/practice-history writes as
+  best-effort but visible: if localStorage is full or blocked, the score result
+  and AI feedback still continue, and the practice card shows a Chinese
+  `role="alert"` warning that the local trend/history was not saved.
 - Settings language availability now distinguishes bundled language-pack
   `检查中` from true `缺失或不可读`. Spanish/French/Russian users should not see a
   false missing-pack state while the local manifest is still loading; unreadable

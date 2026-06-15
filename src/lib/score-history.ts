@@ -17,15 +17,16 @@ function load(): ScoreHistory {
   }
 }
 
-function save(history: ScoreHistory) {
+function save(history: ScoreHistory): boolean {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+    return true;
   } catch {
-    // localStorage full or unavailable
+    return false;
   }
 }
 
-export function addScore(key: string, score: number) {
+export function addScore(key: string, score: number): boolean {
   const history = load();
   const entry = history[key] ?? { scores: [], lastUpdated: "" };
   entry.scores.push(Math.round(score));
@@ -34,7 +35,7 @@ export function addScore(key: string, score: number) {
   }
   entry.lastUpdated = new Date().toISOString();
   history[key] = entry;
-  save(history);
+  return save(history);
 }
 
 export function getScores(key: string): number[] {
