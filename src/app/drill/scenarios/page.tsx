@@ -152,17 +152,22 @@ export default function ScenariosPage() {
     !!recorder.audioBlob && (quality.isAnalyzing || !quality.report?.canSubmit);
 
   return (
-    <div className="h-full overflow-y-auto px-6 py-4 scrollbar-thin">
-      <div className="mb-5 flex items-center gap-3">
+    <div
+      data-smoke="scenario-page"
+      className="h-full overflow-y-auto px-6 py-4 scrollbar-thin"
+    >
+      <div className="mb-5 flex flex-wrap items-start gap-3">
         <Link
           href="/drill"
-          className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold">场景迁移训练</h1>
-          <p className="text-sm text-muted-foreground">
+        <div className="min-w-0 flex-1">
+          <h1 className="break-words text-2xl font-bold [overflow-wrap:anywhere]">
+            场景迁移训练
+          </h1>
+          <p className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
             不看固定材料，把当前弱点迁移到真实表达任务
           </p>
         </div>
@@ -201,7 +206,10 @@ export default function ScenariosPage() {
         </aside>
 
         <main className="space-y-5">
-          <section className="rounded-xl border bg-card p-5 shadow-sm">
+          <section
+            data-smoke="scenario-prompt-card"
+            className="rounded-xl border bg-card p-5 shadow-sm"
+          >
             <div className="mb-4 flex items-center gap-2">
               <BriefcaseBusiness className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-bold">{plan.scenario.title}</h2>
@@ -281,7 +289,10 @@ export default function ScenariosPage() {
             )}
           </section>
 
-          <section className="rounded-xl border bg-card p-5 shadow-sm">
+          <section
+            data-smoke="scenario-recording-card"
+            className="rounded-xl border bg-card p-5 shadow-sm"
+          >
             <div className="flex flex-col items-center gap-4">
               <RecordButton
                 isRecording={recorder.isRecording}

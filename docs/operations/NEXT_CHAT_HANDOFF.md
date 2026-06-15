@@ -184,6 +184,11 @@ git status --short --branch
   covers `/drill/perception` in main, narrow, and low-height route passes under
   an experimental-language context, where it must show the blocker instead of
   loading English-only HVPT material.
+- English scenario/spontaneous transfer pages now have page/prompt/recording
+  smoke hooks and wrap-ready page headers. Release EXE smoke opens
+  `/drill/scenarios` and `/drill/spontaneous` in English context during main,
+  narrow, and low-height passes and checks their prompt/recording cards plus
+  horizontal overflow.
 - Quick diagnosis word and paragraph recording cards now show recorder startup
   errors and Azure scoring errors inline with `role="alert"`, so missing
   microphone permission, missing Azure keys, network failure, or quota failure
@@ -381,6 +386,9 @@ Current gate summary:
 - Focused perception-drill action-row tests passed: `2` files and `14` tests,
   covering inline ABX audio errors, wrap-ready result actions, and Release smoke
   route coverage for the experimental-language blocker path.
+- Focused transfer-route smoke tests passed: `1` file and `13` tests, covering
+  scenarios/spontaneous smoke hooks, wrap-ready page headers, and the new
+  English transfer route smoke assertions.
 - Open-source handoff/readiness plus IPA audit export drift tests passed.
 - Static language-pack manifest IPA drift tests passed for the applied French
   and Russian reviewed findings.
@@ -412,13 +420,15 @@ Current gate summary:
   path. During the pre-commit verification run it correctly reported the
   expected dirty worktree from this local fix.
 - Release EXE UI smoke passed with `scoringTileAudioPolicy=ok`,
-  `practiceAudioLabels=ok`, `freePracticeSmoke=ok`, `assessmentSmoke=ok`,
-  `narrowViewport=ok`, `lowHeightViewport=ok`, and
+  `englishTransferRoutes=ok`, `practiceAudioLabels=ok`, `freePracticeSmoke=ok`,
+  `assessmentSmoke=ok`, `narrowViewport=ok`, `lowHeightViewport=ok`, and
   `releaseServedFromDevServer=false`; the smoke script now includes `/progress`
   and `/drill/perception` in the main, narrow-window, and low-height route
-  passes, `/sentences` waits for the actual free-practice page plus
-  input/recording cards, and `/assessment` waits for the intro card plus
-  start/passage actions instead of only checking the page container.
+  passes, checks English `/drill/scenarios` and `/drill/spontaneous` transfer
+  pages in main/narrow/low-height passes, `/sentences` waits for the actual
+  free-practice page plus input/recording cards, and `/assessment` waits for the
+  intro card plus start/passage actions instead of only checking the page
+  container.
 - Release EXE launch passed from the static Tauri bundle, and the test process
   was closed after verification.
 - No ElevenLabs generation or TTS spend is part of this validation path.

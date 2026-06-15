@@ -205,17 +205,22 @@ export default function SpontaneousPage() {
     !!recorder.audioBlob && (quality.isAnalyzing || !quality.report?.canSubmit);
 
   return (
-    <div className="h-full overflow-y-auto px-6 py-4 scrollbar-thin">
-      <div className="mb-5 flex items-center gap-3">
+    <div
+      data-smoke="spontaneous-page"
+      className="h-full overflow-y-auto px-6 py-4 scrollbar-thin"
+    >
+      <div className="mb-5 flex flex-wrap items-start gap-3">
         <Link
           href="/drill"
-          className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full hover:bg-muted transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold">即兴迁移测试</h1>
-          <p className="text-sm text-muted-foreground">
+        <div className="min-w-0 flex-1">
+          <h1 className="break-words text-2xl font-bold [overflow-wrap:anywhere]">
+            即兴迁移测试
+          </h1>
+          <p className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
             不先写稿，先说，再转写和保守评分；只有这里会计入 spontaneous 证据
           </p>
         </div>
@@ -248,7 +253,10 @@ export default function SpontaneousPage() {
         </aside>
 
         <main className="space-y-5">
-          <section className="rounded-xl border bg-card p-5 shadow-sm">
+          <section
+            data-smoke="spontaneous-prompt-card"
+            className="rounded-xl border bg-card p-5 shadow-sm"
+          >
             <div className="mb-4 flex items-center gap-2">
               <MessageCircleQuestion className="h-5 w-5 text-primary" />
               <h2 className="text-xl font-bold">{prompt.title}</h2>
@@ -277,7 +285,10 @@ export default function SpontaneousPage() {
             </div>
           </section>
 
-          <section className="rounded-xl border bg-card p-5 shadow-sm">
+          <section
+            data-smoke="spontaneous-recording-card"
+            className="rounded-xl border bg-card p-5 shadow-sm"
+          >
             <div className="mb-4 flex items-center gap-2">
               <Mic className="h-4 w-4 text-primary" />
               <h2 className="font-semibold">录一段 20-40 秒即兴回答</h2>

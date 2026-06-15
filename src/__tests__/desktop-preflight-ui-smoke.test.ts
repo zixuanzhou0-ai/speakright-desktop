@@ -78,6 +78,12 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("/drill/perception");
     expect(script).toContain("perceptionHooksReady");
     expect(script).toContain("perception-experimental-blocker");
+    expect(script).toContain("/drill/scenarios");
+    expect(script).toContain("/drill/spontaneous");
+    expect(script).toContain("assertEnglishTransferRoutes");
+    expect(script).toContain("englishTransferRoutes=ok");
+    expect(script).toContain("scenario-prompt-card");
+    expect(script).toContain("spontaneous-recording-card");
     expect(script).toContain("/sentences");
     expect(script).toContain('selector: \'[data-smoke="sentences-page"]\'');
     expect(script).toContain("sentenceHooksReady");
@@ -319,6 +325,11 @@ describe("desktop preflight and UI smoke", () => {
 
     expect(scenariosPage).toContain('data-smoke="scenario-demo-audio-error"');
     expect(scenariosPage).toContain('data-smoke="scenario-assessment-error"');
+    expect(scenariosPage).toContain('data-smoke="scenario-page"');
+    expect(scenariosPage).toContain('data-smoke="scenario-prompt-card"');
+    expect(scenariosPage).toContain('data-smoke="scenario-recording-card"');
+    expect(scenariosPage).toContain("flex flex-wrap items-start gap-3");
+    expect(scenariosPage).toContain("min-w-0 flex-1");
     expect(scenariosPage).toContain("{tts.error}");
     expect(scenariosPage).toContain("{recorder.error ?? assessment.error}");
     expect(scenariosPage).toContain('role="alert"');
@@ -326,6 +337,15 @@ describe("desktop preflight and UI smoke", () => {
     expect(spontaneousPage).toContain(
       'data-smoke="spontaneous-processing-error"',
     );
+    expect(spontaneousPage).toContain('data-smoke="spontaneous-page"');
+    expect(spontaneousPage).toContain(
+      'data-smoke="spontaneous-prompt-card"',
+    );
+    expect(spontaneousPage).toContain(
+      'data-smoke="spontaneous-recording-card"',
+    );
+    expect(spontaneousPage).toContain("flex flex-wrap items-start gap-3");
+    expect(spontaneousPage).toContain("min-w-0 flex-1");
     expect(spontaneousPage).toContain("{recorder.error ?? error}");
     expect(spontaneousPage).toContain("Azure Speech API 密钥和区域");
     expect(spontaneousPage).toContain('role="alert"');

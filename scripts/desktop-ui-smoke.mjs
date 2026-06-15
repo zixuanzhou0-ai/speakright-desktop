@@ -1455,10 +1455,79 @@ async function assertMainRoutes(cdp) {
   }
 }
 
+async function assertEnglishTransferRoutes(cdp) {
+  await clickLanguage(cdp, "en-US");
+  const routes = [
+    {
+      path: "/drill/scenarios",
+      selector: '[data-smoke="scenario-page"]',
+      pageSmoke: "scenario-page",
+      promptSmoke: "scenario-prompt-card",
+      recordingSmoke: "scenario-recording-card",
+    },
+    {
+      path: "/drill/spontaneous",
+      selector: '[data-smoke="spontaneous-page"]',
+      pageSmoke: "spontaneous-page",
+      promptSmoke: "spontaneous-prompt-card",
+      recordingSmoke: "spontaneous-recording-card",
+    },
+  ];
+
+  for (const route of routes) {
+    await navigate(cdp, route.path, route.selector, { direct: true });
+    const result = await evaluate(
+      cdp,
+      `
+(() => {
+  const page = document.querySelector('[data-smoke="${route.pageSmoke}"]');
+  const prompt = document.querySelector('[data-smoke="${route.promptSmoke}"]');
+  const recording = document.querySelector('[data-smoke="${route.recordingSmoke}"]');
+  const bodyText = document.body?.innerText ?? "";
+  const readableText = [...document.querySelectorAll("h1,h2,p,textarea")].every((element) => {
+    const rect = element.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return true;
+    const style = window.getComputedStyle(element);
+    return (
+      style.textOverflow !== "ellipsis" &&
+      style.whiteSpace !== "nowrap" &&
+      style.webkitLineClamp !== "1"
+    );
+  });
+  return {
+    ok:
+      Boolean(page) &&
+      Boolean(prompt) &&
+      Boolean(recording) &&
+      bodyText.trim().length > 20 &&
+      readableText &&
+      document.documentElement.scrollWidth <= window.innerWidth + 24,
+    hasPage: Boolean(page),
+    hasPrompt: Boolean(prompt),
+    hasRecording: Boolean(recording),
+    readableText,
+    scrollWidth: document.documentElement.scrollWidth,
+    innerWidth: window.innerWidth,
+    bodyText: bodyText.slice(0, 800)
+  };
+})()
+`,
+    );
+    if (!result?.ok) {
+      throw new Error(
+        `English transfer route smoke failed for ${route.path}: ${JSON.stringify(
+          result,
+        )}`,
+      );
+    }
+  }
+}
+
 async function assertNarrowViewportRoutes(cdp) {
   await setViewport(cdp, 760, 720);
   try {
     await assertSettings(cdp);
+    await assertEnglishTransferRoutes(cdp);
     await clickLanguage(cdp, "fr-FR");
     await navigate(
       cdp,
@@ -1652,6 +1721,7 @@ async function assertLowHeightViewportRoutes(cdp) {
       );
     }
 
+    await assertEnglishTransferRoutes(cdp);
     await clickLanguage(cdp, "ru-RU");
     await navigate(
       cdp,
@@ -1920,6 +1990,7 @@ async function smoke() {
     }
     await assertScoringTileAudioPolicy(cdp);
     await assertEnglishProgressArchive(cdp);
+    await assertEnglishTransferRoutes(cdp);
     await clickLanguage(cdp, "fr-FR");
     await assertMainRoutes(cdp);
     await assertNarrowViewportRoutes(cdp);
@@ -1936,6 +2007,7 @@ async function smoke() {
           .join(",")}`,
         "routes=/drill,/drill/prosody,/drill/perception,/sentences,/assessment,/progress",
         "scoringTileAudioPolicy=ok",
+        "englishTransferRoutes=ok",
         "practiceAudioLabels=ok",
         "freePracticeSmoke=ok",
         "assessmentSmoke=ok",
