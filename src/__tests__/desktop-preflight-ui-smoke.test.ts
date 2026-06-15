@@ -111,8 +111,12 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("scoringTileAudioPolicy=ok");
     expect(script).toContain("usage-history-target");
     expect(script).toContain("pronunciation-test-row");
+    expect(script).toContain("azure-config-actions");
+    expect(script).toContain("tts-config-actions");
+    expect(script).toContain("llm-config-actions");
     expect(script).toContain("childrenDoNotOverlap");
     expect(script).toContain("pronunciationRowsWrap");
+    expect(script).toContain("settingsActionRowsWrap");
     expect(script).toContain("llm-provider-chip");
     expect(script).toContain("GLM / Z.ai");
     expect(script).toContain("Xiaomi MiMo");
@@ -164,6 +168,15 @@ describe("desktop preflight and UI smoke", () => {
     const llmCard = readProjectFile(
       "src/components/settings/llm-config-card.tsx",
     );
+    const azureCard = readProjectFile(
+      "src/components/settings/azure-config-card.tsx",
+    );
+    const elevenLabsCard = readProjectFile(
+      "src/components/settings/elevenlabs-config-card.tsx",
+    );
+    const connectionStatus = readProjectFile(
+      "src/components/settings/connection-status.tsx",
+    );
 
     expect(languageCard).toContain('data-smoke="language-option-missing"');
     expect(languageCard).toContain("overflow-wrap:anywhere");
@@ -176,6 +189,12 @@ describe("desktop preflight and UI smoke", () => {
     expect(usageMonitor).not.toContain("truncate");
     expect(pronunciationCard).toContain('data-smoke="pronunciation-test-row"');
     expect(pronunciationCard).toContain("flex flex-wrap items-center gap-3");
+    expect(azureCard).toContain('data-smoke="azure-config-actions"');
+    expect(azureCard).toContain("flex flex-wrap items-center gap-3");
+    expect(elevenLabsCard).toContain(
+      'data-smoke="tts-config-actions"',
+    );
+    expect(elevenLabsCard).toContain("flex flex-wrap items-center gap-3");
     expect(languageAvailabilityCard).toContain(
       "data-smoke={`language-availability-",
     );
@@ -185,7 +204,11 @@ describe("desktop preflight and UI smoke", () => {
     expect(languageAvailabilityCard).toContain("overflow-wrap:anywhere");
     expect(llmCard).toContain('data-smoke="llm-provider-chip"');
     expect(llmCard).toContain('data-smoke="llm-manual-provider-note"');
+    expect(llmCard).toContain('data-smoke="llm-config-actions"');
+    expect(llmCard).toContain("flex flex-wrap items-center gap-3");
     expect(llmCard).toContain("break-words");
+    expect(connectionStatus).toContain("basis-48");
+    expect(connectionStatus).toContain("overflow-wrap:anywhere");
   });
 
   it("keeps Settings data-control operation results visible inline", () => {

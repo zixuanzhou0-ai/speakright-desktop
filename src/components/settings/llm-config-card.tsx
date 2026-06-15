@@ -295,7 +295,10 @@ export function LlmConfigCard() {
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div
+          className="flex flex-wrap items-center gap-3"
+          data-smoke="llm-config-actions"
+        >
           <Button onClick={handleSave} disabled={desktopCustomBlocked}>
             保存
           </Button>

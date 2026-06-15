@@ -20,7 +20,7 @@ claimed as complete.
 | Spanish/French/Russian local dual-voice audio has zero missing required items and dry-run makes no ElevenLabs calls | `scripts/multilingual-audio-parity-report.mjs`, `src/__tests__/multilingual-audio-parity.test.ts`, `src/__tests__/static-language-audio-pack-assets.test.ts`, `npm.cmd run audio:parity:dry-run` |
 | Local A/B word audio, IPA chart normal/slow word audio, and bundled language-pack read-along playback are louder and closer to video playback without regenerating TTS or allowing obvious clipping | `src/hooks/use-word-pronunciation.ts`, `src/hooks/use-audio-player.ts`, `src/hooks/use-tts-aligned.ts`, `src/lib/audio-normalization.ts`, `src/lib/audio-playback-policy.ts`, `src/components/phoneme/phoneme-card.tsx`, `src/components/phoneme/phoneme-study-card.tsx`, `scripts/audio-loudness-audit.mjs`, `src/__tests__/audio-normalization.test.ts`, `src/__tests__/use-word-pronunciation.test.tsx`, `src/__tests__/use-audio-player.test.tsx`, `src/__tests__/use-tts-aligned.test.tsx`, `src/__tests__/phoneme-card.test.tsx`, `src/__tests__/phoneme-study-card.test.tsx`, `npm.cmd run audio:loudness:dry-run`; the cached normalization helper, active playback hook, and read-along local-pack path preserve language-pack fallback gain before peak-safe limiting where applicable, very quiet decoded local word clips can reach up to `12x` peak-safe gain when peaks permit it, IPA chart normal/slow word playback uses a shared boost, bundled read-along replay keeps its gain, and representative A/B plus chart-word samples are compared against teaching-video loudness without ElevenLabs calls |
 | Standard-demo TTS, local detail/free-practice word audio gaps, and online dictionary fallback failures show actionable Chinese messages without generating audio during validation | `src/lib/api-client.ts`, `src/hooks/use-tts.ts`, `src/hooks/use-tts-aligned.ts`, `src/hooks/use-word-pronunciation.ts`, `src/components/phoneme/phoneme-study-card.tsx`, `src/components/sentences/sentence-input-card.tsx`, `src/components/settings/elevenlabs-config-card.tsx`, `src/components/settings/usage-monitor.tsx`, `src/app/drill/prosody/page.tsx`, `src/app/drill/scenarios/page.tsx`, `src/app/drill/contrast/page.tsx`, `src/app/drill/perception/page.tsx`, `src/app/drill/pack/[packId]/pack-runner-client.tsx`, `src/__tests__/api-client-audio.test.ts`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`, `src/__tests__/drill-pack-runner.test.tsx`, `src/__tests__/perception-drill-page.test.tsx`, `src/__tests__/phoneme-study-card.test.tsx`, `src/__tests__/settings-key-hydration.test.tsx`, `src/__tests__/use-tts-aligned.test.tsx`, `src/__tests__/use-word-pronunciation.test.tsx`; ElevenLabs connection tests, usage checks, voice queries, TTS, aligned TTS, non-English local-pack gaps, and English online dictionary fallback map invalid keys, unavailable voice/model, network/proxy failures, timeout, quota/rate-limit, service failure, empty/too-long text, missing local detail/free-practice word audio, and missing dictionary entries to Chinese messages; detail-page, free-practice word speakers, prosody demos, scenario demos, contrast word demos, perception playback, and pack-runner reference/perception playback render the failure inline instead of silently clearing the loading state, perception ABX clears stale pronunciation errors when moving to the next question or restarting a session, pack-runner clears stale reference-audio errors when starting/restarting a course, moving levels/items, or beginning recording/remediation, stale online dictionary fallback failures cannot overwrite a newer word playback request, while bundled local word and language-pack audio remain the first-choice path and validation still makes no TTS generation calls |
-| Settings connection-test failures, first-run usage empty states, language availability, and data-control export/delete/reset failures preserve actionable Chinese reasons and avoid raw English exceptions or nowrap overflow | `src/components/settings/azure-config-card.tsx`, `src/components/settings/elevenlabs-config-card.tsx`, `src/components/settings/llm-config-card.tsx`, `src/components/settings/pronunciation-config-card.tsx`, `src/components/settings/usage-monitor.tsx`, `src/components/settings/connection-status.tsx`, `src/components/settings/user-facing-error.ts`, `src/components/settings/language-availability-card.tsx`, `src/components/settings/data-control-card.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`, `src/__tests__/settings-connection-errors.test.tsx`, `src/__tests__/settings-key-hydration.test.tsx`, `src/__tests__/language-availability-card.test.tsx`; Azure, ElevenLabs, AI coach, and Youdao test buttons keep Chinese provider/client messages when available, replace raw English fetch errors with Chinese network/proxy guidance, explain that bundled local practice audio is unaffected by online dictionary test failure, the ElevenLabs usage card explains on first run that sentence/phrase standard demos need a key while local word and built-in language-pack audio can still be used, the language availability card shows `检查中` while local language-pack manifests are loading and `缺失或不可读` with reinstall/Release EXE feedback guidance if they cannot be read, data/privacy center export/delete/reset operations keep success or failure visible inline with `role="status"` / `role="alert"`, and long status text remains wrap-ready |
+| Settings connection-test failures, first-run usage empty states, language availability, and data-control export/delete/reset failures preserve actionable Chinese reasons and avoid raw English exceptions or nowrap overflow | `src/components/settings/azure-config-card.tsx`, `src/components/settings/elevenlabs-config-card.tsx`, `src/components/settings/llm-config-card.tsx`, `src/components/settings/pronunciation-config-card.tsx`, `src/components/settings/usage-monitor.tsx`, `src/components/settings/connection-status.tsx`, `src/components/settings/user-facing-error.ts`, `src/components/settings/language-availability-card.tsx`, `src/components/settings/data-control-card.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`, `src/__tests__/settings-connection-errors.test.tsx`, `src/__tests__/settings-key-hydration.test.tsx`, `src/__tests__/language-availability-card.test.tsx`; Azure, ElevenLabs, AI coach, and Youdao test buttons keep Chinese provider/client messages when available, replace raw English fetch errors with Chinese network/proxy guidance, explain that bundled local practice audio is unaffected by online dictionary test failure, the ElevenLabs usage card explains on first run that sentence/phrase standard demos need a key while local word and built-in language-pack audio can still be used, the language availability card shows `检查中` while local language-pack manifests are loading and `缺失或不可读` with reinstall/Release EXE feedback guidance if they cannot be read, data/privacy center export/delete/reset operations keep success or failure visible inline with `role="status"` / `role="alert"`, API config action rows wrap in narrow Settings layouts, and long status text remains wrap-ready |
 | Spanish 22, French 26, and Russian 27 sound units are covered by diagnosis and sentence practice; contrast and sentence decks meet launch-density targets | `src/lib/language-learning-decks.ts`, `src/lib/language-sound-units/*.ts`, `src/__tests__/language-learning-decks.test.ts`, `src/__tests__/spanish-language-content.test.ts`, `src/__tests__/french-language-content.test.ts`, `src/__tests__/russian-language-content.test.ts`; French rule sentences now carry connected-speech IPA hints for liaison, enchaînement, elision, and final-consonant silence instead of only abstract labels; the Russian final-devoicing unit explains that final voiced obstruents devoice before pauses or voiceless consonants but connected speech before voiced consonants, sonorants, or vowels must be handled as connected-speech realization rather than isolated word-final devoicing, and sentence practice uses a clear voiceless-consonant context (`Нож тупой`) instead of the misleading `Друг ждёт` boundary |
 | Non-English IPA audit exports are reproducible, distinguish full IPA rows from deck focus hints, keep sourced review decisions machine-checkable, and keep bundled language-pack IPA metadata aligned | `src/lib/non-english-ipa-audit.ts`, `scripts/export-non-english-ipa-audit-input.mjs`, `docs/operations/non-english-ipa-audit-input.json`, `docs/operations/non-english-ipa-reviewed-findings.json`, `docs/operations/IPA_DISPLAY_AUDIT_STRATEGY.md`, `public/audio/language-packs/fr-FR/manifest.json`, `public/audio/language-packs/ru-RU/manifest.json`, `src/__tests__/non-english-ipa-audit.test.ts`, `src/__tests__/non-english-ipa-reviewed-findings.test.ts`, `src/__tests__/static-language-audio-pack-assets.test.ts`, `npm.cmd run ipa:audit:export`; the current tracked export contains `1736` rows and marks `34` `deck-focus-hint` rows so compact practice cues are not mistaken for complete sentence IPA, the test compares the tracked JSON against the current source-built output to catch stale audit exports, high-risk French connected-speech rows reject stale word-boundary IPA, Spanish audit `currentIpa` rows stay phoneme-first for `/b d g/` while explicit allophone unit labels may keep `[β ð ɣ]`, the static language-pack asset test locks applied French/Russian manifest IPA metadata against stale word-boundary or isolated-devoicing strings, and the reviewed-findings ledger locks applied `update`, accepted `variant-accepted`, and unchanged `needs-review` rows such as Russian `поезд идёт` against accidental drift |
 | Repeated or noisy non-English practice text is constrained | `src/lib/language-keyword-expansions.ts`, `src/__tests__/language-learning-decks.test.ts`, `src/__tests__/spanish-sound-examples.test.ts` |
@@ -31,7 +31,7 @@ claimed as complete.
 | Detail-page scoring breakdowns, detail header speakers, and list-card IPA clicks show honest target reference and stable clickable short-audio tiles | `src/lib/detail-assessment-breakdown.ts`, `src/components/scoring/phoneme-highlight.tsx`, `src/components/phoneme/phoneme-play-button.tsx`, `src/components/phoneme/phoneme-card.tsx`, `src/hooks/use-audio-player.ts`, `src/lib/assessment-segment-audio.ts`, `src/lib/azure-phoneme-map.ts`, `src/lib/audio-playback-policy.ts`, `src/lib/language-phoneme-resources.ts`, `src/lib/local-language-assets.ts`, `src/__tests__/detail-assessment-breakdown.test.ts`, `src/__tests__/phoneme-highlight.test.tsx`, `src/__tests__/phoneme-play-button.test.tsx`, `src/__tests__/phoneme-card.test.tsx`, `src/__tests__/assessment-segment-audio.test.ts`, `src/__tests__/audio-playback-policy.test.ts`, `src/__tests__/use-audio-player.test.tsx`, `src/__tests__/azure-phoneme-map-language-parity.test.ts`, `src/__tests__/language-phoneme-resources.test.ts`, `scripts/desktop-ui-smoke.mjs`; non-English scoring tiles reuse the exact same left/detail sound-unit header clip (`phonemeAudio.localSrc`) or stay visible but unclickable, never falling back to word examples, rule/prosody clips, proxy media, or video audio; Spanish `/β/ /ð/ /ɣ/` allophone clips do not masquerade as plain `/b/ /d/ /g/`; English chart clicks are capped at `560ms`, local non-English header/scoring sound-unit clips are capped at `500ms` through the shared header playback policy, and the Russian final-devoicing proxy resource note points maintainers to the current `Нож тупой` sentence practice instead of stale `current example друг` wording |
 | Recording replay and benchmark playback use centralized audio cleanup and missing local benchmark audio is visible | `src/app/drill/prosody/page.tsx`, `src/app/drill/scenarios/page.tsx`, `src/app/drill/spontaneous/page.tsx`, `src/app/progress/page.tsx`, `src/hooks/use-audio-player.ts`, `src/__tests__/progress-page.test.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; source policy forbids raw `new Audio(...)` replay in these user-facing pages, progress-page benchmark playback uses the shared `playBlob` path, missing IndexedDB audio shows a Chinese warning instead of a silent no-op, and benchmark delete/clear failures show inline Chinese archive-status errors |
 | Benchmark recording archive save failures are visible without blocking the completed scoring result | `src/lib/benchmark-archive.ts`, `src/app/drill/prosody/page.tsx`, `src/app/drill/scenarios/page.tsx`, `src/app/drill/spontaneous/page.tsx`, `src/__tests__/benchmark-archive.test.ts`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; prosody, scenario, and spontaneous transfer keep the scored result/feedback after a successful assessment, but if IndexedDB/quota/local storage prevents benchmark audio from being archived, they show a Chinese warning that the recording was not saved instead of only writing `console.warn`; spontaneous transfer also avoids claiming "录音已作为 benchmark 保存" when archive persistence failed |
-| Release-window smoke covers likely user-visible regressions | `scripts/desktop-ui-smoke.mjs`: settings, English detail, Spanish `/es-a`, Spanish stress/rhythm, French `/fr-i`, schwa, liaison, enchainement, elision, final consonant silence, Russian `/ru-a`, stress/reduction/rule units, `/drill`, `/sentences`, `/assessment`, `/progress`; verifies not localhost, no text ellipsis/nowrap on detail task text, no practice-button overlap, expected header-audio visibility/clickability readiness, A/B voice selector and word-audio button visibility/clickability/label runtime readiness, rule/prosody A/B playback labels do not regress to word-only labels, free-practice page/input/recording cards render in main, narrow, and low-height route passes, assessment page/intro card/start/passage actions render in main, narrow, and low-height route passes, video selector visibility/no-overlap/no-overflow and wrapping labels, Settings/usage/pronunciation-test long-control wrapping and pronunciation-test row no-overlap, scoring-breakdown placeholder or target IPA reference visibility/readability/no-overflow readiness in normal, narrow, and low-height detail windows, scoring tile exact-audio policy runtime readiness with one playable exact header clip, one locked unverified tile, `progress-experimental-blocker`, `scoringTileAudioPolicy=ok`, `practiceAudioLabels=ok`, `freePracticeSmoke=ok`, `assessmentSmoke=ok`, `narrowViewport=ok`, and `lowHeightViewport=ok` |
+| Release-window smoke covers likely user-visible regressions | `scripts/desktop-ui-smoke.mjs`: settings, English detail, Spanish `/es-a`, Spanish stress/rhythm, French `/fr-i`, schwa, liaison, enchainement, elision, final consonant silence, Russian `/ru-a`, stress/reduction/rule units, `/drill`, `/sentences`, `/assessment`, `/progress`; verifies not localhost, no text ellipsis/nowrap on detail task text, no practice-button overlap, expected header-audio visibility/clickability readiness, A/B voice selector and word-audio button visibility/clickability/label runtime readiness, rule/prosody A/B playback labels do not regress to word-only labels, free-practice page/input/recording cards render in main, narrow, and low-height route passes, assessment page/intro card/start/passage actions render in main, narrow, and low-height route passes, video selector visibility/no-overlap/no-overflow and wrapping labels, Settings/usage/pronunciation-test/API-config long-control wrapping and row no-overlap, scoring-breakdown placeholder or target IPA reference visibility/readability/no-overflow readiness in normal, narrow, and low-height detail windows, scoring tile exact-audio policy runtime readiness with one playable exact header clip, one locked unverified tile, `progress-experimental-blocker`, `scoringTileAudioPolicy=ok`, `practiceAudioLabels=ok`, `freePracticeSmoke=ok`, `assessmentSmoke=ok`, `narrowViewport=ok`, and `lowHeightViewport=ok` |
 | Public repository has basic open-source governance, asset-boundary documentation, support routing, release-script guardrails, issue/PR template guardrails, conduct/privacy expectations, and a tracked-file secret-format guard | `LICENSE`, `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SUPPORT.md`, `SECURITY.md`, `THIRD_PARTY_NOTICES.md`, `.env.example`, `.github/ISSUE_TEMPLATE/*.md`, `.github/pull_request_template.md`, `README.md`, `package.json`, `scripts/desktop-build.mjs`, `src/__tests__/desktop-artifact-smoke.test.ts`, `src/__tests__/open-source-readiness.test.ts`; source code is MIT-licensed while bundled media is explicitly not automatically relicensed, public developer/release npm scripts remain explicit, the desktop build wrapper defaults Windows release packaging to `CARGO_BUILD_JOBS=1` unless the environment already overrides it, issue and PR templates keep Release EXE/privacy/experimental-language boundaries visible, IPA audit reports require `auditRole` plus sourced update/variant evidence and keep `needs-review` rows unchanged without stronger follow-up evidence, the audio/provider template separates missing bundled audio, wrong clickable audio sources, loudness mismatches, and quota-impacting provider requests from general bugs, `SUPPORT.md` routes Release EXE bugs, IPA audits, audio/provider requests, private reports, and paid-provider boundaries to the correct channel, `CODE_OF_CONDUCT.md` keeps accent/learner/IPA discussion respectful and evidence-first while routing secrets or private recordings away from public issues, routine validation scripts do not call audio generation, and tracked text files are checked for obvious real private-key/API-token formats without printing matched secret text |
 | Public release remains blocked until Windows signing is complete | `README.md`, `docs/INSTALLATION.md`, `docs/operations/DESKTOP_STARTUP_RUNBOOK.md` |
 
@@ -62,7 +62,7 @@ rerun during this playback/UI RC pass.
 
 ## Latest Local Command Results
 
-Latest settled-main RC pass for tomorrow's manual testing:
+Latest local RC pass for Settings action-row hardening:
 
 ```text
 git status --short --branch
@@ -70,92 +70,19 @@ git status --short --branch
   push fallback; verify GitHub main ref and local-vs-remote tree SHA before
   treating the content as unpushed
 
-npm.cmd exec vitest run src/__tests__/non-english-ipa-audit.test.ts src/__tests__/language-learning-decks.test.ts src/__tests__/open-source-readiness.test.ts --reporter=verbose
-  3 files / 27 tests passed
-
-npm.cmd exec vitest run src/__tests__/russian-language-content.test.ts src/__tests__/language-learning-decks.test.ts src/__tests__/non-english-ipa-audit.test.ts --reporter=verbose
-  3 files / 24 tests passed
-
-npm.cmd exec vitest run src/__tests__/language-feedback-rules.test.ts src/__tests__/language-source-alignment.test.ts src/__tests__/russian-language-content.test.ts --reporter=verbose
-  3 files / 13 tests passed
-
-npm.cmd exec vitest run src/__tests__/assessment-report.test.tsx src/__tests__/mastery-language-policy.test.ts src/__tests__/diagnosis-engine.test.ts --reporter=verbose
-  3 files / 16 tests passed
-
-npm.cmd exec vitest run src/__tests__/non-english-ipa-reviewed-findings.test.ts src/__tests__/non-english-ipa-audit.test.ts src/__tests__/language-learning-decks.test.ts --reporter=verbose
-  3 files / 22 tests passed
-
-npm.cmd exec vitest run src/__tests__/open-source-readiness.test.ts --reporter=verbose
-  1 file / 8 tests passed
-
-npm.cmd exec vitest run src/__tests__/static-language-audio-pack-assets.test.ts src/__tests__/multilingual-audio-parity.test.ts src/__tests__/non-english-ipa-reviewed-findings.test.ts --reporter=verbose
-  3 files / 14 tests passed; language-pack manifest IPA metadata is aligned
-  with applied French/Russian reviewed findings while Russian поезд идёт
-  remains unchanged as needs-review
-
-npm.cmd exec vitest run src/__tests__/llm-prompt.test.ts src/__tests__/llm-desktop-policy.test.ts src/__tests__/llm-config-card.test.tsx src/__tests__/desktop-preflight-ui-smoke.test.ts --reporter=verbose
-  4 files / 25 tests passed
-
-npm.cmd exec vitest run src/__tests__/llm-prompt.test.ts src/__tests__/language-feedback-rules.test.ts src/__tests__/llm-desktop-policy.test.ts --reporter=verbose
-  3 files / 20 tests passed; non-English full-score prompts remain conservative
-  and do not ask the AI coach to write "完美" or "已掌握"
-
-npm.cmd exec vitest run src/__tests__/drill-pack-runner.test.tsx src/__tests__/mastery-language-policy.test.ts --reporter=verbose
-  2 files / 7 tests passed; direct English pack routes are blocked for
-  experimental languages before English pack content renders
-
-npm.cmd exec vitest run src/__tests__/progress-page.test.tsx src/__tests__/desktop-preflight-ui-smoke.test.ts src/__tests__/mastery-language-policy.test.ts --reporter=verbose
-  3 files / 13 tests passed; direct progress-archive access shows the
-  experimental blocker for Spanish/French/Russian and desktop UI smoke now
-  covers /progress in main, narrow-window, and low-height route passes; the
-  experimental path does not read the formal mastery profile or benchmark
-  archive
-
-npm.cmd exec vitest run src/__tests__/use-recorder.test.tsx src/__tests__/drill-recording.test.tsx --reporter=verbose
-  Recorder startup failures map to actionable Chinese messages, opened streams
-  are stopped after recorder initialization failure, mid-session recorder
-  errors discard untrusted partial audio, and word/sentence drill recording
-  cards render recorder errors inline
-
-npm.cmd exec vitest run src/__tests__/desktop-readiness.test.ts src/__tests__/desktop-readiness-card.test.tsx --reporter=verbose
-  2 files / 8 tests passed; first-run microphone readiness rejects low-signal
-  and too-short checks with Chinese messages, and the desktop readiness card
-  shows actionable Chinese hints for unsupported microphone access and denied
-  permission
-
-npm.cmd exec vitest run src/__tests__/api-client-azure.test.ts --reporter=verbose
-  1 file / 10 tests passed; Azure auth, network, no-speech, NoMatch, and
-  empty-transcription failures map to actionable Chinese messages
-
-npm.cmd exec vitest run src/__tests__/llm-feedback-parser.test.ts src/__tests__/use-llm-feedback.test.tsx src/__tests__/llm-desktop-policy.test.ts --reporter=verbose
-  3 files / 20 tests passed; LLM Settings connection failures, stream provider
-  and network failures, and useLlmFeedback SSE error chunks surface actionable
-  Chinese messages
-
-npm.cmd exec vitest run src/__tests__/api-client-audio.test.ts src/__tests__/use-tts-aligned.test.tsx src/__tests__/use-word-pronunciation.test.tsx --reporter=verbose
-  3 files / 23 tests passed; ElevenLabs connection/TTS failures, missing
-  standard-demo provider guidance, and online dictionary fallback errors surface
-  actionable Chinese messages without generating audio
-
-npm.cmd exec vitest run src/__tests__/settings-connection-errors.test.tsx src/__tests__/llm-config-card.test.tsx --reporter=verbose
-  2 files / 8 tests passed; Settings connection-test status preserves
-  actionable Chinese Azure, ElevenLabs, AI coach, and Youdao errors, replaces
-  raw English fetch failures with Chinese guidance, and keeps long status text
-  wrap-ready
-
-npm.cmd exec vitest run src/__tests__/phoneme-study-card.test.tsx src/__tests__/practice-text-presentation.test.ts --reporter=verbose
-  2 files / 9 tests passed; non-English detail practice text stays centered
-  and untruncated, Russian long Cyrillic rule sentences stay visible, and A/B
-  playback buttons no longer label phrase/sentence/rule tasks as word playback
+npm.cmd run test -- src/__tests__/desktop-preflight-ui-smoke.test.ts src/__tests__/settings-connection-errors.test.tsx src/__tests__/llm-config-card.test.tsx
+  3 files / 21 tests passed; Settings API config action rows and shared
+  connection status remain wrap-ready, and the Release EXE smoke script checks
+  those rows without referencing provider generation paths
 
 npm.cmd run test
-  100 files / 557 tests passed
+  106 files / 594 tests passed
 
 npm.cmd run typecheck
   passed
 
 npm.cmd run lint
-  passed; 357 files checked
+  passed; 364 files checked
 
 npm.cmd run build:desktop-frontend
   passed; 144 static pages generated
@@ -174,7 +101,8 @@ npm.cmd run desktop:ui-smoke
   A/B selector and word-audio button visibility/clickability/label runtime
   checks, video selector
   visibility/no-overlap/no-overflow, Settings/usage long-text wrapping,
-  Settings pronunciation-test row no-overlap, scoring-breakdown
+  Settings pronunciation-test and API config action rows no-overlap,
+  scoring-breakdown
   visibility/readability/no-overflow runtime checks in normal, narrow, and
   low-height detail windows,
   /progress experimental blocker route coverage in main, narrow-window, and
@@ -184,12 +112,6 @@ npm.cmd run desktop:ui-smoke
   scoringTileAudioPolicy=ok,
   narrowViewport=ok, lowHeightViewport=ok,
   releaseServedFromDevServer=false
-
-npm.cmd run audio:parity:dry-run
-  Spanish 880 existing / 0 missing; French 1090 existing / 0 missing;
-  Russian 918 normalized lookup items / 0 missing; bundled Russian files
-  remain 460 x 2 because punctuation variants can share one local clip; no
-  ElevenLabs calls
 
 npm.cmd run desktop:launch-release
   passed; Release EXE opened from the static Tauri bundle and the verification
@@ -206,9 +128,9 @@ npm.cmd run desktop:launch-release
 
 ## Limits
 
-- `audio:loudness:dry-run` was not rerun during the exact-header scoring-tile
-  pass; the latest recorded loudness pass remains the previous playback-layer
-  gain audit.
+- `audio:parity:dry-run` and `audio:loudness:dry-run` were not rerun during the
+  Settings action-row pass; the latest recorded audio dry-runs remain the
+  previous playback-layer audits.
 - `es-ES`, `fr-FR`, and `ru-RU` are experimental and must not be described as
   formally mastered.
 - The RC gate does not generate new TTS audio.

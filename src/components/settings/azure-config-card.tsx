@@ -117,7 +117,10 @@ export function AzureConfigCard() {
             onChange={(e) => setRegion(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-3">
+        <div
+          className="flex flex-wrap items-center gap-3"
+          data-smoke="azure-config-actions"
+        >
           <Button onClick={handleSave}>保存</Button>
           <Button variant="outline" onClick={handleTest}>
             测试连接

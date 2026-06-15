@@ -152,7 +152,10 @@ export function ElevenLabsConfigCard() {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center gap-3">
+        <div
+          className="flex flex-wrap items-center gap-3"
+          data-smoke="tts-config-actions"
+        >
           <Button onClick={handleSave}>保存</Button>
           <Button variant="outline" onClick={handleTest}>
             测试连接

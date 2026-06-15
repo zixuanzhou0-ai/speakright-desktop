@@ -160,6 +160,10 @@ git status --short --branch
   the test button and connection status do not crowd each other. Release EXE
   smoke now checks this row exists at runtime, wraps, avoids horizontal
   overflow, and has no overlapping child controls.
+- Settings Azure, ElevenLabs, and AI coach config action rows now use the same
+  wrap-ready layout. Their connection status text keeps long Chinese
+  provider/network messages visible, and Release EXE smoke checks the rows for
+  wrapping plus child-control overlap.
 - Quick diagnosis word and paragraph recording cards now show recorder startup
   errors and Azure scoring errors inline with `role="alert"`, so missing
   microphone permission, missing Azure keys, network failure, or quota failure

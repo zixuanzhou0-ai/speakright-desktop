@@ -688,6 +688,11 @@ async function assertSettings(cdp) {
   const languageMissing = [...document.querySelectorAll('[data-smoke="language-option-missing"]')];
   const usageTargets = [...document.querySelectorAll('[data-smoke="usage-history-target"]')];
   const pronunciationRows = [...document.querySelectorAll('[data-smoke="pronunciation-test-row"]')];
+  const settingsActionRows = [
+    ...document.querySelectorAll(
+      '[data-smoke="azure-config-actions"], [data-smoke="tts-config-actions"], [data-smoke="llm-config-actions"]'
+    ),
+  ];
   const llmProviderChips = [...document.querySelectorAll('[data-smoke="llm-provider-chip"]')];
   const llmProviderLabels = llmProviderChips.map((chip) => chip.innerText.trim());
   const childrenDoNotOverlap = (element) => {
@@ -717,6 +722,16 @@ async function assertSettings(cdp) {
       childrenDoNotOverlap(element)
     );
   });
+  const settingsActionRowsWrap =
+    settingsActionRows.length === 3 &&
+    settingsActionRows.every((element) => {
+      const style = window.getComputedStyle(element);
+      return (
+        style.flexWrap !== "nowrap" &&
+        element.scrollWidth <= element.clientWidth + 2 &&
+        childrenDoNotOverlap(element)
+      );
+    });
   const llmProvidersWrap =
     llmProviderChips.length >= 10 &&
     ["GPT", "GLM / Z.ai", "Kimi", "MiniMax", "Xiaomi MiMo"].every((label) =>
@@ -734,6 +749,7 @@ async function assertSettings(cdp) {
       usageTargets.every(wraps) &&
       pronunciationRows.length > 0 &&
       pronunciationRowsWrap &&
+      settingsActionRowsWrap &&
       llmProvidersWrap &&
       bodyText.includes("实验") &&
       !bodyText.includes("Merriam-Webster") &&
@@ -744,6 +760,8 @@ async function assertSettings(cdp) {
     usageTargetCount: usageTargets.length,
     pronunciationRowCount: pronunciationRows.length,
     pronunciationRowsWrap,
+    settingsActionRowCount: settingsActionRows.length,
+    settingsActionRowsWrap,
     llmProviderLabels,
     llmProvidersWrap,
     bodyText: bodyText.slice(0, 1200)
