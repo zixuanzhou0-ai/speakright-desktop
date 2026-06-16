@@ -1,10 +1,11 @@
 import { execFile, spawn } from "node:child_process";
-import { existsSync, writeSync } from "node:fs";
+import { existsSync, readdirSync, statSync, writeSync } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 const root = process.cwd();
+const releaseFreshnessToleranceMs = 2000;
 
 function releaseExecutablePath() {
   if (process.platform === "win32") {
@@ -40,6 +41,61 @@ function writeLine(fd, message) {
 
 function formatError(error) {
   return error instanceof Error ? error.message : String(error);
+}
+
+function newestFileMtimeMs(directory) {
+  if (!existsSync(directory)) return null;
+
+  let newest = null;
+  const pending = [directory];
+  while (pending.length > 0) {
+    const current = pending.pop();
+    let entries;
+    try {
+      entries = readdirSync(current, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+
+    for (const entry of entries) {
+      const entryPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        pending.push(entryPath);
+        continue;
+      }
+      if (!entry.isFile()) continue;
+
+      try {
+        const mtimeMs = statSync(entryPath).mtimeMs;
+        newest = Math.max(newest ?? 0, mtimeMs);
+      } catch {
+        // A concurrently rewritten static export file should not hide other files.
+      }
+    }
+  }
+
+  return newest;
+}
+
+function assertReleaseExecutableFresh() {
+  const staticExportPath = path.join(root, "out");
+  const newestStaticMtimeMs = newestFileMtimeMs(staticExportPath);
+  if (newestStaticMtimeMs === null) return;
+
+  const executableMtimeMs = statSync(executable).mtimeMs;
+  if (newestStaticMtimeMs - executableMtimeMs <= releaseFreshnessToleranceMs) {
+    return;
+  }
+
+  fail(
+    [
+      "release executable is older than the static export.",
+      `Static export: ${staticExportPath}`,
+      `Release EXE: ${executable}`,
+      "Run npm run desktop:build before launching the Release EXE.",
+      "Do not use localhost/dev server as a substitute.",
+    ].join(" "),
+  );
 }
 
 async function runningSpeakRightProcesses() {
@@ -84,6 +140,8 @@ if (!existsSync(executable)) {
     ].join(" "),
   );
 }
+
+assertReleaseExecutableFresh();
 
 const running = await runningSpeakRightProcesses();
 if (running.length > 0) {

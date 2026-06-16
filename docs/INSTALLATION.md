@@ -65,6 +65,12 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 Do not use a browser `localhost` tab as release acceptance. `npm run
 desktop:dev` is for code debugging only.
 
+If you run `npm run build:desktop-frontend` or change UI/source files after a
+Release EXE was built, rebuild the desktop package before validation:
+`npm run desktop:build`. The preflight and launch scripts reject a Release EXE
+that is older than the static export in `out/`, so an old executable cannot be
+used as a substitute for the current source tree.
+
 ## Required Configuration
 
 SpeakRight can open without API keys, but scoring and AI feedback require external services.
@@ -243,6 +249,9 @@ it refuses to open another Release EXE, prints the running PID list, and leaves
 the existing SpeakRight window untouched.
 On a normal launch it prints the Release EXE path, the child process PID, and a
 reminder that the command does not start localhost or the Next dev server.
+If the static export in `out/` is newer than the Release EXE, both
+`desktop:preflight` and `desktop:launch-release` stop with a clear message to
+run `npm run desktop:build` first.
 
 ## Troubleshooting
 

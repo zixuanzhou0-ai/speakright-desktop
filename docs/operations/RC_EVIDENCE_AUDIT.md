@@ -11,7 +11,7 @@ claimed as complete.
 
 | RC requirement | Evidence source |
 | --- | --- |
-| Current workspace is `E:\SpeakRightDesktopRepo`; release testing uses the Release EXE, not localhost; public install docs explain download, source build, first launch, and degraded no-key/no-network/no-microphone/missing-local-audio states | `README.md`, `docs/INSTALLATION.md`, `docs/operations/DESKTOP_STARTUP_RUNBOOK.md`, `scripts/desktop-preflight.mjs`, `scripts/desktop-launch-release.mjs`, `scripts/desktop-ui-smoke.mjs`, `src/__tests__/open-source-readiness.test.ts`, `npm.cmd run desktop:preflight`, `npm.cmd run desktop:launch-release`, `npm.cmd run desktop:ui-smoke`; `desktop:launch-release` refuses duplicate `speakright.exe` Release processes, reports running PIDs, prints a visible launch request, Release EXE path, child PID, and no-localhost boundary before detaching the app process |
+| Current workspace is `E:\SpeakRightDesktopRepo`; release testing uses the Release EXE, not localhost; public install docs explain download, source build, first launch, and degraded no-key/no-network/no-microphone/missing-local-audio states | `README.md`, `docs/INSTALLATION.md`, `docs/operations/DESKTOP_STARTUP_RUNBOOK.md`, `scripts/desktop-preflight.mjs`, `scripts/desktop-launch-release.mjs`, `scripts/desktop-ui-smoke.mjs`, `src/__tests__/open-source-readiness.test.ts`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`, `npm.cmd run desktop:preflight`, `npm.cmd run desktop:launch-release`, `npm.cmd run desktop:ui-smoke`; `desktop:preflight` and `desktop:launch-release` reject a Release EXE that is older than the static export in `out/`, so frontend-only builds cannot accidentally validate a stale packaged app; `desktop:launch-release` refuses duplicate `speakright.exe` Release processes, reports running PIDs, prints a visible launch request, Release EXE path, child PID, and no-localhost boundary before detaching the app process |
 | Startup local-data migration and theme persistence failures do not block API-key hydration or app startup | `src/components/layout/key-hydrator.tsx`, `src/components/layout/theme-provider.tsx`, `src/__tests__/key-hydrator.test.tsx`, `src/__tests__/theme-provider.test.tsx`; the startup hydrator catches local data migration/storage failures, shows a fixed Chinese toast explaining that the app will continue to start and that Settings can export diagnostics or reset local data, and still calls `hydrateKeys()` so configured provider keys or settings can load even if local learning-data migration is unavailable; theme preference reads and writes are best-effort, so blocked or invalid theme storage falls back to `system` without blanking the shell, while a live theme toggle still updates the rendered UI |
 | English is the stable baseline; Spanish, French, and Russian remain experimental | `README.md`, `docs/INSTALLATION.md`, `docs/operations/NEXT_CHAT_HANDOFF.md`, `src/app/drill/page.tsx`, `src/lib/mastery-language-policy.ts`, `src/__tests__/mastery-language-policy.test.ts` |
 | Non-English practice can score and provide feedback but cannot load English advanced training packs, write formal mastery/evidenceMastery, display diagnosis issues as formal mastery stages, or show/read English progress archives | `src/lib/mastery-language-policy.ts`, `src/components/assessment/assessment-report.tsx`, `src/app/sentences/page.tsx`, `src/app/progress/page.tsx`, `src/app/assessment/passage/page.tsx`, `src/app/drill/evidence/page.tsx`, `src/app/drill/pack/[packId]/pack-runner-client.tsx`, `src/app/drill/perception/page.tsx`, `src/app/drill/prosody/page.tsx`, `src/app/drill/scenarios/page.tsx`, `src/app/drill/spontaneous/page.tsx`, `src/__tests__/assessment-report.test.tsx`, `src/__tests__/drill-pack-runner.test.tsx`, `src/__tests__/progress-page.test.tsx`, `src/__tests__/mastery-language-policy.test.ts`, `src/__tests__/mastery-profile.test.ts`; direct English pack-runner routes show `pack-runner-experimental-blocker` for Spanish/French/Russian instead of loading English pack content; direct `/progress` access shows `progress-experimental-blocker` for Spanish/French/Russian instead of English mastery archive metrics, and the blocker path does not call the formal mastery profile or benchmark archive loaders; direct `/drill/evidence` access shows `evidence-experimental-blocker` for Spanish/French/Russian and does not read the formal mastery profile; direct `/assessment/passage` access shows `assessment-passage-experimental-blocker` for Spanish/French/Russian instead of loading the English coverage passage or English training-pack evidence; diagnosis issue cards keep formal mastery badges for English but show `experimental 练习观察` plus the experimental blocker for Spanish/French/Russian instead of `阶段` / `下一层` / `阶段分` badges |
@@ -74,32 +74,24 @@ Latest local full gate recorded in this audit:
 ```text
 git status --short --branch
   initial gate status before this round's edits was
-  `## main...origin/main [ahead 76]`; the current full gate was run with the
-  shared Button wrap fix still unstaged, so `desktop:preflight` correctly
-  reported `Git: dirty`. After GitHub API fallback pushes, verify the GitHub
-  `main` ref and local-vs-remote tree SHA before treating content as unpushed.
+  `## main...origin/main [ahead 77]`; the current full gate was run with the
+  stale Release EXE guard and documentation updates still unstaged, so
+  `desktop:preflight` correctly reported `Git: dirty`. After GitHub API
+  fallback pushes, verify the GitHub `main` ref and local-vs-remote tree SHA
+  before treating content as unpushed.
 
 npm.cmd run test -- src/__tests__/desktop-preflight-ui-smoke.test.ts
-  1 file / 19 tests passed; Settings smoke assertions now lock the shared
-  Button wrap-safe defaults, `min-h-*` text-button sizing, fixed `size-*` icon
-  variants, and Release EXE runtime checks for visible Settings text buttons.
+  1 file / 20 tests passed; source assertions now lock the stale static-export
+  guard in both `desktop:preflight` and `desktop:launch-release`, including the
+  no-localhost fallback message and launch-time check before process launch.
 
 npm.cmd run test -- open-source-readiness
   1 file / 10 tests passed; public governance files, issue routing, privacy
   boundaries, zero-generation routine scripts, and Release EXE wording stayed
   locked.
 
-npm.cmd run test -- phoneme-card phoneme-play-button phoneme-study-card desktop-preflight-ui-smoke
-  4 files / 41 tests passed; detail header speakers, list-card IPA clicks, and
-  Release smoke script assertions expose strict `data-audio-*` metadata for
-  verified short clips while keeping unverified audio locked.
-
-npm.cmd run test -- word-card-layout practice-text-presentation
-  2 files / 5 tests passed; the legacy phoneme word card and shared target-text
-  helpers stay centered, wrapping, density-aware, and untruncated.
-
 npm.cmd run test
-  123 files / 695 tests passed
+  123 files / 696 tests passed
 
 npm.cmd run typecheck
   passed
@@ -113,12 +105,13 @@ npm.cmd run build:desktop-frontend
 npm.cmd run desktop:build
   passed; reran `build:desktop-frontend`, compiled the Tauri release app, built
   `src-tauri\target\release\speakright.exe`, and generated MSI/NSIS bundles so
-  the Release EXE contained the shared Button runtime/style change.
+  the Release EXE contained the stale static-export guard changes and current
+  static app assets.
 
 npm.cmd run desktop:preflight
-  passed; Release EXE exists, no running `speakright.exe`, no localhost startup;
-  `Git: dirty` was expected because this round's changes were intentionally left
-  unstaged until after the gate.
+  passed; Release EXE exists, is not older than `out/`, no running
+  `speakright.exe`, no localhost startup; `Git: dirty` was expected because this
+  round's changes were intentionally left unstaged until after the gate.
 
 npm.cmd run desktop:ui-smoke
   passed; Release EXE runtime, centered target text, no target-text ellipsis,
@@ -158,7 +151,7 @@ npm.cmd run desktop:ui-smoke
 
 npm.cmd run desktop:launch-release
   passed; command printed `SpeakRight release desktop app launch requested`,
-  the Release EXE path, a child PID, and the no-localhost reminder; the
+  the Release EXE path, child PID `68536`, and the no-localhost reminder; the
   Release EXE opened from `src-tauri\target\release\speakright.exe`.
 
 process cleanup

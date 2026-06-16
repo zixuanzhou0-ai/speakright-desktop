@@ -82,7 +82,32 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("com.speakright.desktop");
     expect(script).toContain("../out");
     expect(script).toContain("release executable is missing");
+    expect(script).toContain(
+      "release executable is older than the static export",
+    );
+    expect(script).toContain(
+      "Run npm run desktop:build before Release EXE validation or launch",
+    );
+    expect(script).toContain("releaseFreshnessToleranceMs");
+    expect(script).toContain("newestFileMtimeMs");
+    expect(script).toContain("!allowMissingReleaseExe");
     expect(script).toContain("does not start localhost");
+  });
+
+  it("launch-release refuses stale static-export packages before opening the app", () => {
+    const script = readProjectFile("scripts/desktop-launch-release.mjs");
+
+    expect(script).toContain(
+      "release executable is older than the static export",
+    );
+    expect(script).toContain(
+      "Run npm run desktop:build before launching the Release EXE",
+    );
+    expect(script).toContain("Do not use localhost/dev server as a substitute");
+    expect(script).toContain("assertReleaseExecutableFresh();");
+    expect(script.indexOf("assertReleaseExecutableFresh();")).toBeLessThan(
+      script.indexOf("const running = await runningSpeakRightProcesses();"),
+    );
   });
 
   it("wires a release UI smoke command into local desktop validation", () => {

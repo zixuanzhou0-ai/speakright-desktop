@@ -63,6 +63,11 @@ If the Release EXE is missing or stale:
 npm run desktop:run-release
 ```
 
+`desktop:preflight` and `desktop:launch-release` also refuse to validate or
+open a Release EXE when the static export in `out/` is newer than the packaged
+executable. After running `npm run build:desktop-frontend` or changing UI code,
+run `npm run desktop:build` before Release EXE smoke or manual QA.
+
 For the daily desktop startup checklist, see
 `docs/operations/DESKTOP_STARTUP_RUNBOOK.md`.
 
@@ -100,6 +105,7 @@ npm run test
 npm run typecheck
 npm run lint
 npm run build:desktop-frontend
+npm run desktop:build
 npm run desktop:preflight
 npm run desktop:ui-smoke
 npm run desktop:live-validation
@@ -134,15 +140,15 @@ loudness after playback-layer gain. It writes
 input under `docs/operations/non-english-ipa-audit-input.json`, including
 `auditRole` markers that separate full IPA rows from deck focus hints.
 
-`desktop:preflight` checks the active workspace, release executable, and running
-`speakright.exe` process before release-style testing. It never closes the app
-for you; close SpeakRight manually before building. `desktop:launch-release`
-also refuses to open a second `speakright.exe`, reports the running process IDs,
-and prints a visible launch request, Release EXE path, child PID, and no-localhost
-boundary before it detaches the app process. `desktop:ui-smoke` launches the
-Release EXE, opens Settings, English, Spanish, French, Russian, drill, free
-practice, and diagnosis routes, and confirms the runtime is not served from
-`localhost`.
+`desktop:preflight` checks the active workspace, release executable, static
+export freshness, and running `speakright.exe` process before release-style
+testing. It never closes the app for you; close SpeakRight manually before
+building. `desktop:launch-release` also refuses stale static-export packages and
+duplicate `speakright.exe` processes, reports the running process IDs, and prints
+a visible launch request, Release EXE path, child PID, and no-localhost boundary
+before it detaches the app process. `desktop:ui-smoke` launches the Release EXE,
+opens Settings, English, Spanish, French, Russian, drill, free practice, and
+diagnosis routes, and confirms the runtime is not served from `localhost`.
 
 GitHub Actions are split by change type: source, public asset, script,
 `src-tauri`, or package changes still run the full Windows desktop build, while

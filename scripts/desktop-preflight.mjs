@@ -1,5 +1,5 @@
 import { execFile } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
 import { promisify } from "node:util";
 
@@ -7,6 +7,7 @@ const execFileAsync = promisify(execFile);
 const root = process.cwd();
 const args = new Set(process.argv.slice(2));
 const allowMissingReleaseExe = args.has("--allow-missing-release-exe");
+const releaseFreshnessToleranceMs = 2000;
 
 function releaseExecutablePath() {
   if (process.platform === "win32") {
@@ -36,6 +37,61 @@ function fail(message) {
 
 function readJson(relativePath) {
   return JSON.parse(readFileSync(path.join(root, relativePath), "utf8"));
+}
+
+function newestFileMtimeMs(directory) {
+  if (!existsSync(directory)) return null;
+
+  let newest = null;
+  const pending = [directory];
+  while (pending.length > 0) {
+    const current = pending.pop();
+    let entries;
+    try {
+      entries = readdirSync(current, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+
+    for (const entry of entries) {
+      const entryPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        pending.push(entryPath);
+        continue;
+      }
+      if (!entry.isFile()) continue;
+
+      try {
+        const mtimeMs = statSync(entryPath).mtimeMs;
+        newest = Math.max(newest ?? 0, mtimeMs);
+      } catch {
+        // A concurrently rewritten static export file should not hide other files.
+      }
+    }
+  }
+
+  return newest;
+}
+
+function assertReleaseExecutableFresh(executable) {
+  const staticExportPath = path.join(root, "out");
+  const newestStaticMtimeMs = newestFileMtimeMs(staticExportPath);
+  if (newestStaticMtimeMs === null) return;
+
+  const executableMtimeMs = statSync(executable).mtimeMs;
+  if (newestStaticMtimeMs - executableMtimeMs <= releaseFreshnessToleranceMs) {
+    return;
+  }
+
+  fail(
+    [
+      "release executable is older than the static export.",
+      `Static export: ${staticExportPath}`,
+      `Release EXE: ${executable}`,
+      "Run npm run desktop:build before Release EXE validation or launch.",
+      "Do not use localhost/dev server as a substitute.",
+    ].join(" "),
+  );
 }
 
 async function gitStatus() {
@@ -137,6 +193,9 @@ async function main() {
         "Run npm run desktop:build before launch or smoke testing.",
       ].join(" "),
     );
+  }
+  if (!allowMissingReleaseExe && existsSync(executable)) {
+    assertReleaseExecutableFresh(executable);
   }
 
   const status = await gitStatus();

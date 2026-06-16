@@ -64,6 +64,10 @@ EXE. The command prints the running process IDs so the operator can identify the
 stale app process without falling back to a localhost browser tab.
 On a normal launch, it prints the Release EXE path, the child process PID, and a
 reminder that it does not start localhost or the Next dev server.
+If `desktop:preflight` or `desktop:launch-release` reports that the Release EXE
+is older than the static export in `out/`, run `npm run desktop:build` before
+continuing. Do not validate a localhost/dev-server view in place of the packaged
+Release EXE.
 
 4. Use the app window that opens from Tauri. Do not use a browser tab pointed at
    `localhost`.
@@ -217,6 +221,7 @@ npm run test
 npm run typecheck
 npm run lint
 npm run build:desktop-frontend
+npm run desktop:build
 npm run desktop:preflight
 npm run desktop:ui-smoke
 ```

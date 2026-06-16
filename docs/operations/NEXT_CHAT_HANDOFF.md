@@ -79,6 +79,10 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
   refuses to open a second `speakright.exe`, prints the running PID list, and on
   normal launch prints a visible launch request, Release EXE path, child PID,
   and no-localhost reminder before detaching the app process.
+- `desktop:preflight` and `desktop:launch-release` now also compare the packaged
+  Release EXE against the static export in `out/`. If `out/` is newer, they stop
+  and ask for `npm run desktop:build` so a stale EXE cannot pass Release
+  validation after a frontend-only build.
 - Drill feedback action buttons now wrap and stay centered after three failed
   attempts, so the `再听一遍` / `跳过此词` controls do not force horizontal
   overflow in narrow windows.
@@ -165,10 +169,10 @@ git status --short --branch
 ## Latest Local Fixes To Preserve
 
 - The Release launch script is now self-contained: even if a maintainer skips
-  `desktop:preflight`, `desktop:launch-release` refuses stale duplicate
-  `speakright.exe` processes, reports PIDs, and writes visible terminal status
-  before detaching the Release process so the command does not look like a blank
-  no-op.
+  `desktop:preflight`, `desktop:launch-release` refuses stale static-export
+  packages and duplicate `speakright.exe` processes, reports PIDs, and writes
+  visible terminal status before detaching the Release process so the command
+  does not look like a blank no-op.
 - Non-English practice cards now prioritize the text the user must read.
   Words, phrases, and sentences should be visible in full instead of using
   ellipsis.
@@ -526,8 +530,8 @@ Current gate summary is intentionally compact here:
   `docs/operations/RC_EVIDENCE_AUDIT.md`.
 - The routine gate remains `npm.cmd run test`, `npm.cmd run typecheck`,
   `npm.cmd run lint`, `npm.cmd run build:desktop-frontend`,
-  `npm.cmd run desktop:preflight`, `npm.cmd run desktop:ui-smoke`, and
-  `npm.cmd run desktop:launch-release`.
+  `npm.cmd run desktop:build`, `npm.cmd run desktop:preflight`,
+  `npm.cmd run desktop:ui-smoke`, and `npm.cmd run desktop:launch-release`.
 - Focused suites cover open-source governance, no-secret scans, source-build
   docs, IPA audit exports, centered/wrapping target text, failure-state Chinese
   alerts, experimental-language blockers, audio-source policy, and local-save
