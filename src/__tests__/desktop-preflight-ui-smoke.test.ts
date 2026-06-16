@@ -407,6 +407,28 @@ describe("desktop preflight and UI smoke", () => {
     expect(qualityPanel).toContain("录音质量");
   });
 
+  it("keeps session-state persistence failures visible on practice pages", () => {
+    const sessionHook = readProjectFile("src/hooks/use-session-state.ts");
+    const sentencesPage = readProjectFile("src/app/sentences/page.tsx");
+    const phonemePage = readProjectFile(
+      "src/app/phonemes/[phoneme]/phoneme-detail-page.tsx",
+    );
+
+    expect(sessionHook).toContain("SESSION_STORAGE_WARNING");
+    expect(sessionHook).toContain("onPersistenceError");
+    expect(sessionHook).toContain("本页临时状态无法保存或恢复");
+    expect(sentencesPage).toContain(
+      'data-smoke="free-practice-session-storage-warning"',
+    );
+    expect(sentencesPage).toContain("handleSessionStorageError");
+    expect(sentencesPage).toContain('role="alert"');
+    expect(phonemePage).toContain(
+      'data-smoke="phoneme-session-storage-warning"',
+    );
+    expect(phonemePage).toContain("handleSessionStorageError");
+    expect(phonemePage).toContain('role="alert"');
+  });
+
   it("keeps advanced drill provider failures visible inline", () => {
     const drillPage = readProjectFile("src/app/drill/page.tsx");
     const drillReportStorage = readProjectFile(

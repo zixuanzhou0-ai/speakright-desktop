@@ -115,6 +115,9 @@ reminder that it does not start localhost or the Next dev server.
   If the quick diagnosis page cannot read the saved current or legacy report, it
   should show the same kind of Chinese reset/export warning and keep the intro
   flow usable.
+  If sessionStorage is blocked or full, free practice and phoneme detail should
+  keep the current practice usable while showing a Chinese warning that text,
+  selected-word, score, or AI-feedback state may not restore after navigation.
 - English: open phoneme list, then five phoneme detail pages; play target sound,
   example word, record, replay the recording, and score once.
 - Spanish, French, and Russian: switch each language, open the sound-unit list,
@@ -471,6 +474,9 @@ release notes and installation guide keep the unsigned warning visible.
   - Focused recording-quality panel tests: `1` file and `3` tests passed,
     covering blocker alerts, submit-ready status feedback, and the empty
     pre-report state.
+  - Focused session-state warning tests: `2` files and `20` tests passed,
+    covering blocked sessionStorage read/write/manual helper notifications and
+    static Release smoke hooks for free practice plus phoneme detail warnings.
   - Focused exact scoring-audio tests: `6` files and `57` tests passed,
     including left/right header-clip parity, Spanish/French/Russian exact alias
     inventory, unclickable unverified tiles, and header/scoring short playback.
@@ -492,8 +498,8 @@ release notes and installation guide keep the unsigned warning visible.
   - Latest settled-main validation results are centralized in
     `docs/operations/RC_EVIDENCE_AUDIT.md` to avoid stale counts across
     multiple handoff documents.
-  - `npm.cmd run test` passed with `116` files and `642` tests;
-    `npm.cmd run typecheck`, `npm.cmd run lint` (`377` files checked), and
+  - `npm.cmd run test` passed with `117` files and `646` tests;
+    `npm.cmd run typecheck`, `npm.cmd run lint` (`378` files checked), and
     `npm.cmd run build:desktop-frontend` passed in the latest settled-main
     gate.
   - `npm.cmd run desktop:build`: passed; rebuilt Release EXE, MSI, and NSIS.

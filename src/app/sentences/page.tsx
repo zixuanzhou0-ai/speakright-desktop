@@ -6,12 +6,11 @@ import { LanguageModuleGate } from "@/components/common/language-module-gate";
 import { SentenceInputCard } from "@/components/sentences/sentence-input-card";
 import { SentenceRecordingCard } from "@/components/sentences/sentence-recording-card";
 import { SentenceResultsColumn } from "@/components/sentences/sentence-results-column";
-import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useLanguageConfig } from "@/hooks/use-api-keys";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useAzureAssessment } from "@/hooks/use-azure-assessment";
 import type { FeedbackData } from "@/hooks/use-llm-feedback";
 import { useLlmFeedback } from "@/hooks/use-llm-feedback";
-import { useWordPronunciation } from "@/hooks/use-word-pronunciation";
 import { useRecorder } from "@/hooks/use-recorder";
 import { useRecordingQuality } from "@/hooks/use-recording-quality";
 import {
@@ -23,6 +22,7 @@ import {
 import { useSyllableStress } from "@/hooks/use-syllable-stress";
 import { useTtsAligned } from "@/hooks/use-tts-aligned";
 import { useWordIpa } from "@/hooks/use-word-ipa";
+import { useWordPronunciation } from "@/hooks/use-word-pronunciation";
 import {
   analyzeFreePracticeTransfer,
   buildFreePracticeTargetPreview,
@@ -44,8 +44,18 @@ export default function SentencesPage() {
   const { languageId } = useLanguageConfig();
   const languageProfile = getLanguageProfile(languageId);
   const sessionPrefix = `${SESSION_PREFIX_BASE}:${languageId}`;
-  const [sentence, setSentence] = useSessionState(`${sessionPrefix}:text`, "");
-  const [speed, setSpeed] = useSessionState(`${sessionPrefix}:speed`, 0.85);
+  const [sessionStorageWarning, setSessionStorageWarning] = useState<
+    string | null
+  >(null);
+  const handleSessionStorageError = useCallback((message: string) => {
+    setSessionStorageWarning(message);
+  }, []);
+  const [sentence, setSentence] = useSessionState(`${sessionPrefix}:text`, "", {
+    onPersistenceError: handleSessionStorageError,
+  });
+  const [speed, setSpeed] = useSessionState(`${sessionPrefix}:speed`, 0.85, {
+    onPersistenceError: handleSessionStorageError,
+  });
   const [selectedWord, setSelectedWord] = useState<AzureWord | null>(null);
   const [transferSummary, setTransferSummary] =
     useState<FreePracticeTransferSummary | null>(null);
@@ -99,12 +109,15 @@ export default function SentencesPage() {
 
     const savedResult = loadSession<AzureAssessmentResult>(
       `${sessionPrefix}:azureResult`,
+      { onPersistenceError: handleSessionStorageError },
     );
     const savedFeedback = loadSession<FeedbackData>(
       `${sessionPrefix}:llmFeedback`,
+      { onPersistenceError: handleSessionStorageError },
     );
     const savedWordIdx = loadSession<number>(
       `${sessionPrefix}:selectedWordIdx`,
+      { onPersistenceError: handleSessionStorageError },
     );
 
     if (savedResult) {
@@ -114,7 +127,7 @@ export default function SentencesPage() {
       }
     }
     if (savedFeedback) llm.restore(savedFeedback);
-  }, [azure, llm, sessionPrefix]);
+  }, [azure, llm, sessionPrefix, handleSessionStorageError]);
 
   useEffect(() => {
     const refreshProfile = () => setProfile(loadMasteryProfile());
@@ -125,15 +138,25 @@ export default function SentencesPage() {
 
   useEffect(() => {
     if (restoredSessionPrefixRef.current !== sessionPrefix) return;
-    saveSession(`${sessionPrefix}:azureResult`, azure.result);
-  }, [azure.result, sessionPrefix]);
+    saveSession(`${sessionPrefix}:azureResult`, azure.result, {
+      onPersistenceError: handleSessionStorageError,
+    });
+  }, [azure.result, sessionPrefix, handleSessionStorageError]);
 
   useEffect(() => {
     if (restoredSessionPrefixRef.current !== sessionPrefix) return;
     if (llm.hasFeedback && !llm.isStreaming) {
-      saveSession(`${sessionPrefix}:llmFeedback`, llm.feedback);
+      saveSession(`${sessionPrefix}:llmFeedback`, llm.feedback, {
+        onPersistenceError: handleSessionStorageError,
+      });
     }
-  }, [llm.feedback, llm.hasFeedback, llm.isStreaming, sessionPrefix]);
+  }, [
+    llm.feedback,
+    llm.hasFeedback,
+    llm.isStreaming,
+    sessionPrefix,
+    handleSessionStorageError,
+  ]);
 
   useEffect(() => {
     if (restoredSessionPrefixRef.current !== sessionPrefix) return;
@@ -141,13 +164,17 @@ export default function SentencesPage() {
       selectedWord && azure.result
         ? azure.result.words.indexOf(selectedWord)
         : null;
-    saveSession(`${sessionPrefix}:selectedWordIdx`, idx);
-  }, [selectedWord, azure.result, sessionPrefix]);
+    saveSession(`${sessionPrefix}:selectedWordIdx`, idx, {
+      onPersistenceError: handleSessionStorageError,
+    });
+  }, [selectedWord, azure.result, sessionPrefix, handleSessionStorageError]);
 
   // ── Handlers ──
 
   const handleClearSession = useCallback(() => {
-    clearSessionPrefix(sessionPrefix);
+    clearSessionPrefix(sessionPrefix, {
+      onPersistenceError: handleSessionStorageError,
+    });
     setSentence("");
     setSpeed(0.85);
     setSelectedWord(null);
@@ -173,6 +200,7 @@ export default function SentencesPage() {
     setSentence,
     setSpeed,
     sessionPrefix,
+    handleSessionStorageError,
   ]);
 
   useEffect(() => {
@@ -390,90 +418,99 @@ export default function SentencesPage() {
         className="h-full flex flex-col px-6 py-4 overflow-hidden"
         data-smoke="sentences-page"
       >
-      <div className="mb-2 flex shrink-0 items-center justify-between">
-        <h1 className="text-2xl font-bold">自由练习</h1>
-        {(azure.result || llm.hasFeedback) && (
-          <button
-            type="button"
-            onClick={handleClearSession}
-            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+        <div className="mb-2 flex shrink-0 items-center justify-between">
+          <h1 className="text-2xl font-bold">自由练习</h1>
+          {(azure.result || llm.hasFeedback) && (
+            <button
+              type="button"
+              onClick={handleClearSession}
+              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            >
+              <Trash2 className="h-3 w-3" />
+              清除练习记录
+            </button>
+          )}
+        </div>
+        <p className="mb-4 shrink-0 text-muted-foreground">
+          输入单词或句子，听标准发音，跟读录音，获得 AI 评分与反馈
+        </p>
+        {sessionStorageWarning && (
+          <p
+            className="mb-3 shrink-0 rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
+            data-smoke="free-practice-session-storage-warning"
+            role="alert"
           >
-            <Trash2 className="h-3 w-3" />
-            清除练习记录
-          </button>
+            {sessionStorageWarning}
+          </p>
         )}
-      </div>
-      <p className="mb-4 shrink-0 text-muted-foreground">
-        输入单词或句子，听标准发音，跟读录音，获得 AI 评分与反馈
-      </p>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr] flex-1 min-h-0">
-        {/* Left Column */}
-        <div className="flex flex-col gap-3 min-h-0 lg:overflow-y-auto scrollbar-thin">
-          <SentenceInputCard
-            sentence={sentence}
-            onSentenceChange={setSentence}
-            speed={speed}
-            onSpeedChange={setSpeed}
-            isWordMode={isWordMode}
-            trimmedText={trimmedText}
-            wordIpa={wordIpa}
-            hasPlayedWord={hasPlayedWord}
-            wordAudioIsPlaying={wordAudio.isPlaying}
-            wordAudioIsLoading={wordAudio.isLoading}
-            wordAudioError={wordAudio.error}
-            onWordAudioPlay={handleWordAudioPlay}
-            ttsIsPlaying={tts.isPlaying}
-            ttsIsLoading={tts.isLoading}
-            ttsError={tts.error}
-            ttsWordTimings={tts.wordTimings}
-            ttsCurrentTime={tts.currentTime}
-            onTtsReplay={() => tts.replay()}
-            targetPreview={targetPreview}
-            onListen={handleListen}
-          />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr] flex-1 min-h-0">
+          {/* Left Column */}
+          <div className="flex flex-col gap-3 min-h-0 lg:overflow-y-auto scrollbar-thin">
+            <SentenceInputCard
+              sentence={sentence}
+              onSentenceChange={setSentence}
+              speed={speed}
+              onSpeedChange={setSpeed}
+              isWordMode={isWordMode}
+              trimmedText={trimmedText}
+              wordIpa={wordIpa}
+              hasPlayedWord={hasPlayedWord}
+              wordAudioIsPlaying={wordAudio.isPlaying}
+              wordAudioIsLoading={wordAudio.isLoading}
+              wordAudioError={wordAudio.error}
+              onWordAudioPlay={handleWordAudioPlay}
+              ttsIsPlaying={tts.isPlaying}
+              ttsIsLoading={tts.isLoading}
+              ttsError={tts.error}
+              ttsWordTimings={tts.wordTimings}
+              ttsCurrentTime={tts.currentTime}
+              onTtsReplay={() => tts.replay()}
+              targetPreview={targetPreview}
+              onListen={handleListen}
+            />
 
-          <SentenceRecordingCard
-            sentence={sentence}
-            isRecording={recorder.isRecording}
-            elapsedSeconds={recorder.elapsedSeconds}
-            maxDurationSeconds={recorder.maxDurationSeconds}
-            audioBlob={recorder.audioBlob}
-            stream={recorder.stream}
-            qualityReport={recordingQuality.report}
-            isAnalyzingQuality={recordingQuality.isAnalyzing}
-            recorderError={recorder.error}
-            onRecordStart={handleRecordStart}
-            onRecordStop={handleRecordStop}
-            isPlaying={playback.isPlaying}
-            onReplay={handlePlayRecording}
-            isAssessing={azure.isLoading}
-            assessError={azure.error}
-            localSaveError={localSaveError}
-            result={azure.result}
-            onClear={handleClear}
-            onAssess={handleAssess}
-          />
+            <SentenceRecordingCard
+              sentence={sentence}
+              isRecording={recorder.isRecording}
+              elapsedSeconds={recorder.elapsedSeconds}
+              maxDurationSeconds={recorder.maxDurationSeconds}
+              audioBlob={recorder.audioBlob}
+              stream={recorder.stream}
+              qualityReport={recordingQuality.report}
+              isAnalyzingQuality={recordingQuality.isAnalyzing}
+              recorderError={recorder.error}
+              onRecordStart={handleRecordStart}
+              onRecordStop={handleRecordStop}
+              isPlaying={playback.isPlaying}
+              onReplay={handlePlayRecording}
+              isAssessing={azure.isLoading}
+              assessError={azure.error}
+              localSaveError={localSaveError}
+              result={azure.result}
+              onClear={handleClear}
+              onAssess={handleAssess}
+            />
+          </div>
+
+          {/* Right Column */}
+          <div className="flex flex-col gap-3 min-h-0 lg:overflow-y-auto scrollbar-thin lg:pb-4">
+            <SentenceResultsColumn
+              hasResult={hasResult}
+              languageId={languageId}
+              result={azure.result}
+              selectedWord={selectedWord}
+              stressedSyllables={stressedSyllables}
+              onWordClick={handleWordClick}
+              feedback={llm.feedback}
+              isStreaming={llm.isStreaming}
+              hasFeedback={llm.hasFeedback}
+              llmError={llm.error}
+              onRetryFeedback={handleRetryFeedback}
+              transferSummary={transferSummary}
+            />
+          </div>
         </div>
-
-        {/* Right Column */}
-        <div className="flex flex-col gap-3 min-h-0 lg:overflow-y-auto scrollbar-thin lg:pb-4">
-          <SentenceResultsColumn
-            hasResult={hasResult}
-            languageId={languageId}
-            result={azure.result}
-            selectedWord={selectedWord}
-            stressedSyllables={stressedSyllables}
-            onWordClick={handleWordClick}
-            feedback={llm.feedback}
-            isStreaming={llm.isStreaming}
-            hasFeedback={llm.hasFeedback}
-            llmError={llm.error}
-            onRetryFeedback={handleRetryFeedback}
-            transferSummary={transferSummary}
-          />
-        </div>
-      </div>
       </div>
     </LanguageModuleGate>
   );

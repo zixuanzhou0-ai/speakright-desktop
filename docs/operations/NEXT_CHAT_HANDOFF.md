@@ -176,6 +176,11 @@ git status --short --branch
   visible: if localStorage is full or blocked, the score result and feedback
   flow still continue, and the practice surface shows a Chinese `role="alert"`
   warning that local trend/history or transfer evidence was not saved.
+- Free practice and phoneme detail now also surface temporary `sessionStorage`
+  failures. If page-level text, selected word, score, or AI-feedback state
+  cannot be saved/restored for navigation, the current practice still continues,
+  but the page shows `free-practice-session-storage-warning` or
+  `phoneme-session-storage-warning` with Chinese reset/export guidance.
 - Advanced English training surfaces now follow the same visible local-save
   policy for mastery/profile writes: pack-runner completion, HVPT perception,
   prosody, scenario transfer, and spontaneous transfer keep the completed result
@@ -514,6 +519,9 @@ Current gate summary:
 - Focused recording-quality panel tests passed: `1` file and `3` tests,
   covering blocker alerts, submit-ready status feedback, and the empty
   pre-report state.
+- Focused session-state warning tests passed: `2` files and `20` tests,
+  covering blocked `sessionStorage` read/write/manual helper notifications and
+  static Release smoke hooks for free practice plus phoneme detail warnings.
 - Focused desktop-readiness microphone tests passed: `2` files and `8` tests,
   covering low-signal/too-short Chinese errors plus unsupported and denied
   microphone-check checklist hints.
@@ -531,8 +539,8 @@ Current gate summary:
 - Focused phoneme detail presentation tests passed: `2` files and `9` tests,
   covering non-English full text visibility, Russian long Cyrillic rule text,
   and task-accurate A/B playback labels.
-- Full tests passed: `116` files and `642` tests.
-- Typecheck, lint (`377` files checked), and static desktop frontend build
+- Full tests passed: `117` files and `646` tests.
+- Typecheck, lint (`378` files checked), and static desktop frontend build
   passed.
 - Release EXE build passed and rebuilt EXE, MSI, and NSIS artifacts.
 - Release EXE preflight passed; no localhost startup is part of the release
@@ -553,7 +561,7 @@ Current gate summary:
   intro card plus start/passage actions instead of only checking the page
   container.
 - Release EXE launch passed from the static Tauri bundle, and the test process
-  was closed after verification; the latest launch PID was `56688`.
+  was closed after verification; the latest launch PID was `54628`.
 - No ElevenLabs generation or TTS spend is part of this validation path.
 
 For tomorrow's manual test session, start with:

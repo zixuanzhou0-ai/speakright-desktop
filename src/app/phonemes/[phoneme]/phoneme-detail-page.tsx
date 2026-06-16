@@ -11,12 +11,11 @@ import { PhonemeStudyCard } from "@/components/phoneme/phoneme-study-card";
 import { PhonemeHighlight } from "@/components/scoring/phoneme-highlight";
 import { ScoreSummary } from "@/components/scoring/score-summary";
 import { Button } from "@/components/ui/button";
+import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { useAzureAssessment } from "@/hooks/use-azure-assessment";
-import { useLanguageConfig } from "@/hooks/use-api-keys";
 import type { FeedbackData } from "@/hooks/use-llm-feedback";
 import { useLlmFeedback } from "@/hooks/use-llm-feedback";
-import { useWordPronunciation } from "@/hooks/use-word-pronunciation";
 import { useRecorder } from "@/hooks/use-recorder";
 import {
   loadSession,
@@ -24,16 +23,17 @@ import {
   useSessionState,
 } from "@/hooks/use-session-state";
 import { useSyllableStress } from "@/hooks/use-syllable-stress";
+import { useWordPronunciation } from "@/hooks/use-word-pronunciation";
+import {
+  collectDetailAssessmentPhonemes,
+  collectDetailAssessmentSyllables,
+} from "@/lib/detail-assessment-breakdown";
 import { getLanguagePhonemeBySlug } from "@/lib/language-phonemes";
 import {
   getDefaultPhonemeSlug,
   getLanguageProfile,
 } from "@/lib/language-profiles";
 import { isRuleLikeSoundUnit } from "@/lib/language-sound-unit-groups";
-import {
-  collectDetailAssessmentPhonemes,
-  collectDetailAssessmentSyllables,
-} from "@/lib/detail-assessment-breakdown";
 import {
   getPracticedWordsForLanguage,
   markWordPracticedForLanguage,
@@ -84,21 +84,33 @@ export function PhonemeDetailPage() {
   const autoAssessTriggered = useRef(false);
 
   const sessionPrefix = `phonemes:${languageId}:${params.phoneme}`;
+  const [sessionStorageWarning, setSessionStorageWarning] = useState<
+    string | null
+  >(null);
+  const handleSessionStorageError = useCallback((message: string) => {
+    setSessionStorageWarning(message);
+  }, []);
 
   const [currentWord, setCurrentWord] = useSessionState<KeywordEntry | null>(
     `${sessionPrefix}:currentWord`,
     null,
+    { onPersistenceError: handleSessionStorageError },
   );
   const [wordHistory, setWordHistory] = useSessionState<KeywordEntry[]>(
     `${sessionPrefix}:wordHistory`,
     [],
+    { onPersistenceError: handleSessionStorageError },
   );
   const [selectedWordPhonemes, setSelectedWordPhonemes] = useSessionState<
     { phoneme: string; accuracyScore: number }[]
-  >(`${sessionPrefix}:phonemes`, []);
+  >(`${sessionPrefix}:phonemes`, [], {
+    onPersistenceError: handleSessionStorageError,
+  });
   const [selectedWordSyllables, setSelectedWordSyllables] = useSessionState<
     { syllable: string; grapheme?: string; accuracyScore: number }[]
-  >(`${sessionPrefix}:syllables`, []);
+  >(`${sessionPrefix}:syllables`, [], {
+    onPersistenceError: handleSessionStorageError,
+  });
   const [localSaveError, setLocalSaveError] = useState<string | null>(null);
 
   // Annotate syllables with stress data (static IPA lookup → legacy local cache).
@@ -116,27 +128,39 @@ export function PhonemeDetailPage() {
 
     const savedResult = loadSession<AzureAssessmentResult>(
       `${sessionPrefix}:azureResult`,
+      { onPersistenceError: handleSessionStorageError },
     );
     const savedFeedback = loadSession<FeedbackData>(
       `${sessionPrefix}:llmFeedback`,
+      { onPersistenceError: handleSessionStorageError },
     );
 
     if (savedResult) azure.restore(savedResult);
     if (savedFeedback) llm.restore(savedFeedback);
-  }, [sessionPrefix, azure.restore, llm.restore]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sessionPrefix, azure.restore, llm.restore, handleSessionStorageError]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Save hook state to sessionStorage on change
   useEffect(() => {
     if (!restoredRef.current) return;
-    saveSession(`${sessionPrefix}:azureResult`, azure.result);
-  }, [azure.result, sessionPrefix]);
+    saveSession(`${sessionPrefix}:azureResult`, azure.result, {
+      onPersistenceError: handleSessionStorageError,
+    });
+  }, [azure.result, sessionPrefix, handleSessionStorageError]);
 
   useEffect(() => {
     if (!restoredRef.current) return;
     if (llm.hasFeedback && !llm.isStreaming) {
-      saveSession(`${sessionPrefix}:llmFeedback`, llm.feedback);
+      saveSession(`${sessionPrefix}:llmFeedback`, llm.feedback, {
+        onPersistenceError: handleSessionStorageError,
+      });
     }
-  }, [llm.feedback, llm.hasFeedback, llm.isStreaming, sessionPrefix]);
+  }, [
+    llm.feedback,
+    llm.hasFeedback,
+    llm.isStreaming,
+    sessionPrefix,
+    handleSessionStorageError,
+  ]);
 
   // Deterministic word pool: static keywords + extended word bank.
   const wordPool = useMemo(
@@ -155,8 +179,9 @@ export function PhonemeDetailPage() {
 
   useEffect(() => {
     setShowSmokeAssessmentTiles(
-      new URLSearchParams(window.location.search).get("smokeAssessmentTiles") ===
-        "1",
+      new URLSearchParams(window.location.search).get(
+        "smokeAssessmentTiles",
+      ) === "1",
     );
   }, []);
 
@@ -433,14 +458,18 @@ export function PhonemeDetailPage() {
             onNext={handleNext}
             onSetWordDirection={setWordDirection}
             onSetLastChartPlay={setLastChartPlay}
-            onPlayWord={(word, voice) => wordAudio.playWord(word, voice, languageId)}
+            onPlayWord={(word, voice) =>
+              wordAudio.playWord(word, voice, languageId)
+            }
             onPlayChartAudio={(path, options) => chartAudio.play(path, options)}
             onStopPlayback={() => playback.stop()}
             onStopWordAudio={() => wordAudio.stop()}
             onStopChartAudio={() => chartAudio.stop()}
             wordHistoryLength={wordHistory.length}
             canGoPrevious={
-              languageId === "es-ES" ? wordPool.length > 1 : wordHistory.length > 0
+              languageId === "es-ES"
+                ? wordPool.length > 1
+                : wordHistory.length > 0
             }
           />
 
@@ -448,6 +477,16 @@ export function PhonemeDetailPage() {
             <div className="rounded-lg border bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
               这是规则/语流训练，评分以词或短语证据为准，不会用单个音素分数直接晋级掌握状态。
             </div>
+          )}
+
+          {sessionStorageWarning && (
+            <p
+              className="rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
+              data-smoke="phoneme-session-storage-warning"
+              role="alert"
+            >
+              {sessionStorageWarning}
+            </p>
           )}
 
           {/* ── 练习区 ── */}
