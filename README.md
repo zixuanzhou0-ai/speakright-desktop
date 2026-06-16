@@ -139,11 +139,10 @@ README/docs-only changes run the lightweight Docs Check workflow.
   is complete.
 - Last controlled-test verification: 2026-06-16, after the Release launch
   guardrail pass and full Release EXE gate.
-- Previous release-validation baseline: `94be1d4`
-  (`chore: tighten desktop release validation`).
-- Latest release-hardening pass added non-English low-evidence diagnosis gates,
-  `desktop:preflight`, `desktop:ui-smoke`, and docs-only CI path filtering; the
-  final local `validate:desktop` pass completed successfully.
+- The current release-hardening proof matrix, exact command results, and known
+  blockers live in `docs/operations/RC_EVIDENCE_AUDIT.md`; do not treat an
+  older commit SHA or a downloaded installer timestamp as the latest validated
+  RC state without checking that audit.
 - Verified bundled assets after the multilingual dual-voice expansion: English
   word audio `1464/1464`, Spanish language-pack audio `880/880`, French
   language-pack audio `1090/1090`, Russian language-pack files `920/920`, local

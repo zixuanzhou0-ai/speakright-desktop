@@ -154,8 +154,9 @@ coverage.
 ## Current Internal-Test Status
 
 Current controlled-test track: Release Candidate evidence audit, documented in
-`docs/operations/RC_EVIDENCE_AUDIT.md`. Previous release-validation baseline
-before the local RC audit: `94be1d4`.
+`docs/operations/RC_EVIDENCE_AUDIT.md`. Use that audit for the latest command
+results, Release EXE smoke coverage, and known blockers before treating a
+downloaded installer as the latest validated RC.
 
 - Recommended launch path: `npm run desktop:launch-release`.
 - Build shape: Tauri static bundle, not `localhost`.

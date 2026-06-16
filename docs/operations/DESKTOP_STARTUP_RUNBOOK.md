@@ -313,10 +313,11 @@ release notes and installation guide keep the unsigned warning visible.
 - Current public-release blocker remains Windows code signing; controlled
   internal testing may continue with the unsigned warning visible.
 
-## 2026-06-11 Release-Validation Result
+## 2026-06-11 Historical Release-Validation Result
 
-- Current validation update: commit `94be1d4` (`chore: tighten desktop release
-  validation`).
+- Historical validation update: commit `94be1d4` (`chore: tighten desktop
+  release validation`). Do not use this historical SHA as the latest RC state;
+  current command results live in `docs/operations/RC_EVIDENCE_AUDIT.md`.
 - `npm.cmd run test`: 72 test files and 363 tests passed.
 - `npm.cmd run typecheck`: passed.
 - `npm.cmd run lint`: passed; Biome checked 308 files.
@@ -498,10 +499,9 @@ release notes and installation guide keep the unsigned warning visible.
   - Latest settled-main validation results are centralized in
     `docs/operations/RC_EVIDENCE_AUDIT.md` to avoid stale counts across
     multiple handoff documents.
-  - `npm.cmd run test` passed with `117` files and `646` tests;
-    `npm.cmd run typecheck`, `npm.cmd run lint` (`378` files checked), and
-    `npm.cmd run build:desktop-frontend` passed in the latest settled-main
-    gate.
+  - `npm.cmd run test`, `npm.cmd run typecheck`, `npm.cmd run lint`, and
+    `npm.cmd run build:desktop-frontend` passed in that settled-main gate; exact
+    current counts live in `docs/operations/RC_EVIDENCE_AUDIT.md`.
   - `npm.cmd run desktop:build`: passed; rebuilt Release EXE, MSI, and NSIS.
   - `npm.cmd run desktop:preflight`: passed.
   - `npm.cmd run desktop:ui-smoke`: passed from Release EXE with centered target

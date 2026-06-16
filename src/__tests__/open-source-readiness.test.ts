@@ -282,12 +282,21 @@ describe("open-source readiness files", () => {
     expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
       'word floor `-21.6 dB`',
     );
+    expect(readme).toContain("current release-hardening proof matrix");
+    expect(readme).toContain("older commit SHA");
+    expect(installation).toContain("Use that audit for the latest command");
+    expect(readme).not.toContain("Previous release-validation baseline");
+    expect(installation).not.toContain("Previous release-validation baseline");
+    expect(readme).not.toContain("94be1d4");
+    expect(installation).not.toContain("94be1d4");
     expect(handoffDocs).toContain(
       "Current command-by-command results, including exact test counts, live in",
     );
     expect(handoffDocs).not.toMatch(/89\s+(?:files|test files).*489\s+tests/);
     expect(handoffDocs).not.toContain("119` files and `666` tests");
+    expect(handoffDocs).not.toContain("117` files and `646` tests");
     expect(handoffDocs).not.toContain("Biome checked 341 files");
+    expect(handoffDocs).not.toContain("378` files checked");
     expect(handoffDocs).not.toContain("PID was `70112`");
   });
 
