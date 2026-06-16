@@ -136,6 +136,9 @@ describe("settings key hydration", () => {
       "data-smoke",
       "elevenlabs-usage-empty",
     );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "未配置 ElevenLabs API Key",
+    );
     expect(mocks.fetchElevenLabsUsage).not.toHaveBeenCalled();
 
     await act(async () => {
@@ -147,6 +150,37 @@ describe("settings key hydration", () => {
         "eleven-hydrated-key",
       );
     });
+  }, 30_000);
+
+  it("keeps ElevenLabs usage network failures actionable in Chinese", async () => {
+    const { UsageMonitor } = await import(
+      "@/components/settings/usage-monitor"
+    );
+    const { hydrateKeys } = await import("@/lib/api-keys");
+    mocks.fetchElevenLabsUsage.mockRejectedValueOnce(
+      new TypeError("Failed to fetch"),
+    );
+    mocks.secureStore.set("speakright_elevenlabs_config", {
+      apiKey: "eleven-hydrated-key",
+      voiceId: "voice",
+      modelId: "eleven_flash_v2_5",
+    });
+
+    render(<UsageMonitor />);
+
+    await act(async () => {
+      await hydrateKeys();
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toHaveTextContent(
+        "ElevenLabs 用量查询失败，请检查网络、代理或 API Key 后重试",
+      );
+    });
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "本地单词音频和已内置语言包音频可继续使用",
+    );
+    expect(screen.queryByText("Failed to fetch")).not.toBeInTheDocument();
   }, 30_000);
 
   it("keeps the word pronunciation label fixed after legacy source hydration", async () => {

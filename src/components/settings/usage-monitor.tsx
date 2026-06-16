@@ -22,6 +22,7 @@ import {
   resetAzureUsage,
   resetLlmUsage,
 } from "@/lib/usage-tracker";
+import { getSettingsUserFacingError } from "./user-facing-error";
 
 // ===== Ring Progress =====
 
@@ -85,6 +86,9 @@ interface ElevenLabsData {
 const ELEVENLABS_USAGE_NOT_CONFIGURED_MESSAGE =
   "未配置 ElevenLabs API Key。句子/短语标准示范和跟读高亮需要配置；本地单词音频和已内置语言包音频可继续使用。";
 
+const ELEVENLABS_USAGE_QUERY_FAILED_MESSAGE =
+  "ElevenLabs 用量查询失败，请检查网络、代理或 API Key 后重试；本地单词音频和已内置语言包音频可继续使用。";
+
 function ElevenLabsUsageCard() {
   const [data, setData] = useState<ElevenLabsData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -108,7 +112,9 @@ function ElevenLabsUsageCard() {
       if (msg.includes("missing_permissions") || msg.includes("401")) {
         setError("API Key 缺少 user_read 权限，无法查询用量");
       } else {
-        setError(msg);
+        setError(
+          getSettingsUserFacingError(e, ELEVENLABS_USAGE_QUERY_FAILED_MESSAGE),
+        );
       }
     } finally {
       setLoading(false);
@@ -137,6 +143,8 @@ function ElevenLabsUsageCard() {
   }, [fetchUsage]);
 
   const percent = data ? (data.characterCount / data.characterLimit) * 100 : 0;
+  const isNotConfigured =
+    error === ELEVENLABS_USAGE_NOT_CONFIGURED_MESSAGE;
   const resetDays = data?.nextResetUnix
     ? Math.max(
         0,
@@ -165,8 +173,10 @@ function ElevenLabsUsageCard() {
       <CardContent>
         {error ? (
           <p
+            aria-live={isNotConfigured ? "polite" : "assertive"}
             className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]"
             data-smoke="elevenlabs-usage-empty"
+            role={isNotConfigured ? "status" : "alert"}
           >
             {error}
           </p>

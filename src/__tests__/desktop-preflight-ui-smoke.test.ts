@@ -252,7 +252,11 @@ describe("desktop preflight and UI smoke", () => {
     expect(usageMonitor).toContain('data-smoke="usage-history-target"');
     expect(usageMonitor).toContain('data-smoke="elevenlabs-usage-empty"');
     expect(usageMonitor).toContain("未配置 ElevenLabs API Key");
+    expect(usageMonitor).toContain("ElevenLabs 用量查询失败");
     expect(usageMonitor).toContain("本地单词音频");
+    expect(usageMonitor).toContain(
+      'role={isNotConfigured ? "status" : "alert"}',
+    );
     expect(usageMonitor).toContain("overflow-wrap:anywhere");
     expect(usageMonitor).not.toContain("truncate");
     expect(pronunciationCard).toContain('data-smoke="pronunciation-test-row"');
