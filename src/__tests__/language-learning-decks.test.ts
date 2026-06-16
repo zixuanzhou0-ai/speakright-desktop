@@ -49,14 +49,6 @@ const ALLOWED_COMPACT_SENTENCE_HINTS = new Map([
     },
   ],
   [
-    "fr-FR:Le grand homme parle encore.",
-    {
-      ipaHint: "liaison",
-      targetUnitSlugs: ["fr-liaison", "fr-r", "fr-an"],
-      focus: "grand homme 的 liaison",
-    },
-  ],
-  [
     "ru-RU:Встреча завтра утром.",
     {
       ipaHint: "clusters + assimilation",

@@ -173,6 +173,11 @@ describe("static multilingual language audio packs", () => {
         ipa: "/ʒɛm lə bɔ̃ vɛ̃ blɑ̃/",
       },
       {
+        languageId: "fr-FR",
+        text: "Le grand homme parle encore.",
+        ipa: "/lə gʁɑ̃tɔm paʁl ɑ̃kɔʁ/",
+      },
+      {
         languageId: "ru-RU",
         text: "Здравствуйте, студент.",
         ipa: "/ˈzdrastvʊjtʲe stʊˈdʲent/",

@@ -76,8 +76,10 @@ Russian `ru-RU`:
   those as `focus-hint`, not as a full `recommendedIpa` candidate.
 - The remaining non-IPA sentence hints are intentionally bounded and tested in
   `language-learning-decks.test.ts`: Spanish `nasal place`, `stress`, and
-  `syllable rhythm`; French `Le grand homme parle encore.` -> `liaison`;
-  Russian `Встреча завтра утром.` -> `clusters + assimilation`. New compact
+  `syllable rhythm`; Russian `Встреча завтра утром.` ->
+  `clusters + assimilation`. French connected-speech sentence rows such as
+  `Le grand homme parle encore.` use slash-wrapped broad realization
+  (`/lə gʁɑ̃tɔm paʁl ɑ̃kɔʁ/`) rather than compact labels. New compact
   hints should either be upgraded to a full sourced IPA display or added to that
   explicit allowlist with a clear audit reason.
 

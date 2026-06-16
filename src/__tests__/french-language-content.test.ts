@@ -57,6 +57,13 @@ describe("French pronunciation content", () => {
     expect(byText("J’aime le bon vin blanc.")?.ipaHint).toBe(
       "/ʒɛm lə bɔ̃ vɛ̃ blɑ̃/",
     );
+    expect(byText("Le grand homme parle encore.")?.ipaHint).toBe(
+      "/lə gʁɑ̃tɔm paʁl ɑ̃kɔʁ/",
+    );
+    expect(byText("Le grand homme parle encore.")?.focus).toContain(
+      "liaison",
+    );
+    expect(byText("Le grand homme parle encore.")?.focus).toContain("/t/");
     expect(bySlug("fr-schwa")?.ipaHint).toContain("ə");
 
     for (const item of [
@@ -65,6 +72,7 @@ describe("French pronunciation content", () => {
       bySlug("fr-elision"),
       byText("Trop grand, trop lent, trop fort."),
       byText("J’aime le bon vin blanc."),
+      byText("Le grand homme parle encore."),
     ]) {
       expect(item?.ipaHint, item?.text).toMatch(/^\/.+\/$/);
     }

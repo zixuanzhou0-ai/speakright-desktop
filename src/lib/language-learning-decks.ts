@@ -514,9 +514,9 @@ export const LANGUAGE_LEARNING_DECKS: Record<DeckLanguageId, LanguageLearningDec
       },
       {
         text: "Le grand homme parle encore.",
-        ipaHint: "liaison",
+        ipaHint: "/lə gʁɑ̃tɔm paʁl ɑ̃kɔʁ/",
         targetUnitSlugs: ["fr-liaison", "fr-r", "fr-an"],
-        focus: "grand homme 的 liaison",
+        focus: "grand homme 的 liaison：/t/ 重新发出并连到 homme",
       },
       {
         text: "Petit à petit, elle écoute.",
