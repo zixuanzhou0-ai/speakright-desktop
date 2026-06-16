@@ -22,6 +22,15 @@ export function PhonemeGrid({ phonemes }: PhonemeGridProps) {
 
   return (
     <div className="space-y-8">
+      {player.error && (
+        <p
+          className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-center text-sm text-destructive [overflow-wrap:anywhere]"
+          data-smoke="phoneme-grid-audio-error"
+          role="alert"
+        >
+          {player.error}
+        </p>
+      )}
       {groups.map((group) => (
         <section key={group.id} className="space-y-3">
           <div>

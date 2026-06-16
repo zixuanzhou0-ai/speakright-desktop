@@ -453,6 +453,7 @@ export function PhonemeDetailPage() {
             isWordActive={isWordActive}
             wordIsLoading={wordAudio.isLoading}
             wordAudioError={wordAudio.error}
+            chartAudioError={chartAudio.error}
             lastChartPlay={lastChartPlay}
             onPrevious={handlePrevious}
             onNext={handleNext}

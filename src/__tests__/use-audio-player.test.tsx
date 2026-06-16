@@ -6,6 +6,7 @@ type MockHowlInstance = {
   play: ReturnType<typeof vi.fn>;
   stop: ReturnType<typeof vi.fn>;
   unload: ReturnType<typeof vi.fn>;
+  triggerLoadError: () => void;
 };
 
 const howlerMock = vi.hoisted(() => ({
@@ -21,6 +22,7 @@ beforeEach(() => {
   howlerMock.instances.length = 0;
   howlerMock.Howl.mockImplementation(function MockHowl(options: {
     onplay?: () => void;
+    onloaderror?: () => void;
   }) {
     const instance: MockHowlInstance = {
       play: vi.fn(() => {
@@ -29,6 +31,7 @@ beforeEach(() => {
       }),
       stop: vi.fn(),
       unload: vi.fn(),
+      triggerLoadError: () => options.onloaderror?.(),
     };
     howlerMock.instances.push(instance);
     return instance;
@@ -85,5 +88,23 @@ describe("useAudioPlayer", () => {
         volume: 1.6,
       }),
     );
+  });
+
+  it("exposes a Chinese local audio error when bundled playback fails", () => {
+    const { result } = renderHook(() => useAudioPlayer());
+
+    act(() => {
+      result.current.play("/audio/ipa/normal/cat.mp3");
+    });
+    expect(result.current.error).toBeNull();
+
+    act(() => {
+      howlerMock.instances[0].triggerLoadError();
+    });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.isPlaying).toBe(false);
+    expect(result.current.error).toContain("本地音频加载失败");
+    expect(result.current.error).toContain("Release EXE 音频缺口");
   });
 });

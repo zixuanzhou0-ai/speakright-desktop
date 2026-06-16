@@ -19,7 +19,7 @@ export function PhonemePlayButton({
   phonemeAudio,
   onBeforePlay,
 }: PhonemePlayButtonProps) {
-  const { play, isPlaying, isLoading } = useAudioPlayer();
+  const { play, isPlaying, isLoading, error, clearError } = useAudioPlayer();
   const canPlayLocalHeaderAudio = isPlayableHeaderAudioSrc(
     phonemeAudio?.localSrc,
   );
@@ -46,17 +46,29 @@ export function PhonemePlayButton({
   };
 
   const handleClick = () => {
+    clearError();
     onBeforePlay?.();
     play(audioSrc, playbackOptions);
   };
 
   return (
-    <AudioPlayerButton
-      onClick={handleClick}
-      isPlaying={isPlaying}
-      isLoading={isLoading}
-      size="lg"
-      dataAttributes={dataAttributes}
-    />
+    <span className="inline-flex min-w-0 flex-col items-center gap-1">
+      <AudioPlayerButton
+        onClick={handleClick}
+        isPlaying={isPlaying}
+        isLoading={isLoading}
+        size="lg"
+        dataAttributes={dataAttributes}
+      />
+      {error && (
+        <span
+          className="max-w-44 break-words text-center text-[11px] leading-snug text-destructive [overflow-wrap:anywhere]"
+          data-smoke="phoneme-header-audio-error"
+          role="alert"
+        >
+          {error}
+        </span>
+      )}
+    </span>
   );
 }

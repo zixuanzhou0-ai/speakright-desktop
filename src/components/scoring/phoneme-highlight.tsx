@@ -60,6 +60,7 @@ function playPhonemeAudio(
   options: PhonemeTilePlaybackOptions,
   onStart: () => void,
   onEnd: () => void,
+  onError: () => void,
 ) {
   if (!isScoringTileAudioPlayable(audioUrl)) {
     onEnd();
@@ -105,6 +106,15 @@ function playPhonemeAudio(
       activePhonemeKey = "";
       if (activeHowl === howl) activeHowl = null;
       onEnd();
+      onError();
+    },
+    onplayerror: () => {
+      clearActiveStopTimer();
+      clearActiveFadeTimer();
+      activePhonemeKey = "";
+      if (activeHowl === howl) activeHowl = null;
+      onEnd();
+      onError();
     },
   });
   activeHowl = howl;
@@ -139,10 +149,14 @@ export function PhonemeBlock({
   ph,
   index,
   languageId = "en-US",
+  onPlaybackStart,
+  onPlaybackError,
 }: {
   ph: AzurePhoneme;
   index: number;
   languageId?: LanguageId;
+  onPlaybackStart?: () => void;
+  onPlaybackError?: () => void;
 }) {
   const score = Math.round(ph.accuracyScore);
   const isGood = ph.accuracyScore >= 60;
@@ -164,6 +178,7 @@ export function PhonemeBlock({
 
   const handlePlay = useCallback(() => {
     if (!audioInfo) return;
+    onPlaybackStart?.();
 
     playPhonemeAudio(
       audioInfo.url,
@@ -175,8 +190,15 @@ export function PhonemeBlock({
       },
       () => setPlayingIfMounted(true),
       () => setPlayingIfMounted(false),
+      () => onPlaybackError?.(),
     );
-  }, [audioInfo, blockKey, setPlayingIfMounted]);
+  }, [
+    audioInfo,
+    blockKey,
+    onPlaybackError,
+    onPlaybackStart,
+    setPlayingIfMounted,
+  ]);
 
   const handleClick = useCallback(() => {
     if (!hasAudio) return;
@@ -313,6 +335,7 @@ export function PhonemeHighlight({
   expectedText,
   expectedIpa,
 }: PhonemeHighlightProps) {
+  const [playbackError, setPlaybackError] = useState<string | null>(null);
   const visiblePhonemes = phonemes.filter((ph) =>
     normalizeAssessmentPhoneme(ph.phoneme),
   );
@@ -357,6 +380,15 @@ export function PhonemeHighlight({
             </span>
           )}
         </div>
+        {playbackError && (
+          <p
+            className="mb-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-center text-xs text-destructive [overflow-wrap:anywhere]"
+            data-smoke="assessment-phoneme-audio-error"
+            role="alert"
+          >
+            {playbackError}
+          </p>
+        )}
         {showTargetReference && (
           <div
             className="mb-3 rounded-lg border bg-muted/20 px-3 py-2 text-center"
@@ -386,6 +418,12 @@ export function PhonemeHighlight({
                 ph={item.ph}
                 index={i}
                 languageId={languageId}
+                onPlaybackStart={() => setPlaybackError(null)}
+                onPlaybackError={() =>
+                  setPlaybackError(
+                    "本地音标音频加载失败：发布包音频可能缺失或被系统拦截，请重新安装应用，或通过音频/provider issue 反馈 Release EXE 音频缺口。",
+                  )
+                }
               />
             ))}
           </div>

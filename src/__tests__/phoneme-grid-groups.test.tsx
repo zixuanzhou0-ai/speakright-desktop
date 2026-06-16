@@ -3,13 +3,19 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { PhonemeGrid } from "@/components/phoneme/phoneme-grid";
 import { getLanguagePhonemes } from "@/lib/language-phonemes";
 
+const mocks = vi.hoisted(() => ({
+  playerError: null as string | null,
+}));
+
 vi.mock("@/hooks/use-audio-player", () => ({
   useAudioPlayer: () => ({
     isPlaying: false,
     isLoading: false,
+    error: mocks.playerError,
     play: vi.fn(),
     playBlob: vi.fn(),
     stop: vi.fn(),
+    clearError: vi.fn(),
   }),
 }));
 
@@ -17,7 +23,10 @@ vi.mock("next/image", () => ({
   default: () => null,
 }));
 
-afterEach(() => cleanup());
+afterEach(() => {
+  cleanup();
+  mocks.playerError = null;
+});
 
 describe("PhonemeGrid language grouping", () => {
   it("keeps English as vowels and consonants", () => {
@@ -66,5 +75,15 @@ describe("PhonemeGrid language grouping", () => {
     ]) {
       expect(screen.getByRole("heading", { name: label })).toBeInTheDocument();
     }
+  });
+
+  it("shows shared local audio playback failures above the grid", () => {
+    mocks.playerError = "本地音频加载失败：发布包音频可能缺失。";
+
+    render(<PhonemeGrid phonemes={getLanguagePhonemes("en-US")} />);
+
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveAttribute("data-smoke", "phoneme-grid-audio-error");
+    expect(alert).toHaveTextContent("本地音频加载失败");
   });
 });

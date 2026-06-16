@@ -10,14 +10,28 @@ import {
 export interface UseAudioPlayerReturn {
   isPlaying: boolean;
   isLoading: boolean;
+  error: string | null;
   play: (src: string, options?: AudioPlaybackOptions) => void;
   playBlob: (blob: Blob) => void;
   stop: () => void;
+  clearError: () => void;
+}
+
+function getAudioPlaybackErrorMessage(src?: string): string {
+  if (!src) return "音频播放失败，请检查系统音频输出或稍后重试。";
+  if (src.startsWith("blob:")) {
+    return "录音回放加载失败，请重录或重启 SpeakRight 后再试。";
+  }
+  if (src.startsWith("/audio/")) {
+    return "本地音频加载失败：发布包音频可能缺失或被系统拦截，请重新安装应用，或通过音频/provider issue 反馈 Release EXE 音频缺口。";
+  }
+  return "音频播放失败，请检查系统音频输出、网络或代理后重试。";
 }
 
 export function useAudioPlayer(): UseAudioPlayerReturn {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const howlRef = useRef<Howl | null>(null);
   const blobUrlRef = useRef<string | null>(null);
   const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -30,6 +44,10 @@ export function useAudioPlayer(): UseAudioPlayerReturn {
 
   const setSafeIsLoading = useCallback((value: boolean) => {
     if (mountedRef.current) setIsLoading(value);
+  }, []);
+
+  const setSafeError = useCallback((value: string | null) => {
+    if (mountedRef.current) setError(value);
   }, []);
 
   const clearPlaybackTimers = useCallback(() => {
@@ -58,6 +76,7 @@ export function useAudioPlayer(): UseAudioPlayerReturn {
   const play = useCallback(
     (src: string, options: AudioPlaybackOptions = {}) => {
       cleanup();
+      setSafeError(null);
       if (isVideoBackedAudioSrc(src)) {
         setSafeIsLoading(false);
         setSafeIsPlaying(false);
@@ -68,6 +87,12 @@ export function useAudioPlayer(): UseAudioPlayerReturn {
       setSafeIsLoading(true);
 
       const volume = options.volume ?? 1;
+      const handlePlaybackError = () => {
+        clearPlaybackTimers();
+        setSafeIsLoading(false);
+        setSafeIsPlaying(false);
+        setSafeError(getAudioPlaybackErrorMessage(src));
+      };
 
       const howl = new Howl({
         src: [src],
@@ -86,11 +111,8 @@ export function useAudioPlayer(): UseAudioPlayerReturn {
           clearPlaybackTimers();
           setSafeIsPlaying(false);
         },
-        onloaderror: () => {
-          clearPlaybackTimers();
-          setSafeIsLoading(false);
-          setSafeIsPlaying(false);
-        },
+        onloaderror: handlePlaybackError,
+        onplayerror: handlePlaybackError,
       });
 
       howlRef.current = howl;
@@ -124,6 +146,7 @@ export function useAudioPlayer(): UseAudioPlayerReturn {
     [
       cleanup,
       clearPlaybackTimers,
+      setSafeError,
       setSafeIsLoading,
       setSafeIsPlaying,
     ],
@@ -134,7 +157,13 @@ export function useAudioPlayer(): UseAudioPlayerReturn {
       cleanup();
       const url = URL.createObjectURL(blob);
       blobUrlRef.current = url;
+      setSafeError(null);
       setSafeIsLoading(true);
+      const handlePlaybackError = () => {
+        setSafeIsLoading(false);
+        setSafeIsPlaying(false);
+        setSafeError(getAudioPlaybackErrorMessage(url));
+      };
       const howl = new Howl({
         src: [url],
         format: ["wav", "webm", "ogg", "mp4", "m4a", "mp3"],
@@ -145,22 +174,23 @@ export function useAudioPlayer(): UseAudioPlayerReturn {
         },
         onend: () => setSafeIsPlaying(false),
         onstop: () => setSafeIsPlaying(false),
-        onloaderror: () => {
-          setSafeIsLoading(false);
-          setSafeIsPlaying(false);
-        },
+        onloaderror: handlePlaybackError,
+        onplayerror: handlePlaybackError,
       });
       howlRef.current = howl;
       howl.play();
     },
-    [cleanup, setSafeIsLoading, setSafeIsPlaying],
+    [cleanup, setSafeError, setSafeIsLoading, setSafeIsPlaying],
   );
 
   const stop = useCallback(() => {
     cleanup();
     setSafeIsPlaying(false);
     setSafeIsLoading(false);
-  }, [cleanup, setSafeIsLoading, setSafeIsPlaying]);
+    setSafeError(null);
+  }, [cleanup, setSafeError, setSafeIsLoading, setSafeIsPlaying]);
+
+  const clearError = useCallback(() => setSafeError(null), [setSafeError]);
 
   // Cleanup on unmount to prevent memory leaks
   useEffect(() => {
@@ -171,5 +201,5 @@ export function useAudioPlayer(): UseAudioPlayerReturn {
     };
   }, [cleanup]);
 
-  return { isPlaying, isLoading, play, playBlob, stop };
+  return { isPlaying, isLoading, error, play, playBlob, stop, clearError };
 }

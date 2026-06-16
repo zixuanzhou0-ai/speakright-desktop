@@ -17,6 +17,7 @@ type MockHowlInstance = {
   fade: ReturnType<typeof vi.fn>;
   stop: ReturnType<typeof vi.fn>;
   unload: ReturnType<typeof vi.fn>;
+  triggerLoadError: () => void;
 };
 
 const howlerMock = vi.hoisted(() => ({
@@ -32,6 +33,8 @@ beforeEach(() => {
   howlerMock.instances.length = 0;
   howlerMock.Howl.mockImplementation(function MockHowl(options: {
     onstop?: () => void;
+    onloaderror?: () => void;
+    onplayerror?: () => void;
   }) {
     const instance: MockHowlInstance = {
       play: vi.fn(() => 9),
@@ -39,6 +42,7 @@ beforeEach(() => {
       fade: vi.fn(),
       stop: vi.fn(() => options.onstop?.()),
       unload: vi.fn(),
+      triggerLoadError: () => options.onloaderror?.(),
     };
     howlerMock.instances.push(instance);
     return instance;
@@ -136,6 +140,32 @@ describe("PhonemeHighlight", () => {
         /\.(mp4|m4v|webm)(?:$|\?)/i,
       );
     }
+  });
+
+  it("shows a Chinese alert when playable scoring tile audio fails to load", () => {
+    vi.useFakeTimers();
+    render(
+      <PhonemeHighlight
+        languageId="fr-FR"
+        phonemes={[{ phoneme: "ʁ", accuracyScore: 70 }]}
+      />,
+    );
+
+    const tile = screen.getByRole("button", { name: "播放音标 /ʁ/" });
+    fireEvent.click(tile);
+    act(() => {
+      vi.advanceTimersByTime(120);
+    });
+    expect(howlerMock.instances).toHaveLength(1);
+
+    act(() => {
+      howlerMock.instances[0].triggerLoadError();
+    });
+
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveAttribute("data-smoke", "assessment-phoneme-audio-error");
+    expect(alert).toHaveTextContent("本地音标音频加载失败");
+    expect(alert).toHaveTextContent("Release EXE 音频缺口");
   });
 
   it("shows Spanish nasal assessment segments as visible but unclickable /n/ tiles", () => {

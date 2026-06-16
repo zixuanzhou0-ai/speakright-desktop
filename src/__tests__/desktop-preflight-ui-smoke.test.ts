@@ -496,6 +496,33 @@ describe("desktop preflight and UI smoke", () => {
     expect(waveformDisplay).toContain('ws.on("error"');
   });
 
+  it("keeps local playback load failures visible instead of silent no-ops", () => {
+    const audioHook = readProjectFile("src/hooks/use-audio-player.ts");
+    const playButton = readProjectFile(
+      "src/components/phoneme/phoneme-play-button.tsx",
+    );
+    const phonemeGrid = readProjectFile(
+      "src/components/phoneme/phoneme-grid.tsx",
+    );
+    const studyCard = readProjectFile(
+      "src/components/phoneme/phoneme-study-card.tsx",
+    );
+    const phonemeHighlight = readProjectFile(
+      "src/components/scoring/phoneme-highlight.tsx",
+    );
+
+    expect(audioHook).toContain("getAudioPlaybackErrorMessage");
+    expect(audioHook).toContain("Release EXE 音频缺口");
+    expect(audioHook).toContain("onplayerror");
+    expect(playButton).toContain('data-smoke="phoneme-header-audio-error"');
+    expect(phonemeGrid).toContain('data-smoke="phoneme-grid-audio-error"');
+    expect(studyCard).toContain('data-smoke="practice-chart-audio-error"');
+    expect(phonemeHighlight).toContain(
+      'data-smoke="assessment-phoneme-audio-error"',
+    );
+    expect(phonemeHighlight).toContain("本地音标音频加载失败");
+  });
+
   it("keeps blocking recording-quality failures exposed as alerts", () => {
     const qualityPanel = readProjectFile(
       "src/components/audio/recording-quality-panel.tsx",

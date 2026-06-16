@@ -36,6 +36,7 @@ interface PhonemeStudyCardProps {
   isWordActive: boolean;
   wordIsLoading: boolean;
   wordAudioError?: string | null;
+  chartAudioError?: string | null;
   lastChartPlay: "normal" | "slow";
   onPrevious: () => void;
   onNext: () => void;
@@ -251,6 +252,7 @@ export function PhonemeStudyCard({
   isWordActive,
   wordIsLoading,
   wordAudioError,
+  chartAudioError,
   lastChartPlay,
   onPrevious,
   onNext,
@@ -532,6 +534,15 @@ export function PhonemeStudyCard({
                   className="mt-2 text-center text-xs text-destructive"
                 >
                   {wordAudioError}
+                </p>
+              )}
+              {chartAudioError && (
+                <p
+                  role="alert"
+                  data-smoke="practice-chart-audio-error"
+                  className="mt-2 text-center text-xs text-destructive"
+                >
+                  {chartAudioError}
                 </p>
               )}
             </>

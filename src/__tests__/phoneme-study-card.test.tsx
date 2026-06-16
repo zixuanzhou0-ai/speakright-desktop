@@ -33,10 +33,12 @@ function renderCard({
   phoneme,
   currentWord,
   wordAudioError,
+  chartAudioError,
 }: {
   phoneme: PhonemeData;
   currentWord: { word: string; ipa: string; stressText?: string };
   wordAudioError?: string | null;
+  chartAudioError?: string | null;
 }) {
   render(
     <PhonemeStudyCard
@@ -49,6 +51,7 @@ function renderCard({
       isWordActive={false}
       wordIsLoading={false}
       wordAudioError={wordAudioError}
+      chartAudioError={chartAudioError}
       lastChartPlay="normal"
       onPrevious={noop}
       onNext={noop}
@@ -207,6 +210,31 @@ describe("PhonemeStudyCard non-English reading layout", () => {
     expect(screen.getByRole("alert")).toHaveTextContent(
       "在线发音兜底失败，请检查网络后重试。",
     );
+  });
+
+  it("shows chart illustration audio errors below the English practice controls", () => {
+    renderCard({
+      phoneme: {
+        languageId: "en-US",
+        ipa: "/ae/",
+        symbol: "ae",
+        slug: "ae",
+        name: "AA",
+        category: "vowel",
+        example: "cat",
+        chartWord: "cat",
+        chartImage: "cat",
+        keywords: [{ word: "cat", ipa: "/kaet/" }],
+        difficulty: "medium",
+      },
+      currentWord: { word: "cat", ipa: "/kaet/" },
+      chartAudioError:
+        "本地音频加载失败：发布包音频可能缺失或被系统拦截，请重新安装应用。",
+    });
+
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveAttribute("data-smoke", "practice-chart-audio-error");
+    expect(alert).toHaveTextContent("本地音频加载失败");
   });
 
   it("keeps exact local header audio for non-English units with target assets", () => {

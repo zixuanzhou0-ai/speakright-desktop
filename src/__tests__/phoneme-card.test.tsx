@@ -13,9 +13,11 @@ function mockPlayer(): UseAudioPlayerReturn {
   return {
     isPlaying: false,
     isLoading: false,
+    error: null,
     play: vi.fn(),
     playBlob: vi.fn(),
     stop: vi.fn(),
+    clearError: vi.fn(),
   };
 }
 

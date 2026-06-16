@@ -16,6 +16,7 @@ type MockHowlInstance = {
   fade: ReturnType<typeof vi.fn>;
   stop: ReturnType<typeof vi.fn>;
   unload: ReturnType<typeof vi.fn>;
+  triggerLoadError: () => void;
 };
 
 const howlerMock = vi.hoisted(() => ({
@@ -37,6 +38,7 @@ beforeEach(() => {
   howlerMock.Howl.mockImplementation(function MockHowl(options: {
     onplay?: () => void;
     onstop?: () => void;
+    onloaderror?: () => void;
   }) {
     const instance: MockHowlInstance = {
       play: vi.fn(() => {
@@ -47,6 +49,7 @@ beforeEach(() => {
       fade: vi.fn(),
       stop: vi.fn(() => options.onstop?.()),
       unload: vi.fn(),
+      triggerLoadError: () => options.onloaderror?.(),
     };
     howlerMock.instances.push(instance);
     return instance;
@@ -235,5 +238,20 @@ describe("PhonemePlayButton", () => {
     expect(howlerMock.instances).toHaveLength(2);
     expect(howlerMock.instances[0].unload).toHaveBeenCalledTimes(1);
     expect(howlerMock.instances[1].play).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows a Chinese alert when header audio fails to load", () => {
+    render(<PhonemePlayButton chartWord="cat" />);
+    const button = screen.getByRole("button", { name: "播放发音" });
+
+    fireEvent.click(button);
+    act(() => {
+      howlerMock.instances[0].triggerLoadError();
+    });
+
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveAttribute("data-smoke", "phoneme-header-audio-error");
+    expect(alert).toHaveTextContent("本地音频加载失败");
+    expect(alert).toHaveTextContent("Release EXE 音频缺口");
   });
 });
