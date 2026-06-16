@@ -1287,10 +1287,31 @@ async function assertScoringTileAudioPolicy(cdp) {
 (() => {
   const fixture = document.querySelector('[data-smoke="assessment-phoneme-tile-fixture"]');
   const audioHint = document.querySelector('[data-smoke="assessment-phoneme-audio-hint"]');
+  const headerButton = document.querySelector('[data-smoke="sound-unit-header-audio"] button');
   const tiles = [...document.querySelectorAll('[data-smoke="assessment-phoneme-tile"]')];
   const hasVisibleRect = (element) => {
     const rect = element.getBoundingClientRect();
     return rect.width > 0 && rect.height > 0;
+  };
+  const headerPolicy = {
+    hasVisibleRect: Boolean(headerButton) && hasVisibleRect(headerButton),
+    playable: headerButton?.getAttribute("data-audio-playable") === "true",
+    kind: headerButton?.getAttribute("data-audio-kind") ?? "none",
+    audioSrc: headerButton?.getAttribute("data-audio-src") ?? "",
+    maxDurationMs: Number(headerButton?.getAttribute("data-audio-max-duration-ms") ?? 0),
+    fadeOutMs: Number(headerButton?.getAttribute("data-audio-fade-out-ms") ?? 0),
+    ariaDisabled: headerButton?.getAttribute("aria-disabled") === "true",
+    ariaLabel: headerButton?.getAttribute("aria-label") ?? "",
+    disabled: Boolean(headerButton?.disabled),
+    isHeaderClip: /^\\/audio\\/language-assets\\/es-ES\\/header-clips\\/.+\\.m4a$/i.test(
+      headerButton?.getAttribute("data-audio-src") ?? "",
+    ),
+    isVideo: /\\.(mp4|m4v|webm)(?:$|\\?)/i.test(
+      headerButton?.getAttribute("data-audio-src") ?? "",
+    ),
+    isLanguagePack: (headerButton?.getAttribute("data-audio-src") ?? "").includes(
+      "/audio/language-packs/",
+    )
   };
   const tilePolicies = tiles.map((tile) => {
     const maxDurationMs = Number(tile.getAttribute("data-audio-max-duration-ms") ?? 0);
@@ -1374,13 +1395,36 @@ async function assertScoringTileAudioPolicy(cdp) {
       tile.fadeOutMs > 0
     );
   });
+  const headerPolicyIsStrict =
+    headerPolicy.hasVisibleRect &&
+    headerPolicy.playable &&
+    !headerPolicy.disabled &&
+    !headerPolicy.ariaDisabled &&
+    headerPolicy.ariaLabel.includes("发音") &&
+    headerPolicy.kind === "sound-unit" &&
+    headerPolicy.isHeaderClip &&
+    headerPolicy.maxDurationMs > 0 &&
+    headerPolicy.maxDurationMs <= 560 &&
+    headerPolicy.fadeOutMs > 0 &&
+    !headerPolicy.isVideo &&
+    !headerPolicy.isLanguagePack;
+  const hasTileMatchingHeader = tilePolicies.some(
+    (tile) =>
+      tile.playable &&
+      tile.kind === headerPolicy.kind &&
+      tile.audioSrc === headerPolicy.audioSrc &&
+      tile.maxDurationMs === headerPolicy.maxDurationMs &&
+      tile.fadeOutMs === headerPolicy.fadeOutMs,
+  );
   const tileAudioPolicyReady =
     Boolean(fixture) &&
     audioHint?.textContent?.includes("有本地音频的片段可点击") &&
     tiles.length >= 2 &&
     hasPlayableExactHeaderClip &&
     hasLockedUnverifiedTile &&
-    tilePoliciesAreStrict;
+    tilePoliciesAreStrict &&
+    headerPolicyIsStrict &&
+    hasTileMatchingHeader;
   return {
     ok: tileAudioPolicyReady,
     tileCount: tiles.length,
@@ -1389,6 +1433,9 @@ async function assertScoringTileAudioPolicy(cdp) {
     hasPlayableExactHeaderClip,
     hasLockedUnverifiedTile,
     tilePoliciesAreStrict,
+    headerPolicyIsStrict,
+    hasTileMatchingHeader,
+    headerAudio: headerPolicy,
     tileAudio: tiles.map((tile) => ({
       kind: tile.getAttribute("data-audio-kind"),
       src: tile.getAttribute("data-audio-src"),

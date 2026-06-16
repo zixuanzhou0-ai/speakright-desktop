@@ -34,6 +34,37 @@ function phoneme(overrides: Partial<PhonemeData> = {}): PhonemeData {
   };
 }
 
+function expectHeaderAudioMetadata(
+  element: Element | null,
+  expected: {
+    kind: "chart" | "sound-unit";
+    src: string;
+    maxDurationMs: string;
+    fadeOutMs: string;
+  },
+) {
+  expect(element).toHaveAttribute("data-audio-playable", "true");
+  expect(element).toHaveAttribute("data-audio-kind", expected.kind);
+  expect(element).toHaveAttribute("data-audio-src", expected.src);
+  expect(element).toHaveAttribute(
+    "data-audio-max-duration-ms",
+    expected.maxDurationMs,
+  );
+  expect(element).toHaveAttribute("data-audio-fade-out-ms", expected.fadeOutMs);
+  expect(element).toHaveAttribute("aria-disabled", "false");
+}
+
+function expectHeaderAudioLocked(element: Element) {
+  expect(element).toHaveAttribute("data-audio-playable", "false");
+  expect(element).toHaveAttribute("data-audio-kind", "none");
+  expect(element).toHaveAttribute("data-audio-src", "");
+  expect(element).toHaveAttribute("data-audio-max-duration-ms", "");
+  expect(element).toHaveAttribute("data-audio-fade-out-ms", "");
+  expect(element).toHaveAttribute("aria-disabled", "true");
+  expect(element).toHaveAttribute("tabindex", "-1");
+  expect(element).not.toHaveAttribute("role", "button");
+}
+
 describe("PhonemeCard header audio", () => {
   it("uses one-shot playback options when the IPA symbol plays English chart audio", () => {
     const player = mockPlayer();
@@ -47,7 +78,28 @@ describe("PhonemeCard header audio", () => {
       />,
     );
 
-    fireEvent.click(screen.getByText("/ae/"));
+    const ipa = screen.getByText("/ae/");
+    expectHeaderAudioMetadata(ipa, {
+      kind: "chart",
+      src: "/audio/ipa/phoneme/cat.mp3",
+      maxDurationMs: "560",
+      fadeOutMs: "55",
+    });
+    expect(ipa).toHaveAttribute("data-smoke", "phoneme-card-ipa-audio");
+    expect(ipa).toHaveAttribute("role", "button");
+    expect(ipa).toHaveAttribute("tabindex", "0");
+
+    const speaker = document.querySelector(
+      '[data-smoke="phoneme-card-header-audio-button"]',
+    );
+    expectHeaderAudioMetadata(speaker, {
+      kind: "chart",
+      src: "/audio/ipa/phoneme/cat.mp3",
+      maxDurationMs: "560",
+      fadeOutMs: "55",
+    });
+
+    fireEvent.click(ipa);
 
     expect(player.play).toHaveBeenCalledWith("/audio/ipa/phoneme/cat.mp3", {
       startMs: 25,
@@ -78,7 +130,24 @@ describe("PhonemeCard header audio", () => {
       />,
     );
 
-    fireEvent.click(screen.getByText("/e/"));
+    const ipa = screen.getByText("/e/");
+    expectHeaderAudioMetadata(ipa, {
+      kind: "sound-unit",
+      src: "/audio/language-assets/fr-FR/header-clips/fr-e.m4a",
+      maxDurationMs: "500",
+      fadeOutMs: "60",
+    });
+    const speaker = document.querySelector(
+      '[data-smoke="phoneme-card-header-audio-button"]',
+    );
+    expectHeaderAudioMetadata(speaker, {
+      kind: "sound-unit",
+      src: "/audio/language-assets/fr-FR/header-clips/fr-e.m4a",
+      maxDurationMs: "500",
+      fadeOutMs: "60",
+    });
+
+    fireEvent.click(ipa);
 
     expect(player.play).toHaveBeenCalledWith(
       "/audio/language-assets/fr-FR/header-clips/fr-e.m4a",
@@ -112,7 +181,13 @@ describe("PhonemeCard header audio", () => {
       />,
     );
 
-    fireEvent.click(screen.getByText("/e/"));
+    const ipa = screen.getByText("/e/");
+    expectHeaderAudioLocked(ipa);
+    expect(
+      document.querySelector('[data-smoke="phoneme-card-header-audio-button"]'),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(ipa);
 
     expect(player.play).not.toHaveBeenCalled();
   });
@@ -139,7 +214,13 @@ describe("PhonemeCard header audio", () => {
       />,
     );
 
-    fireEvent.click(screen.getByText("/e/"));
+    const ipa = screen.getByText("/e/");
+    expectHeaderAudioLocked(ipa);
+    expect(
+      document.querySelector('[data-smoke="phoneme-card-header-audio-button"]'),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(ipa);
 
     expect(player.play).not.toHaveBeenCalled();
   });
@@ -169,10 +250,35 @@ describe("PhonemeCard header audio", () => {
     const ipa = screen.getByText("/x/");
     expect(ipa).toHaveClass("cursor-default");
     expect(ipa).not.toHaveClass("cursor-pointer");
+    expectHeaderAudioLocked(ipa);
+    expect(
+      document.querySelector('[data-smoke="phoneme-card-header-audio-button"]'),
+    ).not.toBeInTheDocument();
 
     fireEvent.click(ipa);
 
     expect(player.play).not.toHaveBeenCalled();
+  });
+
+  it("plays verified header audio from the keyboard with the same one-shot policy", () => {
+    const player = mockPlayer();
+    render(
+      <PhonemeCard
+        player={player}
+        phoneme={phoneme({
+          chartWord: "cat",
+          chartIpa: "/kaet/",
+        })}
+      />,
+    );
+
+    fireEvent.keyDown(screen.getByText("/ae/"), { key: " " });
+
+    expect(player.play).toHaveBeenCalledWith("/audio/ipa/phoneme/cat.mp3", {
+      startMs: 25,
+      maxDurationMs: 560,
+      fadeOutMs: 55,
+    });
   });
 
   it("uses boosted chart-word playback options when the illustration plays normal or slow word audio", () => {

@@ -4,6 +4,7 @@ import { Play } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
+import type { KeyboardEvent, MouseEvent } from "react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -60,31 +61,56 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
     languageId,
     phoneme,
   );
+  const headerPlaybackOptions = canPlayHeaderAudio
+    ? getSoundUnitHeaderPlaybackOptions({
+        chartWord: word,
+        phonemeAudio: phoneme.phonemeAudio,
+      })
+    : undefined;
+  const rawHeaderAudioSrc = headerPlaybackOptions
+    ? (word ?? phoneme.phonemeAudio?.localSrc ?? "")
+    : "";
+  const headerAudioSrc =
+    rawHeaderAudioSrc && word
+      ? `/audio/ipa/phoneme/${word}.mp3`
+      : rawHeaderAudioSrc;
+  const headerAudioPlayable = Boolean(headerAudioSrc && headerPlaybackOptions);
+  const headerAudioKind = headerAudioPlayable
+    ? word
+      ? "chart"
+      : "sound-unit"
+    : "none";
+  const headerAudioData = {
+    "data-audio-playable": headerAudioPlayable ? "true" : "false",
+    "data-audio-kind": headerAudioKind,
+    "data-audio-src": headerAudioSrc,
+    "data-audio-max-duration-ms":
+      headerPlaybackOptions?.maxDurationMs?.toString() ?? "",
+    "data-audio-fade-out-ms":
+      headerPlaybackOptions?.fadeOutMs?.toString() ?? "",
+  };
   const wordDensity = getPracticeTextDensity(displayWord ?? "", "word");
   const ipaDensity = getPracticeTextDensity(displayIpa ?? "", "phrase");
 
-  const handlePlayPhoneme = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!canPlayHeaderAudio) return;
-
-    const playbackOptions = getSoundUnitHeaderPlaybackOptions({
-      chartWord: word,
-      phonemeAudio: phoneme.phonemeAudio,
-    });
-    if (!playbackOptions) return;
-
-    if (word) {
-      player.play(`/audio/ipa/phoneme/${word}.mp3`, playbackOptions);
-      return;
-    }
-
-    if (phoneme.phonemeAudio?.localSrc) {
-      player.play(phoneme.phonemeAudio.localSrc, playbackOptions);
-    }
+  const playHeaderAudio = () => {
+    if (!headerAudioPlayable || !headerPlaybackOptions) return;
+    player.play(headerAudioSrc, headerPlaybackOptions);
   };
 
-  const handlePlayWord = (e: React.MouseEvent) => {
+  const handlePlayPhoneme = (e: MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    playHeaderAudio();
+  };
+
+  const handleHeaderAudioKeyDown = (e: KeyboardEvent) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    e.stopPropagation();
+    playHeaderAudio();
+  };
+
+  const handlePlayWord = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!word) return;
@@ -99,13 +125,20 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
         {/* Top row: IPA + difficulty badge */}
         <div className="mb-4 flex flex-wrap items-start justify-center gap-2 text-center">
           <motion.span
-            whileHover={canPlayHeaderAudio ? { scale: 1.08 } : undefined}
-            whileTap={canPlayHeaderAudio ? { scale: 0.95 } : undefined}
+            whileHover={headerAudioPlayable ? { scale: 1.08 } : undefined}
+            whileTap={headerAudioPlayable ? { scale: 0.95 } : undefined}
             transition={springTransition}
             onClick={handlePlayPhoneme}
             className={`select-none font-mono text-4xl font-bold ${
-              canPlayHeaderAudio ? "cursor-pointer" : "cursor-default"
+              headerAudioPlayable ? "cursor-pointer" : "cursor-default"
             }`}
+            data-smoke="phoneme-card-ipa-audio"
+            role={headerAudioPlayable ? "button" : undefined}
+            tabIndex={headerAudioPlayable ? 0 : -1}
+            aria-label={headerAudioPlayable ? `播放音标 ${phoneme.ipa}` : undefined}
+            aria-disabled={!headerAudioPlayable}
+            onKeyDown={headerAudioPlayable ? handleHeaderAudioKeyDown : undefined}
+            {...headerAudioData}
           >
             {phoneme.ipa}
           </motion.span>
@@ -170,13 +203,20 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
               )}
             </div>
           </div>
-          {canPlayHeaderAudio && (
+          {headerAudioPlayable && (
             <motion.div
               whileHover={{ scale: 1.15 }}
               whileTap={{ scale: 0.95 }}
               transition={springTransition}
               onClick={handlePlayPhoneme}
+              onKeyDown={handleHeaderAudioKeyDown}
               className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-muted transition-colors hover:bg-primary hover:text-primary-foreground"
+              data-smoke="phoneme-card-header-audio-button"
+              role="button"
+              tabIndex={0}
+              aria-label={`播放音标 ${phoneme.ipa}`}
+              aria-disabled={false}
+              {...headerAudioData}
             >
               <Play className="h-5 w-5" />
             </motion.div>

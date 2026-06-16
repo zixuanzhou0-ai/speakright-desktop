@@ -223,7 +223,16 @@ describe("PhonemeStudyCard non-English reading layout", () => {
       },
     });
 
-    expect(screen.getByRole("button", { name: "播放发音" })).toBeInTheDocument();
+    const button = screen.getByRole("button", { name: "播放发音" });
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveAttribute("data-audio-playable", "true");
+    expect(button).toHaveAttribute("data-audio-kind", "sound-unit");
+    expect(button).toHaveAttribute(
+      "data-audio-src",
+      "/audio/language-assets/fr-FR/header-clips/fr-schwa.m4a",
+    );
+    expect(button).toHaveAttribute("data-audio-max-duration-ms", "500");
+    expect(button).toHaveAttribute("data-audio-fade-out-ms", "60");
   });
 
   it("passes boosted chart-word playback options from the English detail illustration", () => {

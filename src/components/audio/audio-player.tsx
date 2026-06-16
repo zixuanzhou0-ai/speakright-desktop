@@ -10,6 +10,7 @@ interface AudioPlayerButtonProps {
   isPlaying?: boolean;
   size?: "sm" | "default" | "icon" | "lg";
   color?: "default" | "blue" | "pink";
+  dataAttributes?: Record<string, string>;
 }
 
 const COLOR_CLASSES = {
@@ -30,6 +31,7 @@ export function AudioPlayerButton({
   isPlaying,
   size = "icon",
   color = "default",
+  dataAttributes,
 }: AudioPlayerButtonProps) {
   const colors = COLOR_CLASSES[color];
   return (
@@ -45,6 +47,7 @@ export function AudioPlayerButton({
         onClick={onClick}
         disabled={isLoading}
         className={`cursor-pointer ${isPlaying ? colors.active : colors.idle}`}
+        {...dataAttributes}
         aria-label={
           isLoading ? "加载发音中" : isPlaying ? "正在播放" : "播放发音"
         }
