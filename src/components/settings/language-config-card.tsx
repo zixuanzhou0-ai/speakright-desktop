@@ -45,7 +45,6 @@ export function LanguageConfigCard() {
         {profiles.map((profile) => {
           const selected = profile.id === config.languageId;
           const audit = auditLanguageCoverage(profile.id);
-          const missingPreview = audit.missingCapabilities.slice(0, 3).join("、");
           return (
             <button
               key={profile.id}
@@ -102,8 +101,7 @@ export function LanguageConfigCard() {
                   className="mt-2 break-words text-center text-xs leading-snug text-muted-foreground [overflow-wrap:anywhere]"
                   data-smoke="language-option-missing"
                 >
-                  待补：{missingPreview}
-                  {audit.missingCapabilities.length > 3 ? "…" : ""}
+                  待补：{audit.missingCapabilities.join("、")}
                 </p>
               )}
             </button>

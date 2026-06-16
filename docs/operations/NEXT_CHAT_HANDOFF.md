@@ -124,6 +124,10 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - Settings provider action rows now use wrap-safe save/test buttons for Azure,
   ElevenLabs, AI coach, and pronunciation fallback checks, so narrow Settings
   layouts do not inherit one-line button defaults.
+- Settings language cards now render the full `missingCapabilities` list for
+  each language instead of showing only the first three items followed by an
+  ellipsis; the static smoke guard rejects `missingPreview` and `…` in that
+  component.
 - Release status and language availability cards now wrap version/channel
   badges, release links, build facts, language status badges, detail text, and
   recommendations without losing desktop external-link behavior.

@@ -384,6 +384,9 @@ describe("desktop preflight and UI smoke", () => {
 
     expect(languageCard).toContain('data-smoke="language-option-missing"');
     expect(languageCard).toContain("overflow-wrap:anywhere");
+    expect(languageCard).toContain('audit.missingCapabilities.join("、")');
+    expect(languageCard).not.toContain("missingPreview");
+    expect(languageCard).not.toContain("…");
     expect(languageCard).not.toContain("line-clamp");
     expect(usageMonitor).toContain('data-smoke="usage-history-target"');
     expect(usageMonitor).toContain('data-smoke="elevenlabs-usage-empty"');
