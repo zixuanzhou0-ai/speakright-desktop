@@ -865,6 +865,11 @@ async function assertSettings(cdp) {
   const languageMissing = [...document.querySelectorAll('[data-smoke="language-option-missing"]')];
   const usageTargets = [...document.querySelectorAll('[data-smoke="usage-history-target"]')];
   const pronunciationRows = [...document.querySelectorAll('[data-smoke="pronunciation-test-row"]')];
+  const ttsSelects = [
+    ...document.querySelectorAll(
+      '[data-smoke="tts-voice-select"], [data-smoke="tts-model-select"]'
+    ),
+  ];
   const settingsActionRows = [
     ...document.querySelectorAll(
       '[data-smoke="azure-config-actions"], [data-smoke="tts-config-actions"], [data-smoke="llm-config-actions"]'
@@ -898,8 +903,21 @@ async function assertSettings(cdp) {
       style.flexWrap !== "nowrap" &&
       element.scrollWidth <= element.clientWidth + 2 &&
       childrenDoNotOverlap(element)
-    );
-  });
+      );
+    });
+  const ttsSelectsWrap =
+    ttsSelects.length === 2 &&
+    ttsSelects.every((element) => {
+      const value = element.querySelector('[data-slot="select-value"]');
+      const valueStyle = value ? window.getComputedStyle(value) : null;
+      return (
+        wraps(element) &&
+        Boolean(value) &&
+        valueStyle?.whiteSpace !== "nowrap" &&
+        valueStyle?.webkitLineClamp !== "1" &&
+        element.scrollWidth <= element.clientWidth + 2
+      );
+    });
   const settingsActionRowsWrap =
     settingsActionRows.length === 3 &&
     settingsActionRows.every((element) => {
@@ -927,6 +945,7 @@ async function assertSettings(cdp) {
       usageTargets.every(wraps) &&
       pronunciationRows.length > 0 &&
       pronunciationRowsWrap &&
+      ttsSelectsWrap &&
       settingsActionRowsWrap &&
       Boolean(corruptWarning) &&
       corruptWarning.getAttribute("role") === "alert" &&
@@ -944,6 +963,8 @@ async function assertSettings(cdp) {
     usageTargetCount: usageTargets.length,
     pronunciationRowCount: pronunciationRows.length,
     pronunciationRowsWrap,
+    ttsSelectCount: ttsSelects.length,
+    ttsSelectsWrap,
     settingsActionRowCount: settingsActionRows.length,
     settingsActionRowsWrap,
     hasCorruptWarning: Boolean(corruptWarning),

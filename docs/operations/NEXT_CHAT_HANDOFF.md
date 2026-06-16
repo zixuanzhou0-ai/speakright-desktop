@@ -115,6 +115,9 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - Release status and language availability cards now wrap version/channel
   badges, release links, build facts, language status badges, detail text, and
   recommendations without losing desktop external-link behavior.
+- ElevenLabs voice/model selects now use wrap-safe trigger/value/item text, and
+  Release EXE smoke checks `tts-voice-select` plus `tts-model-select` so long
+  model labels do not fall back to one-line clipping in Settings.
 - Advanced pack-runner badges for intro metadata, course-map status, course
   header, level titles, remediation, and debrief next-level labels now also use
   wrap-safe badge classes.

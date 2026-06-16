@@ -228,6 +228,9 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("azure-config-actions");
     expect(script).toContain("tts-config-actions");
     expect(script).toContain("llm-config-actions");
+    expect(script).toContain("tts-voice-select");
+    expect(script).toContain("tts-model-select");
+    expect(script).toContain("ttsSelectsWrap");
     expect(script).toContain("childrenDoNotOverlap");
     expect(script).toContain("pronunciationRowsWrap");
     expect(script).toContain("settingsActionRowsWrap");
@@ -344,6 +347,7 @@ describe("desktop preflight and UI smoke", () => {
     const connectionStatus = readProjectFile(
       "src/components/settings/connection-status.tsx",
     );
+    const select = readProjectFile("src/components/ui/select.tsx");
 
     expect(languageCard).toContain('data-smoke="language-option-missing"');
     expect(languageCard).toContain("overflow-wrap:anywhere");
@@ -380,6 +384,8 @@ describe("desktop preflight and UI smoke", () => {
       "h-auto min-h-8 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
     );
     expect(elevenLabsCard).toContain('data-smoke="tts-config-actions"');
+    expect(elevenLabsCard).toContain('data-smoke="tts-voice-select"');
+    expect(elevenLabsCard).toContain('data-smoke="tts-model-select"');
     expect(elevenLabsCard).toContain("flex flex-wrap items-center gap-3");
     expect(elevenLabsCard).toContain(
       "WRAP_SAFE_SETTINGS_ACTION_BUTTON_CLASS",
@@ -431,6 +437,14 @@ describe("desktop preflight and UI smoke", () => {
     expect(connectionStatus).toContain("aria-live");
     expect(connectionStatus).toContain("basis-48");
     expect(connectionStatus).toContain("overflow-wrap:anywhere");
+    expect(select).toContain("data-slot=\"select-trigger\"");
+    expect(select).toContain("data-slot=\"select-value\"");
+    expect(select).toContain("min-h-8 w-full max-w-full");
+    expect(select).toContain("whitespace-normal");
+    expect(select).toContain("break-words");
+    expect(select).toContain("[overflow-wrap:anywhere]");
+    expect(select).not.toContain("line-clamp");
+    expect(select).not.toContain("whitespace-nowrap");
   });
 
   it("keeps Settings data-control operation results visible inline", () => {

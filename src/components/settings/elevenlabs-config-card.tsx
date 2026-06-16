@@ -154,7 +154,7 @@ export function ElevenLabsConfigCard() {
         <div className="space-y-2">
           <Label htmlFor="el-voice">Default Voice</Label>
           <Select value={voiceId} onValueChange={(v) => v && setVoiceId(v)}>
-            <SelectTrigger id="el-voice">
+            <SelectTrigger id="el-voice" data-smoke="tts-voice-select">
               <SelectValue placeholder="选择声音" />
             </SelectTrigger>
             <SelectContent>
@@ -169,7 +169,7 @@ export function ElevenLabsConfigCard() {
         <div className="space-y-2">
           <Label htmlFor="el-model">Model</Label>
           <Select value={modelId} onValueChange={(v) => v && setModelId(v)}>
-            <SelectTrigger id="el-model">
+            <SelectTrigger id="el-model" data-smoke="tts-model-select">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
