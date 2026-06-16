@@ -137,6 +137,11 @@ describe("open-source readiness files", () => {
     expect(issueConfig).toContain("Security report");
     expect(bugReport).toContain("Release EXE");
     expect(bugReport).toContain("Spanish, French, or Russian");
+    expect(bugReport).toContain("Network state");
+    expect(bugReport).toContain("API keys configured");
+    expect(bugReport).toContain("Microphone permission/device");
+    expect(bugReport).toContain("缺失或不可读");
+    expect(bugReport).toContain("Chinese inline error or warning");
     expect(bugReport).toContain("Do not attach API keys");
     expect(bugReport).toContain("CODE_OF_CONDUCT.md");
     expect(featureRequest).toContain("Release EXE");
@@ -154,6 +159,10 @@ describe("open-source readiness files", () => {
     expect(audioProvider).toContain("Loudness or clipping mismatch");
     expect(audioProvider).toContain("paid provider");
     expect(audioProvider).toContain("Release EXE or installer");
+    expect(audioProvider).toContain("Settings language-pack state");
+    expect(audioProvider).toContain("Network state during the check");
+    expect(audioProvider).toContain("UI stayed non-clickable");
+    expect(audioProvider).toContain("teaching-video audio");
     expect(audioProvider).toContain("Do not attach API keys");
     expect(audioProvider).toContain("without explicit maintainer approval");
     expect(audioProvider).toContain("Spanish, French, and Russian remain experimental");

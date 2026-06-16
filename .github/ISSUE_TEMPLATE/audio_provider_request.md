@@ -27,6 +27,14 @@ Describe what you checked from the Release EXE or installer. For audio policy
 issues, note whether the speaker used bundled local audio, browser TTS, proxy
 audio, teaching-video audio, or no clickable audio.
 
+For missing or unreadable local audio, include:
+
+- Settings language-pack state: available / checking / 缺失或不可读 / unknown
+- Network state during the check: online / offline / proxy or VPN / unknown
+- API key state for the affected provider: not configured / configured / unknown
+- Whether the UI stayed non-clickable instead of substituting browser TTS,
+  teaching-video audio, proxy audio, or an unrelated word/sample:
+
 Do not attach API keys, raw private recordings, or private learning-data
 exports.
 

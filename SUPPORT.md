@@ -35,6 +35,9 @@ When reporting a user-visible bug, include:
 - OS and SpeakRight version or commit.
 - Launch path, ideally Release EXE or installer.
 - Language, page, sound unit, word, phrase, or sentence.
+- First-launch or degraded-state context when relevant: API key state, network
+  state, microphone permission/device state, and the Settings local-audio state
+  such as `缺失或不可读`.
 - Exact steps, expected behavior, and actual behavior.
 - Screenshots only if they do not show API keys, private user data, or private
   recordings.
