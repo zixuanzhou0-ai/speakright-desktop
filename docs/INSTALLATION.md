@@ -9,6 +9,9 @@ Windows EXE/MSI/NSIS artifacts are signed.
 If you are evaluating the public source repository without joining that
 controlled-test track, prefer **Build From Source** below or wait for a signed
 public Windows release.
+Published GitHub Release assets can lag behind the current `main` branch; check
+the release notes and `docs/operations/RC_EVIDENCE_AUDIT.md` before treating an
+installer as the latest validated RC.
 
 Recommended file:
 

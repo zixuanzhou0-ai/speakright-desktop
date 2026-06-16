@@ -51,15 +51,25 @@ describe("desktop public release gate", () => {
     );
 
     const gateStepIndex = workflow.indexOf("Enforce public release signing");
-    const uploadStepIndex = workflow.indexOf("Upload artifacts");
+    const controlledUploadStepIndex = workflow.indexOf(
+      "Upload controlled-test artifacts",
+    );
+    const signedUploadStepIndex = workflow.indexOf(
+      "Upload signed release artifacts",
+    );
 
     expect(workflow).toContain("npm run desktop:release-gate");
     expect(workflow).toContain("if: startsWith(github.ref, 'refs/tags/v')");
+    expect(workflow).toContain("if: github.event_name == 'workflow_dispatch'");
     expect(workflow).toContain(
-      "if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')",
+      "name: speakright-windows-controlled-test-artifacts",
+    );
+    expect(workflow).toContain(
+      "name: speakright-windows-signed-release-artifacts",
     );
     expect(gateStepIndex).toBeGreaterThan(-1);
-    expect(uploadStepIndex).toBeGreaterThan(-1);
-    expect(gateStepIndex).toBeLessThan(uploadStepIndex);
+    expect(controlledUploadStepIndex).toBeGreaterThan(-1);
+    expect(signedUploadStepIndex).toBeGreaterThan(-1);
+    expect(gateStepIndex).toBeLessThan(signedUploadStepIndex);
   });
 });

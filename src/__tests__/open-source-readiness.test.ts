@@ -169,6 +169,20 @@ describe("open-source readiness files", () => {
     expect(pullRequest).toContain("I followed `CODE_OF_CONDUCT.md`");
   });
 
+  it("keeps Windows workflow artifacts separated by controlled-test and signed-release status", () => {
+    const workflow = read(".github/workflows/build-windows.yml");
+
+    expect(workflow).toContain("Enforce public release signing");
+    expect(workflow).toContain("npm run desktop:release-gate");
+    expect(workflow).toContain("Upload controlled-test artifacts");
+    expect(workflow).toContain("github.event_name == 'workflow_dispatch'");
+    expect(workflow).toContain("speakright-windows-controlled-test-artifacts");
+    expect(workflow).toContain("Upload signed release artifacts");
+    expect(workflow).toContain("startsWith(github.ref, 'refs/tags/v')");
+    expect(workflow).toContain("speakright-windows-signed-release-artifacts");
+    expect(workflow).not.toContain("name: speakright-windows-installers");
+  });
+
   it("keeps current handoff docs from claiming stale local dirty state", () => {
     const handoff = read("docs/operations/NEXT_CHAT_HANDOFF.md");
     const evidence = read("docs/operations/RC_EVIDENCE_AUDIT.md");
@@ -222,6 +236,8 @@ describe("open-source readiness files", () => {
     expect(installation).toContain("prefer **Build From Source** below");
     expect(installation).toContain("wait for a signed");
     expect(installation).toContain("public Windows release");
+    expect(installation).toContain("Published GitHub Release assets can lag");
+    expect(installation).toContain("docs/operations/RC_EVIDENCE_AUDIT.md");
     expect(readme).toContain("source builds");
     expect(readme).toContain("docs/INSTALLATION.md");
     expect(installation).toContain("Build From Source");
