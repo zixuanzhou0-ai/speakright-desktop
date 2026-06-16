@@ -1,4 +1,11 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  createEvent,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FeedbackDisplay } from "@/components/feedback/feedback-display";
 import { LlmFeedback } from "@/components/scoring/llm-feedback";
@@ -44,11 +51,8 @@ describe("feedback markdown links", () => {
     );
 
     const link = screen.getByRole("link", { name: "练习资料" });
-    const event = new MouseEvent("click", {
-      bubbles: true,
-      cancelable: true,
-    });
-    link.dispatchEvent(event);
+    const event = createEvent.click(link);
+    fireEvent(link, event);
 
     expect(event.defaultPrevented).toBe(true);
     expect(link).toHaveAttribute("target", "_blank");
@@ -79,11 +83,8 @@ describe("feedback markdown links", () => {
     );
 
     const link = screen.getByRole("link", { name: "动作提示" });
-    const event = new MouseEvent("click", {
-      bubbles: true,
-      cancelable: true,
-    });
-    link.dispatchEvent(event);
+    const event = createEvent.click(link);
+    fireEvent(link, event);
 
     expect(event.defaultPrevented).toBe(true);
     await waitFor(() => {

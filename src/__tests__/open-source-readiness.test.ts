@@ -73,6 +73,7 @@ describe("open-source readiness files", () => {
       ".github/ISSUE_TEMPLATE/ipa_audit.md",
       ".github/ISSUE_TEMPLATE/audio_provider_request.md",
       ".github/ISSUE_TEMPLATE/feature_request.md",
+      ".github/ISSUE_TEMPLATE/README.md",
       ".github/pull_request_template.md",
     ]) {
       expect(existsSync(join(projectRoot, path)), path).toBe(true);
@@ -119,6 +120,7 @@ describe("open-source readiness files", () => {
     const featureRequest = read(".github/ISSUE_TEMPLATE/feature_request.md");
     const ipaAudit = read(".github/ISSUE_TEMPLATE/ipa_audit.md");
     const audioProvider = read(".github/ISSUE_TEMPLATE/audio_provider_request.md");
+    const issueRouting = read(".github/ISSUE_TEMPLATE/README.md");
     const pullRequest = read(".github/pull_request_template.md");
 
     expect(issueConfig).toContain("blank_issues_enabled: false");
@@ -147,6 +149,18 @@ describe("open-source readiness files", () => {
     expect(audioProvider).toContain("Do not attach API keys");
     expect(audioProvider).toContain("without explicit maintainer approval");
     expect(audioProvider).toContain("Spanish, French, and Russian remain experimental");
+    expect(issueRouting).toContain("Issue Routing");
+    expect(issueRouting).toContain("Bug report");
+    expect(issueRouting).toContain("Audio gap or provider request");
+    expect(issueRouting).toContain("IPA or pronunciation audit");
+    expect(issueRouting).toContain("Feature request");
+    expect(issueRouting).toContain("SECURITY.md");
+    expect(issueRouting).toContain("SUPPORT.md");
+    expect(issueRouting).toContain("Release EXE or installer");
+    expect(issueRouting).toContain("localhost/dev-server tab is not");
+    expect(issueRouting).toContain("Do not ask contributors to generate ElevenLabs audio");
+    expect(issueRouting).toContain("Spanish, French, and Russian remain experimental");
+    expect(issueRouting).toContain("evidenceMastery");
     expect(pullRequest).toContain("I did not use localhost/dev server");
     expect(pullRequest).toContain("I did not generate ElevenLabs audio");
     expect(pullRequest).toContain("Spanish, French, and Russian remain experimental");
@@ -204,6 +218,7 @@ describe("open-source readiness files", () => {
     expect(readme).toContain("A signed public Windows release is not complete yet");
     expect(readme).toContain("internal-test or controlled-test builds");
     expect(installation).toContain("Download Controlled-Test Installer");
+    expect(installation).toContain("latest controlled-test installer");
     expect(installation).toContain("prefer **Build From Source** below");
     expect(installation).toContain("wait for a signed");
     expect(installation).toContain("public Windows release");

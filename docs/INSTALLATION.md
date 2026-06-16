@@ -2,7 +2,7 @@
 
 ## Download Controlled-Test Installer
 
-Download the latest internal-test installer from the GitHub Releases page.
+Download the latest controlled-test installer from the GitHub Releases page.
 
 This build is not code-signed yet. Use it only for controlled testing until the
 Windows EXE/MSI/NSIS artifacts are signed.
@@ -26,7 +26,7 @@ SpeakRight_1.0.1_x64_en-US.msi
 
 1. Run the installer.
 2. If Windows SmartScreen appears, stop and confirm this is the expected
-   internal-test build from the project GitHub Release before choosing
+   controlled-test build from the project GitHub Release before choosing
    **More info** and **Run anyway**.
 3. Launch SpeakRight.
 4. Open **Settings** and configure API keys.
