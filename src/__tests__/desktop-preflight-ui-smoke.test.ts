@@ -323,6 +323,19 @@ describe("desktop preflight and UI smoke", () => {
     expect(dataControlCard).toContain("toast.success(message)");
   });
 
+  it("keeps standard TTS errors user-facing before rendering them", () => {
+    const useTts = readProjectFile("src/hooks/use-tts.ts");
+    const useTtsAligned = readProjectFile("src/hooks/use-tts-aligned.ts");
+    const ttsErrors = readProjectFile("src/lib/tts-errors.ts");
+
+    expect(useTts).toContain("normalizeStandardTtsError");
+    expect(useTtsAligned).toContain("normalizeStandardTtsError");
+    expect(useTts).not.toContain("e.message");
+    expect(useTtsAligned).not.toContain("e.message");
+    expect(ttsErrors).toContain("无法连接 ElevenLabs");
+    expect(ttsErrors).toContain("本地标准示范缓存不可用");
+  });
+
   it("keeps quick assessment recording and scoring failures visible inline", () => {
     const assessmentPage = readProjectFile("src/app/assessment/page.tsx");
     const assessmentReportStorage = readProjectFile(

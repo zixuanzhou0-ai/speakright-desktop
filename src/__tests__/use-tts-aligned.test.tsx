@@ -229,6 +229,23 @@ describe("useTtsAligned", () => {
     expect(result.current.error).toContain("ElevenLabs 请求过于频繁或额度不足");
   });
 
+  it("normalizes raw English online TTS failures before showing them", async () => {
+    mocks.elevenLabsTtsAligned.mockRejectedValueOnce(
+      new TypeError("Failed to fetch"),
+    );
+    const { result } = renderHook(() => useTtsAligned());
+
+    await act(async () => {
+      await result.current.speak("This is an online sentence.", {
+        languageId: "en-US",
+      });
+    });
+
+    expect(result.current.error).toContain("无法播放标准示范");
+    expect(result.current.error).toContain("无法连接 ElevenLabs");
+    expect(result.current.error).not.toContain("Failed to fetch");
+  });
+
   it("uses an installed local language pack when TTS provider is missing", async () => {
     mocks.getElevenLabsConfig.mockReturnValue(null);
     mocks.getLanguageAudioPackEntry.mockResolvedValueOnce({

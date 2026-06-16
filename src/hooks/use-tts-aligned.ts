@@ -12,6 +12,10 @@ import {
 import { getLanguageAudioPackEntry } from "@/lib/language-audio-pack-cache";
 import { getStaticLanguageAudioPackEntry } from "@/lib/static-language-audio-pack";
 import { getTtsFromCache, setTtsToCache } from "@/lib/tts-cache";
+import {
+  normalizeStandardTtsError,
+  STANDARD_TTS_UNAVAILABLE_MESSAGE,
+} from "@/lib/tts-errors";
 import type { LanguageId } from "@/types/language";
 
 export interface WordTiming {
@@ -45,9 +49,6 @@ interface AlignmentData {
   character_start_times_seconds: number[];
   character_end_times_seconds: number[];
 }
-
-const STANDARD_TTS_UNAVAILABLE_MESSAGE =
-  "无法播放标准示范：请先在设置页配置 ElevenLabs，或改用已内置发音资源的练习内容。单词词典发音只负责单词复读。";
 
 function resumeHowlerAudioContext(): void {
   const ctx = Howler.ctx;
@@ -387,8 +388,7 @@ export function useTtsAligned(): UseTtsAlignedReturn {
           playBlob(localBlob.blob, [], playbackOptions);
           return;
         }
-        const details = e instanceof Error ? `（${e.message}）` : "";
-        setError(`${STANDARD_TTS_UNAVAILABLE_MESSAGE}${details}`);
+        setError(normalizeStandardTtsError(e));
         setIsLoading(false);
       }
     },

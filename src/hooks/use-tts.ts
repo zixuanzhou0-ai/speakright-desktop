@@ -3,6 +3,10 @@
 import { useCallback, useState } from "react";
 import { elevenLabsTts } from "@/lib/api-client";
 import { getElevenLabsConfig } from "@/lib/api-keys";
+import {
+  normalizeStandardTtsError,
+  STANDARD_TTS_UNAVAILABLE_MESSAGE,
+} from "@/lib/tts-errors";
 import { useAudioPlayer } from "./use-audio-player";
 
 interface UseTtsReturn {
@@ -11,9 +15,6 @@ interface UseTtsReturn {
   isPlaying: boolean;
   error: string | null;
 }
-
-const STANDARD_TTS_UNAVAILABLE_MESSAGE =
-  "无法播放标准示范：请先在设置页配置 ElevenLabs，或改用已内置发音资源的练习内容。单词词典发音只负责单词复读。";
 
 export function useTts(): UseTtsReturn {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,8 +42,7 @@ export function useTts(): UseTtsReturn {
         player.playBlob(blob);
       } catch (e) {
         console.error("[ElevenLabs TTS]", e);
-        const details = e instanceof Error ? `（${e.message}）` : "";
-        setError(`${STANDARD_TTS_UNAVAILABLE_MESSAGE}${details}`);
+        setError(normalizeStandardTtsError(e));
       } finally {
         setIsLoading(false);
       }
