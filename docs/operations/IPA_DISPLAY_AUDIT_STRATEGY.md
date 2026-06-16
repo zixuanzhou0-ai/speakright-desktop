@@ -74,6 +74,12 @@ Russian `ru-RU`:
 - Some deck sentence entries intentionally use compact focus hints such as
   `/s sʲ zʲ/` instead of full sentence IPA. Future audit exports should treat
   those as `focus-hint`, not as a full `recommendedIpa` candidate.
+- The remaining non-IPA sentence hints are intentionally bounded and tested in
+  `language-learning-decks.test.ts`: Spanish `nasal place`, `stress`, and
+  `syllable rhythm`; French `Le grand homme parle encore.` -> `liaison`;
+  Russian `Встреча завтра утром.` -> `clusters + assimilation`. New compact
+  hints should either be upgraded to a full sourced IPA display or added to that
+  explicit allowlist with a clear audit reason.
 
 ## Scoring Alignment
 

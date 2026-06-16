@@ -23,6 +23,48 @@ const SOUND_UNIT_TARGETS: Record<DeckLanguageId, number> = {
   "fr-FR": 26,
   "ru-RU": 27,
 };
+const ALLOWED_COMPACT_SENTENCE_HINTS = new Map([
+  [
+    "es-ES:Un gato duerme en un banco.",
+    {
+      ipaHint: "nasal place",
+      targetUnitSlugs: ["es-nasal-place", "es-g"],
+      focus: "鼻音位置同化",
+    },
+  ],
+  [
+    "es-ES:Papá habló con el médico.",
+    {
+      ipaHint: "stress",
+      targetUnitSlugs: ["es-lexical-stress"],
+      focus: "重音和 accent marks",
+    },
+  ],
+  [
+    "es-ES:Buenos días, muchas gracias.",
+    {
+      ipaHint: "syllable rhythm",
+      targetUnitSlugs: ["es-syllable-rhythm", "es-diphthongs-w"],
+      focus: "西语音节节奏",
+    },
+  ],
+  [
+    "fr-FR:Le grand homme parle encore.",
+    {
+      ipaHint: "liaison",
+      targetUnitSlugs: ["fr-liaison", "fr-r", "fr-an"],
+      focus: "grand homme 的 liaison",
+    },
+  ],
+  [
+    "ru-RU:Встреча завтра утром.",
+    {
+      ipaHint: "clusters + assimilation",
+      targetUnitSlugs: ["ru-clusters", "ru-voicing-assimilation"],
+      focus: "辅音丛和清浊同化",
+    },
+  ],
+]);
 
 function displayKey(text: string): string {
   return text.trim().toLocaleLowerCase();
@@ -133,6 +175,32 @@ describe("language learning decks", () => {
         expect(getLanguagePhonemeBySlug(languageId, slug)).toBeDefined();
       }
     }
+  });
+
+  it("keeps remaining compact sentence IPA hints explicit and bounded", () => {
+    const compactHints: string[] = [];
+
+    for (const languageId of DECK_LANGUAGES) {
+      const deck = LANGUAGE_LEARNING_DECKS[languageId];
+
+      for (const sentence of deck.sentenceDeck) {
+        if (sentence.ipaHint.startsWith("/")) continue;
+        const key = `${languageId}:${sentence.text}`;
+        const expected = ALLOWED_COMPACT_SENTENCE_HINTS.get(key);
+
+        compactHints.push(key);
+        expect(expected, key).toBeDefined();
+        expect(sentence.ipaHint, key).toBe(expected?.ipaHint);
+        expect(sentence.targetUnitSlugs, key).toEqual(
+          expected?.targetUnitSlugs,
+        );
+        expect(sentence.focus, key).toBe(expected?.focus);
+      }
+    }
+
+    expect(compactHints.sort()).toEqual(
+      Array.from(ALLOWED_COMPACT_SENTENCE_HINTS.keys()).sort(),
+    );
   });
 
   it("covers every language sound unit in at least one deck entry", () => {
