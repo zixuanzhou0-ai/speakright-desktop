@@ -104,7 +104,12 @@ describe("open-source readiness files", () => {
     expect(contributing).toContain("SUPPORT.md");
     expect(contributing).toContain("Release EXE");
     expect(contributing).toContain("Do not generate ElevenLabs audio");
-    expect(contributing).toContain("audio/provider issue template");
+    expect(contributing).toContain("Triage Routing");
+    expect(contributing).toContain("`Bug report` issue template");
+    expect(contributing).toContain("`IPA or pronunciation audit` issue template");
+    expect(contributing).toContain("`Audio gap or provider request` issue template");
+    expect(contributing).toContain("`SECURITY.md` private report");
+    expect(contributing).toContain("quota-impacting provider work");
     expect(contributing).toContain("Spanish, French, and Russian are experimental");
     expect(support).toContain("Release EXE");
     expect(support).toContain("SECURITY.md");

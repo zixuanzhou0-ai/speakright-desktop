@@ -17,9 +17,21 @@ Do not use the older browser workspace for desktop release work.
 Use `SUPPORT.md` when you are unsure whether a report belongs in a public issue,
 an IPA audit issue, or a private security report.
 
-Use the audio/provider issue template for missing bundled audio, wrong
-clickable audio sources, loudness mismatches, or requests that would spend
-ElevenLabs or another paid-provider quota.
+## Triage Routing
+
+Use the narrowest public or private path for the report:
+
+| Report type | Route |
+| --- | --- |
+| Release EXE startup, Settings, UI layout, scoring, drill, free practice, or diagnosis bug | `Bug report` issue template |
+| IPA dispute, pronunciation dispute, or sourced Spanish/French/Russian audit finding | `IPA or pronunciation audit` issue template |
+| Missing bundled audio, wrong clickable audio source, loudness mismatch, or any quota-impacting provider work | `Audio gap or provider request` issue template |
+| API key, token, private recording, private learning-data export, vulnerability, or unsafe desktop permission | `SECURITY.md` private report |
+| Unsure or mixed report | `SUPPORT.md` routing guide |
+
+Do not ask contributors to generate ElevenLabs audio or spend TTS credits in a
+public issue unless a maintainer has already approved that exact generation
+pass. If bundled audio is missing, document the gap first.
 
 ## Development Setup
 
