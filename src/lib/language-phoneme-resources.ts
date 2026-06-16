@@ -1,10 +1,11 @@
+import { getEnglishHeaderPhonemeAudioSrc } from "@/lib/audio-playback-policy";
+import { getLocalLanguagePhonemeAsset } from "@/lib/local-language-assets";
 import type { LanguageId } from "@/types/language";
 import type {
   PhonemeAudioSource,
   PhonemeData,
   PhonemeTeachingResource,
 } from "@/types/phoneme";
-import { getLocalLanguagePhonemeAsset } from "@/lib/local-language-assets";
 
 const LANGUAGE_RESOURCE_STACKS: Record<
   Exclude<LanguageId, "en-US">,
@@ -509,18 +510,22 @@ export function attachLanguagePhonemeResources(
   phonemes: PhonemeData[],
 ): PhonemeData[] {
   if (languageId === "en-US") {
-    return phonemes.map((phoneme) => ({
-      ...phoneme,
-      phonemeAudio: phoneme.chartWord
-        ? {
-            kind: "local",
-            label: `IPA Chart 本地音频：/${phoneme.ipa}/`,
-            source: "americanipachart.com local mirror",
-            localSrc: `/audio/ipa/phoneme/${phoneme.chartWord}.mp3`,
-            languageId,
-          }
-        : phoneme.phonemeAudio,
-    }));
+    return phonemes.map((phoneme) => {
+      const localSrc = getEnglishHeaderPhonemeAudioSrc(phoneme.chartWord);
+
+      return {
+        ...phoneme,
+        phonemeAudio: localSrc
+          ? {
+              kind: "local",
+              label: `IPA Chart 本地音频：/${phoneme.ipa}/`,
+              source: "americanipachart.com local mirror",
+              localSrc,
+              languageId,
+            }
+          : phoneme.phonemeAudio,
+      };
+    });
   }
 
   const languageResources = LANGUAGE_RESOURCE_STACKS[languageId];

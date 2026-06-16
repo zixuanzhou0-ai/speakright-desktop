@@ -35,12 +35,20 @@ const ENGLISH_CHART_AUDIO_STEMS = new Set(
   PHONEMES.map((phoneme) => phoneme.chartWord).filter(Boolean),
 );
 
+export function isKnownEnglishChartAudioStem(
+  chartWord?: string,
+): chartWord is string {
+  const stem = chartWord?.trim();
+  return Boolean(
+    stem && /^[a-z0-9-]+$/.test(stem) && ENGLISH_CHART_AUDIO_STEMS.has(stem),
+  );
+}
+
 export function getEnglishHeaderPhonemeAudioSrc(
   chartWord?: string,
 ): string | null {
   const stem = chartWord?.trim();
-  if (!stem || !/^[a-z0-9-]+$/.test(stem)) return null;
-  if (!ENGLISH_CHART_AUDIO_STEMS.has(stem)) return null;
+  if (!isKnownEnglishChartAudioStem(stem)) return null;
 
   const src = `/audio/ipa/phoneme/${stem}.mp3`;
   return isPlayableHeaderAudioSrc(src) ? src : null;

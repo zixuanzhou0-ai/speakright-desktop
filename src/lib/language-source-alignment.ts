@@ -2,7 +2,10 @@ import { getExactTeachingVideosForSoundUnit } from "@/lib/language-teaching-vide
 import { getLocalLanguagePhonemeAsset } from "@/lib/local-language-assets";
 import { getLanguagePhonemeBySlug } from "@/lib/language-phonemes";
 import { isRuleLikeSoundUnit } from "@/lib/language-sound-unit-groups";
-import { isPlayableHeaderAudioSrc } from "@/lib/audio-playback-policy";
+import {
+  isKnownEnglishChartAudioStem,
+  isPlayableHeaderAudioSrc,
+} from "@/lib/audio-playback-policy";
 import type { LanguageId } from "@/types/language";
 import type { PhonemeData } from "@/types/phoneme";
 
@@ -94,7 +97,7 @@ export function shouldShowSoundUnitHeaderAudio(
 ): boolean {
   if (languageId === "en-US") {
     return Boolean(
-      phoneme.chartWord ||
+      isKnownEnglishChartAudioStem(phoneme.chartWord) ||
         isPlayableHeaderAudioSrc(phoneme.phonemeAudio?.localSrc),
     );
   }

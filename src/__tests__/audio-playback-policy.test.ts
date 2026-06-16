@@ -5,6 +5,7 @@ import {
   getEnglishHeaderPhonemeAudioSrc,
   getSoundUnitHeaderPlaybackOptions,
   isPlayableHeaderAudioSrc,
+  isKnownEnglishChartAudioStem,
 } from "@/lib/audio-playback-policy";
 
 describe("audio playback policy", () => {
@@ -52,6 +53,7 @@ describe("audio playback policy", () => {
     expect(getEnglishHeaderPhonemeAudioSrc("cat")).toBe(
       "/audio/ipa/phoneme/cat.mp3",
     );
+    expect(isKnownEnglishChartAudioStem("cat")).toBe(true);
 
     for (const chartWord of [
       "normal/cat",
@@ -64,6 +66,7 @@ describe("audio playback policy", () => {
       "fr-schwa.m4a",
       "",
     ]) {
+      expect(isKnownEnglishChartAudioStem(chartWord), chartWord).toBe(false);
       expect(getEnglishHeaderPhonemeAudioSrc(chartWord), chartWord).toBeNull();
       expect(
         getSoundUnitHeaderPlaybackOptions({ chartWord }),

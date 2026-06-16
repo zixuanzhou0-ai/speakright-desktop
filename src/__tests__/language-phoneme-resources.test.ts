@@ -6,8 +6,12 @@ import {
   getLocalLanguagePhonemeAsset,
 } from "@/lib/local-language-assets";
 import { getAllAssessmentSegmentAudioRegistryEntries } from "@/lib/assessment-segment-audio";
+import { attachLanguagePhonemeResources } from "@/lib/language-phoneme-resources";
 import { getLanguageResourceSite } from "@/lib/language-resource-sites";
-import { getLanguagePhonemes } from "@/lib/language-phonemes";
+import {
+  getLanguagePhonemes,
+  hasLocalPhonemeAssets,
+} from "@/lib/language-phonemes";
 import { RUSSIAN_PHONEMES } from "@/lib/language-sound-units/russian";
 import type { LanguageId } from "@/types/language";
 import type { PhonemeData } from "@/types/phoneme";
@@ -28,7 +32,38 @@ type ResourceBackedPhoneme = PhonemeData & {
 
 const NON_ENGLISH_LANGUAGES: LanguageId[] = ["es-ES", "fr-FR", "ru-RU"];
 
+function baseEnglishPhoneme(overrides: Partial<PhonemeData> = {}): PhonemeData {
+  return {
+    ipa: "/x/",
+    symbol: "x",
+    slug: "unsafe-chart-word",
+    name: "unsafe chart word",
+    category: "consonant",
+    example: "example",
+    keywords: [{ word: "example", ipa: "/example/" }],
+    difficulty: "high",
+    description: "test sound",
+    languageId: "en-US",
+    soundUnitType: "phoneme",
+    ...overrides,
+  };
+}
+
 describe("non-English phoneme resource parity", () => {
+  it("only attaches known English chart audio stems as local header clips", () => {
+    const [known] = attachLanguagePhonemeResources("en-US", [
+      baseEnglishPhoneme({ chartWord: "cat" }),
+    ]);
+    const [unsafe] = attachLanguagePhonemeResources("en-US", [
+      baseEnglishPhoneme({ chartWord: "fr-schwa" }),
+    ]);
+
+    expect(known.phonemeAudio?.localSrc).toBe("/audio/ipa/phoneme/cat.mp3");
+    expect(hasLocalPhonemeAssets(known)).toBe(true);
+    expect(unsafe.phonemeAudio?.localSrc).toBeUndefined();
+    expect(hasLocalPhonemeAssets(unsafe)).toBe(false);
+  });
+
   it("adds teaching resources to every Spanish, French, and Russian sound unit", () => {
     const missingResources = NON_ENGLISH_LANGUAGES.flatMap((languageId) =>
       getLanguagePhonemes(languageId)

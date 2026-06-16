@@ -72,6 +72,13 @@ describe("language source alignment", () => {
         adHocEnglishUnit({ chartWord: "cat" }),
       ),
     ).toBe(true);
+
+    expect(
+      shouldShowSoundUnitHeaderAudio(
+        "en-US",
+        adHocEnglishUnit({ chartWord: "fr-schwa" }),
+      ),
+    ).toBe(false);
   });
 
   it("keeps exact non-English phoneme header audio available", () => {

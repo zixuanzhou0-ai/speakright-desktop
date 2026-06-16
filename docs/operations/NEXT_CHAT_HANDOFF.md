@@ -394,6 +394,9 @@ git status --short --branch
   stem before constructing `/audio/ipa/phoneme/{stem}.mp3`; path fragments,
   query strings, extensions, spaces, or non-phoneme stems keep the speaker
   hidden instead of accidentally producing a clickable fake single-sound source.
+  The English resource layer and list-card IPA/illustration handlers reuse the
+  same known chart-audio stem guard, so future consumers do not receive or play
+  hand-built unsafe chart audio paths.
 - Scoring-breakdown tiles now also reject video-backed audio URLs before
   constructing a `Howl`, so they cannot play a full teaching-video track even if
   an upstream assessment-audio mapping regresses.

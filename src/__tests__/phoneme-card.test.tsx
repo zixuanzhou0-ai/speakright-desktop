@@ -115,6 +115,31 @@ describe("PhonemeCard header audio", () => {
     });
   });
 
+  it("does not expose unsafe English chart-word stems from the list card", () => {
+    const player = mockPlayer();
+    render(
+      <PhonemeCard
+        player={player}
+        phoneme={phoneme({
+          chartWord: "fr-schwa",
+          chartImage: "cat",
+          chartIpa: "/kaet/",
+        })}
+      />,
+    );
+
+    const ipa = screen.getByText("/ae/");
+    expectHeaderAudioLocked(ipa);
+    expect(
+      document.querySelector('[data-smoke="phoneme-card-header-audio-button"]'),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(ipa);
+    fireEvent.click(screen.getByAltText("fr-schwa"));
+
+    expect(player.play).not.toHaveBeenCalled();
+  });
+
   it("uses one-shot playback options for local non-English header clips", () => {
     const player = mockPlayer();
     render(

@@ -1,6 +1,10 @@
 ﻿import { PHONEMES } from "@/lib/phoneme-data";
 import { expandLanguageKeywordOptions } from "@/lib/language-keyword-expansions";
 import { attachLanguagePhonemeResources } from "@/lib/language-phoneme-resources";
+import {
+  isKnownEnglishChartAudioStem,
+  isPlayableHeaderAudioSrc,
+} from "@/lib/audio-playback-policy";
 import { FRENCH_PHONEMES } from "@/lib/language-sound-units/french";
 import { RUSSIAN_PHONEMES } from "@/lib/language-sound-units/russian";
 import { SPANISH_PHONEMES } from "@/lib/language-sound-units/spanish";
@@ -72,5 +76,9 @@ export function getAllLanguagePhonemeSlugs(): string[] {
 }
 
 export function hasLocalPhonemeAssets(phoneme: PhonemeData): boolean {
-  return Boolean(phoneme.chartWord || phoneme.phonemeAudio?.localSrc);
+  if (phoneme.languageId === "en-US" || !phoneme.languageId) {
+    return isKnownEnglishChartAudioStem(phoneme.chartWord);
+  }
+
+  return isPlayableHeaderAudioSrc(phoneme.phonemeAudio?.localSrc);
 }

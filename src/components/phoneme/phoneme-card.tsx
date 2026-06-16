@@ -11,7 +11,9 @@ import { Card } from "@/components/ui/card";
 import type { UseAudioPlayerReturn } from "@/hooks/use-audio-player";
 import {
   getChartWordPlaybackOptions,
+  getEnglishHeaderPhonemeAudioSrc,
   getSoundUnitHeaderPlaybackOptions,
+  isKnownEnglishChartAudioStem,
 } from "@/lib/audio-playback-policy";
 import { shouldShowSoundUnitHeaderAudio } from "@/lib/language-source-alignment";
 import { getSoundUnitCardLabel } from "@/lib/language-sound-unit-groups";
@@ -67,16 +69,13 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
         phonemeAudio: phoneme.phonemeAudio,
       })
     : undefined;
-  const rawHeaderAudioSrc = headerPlaybackOptions
-    ? (word ?? phoneme.phonemeAudio?.localSrc ?? "")
+  const chartAudioSrc = getEnglishHeaderPhonemeAudioSrc(word);
+  const headerAudioSrc = headerPlaybackOptions
+    ? (chartAudioSrc ?? phoneme.phonemeAudio?.localSrc ?? "")
     : "";
-  const headerAudioSrc =
-    rawHeaderAudioSrc && word
-      ? `/audio/ipa/phoneme/${word}.mp3`
-      : rawHeaderAudioSrc;
   const headerAudioPlayable = Boolean(headerAudioSrc && headerPlaybackOptions);
   const headerAudioKind = headerAudioPlayable
-    ? word
+    ? chartAudioSrc
       ? "chart"
       : "sound-unit"
     : "none";
@@ -114,7 +113,7 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
   const handlePlayWord = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!word) return;
+    if (!isKnownEnglishChartAudioStem(word)) return;
     const next = lastWordPlay === "slow" ? "normal" : "slow";
     setLastWordPlay(next);
     player.play(`/audio/ipa/${next}/${word}.mp3`, getChartWordPlaybackOptions());
