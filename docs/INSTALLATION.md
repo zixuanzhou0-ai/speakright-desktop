@@ -1,8 +1,11 @@
 # Installation Guide
 
-## Download Controlled-Test Installer
+## Controlled-Test Installer Boundary
 
-Download the latest controlled-test installer from the GitHub Releases page.
+Do not treat GitHub Releases as a public signed download page yet. If you are a
+maintainer or tester in the controlled-test track, use the installer filename
+named by the current release notes and verify it against
+`docs/operations/RC_EVIDENCE_AUDIT.md`.
 
 This build is not code-signed yet. Use it only for controlled testing until the
 Windows EXE/MSI/NSIS artifacts are signed.
@@ -13,13 +16,13 @@ Published GitHub Release assets can lag behind the current `main` branch; check
 the release notes and `docs/operations/RC_EVIDENCE_AUDIT.md` before treating an
 installer as the latest validated RC.
 
-Recommended file:
+Controlled-test setup filename currently referenced by the release notes:
 
 ```text
 SpeakRight_1.0.1_x64-setup.exe
 ```
 
-Alternative MSI package:
+Controlled-test MSI filename currently referenced by the release notes:
 
 ```text
 SpeakRight_1.0.1_x64_en-US.msi

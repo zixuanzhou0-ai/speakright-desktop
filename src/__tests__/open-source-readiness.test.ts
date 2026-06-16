@@ -355,8 +355,14 @@ describe("open-source readiness files", () => {
     expect(readme).toContain("Public review, source builds");
     expect(readme).toContain("A signed public Windows release is not complete yet");
     expect(readme).toContain("internal-test or controlled-test builds");
-    expect(installation).toContain("Download Controlled-Test Installer");
-    expect(installation).toContain("latest controlled-test installer");
+    expect(installation).toContain("Controlled-Test Installer Boundary");
+    expect(installation).toContain(
+      "Do not treat GitHub Releases as a public signed download page yet",
+    );
+    expect(installation).toContain("controlled-test track");
+    expect(installation).toContain("installer filename");
+    expect(installation).toContain("current release notes");
+    expect(installation).not.toContain("Download the latest controlled-test installer");
     expect(installation).toContain("prefer **Build From Source** below");
     expect(installation).toContain("wait for a signed");
     expect(installation).toContain("public Windows release");
