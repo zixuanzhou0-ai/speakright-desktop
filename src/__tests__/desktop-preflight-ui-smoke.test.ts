@@ -395,6 +395,15 @@ describe("desktop preflight and UI smoke", () => {
     expect(assessmentPage).toContain("{azure.error}");
     expect(assessmentPage).toContain("{wordAudio.error}");
     expect(assessmentPage).toContain("{paragraphAudio.error}");
+    expect(assessmentPage).toContain(
+      "flex min-w-0 flex-wrap justify-center gap-1.5",
+    );
+    expect(assessmentPage).toContain(
+      "max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
+    );
+    expect(assessmentPage).toContain(
+      "break-words text-xs text-muted-foreground [overflow-wrap:anywhere]",
+    );
     expect(
       assessmentPage.match(
         /max-w-md break-words text-center text-sm text-destructive \[overflow-wrap:anywhere\]/g,

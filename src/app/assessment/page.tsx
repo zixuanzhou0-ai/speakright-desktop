@@ -500,9 +500,13 @@ export default function AssessmentPage() {
                   </div>
 
                   <div className="rounded-xl border bg-card p-8 shadow-sm text-center space-y-4">
-                    <div className="flex flex-wrap justify-center gap-1.5">
+                    <div className="flex min-w-0 flex-wrap justify-center gap-1.5">
                       {targetLabels(currentWord).map((label) => (
-                        <Badge key={label} variant="secondary">
+                        <Badge
+                          key={label}
+                          variant="secondary"
+                          className="max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]"
+                        >
                           {label}
                         </Badge>
                       ))}
@@ -518,7 +522,7 @@ export default function AssessmentPage() {
                       {currentWord.ipa}
                     </span>
                     {currentWord.purpose && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="break-words text-xs text-muted-foreground [overflow-wrap:anywhere]">
                         {currentWord.purpose}
                       </p>
                     )}
