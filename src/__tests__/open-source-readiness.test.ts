@@ -261,6 +261,18 @@ describe("open-source readiness files", () => {
     expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
       "ru-RU 918 existing, 0 missing",
     );
+    expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
+      "Total missing audio items: 0",
+    );
+    expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
+      "estimated characters/credits: 0",
+    );
+    expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
+      'reference video mean `-14.7 dB`',
+    );
+    expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
+      'word floor `-21.6 dB`',
+    );
     expect(handoffDocs).toContain(
       "Current command-by-command results, including exact test counts, live in",
     );

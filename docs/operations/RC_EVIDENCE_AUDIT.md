@@ -159,7 +159,9 @@ npm.cmd run desktop:launch-release
   it when Tauri/Rust or packaged installer behavior changes.
 - Latest recorded audio dry-runs: `audio:parity:dry-run` reported
   `es-ES 880 existing, 0 missing`, `fr-FR 1090 existing, 0 missing`, and
-  `ru-RU 918 existing, 0 missing`; `audio:loudness:dry-run` passed against
+  `ru-RU 918 existing, 0 missing`, with `Total missing audio items: 0` and
+  `estimated characters/credits: 0`; `audio:loudness:dry-run` passed with
+  reference video mean `-14.7 dB` and word floor `-21.6 dB` against
   representative A/B, language-pack, IPA normal/slow, and teaching-video
   samples. Both made zero ElevenLabs calls.
 - `es-ES`, `fr-FR`, and `ru-RU` are experimental and must not be described as
