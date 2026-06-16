@@ -951,8 +951,11 @@ describe("desktop preflight and UI smoke", () => {
     expect(contrastPage).toContain('data-smoke="contrast-word-audio-error"');
     expect(contrastPage).toContain('data-smoke="contrast-page"');
     expect(contrastPage).toContain('data-smoke="contrast-config-card"');
+    expect(contrastPage).toContain('data-smoke="contrast-pair-preview"');
     expect(contrastPage).toContain("flex flex-wrap items-start gap-3");
     expect(contrastPage).toContain("grid grid-cols-1 gap-3 sm:grid-cols-2");
+    expect(contrastPage).toContain("set.pairs.map((pair)");
+    expect(contrastPage).not.toContain("set.pairs[0].wordA} / {set.pairs[0].wordB} ...");
     expect(contrastPage).toContain('data-smoke="contrast-assessment-error"');
     expect(contrastPage).toContain('data-smoke="contrast-assessment-retry"');
     expect(contrastPage).toContain("CONTRAST_ASSESSMENT_FALLBACK_MESSAGE");

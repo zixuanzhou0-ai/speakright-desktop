@@ -409,8 +409,18 @@ export default function ContrastDrillPage() {
                   <span className="block max-w-full break-words text-center font-mono text-lg font-bold [overflow-wrap:anywhere]">
                     {set.label}
                   </span>
-                  <p className="mt-1 break-words text-center text-xs text-muted-foreground [overflow-wrap:anywhere]">
-                    {set.pairs[0].wordA} / {set.pairs[0].wordB} ...
+                  <p
+                    className="mt-2 flex flex-wrap justify-center gap-x-2 gap-y-1 text-xs text-muted-foreground"
+                    data-smoke="contrast-pair-preview"
+                  >
+                    {set.pairs.map((pair) => (
+                      <span
+                        key={`${pair.wordA}-${pair.wordB}`}
+                        className="max-w-full break-words text-center [overflow-wrap:anywhere]"
+                      >
+                        {pair.wordA} / {pair.wordB}
+                      </span>
+                    ))}
                   </p>
                 </motion.button>
               ))}

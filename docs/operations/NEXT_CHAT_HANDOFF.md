@@ -132,6 +132,9 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
   require provider-quota requests to include zero-generation dry-run evidence or
   a clear not-applicable reason, expected text/audio scope, and explicit
   maintainer approval before any ElevenLabs or paid-provider work.
+- Contrast-drill set cards now show every preview word pair in a wrap-safe list
+  instead of only the first pair followed by `...`; the component and desktop
+  static smoke tests lock the full preview.
 - Release status and language availability cards now wrap version/channel
   badges, release links, build facts, language status badges, detail text, and
   recommendations without losing desktop external-link behavior.

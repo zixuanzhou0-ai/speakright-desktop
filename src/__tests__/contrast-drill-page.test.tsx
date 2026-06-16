@@ -105,6 +105,17 @@ describe("ContrastDrillPage", () => {
     });
   });
 
+  it("shows every preview pair in the contrast-set cards without ellipsis", () => {
+    render(<ContrastDrillPage />);
+
+    expect(screen.getByText("sheep / ship")).toBeInTheDocument();
+    expect(screen.getByText("seat / sit")).toBeInTheDocument();
+    expect(screen.getByText("feet / fit")).toBeInTheDocument();
+    expect(screen.getByText("beat / bit")).toBeInTheDocument();
+    expect(screen.getByText("cheap / chip")).toBeInTheDocument();
+    expect(document.body).not.toHaveTextContent("...");
+  });
+
   it("lets users retry contrast Azure scoring on the same recording after a provider failure", async () => {
     const azureFailure =
       "请先到设置页配置 Azure Speech API 密钥和区域；配置后回到本页重新评分。";
