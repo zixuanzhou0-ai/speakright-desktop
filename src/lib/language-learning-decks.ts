@@ -532,7 +532,7 @@ export const LANGUAGE_LEARNING_DECKS: Record<DeckLanguageId, LanguageLearningDec
       },
       {
         text: "J’aime le bon vin blanc.",
-        ipaHint: "elision + nasal vowels",
+        ipaHint: "/ʒɛm lə bɔ̃ vɛ̃ blɑ̃/",
         targetUnitSlugs: ["fr-elision", "fr-on", "fr-in", "fr-an"],
         focus: "省音和鼻化元音",
       },
@@ -622,7 +622,7 @@ export const LANGUAGE_LEARNING_DECKS: Record<DeckLanguageId, LanguageLearningDec
     sentenceDeck: [
       { text: "Мама дома.", stressText: "Ма́ма до́ма.", ipaHint: "/ˈmamə ˈdomə/", targetUnitSlugs: ["ru-a", "ru-o", "ru-stress-reduction"], focus: "重音、/o/ 和非重读弱化" },
       { text: "Я люблю русский язык.", stressText: "Я люблю́ ру́сский язы́к.", ipaHint: "/ruskij jɪˈzɨk/", targetUnitSlugs: ["ru-y", "ru-u", "ru-r", "ru-hard-soft", "ru-iotated-vowels"], focus: "/ɨ/、/u/、颤音、硬软辅音和 iotated vowels" },
-      { text: "Здравствуйте, студент.", stressText: "Здра́вствуйте, студе́нт.", ipaHint: "clusters", targetUnitSlugs: ["ru-clusters"], focus: "辅音丛" },
+      { text: "Здравствуйте, студент.", stressText: "Здра́вствуйте, студе́нт.", ipaHint: "/ˈzdrastvʊjtʲe stʊˈdʲent/", targetUnitSlugs: ["ru-clusters"], focus: "辅音丛" },
       { text: "Чай и щи горячие.", stressText: "Чай и щи горя́чие.", ipaHint: "/tɕ ɕː/", targetUnitSlugs: ["ru-ch", "ru-shch", "ru-ts-ch-shch"], focus: "ч/щ 和 ц/ч/щ 组对比" },
       { text: "Хорошо, спасибо.", stressText: "Хорошо́, спаси́бо.", ipaHint: "/x spɐˈsʲibə/", targetUnitSlugs: ["ru-x", "ru-stress-reduction"], focus: "/x/ 与弱化" },
       { text: "Встреча завтра утром.", stressText: "Встре́ча за́втра у́тром.", ipaHint: "clusters + assimilation", targetUnitSlugs: ["ru-clusters", "ru-voicing-assimilation"], focus: "辅音丛和清浊同化" },
@@ -637,7 +637,7 @@ export const LANGUAGE_LEARNING_DECKS: Record<DeckLanguageId, LanguageLearningDec
       { text: "Москва сегодня холодная.", stressText: "Москва́ сего́дня хо́лодная.", ipaHint: "/ɐ ə/", targetUnitSlugs: ["ru-unstressed-o-a", "ru-unstressed-e-ya"], focus: "非重读元音弱化" },
       { text: "Нож тупой.", stressText: "Нож тупо́й.", ipaHint: "/noʂ tʊˈpoj/", targetUnitSlugs: ["ru-final-devoicing", "ru-sh-zh"], focus: "ж 在清辅音 /t/ 前清化，同时听 ж/ш 的厚音色" },
       { text: "Сделать быстро трудно.", stressText: "Сде́лать бы́стро тру́дно.", ipaHint: "/ˈzdʲelətʲ ˈbɨstrə/", targetUnitSlugs: ["ru-voicing-assimilation", "ru-soft-t-d"], focus: "清浊同化" },
-      { text: "Текст простой, но группа большая.", stressText: "Текст просто́й, но гру́ппа больша́я.", ipaHint: "clusters", targetUnitSlugs: ["ru-clusters"], focus: "辅音丛不加元音" },
+      { text: "Текст простой, но группа большая.", stressText: "Текст просто́й, но гру́ппа больша́я.", ipaHint: "/tʲekst prɐˈstoj no ˈgrupə bɐlʲˈʂajə/", targetUnitSlugs: ["ru-clusters"], focus: "辅音丛不加元音" },
     ],
   },
 };

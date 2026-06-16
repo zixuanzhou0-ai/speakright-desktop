@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-15T10:11:10.605Z",
+  "generatedAt": "2026-06-16T03:32:10.966Z",
   "purpose": "SpeakRight Desktop final user-visible es-ES/fr-FR/ru-RU IPA audit input for GPT Research or expert review",
   "confirmedPolicy": {
     "global": "two-layer display: phoneme or dictionary anchor plus learner-facing training realization",
@@ -22295,9 +22295,9 @@
       "text": "Текст простой, но группа большая.",
       "currentIpa": "/tʲekst prɐˈstoj no ˈgrupə bɐlʲˈʂajə/",
       "currentDisplayType": "sentence",
-      "auditRole": "ipa-transcription",
-      "sourceFile": "src/lib/language-phonemes.ts",
-      "sourceNotes": "Final expanded UI corpus from language-sound-units, language-keyword-expansions, and language-learning-decks."
+      "auditRole": "deck-focus-hint",
+      "sourceFile": "src/lib/language-learning-decks.ts",
+      "sourceNotes": "language-learning-decks sentenceDeck.ipaHint focus cue. Audit the target text and hint role, but do not treat currentIpa as a full sentence transcription."
     },
     {
       "languageId": "ru-RU",
@@ -22311,9 +22311,9 @@
       "text": "Здравствуйте, студент.",
       "currentIpa": "/ˈzdrastvʊjtʲe stʊˈdʲent/",
       "currentDisplayType": "sentence",
-      "auditRole": "ipa-transcription",
-      "sourceFile": "src/lib/language-phonemes.ts",
-      "sourceNotes": "Final expanded UI corpus from language-sound-units, language-keyword-expansions, and language-learning-decks."
+      "auditRole": "deck-focus-hint",
+      "sourceFile": "src/lib/language-learning-decks.ts",
+      "sourceNotes": "language-learning-decks sentenceDeck.ipaHint focus cue. Audit the target text and hint role, but do not treat currentIpa as a full sentence transcription."
     },
     {
       "languageId": "ru-RU",

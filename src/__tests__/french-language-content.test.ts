@@ -54,6 +54,9 @@ describe("French pronunciation content", () => {
     expect(byText("Trop grand, trop lent, trop fort.")?.ipaHint).toBe(
       "/tʁo gʁɑ̃ tʁo lɑ̃ tʁo fɔʁ/",
     );
+    expect(byText("J’aime le bon vin blanc.")?.ipaHint).toBe(
+      "/ʒɛm lə bɔ̃ vɛ̃ blɑ̃/",
+    );
     expect(bySlug("fr-schwa")?.ipaHint).toContain("ə");
 
     for (const item of [
@@ -61,6 +64,7 @@ describe("French pronunciation content", () => {
       bySlug("fr-enchainement"),
       bySlug("fr-elision"),
       byText("Trop grand, trop lent, trop fort."),
+      byText("J’aime le bon vin blanc."),
     ]) {
       expect(item?.ipaHint, item?.text).toMatch(/^\/.+\/$/);
     }

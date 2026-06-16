@@ -167,6 +167,21 @@ describe("static multilingual language audio packs", () => {
     }> = [
       { languageId: "fr-FR", text: "l'homme écoute", ipa: "/lɔmekut/" },
       { languageId: "fr-FR", text: "l'école ouvre", ipa: "/lekɔluvʁ/" },
+      {
+        languageId: "fr-FR",
+        text: "J’aime le bon vin blanc.",
+        ipa: "/ʒɛm lə bɔ̃ vɛ̃ blɑ̃/",
+      },
+      {
+        languageId: "ru-RU",
+        text: "Здравствуйте, студент.",
+        ipa: "/ˈzdrastvʊjtʲe stʊˈdʲent/",
+      },
+      {
+        languageId: "ru-RU",
+        text: "Текст простой, но группа большая.",
+        ipa: "/tʲekst prɐˈstoj no ˈgrupə bɐlʲˈʂajə/",
+      },
       { languageId: "ru-RU", text: "друг дома", ipa: "/drug ˈdomə/" },
       {
         languageId: "ru-RU",

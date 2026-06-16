@@ -2593,7 +2593,7 @@
     {
       "key": "здравствуйте, студент.",
       "text": "Здравствуйте, студент.",
-      "ipa": "clusters",
+      "ipa": "/ˈzdrastvʊjtʲe stʊˈdʲent/",
       "soundUnitSlugs": [
         "ru-clusters"
       ],
@@ -8257,7 +8257,7 @@
     {
       "key": "текст простой, но группа большая.",
       "text": "Текст простой, но группа большая.",
-      "ipa": "clusters",
+      "ipa": "/tʲekst prɐˈstoj no ˈgrupə bɐlʲˈʂajə/",
       "soundUnitSlugs": [
         "ru-clusters"
       ],

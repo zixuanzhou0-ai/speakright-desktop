@@ -52,6 +52,12 @@ describe("Russian pronunciation content", () => {
     const clusterItem = deck.sentenceDeck.find((item) =>
       item.targetUnitSlugs.includes("ru-clusters"),
     );
+    const greetingClusterItem = deck.sentenceDeck.find(
+      (item) => item.text === "Здравствуйте, студент.",
+    );
+    const longClusterItem = deck.sentenceDeck.find(
+      (item) => item.text === "Текст простой, но группа большая.",
+    );
 
     expect(finalDevoicingItems.map((item) => item.text)).not.toContain(
       "Друг ждёт у гаража.",
@@ -68,6 +74,12 @@ describe("Russian pronunciation content", () => {
     expect(reductionItem?.ipaHint).toContain("ɐ");
     expect(hardSoftItem?.focus).toContain("硬软辅音");
     expect(clusterItem?.focus).toContain("辅音丛");
+    expect(greetingClusterItem?.ipaHint).toBe(
+      "/ˈzdrastvʊjtʲe stʊˈdʲent/",
+    );
+    expect(longClusterItem?.ipaHint).toBe(
+      "/tʲekst prɐˈstoj no ˈgrupə bɐlʲˈʂajə/",
+    );
   });
 
   it("expands Russian diagnostic, contrast, and sentence decks", () => {

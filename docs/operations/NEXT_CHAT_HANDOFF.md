@@ -639,9 +639,12 @@ Start with the Release EXE and inspect these areas before adding new features:
 - The audit input is now reproducible with `npm.cmd run ipa:audit:export`.
   Rows include `auditRole`: `ipa-transcription` for real IPA rows and
   `deck-focus-hint` for `language-learning-decks` sentence `ipaHint` rows. The
-  current export keeps the same `1736` total rows and marks `34` deck focus
+  current export keeps the same `1736` total rows and marks `36` deck focus
   hints so GPT Research does not mistake compact cues such as `/s sʲ zʲ/` for
-  complete sentence IPA.
+  complete sentence IPA. Recent source-synced rows also replaced generic
+  `elision + nasal vowels` / `clusters` sentence labels with full IPA for
+  `J’aime le bon vin blanc.`, `Здравствуйте, студент.`, and
+  `Текст простой, но группа большая.`.
 - The reviewed-findings ledger is now checked by
   `src/__tests__/non-english-ipa-reviewed-findings.test.ts`. It locks the
   high-risk Spanish source-leak guardrails, French connected-speech updates,
