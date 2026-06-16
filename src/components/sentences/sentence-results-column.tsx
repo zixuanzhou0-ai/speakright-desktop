@@ -18,6 +18,9 @@ import type {
 } from "@/types/azure";
 import type { LanguageId } from "@/types/language";
 
+const WRAP_SAFE_BADGE_CLASS =
+  "h-auto min-h-5 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]";
+
 interface SentenceResultsColumnProps {
   hasResult: boolean;
   languageId?: LanguageId;
@@ -142,7 +145,11 @@ function TransferEvidenceCard({
             这次自由练习命中了当前训练目标，已写入学习记忆和复习队列。
           </p>
         </div>
-        <Badge variant={summary.recorded ? "default" : "secondary"}>
+        <Badge
+          variant={summary.recorded ? "default" : "secondary"}
+          className={WRAP_SAFE_BADGE_CLASS}
+          data-smoke="free-practice-transfer-status-badge"
+        >
           {summary.recorded ? "已记录" : "仅分析"}
         </Badge>
       </div>
@@ -161,7 +168,11 @@ function TransferEvidenceCard({
                   {item.reason}
                 </p>
               </div>
-              <Badge variant={item.passed ? "default" : "destructive"}>
+              <Badge
+                variant={item.passed ? "default" : "destructive"}
+                className={WRAP_SAFE_BADGE_CLASS}
+                data-smoke="free-practice-transfer-score-badge"
+              >
                 目标音 {item.targetScore}/{item.threshold}
               </Badge>
             </div>

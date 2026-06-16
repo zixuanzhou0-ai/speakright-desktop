@@ -244,6 +244,22 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain('ariaLabel !== "播放单词发音"');
     expect(script).toContain("practiceAudioLabels=ok");
     expect(script).toContain("freePracticeSmoke=ok");
+    const sentencesPage = readProjectFile("src/app/sentences/page.tsx");
+    expect(sentencesPage).toContain('data-smoke="sentences-page"');
+    expect(sentencesPage).toContain('data-smoke="free-practice-clear-session"');
+    expect(sentencesPage).toContain(
+      "mb-2 flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between",
+    );
+    expect(sentencesPage).toContain("break-words text-2xl font-bold");
+    expect(sentencesPage).toContain(
+      "inline-flex h-auto min-h-7 max-w-full items-center justify-center gap-1 whitespace-normal break-words",
+    );
+    expect(sentencesPage).toContain(
+      "break-words text-muted-foreground [overflow-wrap:anywhere]",
+    );
+    expect(sentencesPage).toContain(
+      "break-words rounded-lg border border-amber-300/60",
+    );
     const sentenceInputCard = readProjectFile(
       "src/components/sentences/sentence-input-card.tsx",
     );
@@ -267,6 +283,19 @@ describe("desktop preflight and UI smoke", () => {
     expectSmokeAlertWraps(
       sentenceRecordingCard,
       "free-practice-local-save-error",
+    );
+    const sentenceResultsColumn = readProjectFile(
+      "src/components/sentences/sentence-results-column.tsx",
+    );
+    expect(sentenceResultsColumn).toContain("WRAP_SAFE_BADGE_CLASS");
+    expect(sentenceResultsColumn).toContain(
+      'data-smoke="free-practice-transfer-status-badge"',
+    );
+    expect(sentenceResultsColumn).toContain(
+      'data-smoke="free-practice-transfer-score-badge"',
+    );
+    expect(sentenceResultsColumn).toContain(
+      "h-auto min-h-5 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
     );
     const wordPronunciationHook = readProjectFile(
       "src/hooks/use-word-pronunciation.ts",

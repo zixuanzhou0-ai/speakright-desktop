@@ -418,25 +418,30 @@ export default function SentencesPage() {
         className="h-full flex flex-col px-6 py-4 overflow-hidden"
         data-smoke="sentences-page"
       >
-        <div className="mb-2 flex shrink-0 items-center justify-between">
-          <h1 className="text-2xl font-bold">自由练习</h1>
+        <div className="mb-2 flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="break-words text-2xl font-bold [overflow-wrap:anywhere]">
+              自由练习
+            </h1>
+          </div>
           {(azure.result || llm.hasFeedback) && (
             <button
               type="button"
               onClick={handleClearSession}
-              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              className="inline-flex h-auto min-h-7 max-w-full items-center justify-center gap-1 whitespace-normal break-words rounded-md px-2 py-1 text-center text-xs text-muted-foreground transition-colors [overflow-wrap:anywhere] hover:bg-muted hover:text-foreground"
+              data-smoke="free-practice-clear-session"
             >
               <Trash2 className="h-3 w-3" />
               清除练习记录
             </button>
           )}
         </div>
-        <p className="mb-4 shrink-0 text-muted-foreground">
+        <p className="mb-4 shrink-0 break-words text-muted-foreground [overflow-wrap:anywhere]">
           输入单词或句子，听标准发音，跟读录音，获得 AI 评分与反馈
         </p>
         {sessionStorageWarning && (
           <p
-            className="mb-3 shrink-0 rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
+            className="mb-3 shrink-0 break-words rounded-lg border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-amber-800 [overflow-wrap:anywhere] dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
             data-smoke="free-practice-session-storage-warning"
             role="alert"
           >
