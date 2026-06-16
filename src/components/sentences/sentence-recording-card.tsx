@@ -119,12 +119,20 @@ export function SentenceRecordingCard({
         />
 
         {recorderError && (
-          <p role="alert" className="text-sm text-red-500">
+          <p
+            role="alert"
+            data-smoke="free-practice-recorder-error"
+            className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-center text-sm text-destructive"
+          >
             {recorderError}
           </p>
         )}
         {assessError && (
-          <p role="alert" className="text-sm text-red-500">
+          <p
+            role="alert"
+            data-smoke="free-practice-assess-error"
+            className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-center text-sm text-destructive"
+          >
             {assessError}
           </p>
         )}

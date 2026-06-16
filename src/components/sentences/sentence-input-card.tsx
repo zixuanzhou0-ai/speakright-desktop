@@ -12,6 +12,7 @@ import {
   getCenteredReadableTextClassName,
   getPracticeTextDensity,
 } from "@/lib/practice-text-presentation";
+import type { LanguageId } from "@/types/language";
 
 const MAX_CHARS = 150;
 const WARN_CHARS = 120;
@@ -21,6 +22,7 @@ interface SentenceInputCardProps {
   onSentenceChange: (value: string) => void;
   speed: number;
   onSpeedChange: (value: number) => void;
+  languageId?: LanguageId;
   isWordMode: boolean;
   trimmedText: string;
   wordIpa: string | null;
@@ -47,6 +49,7 @@ export function SentenceInputCard({
   onSentenceChange,
   speed,
   onSpeedChange,
+  languageId = "en-US",
   isWordMode,
   trimmedText,
   wordIpa,
@@ -70,6 +73,11 @@ export function SentenceInputCard({
     isWordMode ? "word" : "sentence",
   );
   const ipaDensity = getPracticeTextDensity(wordIpa ?? "", "phrase");
+  const modeHelpText = isWordMode
+    ? languageId === "en-US"
+      ? "单词模式 · 本地音频优先，有道兜底"
+      : "单词模式 · 本地语言包音频优先，无本地条目时不会用在线音频冒充"
+    : "句子模式 · 发音来自 ElevenLabs";
 
   return (
     <div
@@ -187,18 +195,14 @@ export function SentenceInputCard({
       </div>
 
       {trimmedText && (
-        <p className="text-xs text-muted-foreground/70">
-          {isWordMode
-            ? "单词模式 · 本地音频优先，有道兜底"
-            : "句子模式 · 发音来自 ElevenLabs"}
-        </p>
+        <p className="text-xs text-muted-foreground/70">{modeHelpText}</p>
       )}
 
       {isWordMode && wordAudioError && (
         <p
           role="alert"
           data-smoke="free-practice-word-audio-error"
-          className="text-sm text-red-500"
+          className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive"
         >
           {wordAudioError}
         </p>
@@ -240,7 +244,11 @@ export function SentenceInputCard({
       </AnimatePresence>
 
       {ttsError && (
-        <p role="alert" className="text-sm text-red-500">
+        <p
+          role="alert"
+          data-smoke="free-practice-tts-error"
+          className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive"
+        >
           {ttsError}
         </p>
       )}

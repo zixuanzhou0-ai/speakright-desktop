@@ -452,6 +452,7 @@ export default function SentencesPage() {
               onSentenceChange={setSentence}
               speed={speed}
               onSpeedChange={setSpeed}
+              languageId={languageId}
               isWordMode={isWordMode}
               trimmedText={trimmedText}
               wordIpa={wordIpa}

@@ -54,7 +54,9 @@ describe("useLlmFeedback", () => {
       } as unknown as AzureAssessmentResult);
     });
 
-    expect(result.current.error).toBe("请先在设置页面配置 LLM API 密钥");
+    expect(result.current.error).toBe(
+      "请先在设置页配置 AI 教练 LLM API Key；Azure 数字评分已保留，配置后可重新生成中文反馈。",
+    );
     expect(mocks.streamLlmFeedback).not.toHaveBeenCalled();
   });
 

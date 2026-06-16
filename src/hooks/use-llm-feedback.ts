@@ -162,7 +162,9 @@ export function useLlmFeedback(): UseLlmFeedbackReturn {
     ) => {
       const config = getLlmConfig();
       if (!config) {
-        setError("请先在设置页面配置 LLM API 密钥");
+        setError(
+          "请先在设置页配置 AI 教练 LLM API Key；Azure 数字评分已保留，配置后可重新生成中文反馈。",
+        );
         return;
       }
 
