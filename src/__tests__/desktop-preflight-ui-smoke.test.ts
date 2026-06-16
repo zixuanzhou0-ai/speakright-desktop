@@ -23,6 +23,25 @@ function expectSmokeAlertWraps(source: string, smokeId: string) {
   );
 }
 
+function expectSmokeElementUsesWrapSafeClass(
+  source: string,
+  smokeId: string,
+  className: string,
+) {
+  const marker = `data-smoke="${smokeId}"`;
+  const markerIndex = source.indexOf(marker);
+  expect(markerIndex, `${smokeId} marker`).toBeGreaterThanOrEqual(0);
+
+  const elementSource = source.slice(
+    Math.max(0, markerIndex - 260),
+    markerIndex + 260,
+  );
+  expect(elementSource, `${smokeId} wrap-safe class`).toContain(className);
+  expect(elementSource, `${smokeId} no nowrap`).not.toContain(
+    "whitespace-nowrap",
+  );
+}
+
 describe("desktop preflight and UI smoke", () => {
   it("wires a preflight command before desktop release builds", () => {
     const packageJson = JSON.parse(readProjectFile("package.json")) as {
@@ -595,6 +614,53 @@ describe("desktop preflight and UI smoke", () => {
     expect(drillPage).toContain('data-smoke="drill-report-storage-warning"');
     expect(drillPage).toContain('role="alert"');
     expect(drillPage).toContain("loadDrillReportForLanguage(languageId)");
+    expect(drillPage).toContain("WRAP_SAFE_ACTION_BUTTON_CLASS");
+    expect(drillPage).toContain("WRAP_SAFE_BADGE_CLASS");
+    expect(drillPage).toContain(
+      "h-auto min-h-8 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
+    );
+    expect(drillPage).toContain(
+      "h-auto min-h-5 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
+    );
+    expect(drillPage).toContain(
+      "mb-5 flex flex-col gap-3 shrink-0 sm:flex-row sm:items-start sm:justify-between",
+    );
+    expect(drillPage).toContain('<div className="min-w-0">');
+    for (const smokeId of [
+      "drill-settings-action",
+      "drill-evidence-action",
+      "drill-diagnosis-action",
+      "drill-primary-action",
+      "drill-secondary-diagnosis-action",
+    ]) {
+      expectSmokeElementUsesWrapSafeClass(
+        drillPage,
+        smokeId,
+        "WRAP_SAFE_ACTION_BUTTON_CLASS",
+      );
+    }
+    for (const smokeId of [
+      "drill-readiness-badge",
+      "drill-duration-badge",
+      "drill-priority-badge",
+      "drill-prescription-source-badge",
+      "drill-review-source-badge",
+      "drill-today-duration-badge",
+      "drill-today-state-badge",
+      "drill-today-stage-badge",
+      "drill-memory-count-badge",
+      "drill-memory-severity-badge",
+      "drill-pack-status-badge",
+      "drill-pack-phoneme-badge",
+      "drill-pack-duration-badge",
+      "drill-pack-level-count-badge",
+    ]) {
+      expectSmokeElementUsesWrapSafeClass(
+        drillPage,
+        smokeId,
+        "WRAP_SAFE_BADGE_CLASS",
+      );
+    }
     expect(drillReportStorage).toContain("DRILL_REPORT_STORAGE_WARNING");
     expect(drillReportStorage).toContain("上次诊断报告无法读取");
     expect(drillReportStorage).toContain("重置本机学习数据");

@@ -111,6 +111,11 @@ const FREE_MODES = [
   },
 ];
 
+const WRAP_SAFE_ACTION_BUTTON_CLASS =
+  "h-auto min-h-8 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]";
+const WRAP_SAFE_BADGE_CLASS =
+  "h-auto min-h-5 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]";
+
 function levelTitle(pack: TrainingPack, levelId?: string): string {
   return (
     pack.course?.levels.find((level) => level.id === levelId)?.title ??
@@ -279,8 +284,8 @@ export default function DrillPage() {
           className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin"
           data-smoke="drill-page"
         >
-          <div className="mb-5 flex items-start justify-between gap-4 shrink-0">
-            <div>
+          <div className="mb-5 flex flex-col gap-3 shrink-0 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
               <h1 className="text-2xl font-bold">
                 {languageProfile.shortLabel}实验训练
               </h1>
@@ -290,7 +295,11 @@ export default function DrillPage() {
               </p>
             </div>
             <Link href="/settings">
-              <Button variant="outline" className="gap-2 cursor-pointer">
+              <Button
+                variant="outline"
+                className={`gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
+                data-smoke="drill-settings-action"
+              >
                 <Settings className="h-4 w-4" />
                 设置
               </Button>
@@ -337,8 +346,8 @@ export default function DrillPage() {
         className="h-full flex flex-col px-6 py-4 overflow-y-auto scrollbar-thin"
         data-smoke="drill-page"
       >
-        <div className="mb-5 flex items-start justify-between gap-4 shrink-0">
-          <div>
+        <div className="mb-5 flex flex-col gap-3 shrink-0 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
             <h1 className="text-2xl font-bold">今日学习计划</h1>
             <p className="mt-1 text-muted-foreground">
               今天建议完成 2 个任务：先做到期复习，再做一个主训练
@@ -346,13 +355,21 @@ export default function DrillPage() {
           </div>
           <div className="flex flex-wrap gap-2">
             <Link href="/drill/evidence">
-              <Button variant="outline" className="gap-2 cursor-pointer">
+              <Button
+                variant="outline"
+                className={`gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
+                data-smoke="drill-evidence-action"
+              >
                 <BookOpen className="h-4 w-4" />
                 错题本
               </Button>
             </Link>
             <Link data-smoke="start-three-minute-diagnosis" href="/assessment">
-              <Button variant="outline" className="gap-2 cursor-pointer">
+              <Button
+                variant="outline"
+                className={`gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
+                data-smoke="drill-diagnosis-action"
+              >
                 <ClipboardList className="h-4 w-4" />
                 {report ? "重新 3 分钟诊断" : "开始 3 分钟诊断"}
               </Button>
@@ -368,12 +385,28 @@ export default function DrillPage() {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="min-w-0">
               <div className="mb-2 flex flex-wrap items-center gap-2">
-                <Badge variant={azureReady ? "default" : "destructive"}>
+                <Badge
+                  variant={azureReady ? "default" : "destructive"}
+                  className={WRAP_SAFE_BADGE_CLASS}
+                  data-smoke="drill-readiness-badge"
+                >
                   {azureReady ? "评分已就绪" : "需要配置"}
                 </Badge>
-                <Badge variant="secondary">今日 10 分钟</Badge>
+                <Badge
+                  variant="secondary"
+                  className={WRAP_SAFE_BADGE_CLASS}
+                  data-smoke="drill-duration-badge"
+                >
+                  今日 10 分钟
+                </Badge>
                 {primaryItem?.priority === "critical" && (
-                  <Badge variant="destructive">优先</Badge>
+                  <Badge
+                    variant="destructive"
+                    className={WRAP_SAFE_BADGE_CLASS}
+                    data-smoke="drill-priority-badge"
+                  >
+                    优先
+                  </Badge>
                 )}
               </div>
               <h2 className="text-xl font-bold">
@@ -390,7 +423,11 @@ export default function DrillPage() {
             </div>
             <div className="flex shrink-0 flex-wrap gap-2">
               <Link href={primaryHref}>
-                <Button size="lg" className="gap-2 cursor-pointer">
+                <Button
+                  size="lg"
+                  className={`gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
+                  data-smoke="drill-primary-action"
+                >
                   {azureReady ? (
                     <PlayCircle className="h-5 w-5" />
                   ) : (
@@ -404,7 +441,8 @@ export default function DrillPage() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="gap-2 cursor-pointer"
+                    className={`gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
+                    data-smoke="drill-secondary-diagnosis-action"
                   >
                     <ClipboardList className="h-5 w-5" />
                     开始 3 分钟诊断
@@ -421,7 +459,11 @@ export default function DrillPage() {
             <h2 className="text-sm font-semibold text-muted-foreground">
               今日训练处方
             </h2>
-            <Badge variant={report ? "default" : "secondary"}>
+            <Badge
+              variant={report ? "default" : "secondary"}
+              className={WRAP_SAFE_BADGE_CLASS}
+              data-smoke="drill-prescription-source-badge"
+            >
               {reviewItems.length > 0
                 ? "优先复习"
                 : report
@@ -453,7 +495,11 @@ export default function DrillPage() {
                     <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 transition-colors hover:border-primary/50 cursor-pointer">
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-sm font-semibold">{pack.title}</p>
-                        <Badge variant={priorityVariant(task.priority)}>
+                        <Badge
+                          variant={priorityVariant(task.priority)}
+                          className={WRAP_SAFE_BADGE_CLASS}
+                          data-smoke="drill-review-source-badge"
+                        >
                           {sourceLabel(task.source)}
                         </Badge>
                       </div>
@@ -487,18 +533,28 @@ export default function DrillPage() {
                             ? "destructive"
                             : "outline"
                         }
+                        className={WRAP_SAFE_BADGE_CLASS}
+                        data-smoke="drill-today-duration-badge"
                       >
                         {item.estimatedMinutes} 分钟
                       </Badge>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {item.currentMasteryState && (
-                        <Badge variant="secondary">
+                        <Badge
+                          variant="secondary"
+                          className={WRAP_SAFE_BADGE_CLASS}
+                          data-smoke="drill-today-state-badge"
+                        >
                           {STATE_LABELS[item.currentMasteryState]}
                         </Badge>
                       )}
                       {item.stageScore != null && item.stageCeiling != null && (
-                        <Badge variant="outline">
+                        <Badge
+                          variant="outline"
+                          className={WRAP_SAFE_BADGE_CLASS}
+                          data-smoke="drill-today-stage-badge"
+                        >
                           阶段 {item.stageScore}/{item.stageCeiling}
                         </Badge>
                       )}
@@ -537,6 +593,8 @@ export default function DrillPage() {
                     ? "secondary"
                     : "outline"
                 }
+                className={WRAP_SAFE_BADGE_CLASS}
+                data-smoke="drill-memory-count-badge"
               >
                 {trainingMemory.totalSessions} 轮记录
               </Badge>
@@ -586,7 +644,11 @@ export default function DrillPage() {
                             {weakness.packTitle} · {weakness.reason}
                           </p>
                         </div>
-                        <Badge variant={priorityVariant(weakness.severity)}>
+                        <Badge
+                          variant={priorityVariant(weakness.severity)}
+                          className={WRAP_SAFE_BADGE_CLASS}
+                          data-smoke="drill-memory-severity-badge"
+                        >
                           {weakness.severity === "critical" ? "优先" : "复练"}
                         </Badge>
                       </div>
@@ -804,6 +866,8 @@ function PackCard({
                     ? "secondary"
                     : "outline"
             }
+            className={WRAP_SAFE_BADGE_CLASS}
+            data-smoke="drill-pack-status-badge"
           >
             {status}
           </Badge>
@@ -811,12 +875,29 @@ function PackCard({
         <p className="text-sm text-muted-foreground">{pack.l1Problem}</p>
         <div className="mt-4 flex flex-wrap gap-1.5">
           {pack.targetPhonemes.map((phoneme) => (
-            <Badge key={phoneme} variant="outline">
+            <Badge
+              key={phoneme}
+              variant="outline"
+              className={WRAP_SAFE_BADGE_CLASS}
+              data-smoke="drill-pack-phoneme-badge"
+            >
               {phoneme}
             </Badge>
           ))}
-          <Badge variant="secondary">{pack.estimatedMinutes} 分钟</Badge>
-          <Badge variant="outline">{pack.course?.levels.length ?? 0} 关</Badge>
+          <Badge
+            variant="secondary"
+            className={WRAP_SAFE_BADGE_CLASS}
+            data-smoke="drill-pack-duration-badge"
+          >
+            {pack.estimatedMinutes} 分钟
+          </Badge>
+          <Badge
+            variant="outline"
+            className={WRAP_SAFE_BADGE_CLASS}
+            data-smoke="drill-pack-level-count-badge"
+          >
+            {pack.course?.levels.length ?? 0} 关
+          </Badge>
         </div>
         {levels.length > 0 && (
           <div className="mt-4">
