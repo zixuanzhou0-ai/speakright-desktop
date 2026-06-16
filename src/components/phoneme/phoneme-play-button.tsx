@@ -40,6 +40,7 @@ export function PhonemePlayButton({
     "data-audio-playable": "true",
     "data-audio-kind": audioKind,
     "data-audio-src": audioSrc,
+    "data-audio-start-ms": playbackOptions.startMs?.toString() ?? "",
     "data-audio-max-duration-ms":
       playbackOptions.maxDurationMs?.toString() ?? "",
     "data-audio-fade-out-ms": playbackOptions.fadeOutMs?.toString() ?? "",

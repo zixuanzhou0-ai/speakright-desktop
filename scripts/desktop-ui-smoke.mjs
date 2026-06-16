@@ -1298,6 +1298,7 @@ async function assertScoringTileAudioPolicy(cdp) {
     playable: headerButton?.getAttribute("data-audio-playable") === "true",
     kind: headerButton?.getAttribute("data-audio-kind") ?? "none",
     audioSrc: headerButton?.getAttribute("data-audio-src") ?? "",
+    startMs: Number(headerButton?.getAttribute("data-audio-start-ms") ?? 0),
     maxDurationMs: Number(headerButton?.getAttribute("data-audio-max-duration-ms") ?? 0),
     fadeOutMs: Number(headerButton?.getAttribute("data-audio-fade-out-ms") ?? 0),
     ariaDisabled: headerButton?.getAttribute("aria-disabled") === "true",
@@ -1314,6 +1315,7 @@ async function assertScoringTileAudioPolicy(cdp) {
     )
   };
   const tilePolicies = tiles.map((tile) => {
+    const startMs = Number(tile.getAttribute("data-audio-start-ms") ?? 0);
     const maxDurationMs = Number(tile.getAttribute("data-audio-max-duration-ms") ?? 0);
     const fadeOutMs = Number(tile.getAttribute("data-audio-fade-out-ms") ?? 0);
     const audioSrc = tile.getAttribute("data-audio-src") ?? "";
@@ -1335,6 +1337,7 @@ async function assertScoringTileAudioPolicy(cdp) {
       tabIndex,
       kind,
       audioSrc,
+      startMs,
       maxDurationMs,
       fadeOutMs,
       isHeaderClip,
@@ -1350,6 +1353,8 @@ async function assertScoringTileAudioPolicy(cdp) {
       tile.ariaLabel.includes("播放音标") &&
       tile.kind === "sound-unit" &&
       tile.isHeaderClip &&
+      tile.startMs >= 0 &&
+      tile.startMs <= 25 &&
       tile.maxDurationMs > 0 &&
       tile.maxDurationMs <= 560 &&
       tile.fadeOutMs > 0 &&
@@ -1365,6 +1370,7 @@ async function assertScoringTileAudioPolicy(cdp) {
       tile.tabIndex === "-1" &&
       tile.kind === "none" &&
       tile.audioSrc === "" &&
+      tile.startMs === 0 &&
       tile.maxDurationMs === 0 &&
       tile.fadeOutMs === 0 &&
       tile.ariaLabel === "",
@@ -1378,6 +1384,7 @@ async function assertScoringTileAudioPolicy(cdp) {
         tile.tabIndex === "-1" &&
         tile.kind === "none" &&
         tile.audioSrc === "" &&
+        tile.startMs === 0 &&
         tile.maxDurationMs === 0 &&
         tile.fadeOutMs === 0 &&
         tile.ariaLabel === ""
@@ -1390,6 +1397,8 @@ async function assertScoringTileAudioPolicy(cdp) {
       tile.ariaLabel.includes("播放音标") &&
       tile.kind === "sound-unit" &&
       tile.isHeaderClip &&
+      tile.startMs >= 0 &&
+      tile.startMs <= 25 &&
       tile.maxDurationMs > 0 &&
       tile.maxDurationMs <= 560 &&
       tile.fadeOutMs > 0
@@ -1403,6 +1412,8 @@ async function assertScoringTileAudioPolicy(cdp) {
     headerPolicy.ariaLabel.includes("发音") &&
     headerPolicy.kind === "sound-unit" &&
     headerPolicy.isHeaderClip &&
+    headerPolicy.startMs >= 0 &&
+    headerPolicy.startMs <= 25 &&
     headerPolicy.maxDurationMs > 0 &&
     headerPolicy.maxDurationMs <= 560 &&
     headerPolicy.fadeOutMs > 0 &&
@@ -1413,6 +1424,7 @@ async function assertScoringTileAudioPolicy(cdp) {
       tile.playable &&
       tile.kind === headerPolicy.kind &&
       tile.audioSrc === headerPolicy.audioSrc &&
+      tile.startMs === headerPolicy.startMs &&
       tile.maxDurationMs === headerPolicy.maxDurationMs &&
       tile.fadeOutMs === headerPolicy.fadeOutMs,
   );
@@ -1439,6 +1451,7 @@ async function assertScoringTileAudioPolicy(cdp) {
     tileAudio: tiles.map((tile) => ({
       kind: tile.getAttribute("data-audio-kind"),
       src: tile.getAttribute("data-audio-src"),
+      startMs: tile.getAttribute("data-audio-start-ms"),
       maxDurationMs: tile.getAttribute("data-audio-max-duration-ms"),
       fadeOutMs: tile.getAttribute("data-audio-fade-out-ms"),
       playable: tile.getAttribute("data-audio-playable"),

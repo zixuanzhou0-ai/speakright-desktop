@@ -128,6 +128,12 @@ describe("PhonemeHighlight", () => {
         "/audio/language-assets/es-ES/header-clips/",
       );
       expect(
+        Number(tile.getAttribute("data-audio-start-ms")),
+      ).toBeGreaterThanOrEqual(0);
+      expect(
+        Number(tile.getAttribute("data-audio-start-ms")),
+      ).toBeLessThanOrEqual(25);
+      expect(
         Number(tile.getAttribute("data-audio-max-duration-ms")),
       ).toBeGreaterThan(0);
       expect(
@@ -249,6 +255,7 @@ describe("PhonemeHighlight", () => {
       expect(tile?.getAttribute("data-audio-src")).not.toContain(
         "/audio/language-packs/",
       );
+      expect(Number(tile?.getAttribute("data-audio-start-ms"))).toBe(15);
       expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(
         500,
       );
@@ -305,6 +312,7 @@ describe("PhonemeHighlight", () => {
       expect(tile?.getAttribute("data-audio-src")).not.toContain(
         "/audio/language-packs/",
       );
+      expect(Number(tile?.getAttribute("data-audio-start-ms"))).toBe(15);
       expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(
         500,
       );
@@ -348,6 +356,7 @@ describe("PhonemeHighlight", () => {
       expect(tile?.getAttribute("data-audio-src")).not.toContain(
         "/audio/language-packs/",
       );
+      expect(Number(tile?.getAttribute("data-audio-start-ms"))).toBe(15);
       expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(
         500,
       );
@@ -357,8 +366,10 @@ describe("PhonemeHighlight", () => {
       const tile = screen
         .getByText(label)
         .closest('[data-smoke="assessment-phoneme-tile"]');
+      expect(tile, label).not.toBeNull();
       expect(tile).toHaveAttribute("data-audio-playable", "false");
       expect(tile).toHaveAttribute("data-audio-kind", "none");
+      expect(tile?.getAttribute("data-audio-start-ms")).toBe("");
     }
   });
 

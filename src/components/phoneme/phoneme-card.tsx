@@ -84,6 +84,7 @@ export function PhonemeCard({ phoneme, player }: PhonemeCardProps) {
     "data-audio-playable": headerAudioPlayable ? "true" : "false",
     "data-audio-kind": headerAudioKind,
     "data-audio-src": headerAudioSrc,
+    "data-audio-start-ms": headerPlaybackOptions?.startMs?.toString() ?? "",
     "data-audio-max-duration-ms":
       headerPlaybackOptions?.maxDurationMs?.toString() ?? "",
     "data-audio-fade-out-ms":

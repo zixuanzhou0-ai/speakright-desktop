@@ -187,6 +187,9 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("hasTileMatchingHeader");
     expect(script).toContain("有本地音频的片段可点击");
     expect(script).toContain("data-audio-max-duration-ms");
+    expect(script).toContain("data-audio-start-ms");
+    expect(script).toContain("headerPolicy.startMs <= 25");
+    expect(script).toContain("tile.startMs === headerPolicy.startMs");
     expect(script).toContain("tileAudioPolicyReady");
     expect(script).toContain("hasPlayableExactHeaderClip");
     expect(script).toContain("hasLockedUnverifiedTile");

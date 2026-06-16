@@ -41,6 +41,7 @@ function expectHeaderAudioMetadata(
   expected: {
     kind: "chart" | "sound-unit";
     src: string;
+    startMs: string;
     maxDurationMs: string;
     fadeOutMs: string;
   },
@@ -48,6 +49,7 @@ function expectHeaderAudioMetadata(
   expect(element).toHaveAttribute("data-audio-playable", "true");
   expect(element).toHaveAttribute("data-audio-kind", expected.kind);
   expect(element).toHaveAttribute("data-audio-src", expected.src);
+  expect(element).toHaveAttribute("data-audio-start-ms", expected.startMs);
   expect(element).toHaveAttribute(
     "data-audio-max-duration-ms",
     expected.maxDurationMs,
@@ -60,6 +62,7 @@ function expectHeaderAudioLocked(element: Element) {
   expect(element).toHaveAttribute("data-audio-playable", "false");
   expect(element).toHaveAttribute("data-audio-kind", "none");
   expect(element).toHaveAttribute("data-audio-src", "");
+  expect(element).toHaveAttribute("data-audio-start-ms", "");
   expect(element).toHaveAttribute("data-audio-max-duration-ms", "");
   expect(element).toHaveAttribute("data-audio-fade-out-ms", "");
   expect(element).toHaveAttribute("aria-disabled", "true");
@@ -84,6 +87,7 @@ describe("PhonemeCard header audio", () => {
     expectHeaderAudioMetadata(ipa, {
       kind: "chart",
       src: "/audio/ipa/phoneme/cat.mp3",
+      startMs: "25",
       maxDurationMs: "560",
       fadeOutMs: "55",
     });
@@ -97,6 +101,7 @@ describe("PhonemeCard header audio", () => {
     expectHeaderAudioMetadata(speaker, {
       kind: "chart",
       src: "/audio/ipa/phoneme/cat.mp3",
+      startMs: "25",
       maxDurationMs: "560",
       fadeOutMs: "55",
     });
@@ -136,6 +141,7 @@ describe("PhonemeCard header audio", () => {
     expectHeaderAudioMetadata(ipa, {
       kind: "sound-unit",
       src: "/audio/language-assets/fr-FR/header-clips/fr-e.m4a",
+      startMs: "15",
       maxDurationMs: "500",
       fadeOutMs: "60",
     });
@@ -145,6 +151,7 @@ describe("PhonemeCard header audio", () => {
     expectHeaderAudioMetadata(speaker, {
       kind: "sound-unit",
       src: "/audio/language-assets/fr-FR/header-clips/fr-e.m4a",
+      startMs: "15",
       maxDurationMs: "500",
       fadeOutMs: "60",
     });

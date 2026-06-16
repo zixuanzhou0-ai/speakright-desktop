@@ -263,6 +263,7 @@ export function PhonemeBlock({
       data-audio-playable={hasAudio ? "true" : "false"}
       data-audio-kind={audioInfo?.kind ?? "none"}
       data-audio-src={audioInfo?.url ?? ""}
+      data-audio-start-ms={audioInfo?.startMs ?? ""}
       data-audio-max-duration-ms={audioInfo?.maxDurationMs ?? ""}
       data-audio-fade-out-ms={audioInfo?.fadeOutMs ?? ""}
       className={cn(

@@ -322,8 +322,8 @@ git status --short --branch
   bundled word examples, rule/prosody clips, proxy media, or video audio as
   single-phoneme playback sources. `desktop:ui-smoke` now verifies at runtime
   that a playable scoring tile matches the detail header speaker by
-  `data-audio-kind`, `data-audio-src`, `data-audio-max-duration-ms`, and
-  `data-audio-fade-out-ms`.
+  `data-audio-kind`, `data-audio-src`, `data-audio-start-ms`,
+  `data-audio-max-duration-ms`, and `data-audio-fade-out-ms`.
 - Exact assessment audio aliases are now stored with local language assets.
   Spanish allophone clips stay narrow: `es-bv` maps to `/β/`, `es-d` to `/ð/`,
   and `es-g` to `/ɣ/`; they do not pretend to be plain `/b/ /d/ /g/`.

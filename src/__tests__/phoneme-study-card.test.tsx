@@ -259,6 +259,7 @@ describe("PhonemeStudyCard non-English reading layout", () => {
       "data-audio-src",
       "/audio/language-assets/fr-FR/header-clips/fr-schwa.m4a",
     );
+    expect(button).toHaveAttribute("data-audio-start-ms", "15");
     expect(button).toHaveAttribute("data-audio-max-duration-ms", "500");
     expect(button).toHaveAttribute("data-audio-fade-out-ms", "60");
   });

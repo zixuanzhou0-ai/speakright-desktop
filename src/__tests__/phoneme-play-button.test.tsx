@@ -70,6 +70,7 @@ describe("PhonemePlayButton", () => {
     expect(button).toHaveAttribute("data-audio-playable", "true");
     expect(button).toHaveAttribute("data-audio-kind", "chart");
     expect(button).toHaveAttribute("data-audio-src", "/audio/ipa/phoneme/cat.mp3");
+    expect(button).toHaveAttribute("data-audio-start-ms", "25");
     expect(button).toHaveAttribute("data-audio-max-duration-ms", "560");
     expect(button).toHaveAttribute("data-audio-fade-out-ms", "55");
 
@@ -111,6 +112,7 @@ describe("PhonemePlayButton", () => {
       "data-audio-src",
       "/audio/language-assets/fr-FR/header-clips/fr-schwa.m4a",
     );
+    expect(button).toHaveAttribute("data-audio-start-ms", "15");
     expect(button).toHaveAttribute("data-audio-max-duration-ms", "500");
     expect(button).toHaveAttribute("data-audio-fade-out-ms", "60");
 
