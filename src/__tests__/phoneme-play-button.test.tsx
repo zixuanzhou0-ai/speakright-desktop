@@ -1,4 +1,10 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PhonemePlayButton } from "@/components/phoneme/phoneme-play-button";
 import { getPhonemeAudioInfo } from "@/lib/azure-phoneme-map";
@@ -140,6 +146,23 @@ describe("PhonemePlayButton", () => {
           label: "外部参考",
           source: "external",
           url: "https://example.com/reference",
+        }}
+      />,
+    );
+
+    expect(
+      screen.queryByRole("button", { name: "播放发音" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not render a header speaker when localSrc points to an external URL", () => {
+    render(
+      <PhonemePlayButton
+        phonemeAudio={{
+          kind: "local",
+          label: "外部短音",
+          source: "external CDN",
+          localSrc: "https://example.com/audio/fr-schwa.m4a",
         }}
       />,
     );

@@ -1,5 +1,5 @@
-import type { PhonemeAudioSource } from "@/types/phoneme";
 import type { LanguageId } from "@/types/language";
+import type { PhonemeAudioSource } from "@/types/phoneme";
 
 export interface AudioPlaybackOptions {
   startMs?: number;
@@ -35,7 +35,7 @@ export function isVideoBackedAudioSrc(src?: string): boolean {
 }
 
 export function isPlayableHeaderAudioSrc(src?: string): boolean {
-  return Boolean(src && !isVideoBackedAudioSrc(src));
+  return Boolean(src?.startsWith("/audio/") && !isVideoBackedAudioSrc(src));
 }
 
 export function getSoundUnitHeaderPlaybackOptions({

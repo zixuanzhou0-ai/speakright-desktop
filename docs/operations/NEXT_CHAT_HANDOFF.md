@@ -329,6 +329,10 @@ git status --short --branch
   phoneme-audio `localSrc`, and the shared `useAudioPlayer` hook refuses
   video-backed sources as a final guard. The header speaker component also
   refuses non-local fallback audio at render time.
+- Header/scoring single-sound playback policy now requires local `/audio/`
+  paths. If a future source mistakenly puts an external URL into `localSrc`,
+  the detail/list speaker and scoring tile stay hidden or unclickable instead
+  of treating that URL as verified single-sound audio.
 - Scoring-breakdown tiles now also reject video-backed audio URLs before
   constructing a `Howl`, so they cannot play a full teaching-video track even if
   an upstream assessment-audio mapping regresses.
@@ -553,11 +557,17 @@ Current gate summary:
   missing LLM config guidance that preserves Azure numeric scores; the static
   Release smoke self-test now also checks the free-practice failure hooks remain
   present in the source.
-- Full tests passed: `119` files and `664` tests.
+- Focused single-sound audio policy tests passed: `7` files and `57` tests,
+  covering shared playback policy, detail/list header speakers, scoring tiles,
+  assessment-segment audio, phoneme cards, language-source alignment, and
+  open-source readiness. External URLs in `localSrc` are rejected for
+  header/scoring single-sound playback.
+- Full tests passed: `119` files and `666` tests.
 - Typecheck, lint, and static desktop frontend build passed.
-- The latest free-practice failure guidance pass did not rebuild desktop
-  artifacts because it did not change Tauri/Rust/package assets; the existing
-  Release EXE was validated through preflight, UI smoke, and launch.
+- The latest single-sound audio source-policy pass did not rebuild desktop
+  artifacts because it did not change Tauri/Rust/package assets, audio coverage,
+  or loudness math; the existing Release EXE was validated through preflight,
+  UI smoke, and launch.
 - Release EXE preflight passed; no localhost startup is part of the release
   path. During the pre-commit verification run it correctly reported the
   expected dirty worktree from this local fix.

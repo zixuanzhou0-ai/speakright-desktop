@@ -3,6 +3,7 @@ import {
   getAssessmentTilePlaybackOptions,
   getChartWordPlaybackOptions,
   getSoundUnitHeaderPlaybackOptions,
+  isPlayableHeaderAudioSrc,
 } from "@/lib/audio-playback-policy";
 
 describe("audio playback policy", () => {
@@ -44,6 +45,22 @@ describe("audio playback policy", () => {
     });
 
     expect(options).toBeUndefined();
+  });
+
+  it("refuses external URLs for header speakers even when a localSrc field is present", () => {
+    expect(
+      isPlayableHeaderAudioSrc("https://example.com/audio/fr-schwa.m4a"),
+    ).toBe(false);
+    expect(
+      getSoundUnitHeaderPlaybackOptions({
+        phonemeAudio: {
+          kind: "local",
+          label: "外部短音",
+          source: "external CDN",
+          localSrc: "https://example.com/audio/fr-schwa.m4a",
+        },
+      }),
+    ).toBeUndefined();
   });
 
   it("does not invent playback options for non-local TTS references", () => {

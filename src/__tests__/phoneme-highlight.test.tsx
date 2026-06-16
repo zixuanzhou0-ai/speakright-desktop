@@ -1,4 +1,10 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   isScoringTileAudioPlayable,
@@ -67,6 +73,9 @@ describe("PhonemeHighlight", () => {
         "/audio/language-assets/es-ES/header-clips/es-a.m4a",
       ),
     ).toBe(true);
+    expect(
+      isScoringTileAudioPlayable("https://example.com/audio/es-a.m4a"),
+    ).toBe(false);
   });
 
   it("shows the target IPA reference for non-English phrase breakdowns", () => {
@@ -83,11 +92,11 @@ describe("PhonemeHighlight", () => {
     );
 
     expect(screen.getByText("目标 IPA 参考")).toBeInTheDocument();
-    expect(screen.getByText("Trop grand, trop lent, trop fort.")).toBeInTheDocument();
-    expect(screen.getByText("/tʁo gʁɑ̃ tʁo lɑ̃ tʁo fɔʁ/")).toBeInTheDocument();
     expect(
-      screen.getByText(/下方是本次录音识别到的片段/),
+      screen.getByText("Trop grand, trop lent, trop fort."),
     ).toBeInTheDocument();
+    expect(screen.getByText("/tʁo gʁɑ̃ tʁo lɑ̃ tʁo fɔʁ/")).toBeInTheDocument();
+    expect(screen.getByText(/下方是本次录音识别到的片段/)).toBeInTheDocument();
   });
 
   it("exposes scoring tile short-audio policy metadata for release smoke", () => {
@@ -114,15 +123,15 @@ describe("PhonemeHighlight", () => {
       expect(tile.getAttribute("data-audio-src")).toContain(
         "/audio/language-assets/es-ES/header-clips/",
       );
-      expect(Number(tile.getAttribute("data-audio-max-duration-ms"))).toBeGreaterThan(
-        0,
-      );
-      expect(Number(tile.getAttribute("data-audio-max-duration-ms"))).toBeLessThanOrEqual(
-        560,
-      );
-      expect(Number(tile.getAttribute("data-audio-fade-out-ms"))).toBeGreaterThan(
-        0,
-      );
+      expect(
+        Number(tile.getAttribute("data-audio-max-duration-ms")),
+      ).toBeGreaterThan(0);
+      expect(
+        Number(tile.getAttribute("data-audio-max-duration-ms")),
+      ).toBeLessThanOrEqual(560);
+      expect(
+        Number(tile.getAttribute("data-audio-fade-out-ms")),
+      ).toBeGreaterThan(0);
       expect(tile.getAttribute("data-audio-src")).not.toMatch(
         /\.(mp4|m4v|webm)(?:$|\?)/i,
       );
@@ -157,9 +166,7 @@ describe("PhonemeHighlight", () => {
 
     const visibleNasalTiles = screen
       .getAllByText("/n/")
-      .map((label) =>
-        label.closest('[data-smoke="assessment-phoneme-tile"]'),
-      );
+      .map((label) => label.closest('[data-smoke="assessment-phoneme-tile"]'));
     for (const tile of visibleNasalTiles) {
       expect(tile).toHaveAttribute("data-audio-playable", "false");
       expect(tile).toHaveAttribute("aria-disabled", "true");
@@ -188,7 +195,10 @@ describe("PhonemeHighlight", () => {
 
     const exactSources = [
       ["播放音标 /a/", "/audio/language-assets/es-ES/header-clips/es-a.m4a"],
-      ["播放音标 /θ/", "/audio/language-assets/es-ES/header-clips/es-theta.m4a"],
+      [
+        "播放音标 /θ/",
+        "/audio/language-assets/es-ES/header-clips/es-theta.m4a",
+      ],
       [
         "播放音标 /j/",
         "/audio/language-assets/es-ES/header-clips/es-diphthongs-j.m4a",
@@ -204,7 +214,9 @@ describe("PhonemeHighlight", () => {
       expect(tile?.getAttribute("data-audio-src")).not.toContain(
         "/audio/language-packs/",
       );
-      expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(500);
+      expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(
+        500,
+      );
     }
 
     for (const label of ["/k/", "/n/"] as const) {
@@ -258,7 +270,9 @@ describe("PhonemeHighlight", () => {
       expect(tile?.getAttribute("data-audio-src")).not.toContain(
         "/audio/language-packs/",
       );
-      expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(500);
+      expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(
+        500,
+      );
     }
   });
 
@@ -299,7 +313,9 @@ describe("PhonemeHighlight", () => {
       expect(tile?.getAttribute("data-audio-src")).not.toContain(
         "/audio/language-packs/",
       );
-      expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(500);
+      expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(
+        500,
+      );
     }
 
     for (const label of ["/dʲ/", "/nʲ/", "/ɐ/", "/ʐ/"] as const) {
