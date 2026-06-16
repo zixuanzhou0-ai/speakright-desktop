@@ -183,6 +183,10 @@ describe("open-source readiness files", () => {
     expect(issueRouting).toContain("SUPPORT.md");
     expect(issueRouting).toContain("Release EXE or installer");
     expect(issueRouting).toContain("localhost/dev-server tab is not");
+    expect(issueRouting).toContain("Keep public evidence minimal and redacted");
+    expect(issueRouting).toContain("bearer tokens");
+    expect(issueRouting).toContain("C:\\Users\\name");
+    expect(issueRouting).toContain("Full diagnostics bundles");
     expect(issueRouting).toContain("Do not ask contributors to generate ElevenLabs audio");
     expect(issueRouting).toContain("Spanish, French, and Russian remain experimental");
     expect(issueRouting).toContain("evidenceMastery");

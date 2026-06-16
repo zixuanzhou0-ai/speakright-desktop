@@ -17,6 +17,12 @@ Public issue reports should use evidence from the Release EXE or installer when
 they describe user-facing desktop behavior. A localhost/dev-server tab is not
 release acceptance.
 
+Keep public evidence minimal and redacted. Before posting screenshots or log
+excerpts, remove API keys, bearer tokens, private practice text, local
+user-profile paths such as `C:\Users\name`, and any learning-data export
+contents. Full diagnostics bundles and raw microphone recordings belong in a
+private report, not a public issue.
+
 Do not ask contributors to generate ElevenLabs audio or spend TTS credits unless
 a maintainer explicitly approves that exact generation pass. Use
 `audio:parity:dry-run` and `audio:loudness:dry-run` for zero-generation audio
