@@ -78,6 +78,8 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - Drill feedback action buttons now wrap and stay centered after three failed
   attempts, so the `再听一遍` / `跳过此词` controls do not force horizontal
   overflow in narrow windows.
+- Drill completion summaries now render weak-item text and IPA in a wrap-safe
+  grid, so long multilingual phrases do not crowd the score column.
 - Diagnosis-report action buttons now wrap as well; long prescription CTA titles
   such as `开始：...` keep `whitespace-normal`, `break-words`, and centered text.
 - Free-practice input/listen controls now use a wrapping action row with a

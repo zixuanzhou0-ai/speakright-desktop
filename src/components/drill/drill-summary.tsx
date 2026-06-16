@@ -4,6 +4,11 @@ import { ArrowLeft, PartyPopper, RotateCcw } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  getCenteredCompactTextClassName,
+  getCenteredMonoTextClassName,
+  getPracticeTextDensity,
+} from "@/lib/practice-text-presentation";
 import type { DrillSummary } from "@/types/drill";
 
 interface DrillSummaryCardProps {
@@ -142,30 +147,55 @@ export function DrillSummaryCard({
               薄弱词（需加强练习）
             </h3>
             <div className="space-y-2">
-              {summary.weakItems.map((item) => (
-                <div
-                  key={item.item.text}
-                  className="flex items-center justify-between rounded-lg bg-red-50 px-3 py-2 dark:bg-red-950/20"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{item.item.text}</span>
-                    {item.item.ipa && (
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {item.item.ipa}
-                      </span>
-                    )}
-                  </div>
-                  <span
-                    className={`text-sm font-bold tabular-nums ${
-                      item.bestScore >= 60
-                        ? "text-yellow-600 dark:text-yellow-400"
-                        : "text-red-600 dark:text-red-400"
-                    }`}
+              {summary.weakItems.map((item) => {
+                const textDensity = getPracticeTextDensity(
+                  item.item.text,
+                  "phrase",
+                );
+                const ipaDensity = getPracticeTextDensity(
+                  item.item.ipa ?? "",
+                  "phrase",
+                );
+
+                return (
+                  <div
+                    key={item.item.text}
+                    className="grid grid-cols-1 gap-2 rounded-lg bg-red-50 px-3 py-2 text-center dark:bg-red-950/20 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
+                    data-smoke="drill-summary-weak-item"
                   >
-                    {item.bestScore}
-                  </span>
-                </div>
-              ))}
+                    <div className="min-w-0 space-y-1">
+                      <span
+                        className={`${getCenteredCompactTextClassName(
+                          textDensity,
+                        )} sm:mx-0 sm:text-left`}
+                        data-smoke="drill-summary-weak-item-text"
+                      >
+                        {item.item.text}
+                      </span>
+                      {item.item.ipa && (
+                        <span
+                          className={`font-mono text-muted-foreground ${getCenteredMonoTextClassName(
+                            ipaDensity,
+                          )} sm:mx-0 sm:text-left`}
+                          data-smoke="drill-summary-weak-item-ipa"
+                        >
+                          {item.item.ipa}
+                        </span>
+                      )}
+                    </div>
+                    <span
+                      className={`text-sm font-bold tabular-nums ${
+                        item.bestScore >= 60
+                          ? "text-yellow-600 dark:text-yellow-400"
+                          : "text-red-600 dark:text-red-400"
+                      }`}
+                      data-smoke="drill-summary-weak-item-score"
+                    >
+                      {item.bestScore}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
