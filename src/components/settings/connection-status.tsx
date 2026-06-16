@@ -11,7 +11,12 @@ interface ConnectionStatusProps {
 
 export function ConnectionStatus({ state, message }: ConnectionStatusProps) {
   return (
-    <div className="flex min-w-0 max-w-full flex-1 basis-48 items-center gap-2 text-sm">
+    <div
+      aria-live={state === "error" ? "assertive" : "polite"}
+      className="flex min-w-0 max-w-full flex-1 basis-48 items-center gap-2 text-sm"
+      data-smoke="settings-connection-status"
+      role={state === "error" ? "alert" : "status"}
+    >
       <span
         className={cn(
           "h-2.5 w-2.5 shrink-0 rounded-full",

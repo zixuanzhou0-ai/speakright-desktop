@@ -146,7 +146,8 @@ describe("useWordPronunciation", () => {
         mocks.fetchSources.push(String(src));
         if (
           mocks.failNextLocalAudio &&
-          String(src).startsWith("/audio/words/")
+          (String(src).startsWith("/audio/words/") ||
+            String(src).startsWith("/audio/language-packs/"))
         ) {
           mocks.failNextLocalAudio = false;
           return {
@@ -269,6 +270,27 @@ describe("useWordPronunciation", () => {
       "/audio/language-packs/fr-FR/accueil-63acf559f5.mp3",
     ]);
     expect(mocks.webAudioGainNodes[0]?.gain.value).toBe(1.8);
+    expect(mocks.howlSources).toEqual([]);
+  });
+
+  it("shows an actionable local package error when bundled non-English audio cannot load", async () => {
+    mocks.failNextLocalAudio = true;
+    mocks.getStaticLanguageAudioPackEntry.mockResolvedValue({
+      audioSrc: "/audio/language-packs/fr-FR/bonjour.mp3",
+      voiceSlot: "blue",
+    });
+    const { result } = renderHook(() => useWordPronunciation());
+
+    await act(async () => {
+      result.current.playWord("bonjour", "blue", "fr-FR");
+    });
+
+    await waitFor(() => {
+      expect(result.current.error).toContain("发布包音频可能缺失");
+    });
+    expect(result.current.error).toContain("bonjour");
+    expect(mocks.fetchPronunciation).not.toHaveBeenCalled();
+    expect(mocks.getLanguageAudioPackEntry).not.toHaveBeenCalled();
     expect(mocks.howlSources).toEqual([]);
   });
 

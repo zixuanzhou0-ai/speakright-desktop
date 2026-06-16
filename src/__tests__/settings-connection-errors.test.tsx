@@ -136,5 +136,20 @@ describe("settings connection errors", () => {
     expect(screen.getByText(/ElevenLabs 连接测试失败/)).toHaveClass(
       "break-words",
     );
+    expect(screen.getByRole("alert")).toHaveAttribute(
+      "data-smoke",
+      "settings-connection-status",
+    );
+    expect(screen.getByRole("alert")).toHaveAttribute(
+      "aria-live",
+      "assertive",
+    );
+  });
+
+  it("announces non-error Settings connection states politely", () => {
+    render(<ConnectionStatus state="testing" />);
+
+    expect(screen.getByRole("status")).toHaveTextContent("测试中...");
+    expect(screen.getByRole("status")).toHaveAttribute("aria-live", "polite");
   });
 });

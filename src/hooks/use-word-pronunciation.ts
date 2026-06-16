@@ -65,6 +65,20 @@ function getPronunciationFallbackErrorMessage(error: unknown): string {
   return "在线发音兜底失败，请检查网络后重试。";
 }
 
+const GENERIC_AUDIO_LOAD_ERROR = "音频加载失败，请稍后重试。";
+
+function getBundledAudioLoadErrorMessage(word: string): string {
+  return `本地标准发音加载失败：「${word}」的发布包音频可能缺失或被系统拦截，请重新安装应用或切换到另一个练习词。`;
+}
+
+function getInstalledPackAudioLoadErrorMessage(word: string): string {
+  return `本地标准发音加载失败：「${word}」的已安装音频包可能损坏，请重新安装音频包后重试。`;
+}
+
+function getOnlineFallbackPlaybackErrorMessage(word: string): string {
+  return `在线发音兜底已返回「${word}」音频，但播放失败；请检查系统音频输出后重试。`;
+}
+
 export function useWordPronunciation(): UseWordPronunciationReturn {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -135,11 +149,13 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
         onLoadError,
         requestId,
         normalizeVolume = false,
+        loadErrorMessage,
       }: {
         format?: string;
         onLoadError?: () => void;
         requestId?: number;
         normalizeVolume?: boolean;
+        loadErrorMessage?: string;
       } = {},
     ) => {
       if (requestId !== undefined && requestId !== playRequestIdRef.current) {
@@ -182,7 +198,7 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
           }
           setSafeIsLoading(false);
           setSafeIsPlaying(false);
-          setSafeError("音频加载失败，请稍后重试。");
+          setSafeError(loadErrorMessage ?? GENERIC_AUDIO_LOAD_ERROR);
           console.warn(`[Pronunciation] Audio failed to load: ${src}`);
         },
       });
@@ -198,9 +214,11 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
       {
         onLoadError,
         requestId,
+        loadErrorMessage,
       }: {
         onLoadError?: () => void;
         requestId?: number;
+        loadErrorMessage?: string;
       } = {},
     ) => {
       if (requestId !== undefined && requestId !== playRequestIdRef.current) {
@@ -209,7 +227,12 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
 
       const audioContext = getSharedAudioContext();
       if (!audioContext || typeof fetch !== "function") {
-        playHowl(src, { normalizeVolume: true, onLoadError, requestId });
+        playHowl(src, {
+          normalizeVolume: true,
+          onLoadError,
+          requestId,
+          loadErrorMessage,
+        });
         return;
       }
 
@@ -272,7 +295,7 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
         }
         setSafeIsLoading(false);
         setSafeIsPlaying(false);
-        setSafeError("音频加载失败，请稍后重试。");
+        setSafeError(loadErrorMessage ?? GENERIC_AUDIO_LOAD_ERROR);
         console.warn(
           `[Pronunciation] Local audio failed to play: ${src}`,
           error,
@@ -291,7 +314,10 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
         if (isStaleRequest(requestId)) return;
         const url = URL.createObjectURL(blob);
         blobUrlRef.current = url;
-        playHowl(url, { requestId });
+        playHowl(url, {
+          requestId,
+          loadErrorMessage: getOnlineFallbackPlaybackErrorMessage(word),
+        });
       } catch (error) {
         if (isStaleRequest(requestId)) return;
         setSafeIsLoading(false);
@@ -350,6 +376,7 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
         if (staticEntry) {
           void playLocalWebAudio(staticEntry.audioSrc, {
             requestId,
+            loadErrorMessage: getBundledAudioLoadErrorMessage(normalizedWord),
           });
           return;
         }
@@ -362,7 +389,11 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
         if (cached) {
           const url = URL.createObjectURL(cached.audioBlob);
           blobUrlRef.current = url;
-          playHowl(url, { requestId });
+          playHowl(url, {
+            requestId,
+            loadErrorMessage:
+              getInstalledPackAudioLoadErrorMessage(normalizedWord),
+          });
           return;
         }
 
