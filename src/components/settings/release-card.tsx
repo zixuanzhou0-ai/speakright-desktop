@@ -42,7 +42,7 @@ export function ReleaseCard() {
         </CardDescription>
         <CardAction className="flex items-center gap-2">
           <Badge variant="secondary">v{release.currentVersion}</Badge>
-          <Badge variant="outline">{release.channel}</Badge>
+          <Badge variant="outline">{release.channelLabel}</Badge>
         </CardAction>
       </CardHeader>
 
@@ -55,8 +55,8 @@ export function ReleaseCard() {
           />
           <ReleaseFact
             icon={<Calendar className="size-4" />}
-            label="发布日期"
-            value={release.releasedAt}
+            label="最近验证"
+            value={release.lastValidatedAt}
           />
           <ReleaseFact
             icon={<PackageCheck className="size-4" />}
@@ -66,7 +66,7 @@ export function ReleaseCard() {
           <ReleaseFact
             icon={<ShieldAlert className="size-4" />}
             label="签名状态"
-            value={release.build.signatureStatus}
+            value={release.build.signatureLabel}
           />
         </div>
 
@@ -89,10 +89,19 @@ export function ReleaseCard() {
             <Code2 className="size-3.5" />
             源码仓库
           </DesktopExternalLink>
+          <DesktopExternalLink
+            className={buttonVariants({ size: "sm", variant: "ghost" })}
+            copyMessage="Release 说明链接已复制，请在浏览器中打开"
+            href={release.releaseUrl}
+          >
+            <PackageCheck className="size-3.5" />
+            Release 说明
+          </DesktopExternalLink>
         </div>
 
         <p className="text-xs text-muted-foreground">
-          {release.notes.artifacts} {release.notes.checksum}
+          {release.notes.artifacts} {release.notes.releasePage}{" "}
+          {release.notes.checksum}
         </p>
       </CardContent>
     </Card>

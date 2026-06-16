@@ -20,14 +20,25 @@ describe("desktop release info", () => {
   it("documents the unsigned installer status", () => {
     expect(DESKTOP_RELEASE_INFO.build.signed).toBe(false);
     expect(DESKTOP_RELEASE_INFO.build.signatureStatus).toBe("NotSigned");
-    expect(DESKTOP_RELEASE_INFO.channel).toBe("internal");
+    expect(DESKTOP_RELEASE_INFO.build.signatureLabel).toBe("未签名");
+    expect(DESKTOP_RELEASE_INFO.channel).toBe("controlled-test");
+    expect(DESKTOP_RELEASE_INFO.channelLabel).toBe("可控测试");
     expect(DESKTOP_RELEASE_INFO.channel).not.toBe("stable");
+    expect(DESKTOP_RELEASE_INFO.lastValidatedAt).toBe("2026-06-16");
     expect(DESKTOP_RELEASE_INFO.build.releaseReportFileName).toBe(
       `SpeakRight_${DESKTOP_RELEASE_VERSION}_release-report.json`,
     );
     expect(DESKTOP_RELEASE_INFO.notes.unsigned).toContain("未知发布者");
-    expect(DESKTOP_RELEASE_INFO.notes.unsigned).toContain("可控内测");
+    expect(DESKTOP_RELEASE_INFO.notes.unsigned).toContain("可控测试");
+    expect(DESKTOP_RELEASE_INFO.notes.unsigned).toContain("正式公开 Windows 发布前");
     expect(DESKTOP_RELEASE_INFO.notes.artifacts).toContain("不在已安装 App 内");
+    expect(DESKTOP_RELEASE_INFO.notes.releasePage).toContain(
+      "GitHub Release 页面可能落后",
+    );
+    expect(DESKTOP_RELEASE_INFO.notes.releasePage).toContain("main 分支");
+    expect(DESKTOP_RELEASE_INFO.notes.releasePage).toContain(
+      "RC evidence audit",
+    );
     expect(DESKTOP_RELEASE_INFO.notes.checksum).toContain("release report");
     expect(DESKTOP_RELEASE_INFO.notes.checksum).toContain("SHA-256");
   });

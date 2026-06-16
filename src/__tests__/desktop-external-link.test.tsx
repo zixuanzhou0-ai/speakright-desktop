@@ -138,6 +138,10 @@ describe("DesktopExternalLink", () => {
     expect(screen.queryByRole("link", { name: /下载/ })).toBeNull();
     expect(screen.queryByText("Windows 安装程序")).toBeNull();
     expect(screen.queryByText("Windows MSI")).toBeNull();
+    expect(screen.getByText("可控测试")).toBeInTheDocument();
+    expect(screen.getByText("未签名")).toBeInTheDocument();
+    expect(screen.getByText(/正式公开 Windows 发布前/)).toBeInTheDocument();
+    expect(screen.getByText(/GitHub Release 页面可能落后/)).toBeInTheDocument();
     expect("installers" in DESKTOP_RELEASE_INFO).toBe(false);
 
     const sourceLink = screen.getByRole("link", { name: /源码仓库/ });
@@ -151,6 +155,20 @@ describe("DesktopExternalLink", () => {
     await waitFor(() => {
       expect(mocks.openUrl).toHaveBeenCalledWith(
         DESKTOP_RELEASE_INFO.repositoryUrl,
+      );
+    });
+
+    const releaseLink = screen.getByRole("link", { name: /Release 说明/ });
+    const releaseEvent = new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+    });
+    releaseLink.dispatchEvent(releaseEvent);
+
+    expect(releaseEvent.defaultPrevented).toBe(true);
+    await waitFor(() => {
+      expect(mocks.openUrl).toHaveBeenCalledWith(
+        DESKTOP_RELEASE_INFO.releaseUrl,
       );
     });
   });
