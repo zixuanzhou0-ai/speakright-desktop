@@ -109,6 +109,9 @@ function targetLabels(word: AssessmentWord): string[] {
   );
 }
 
+const WRAP_SAFE_ACTION_BUTTON_CLASS =
+  "h-auto min-h-8 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]";
+
 export default function AssessmentPage() {
   const { languageId } = useLanguageConfig();
   const languageProfile = getLanguageProfile(languageId);
@@ -433,7 +436,7 @@ export default function AssessmentPage() {
                     <Button
                       onClick={handleStart}
                       size="lg"
-                      className="gap-2 cursor-pointer"
+                      className={`gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                       data-smoke="assessment-start-button"
                     >
                       开始快速诊断
@@ -443,7 +446,7 @@ export default function AssessmentPage() {
                       <Button
                         variant="outline"
                         size="lg"
-                        className="gap-2 cursor-pointer"
+                        className={`gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                         data-smoke="assessment-passage-link"
                       >
                         <BookOpenCheck className="h-4 w-4" />
@@ -457,7 +460,7 @@ export default function AssessmentPage() {
                         }
                         variant="outline"
                         size="lg"
-                        className="gap-2 cursor-pointer"
+                        className={`gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                       >
                         <ClipboardList className="h-4 w-4" />
                         查看上次报告
@@ -597,7 +600,7 @@ export default function AssessmentPage() {
                             recordingQuality.isAnalyzing ||
                             !recordingQuality.report?.canSubmit
                           }
-                          className="cursor-pointer"
+                          className={`cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                         >
                           确认，继续
                         </Button>
@@ -652,7 +655,7 @@ export default function AssessmentPage() {
                         })
                       }
                       disabled={paragraphAudio.isLoading}
-                      className="gap-2 cursor-pointer"
+                      className={`gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                     >
                       {paragraphAudio.isLoading ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -716,7 +719,7 @@ export default function AssessmentPage() {
                             recordingQuality.isAnalyzing ||
                             !recordingQuality.report?.canSubmit
                           }
-                          className="cursor-pointer"
+                          className={`cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                         >
                           提交，生成报告
                         </Button>
@@ -779,7 +782,7 @@ export default function AssessmentPage() {
                 <Button
                   onClick={handleStart}
                   variant="outline"
-                  className="mt-3 gap-2 cursor-pointer"
+                  className={`mt-3 gap-2 cursor-pointer ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                 >
                   <RotateCcw className="h-4 w-4" />
                   重试

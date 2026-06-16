@@ -472,6 +472,10 @@ describe("desktop preflight and UI smoke", () => {
     expect(assessmentPage).toContain(
       "max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
     );
+    expect(assessmentPage).toContain("WRAP_SAFE_ACTION_BUTTON_CLASS");
+    expect(assessmentPage).toContain(
+      "h-auto min-h-8 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
+    );
     expect(assessmentPage).toContain(
       "break-words text-xs text-muted-foreground [overflow-wrap:anywhere]",
     );
@@ -512,6 +516,17 @@ describe("desktop preflight and UI smoke", () => {
     expect(passagePage).toContain(
       "h-auto min-h-5 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
     );
+    expect(passagePage).toContain('data-smoke="assessment-passage-prompt-text"');
+    expect(passagePage).toContain(
+      "break-words rounded-xl bg-muted/35 p-5 text-xl leading-9 [overflow-wrap:anywhere]",
+    );
+    expect(passagePage).toContain(
+      "break-words text-sm text-muted-foreground [overflow-wrap:anywhere]",
+    );
+    expect(passagePage).toContain(
+      "mt-2 break-words text-xl font-bold [overflow-wrap:anywhere]",
+    );
+    expect(passagePage).toContain("mt-3 flex flex-wrap justify-center gap-2");
     expect(passagePage).toContain(
       'data-smoke="assessment-passage-start-button"',
     );

@@ -103,6 +103,9 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
   training-memory badges, and training-pack metadata badges.
 - Full-passage diagnosis badges for target packs, feature labels, evidence
   words, and benchmark deltas now use the same wrap-safe badge treatment.
+- Quick assessment action buttons and full-passage diagnosis segment text now
+  use wrap-safe classes too, including intro/retry/submit buttons, segment
+  focus/cue copy, segment titles, and the main passage prompt.
 - Advanced pack-runner badges for intro metadata, course-map status, course
   header, level titles, remediation, and debrief next-level labels now also use
   wrap-safe badge classes.

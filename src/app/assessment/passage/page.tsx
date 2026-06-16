@@ -491,7 +491,7 @@ export default function CoveragePassageAssessmentPage() {
                     <Button
                       onClick={handleStart}
                       size="lg"
-                      className="gap-2"
+                      className={`gap-2 ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                       data-smoke="assessment-passage-start-button"
                     >
                       开始全音诊断
@@ -515,7 +515,7 @@ export default function CoveragePassageAssessmentPage() {
                         }}
                         variant="outline"
                         size="lg"
-                        className="gap-2"
+                        className={`gap-2 ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                       >
                         <ClipboardList className="h-4 w-4" />
                         查看上次全音报告
@@ -568,7 +568,7 @@ export default function CoveragePassageAssessmentPage() {
                     <Target className="h-4 w-4 text-primary" />
                     <h2 className="text-sm font-semibold">这一段只看什么</h2>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
                     {prompt.focus}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
@@ -587,7 +587,7 @@ export default function CoveragePassageAssessmentPage() {
 
                 <div className="rounded-xl border bg-card p-4 shadow-sm">
                   <h2 className="mb-2 text-sm font-semibold">读前动作</h2>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
                     {prompt.coachCue}
                   </p>
                 </div>
@@ -602,10 +602,15 @@ export default function CoveragePassageAssessmentPage() {
                   >
                     {phase.type === "probe" ? "补测" : "朗读"}
                   </Badge>
-                  <h2 className="mt-2 text-xl font-bold">{prompt.title}</h2>
+                  <h2 className="mt-2 break-words text-xl font-bold [overflow-wrap:anywhere]">
+                    {prompt.title}
+                  </h2>
                 </div>
 
-                <p className="rounded-xl bg-muted/35 p-5 text-xl leading-9">
+                <p
+                  className="break-words rounded-xl bg-muted/35 p-5 text-xl leading-9 [overflow-wrap:anywhere]"
+                  data-smoke="assessment-passage-prompt-text"
+                >
                   {prompt.text}
                 </p>
 
@@ -682,7 +687,7 @@ export default function CoveragePassageAssessmentPage() {
                             recordingQuality.reset();
                           }}
                           variant="outline"
-                          className="gap-2"
+                          className={`gap-2 ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                         >
                           <RotateCcw className="h-4 w-4" />
                           重录本段
@@ -693,7 +698,7 @@ export default function CoveragePassageAssessmentPage() {
                             recordingQuality.isAnalyzing ||
                             !recordingQuality.report?.canSubmit
                           }
-                          className="gap-2"
+                          className={`gap-2 ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                         >
                           提交这一段
                           <ArrowRight className="h-4 w-4" />
@@ -754,12 +759,12 @@ export default function CoveragePassageAssessmentPage() {
               <p className="text-red-700 break-words [overflow-wrap:anywhere] dark:text-red-400">
                 {phase.message}
               </p>
-              <div className="mt-3 flex justify-center gap-2">
+              <div className="mt-3 flex flex-wrap justify-center gap-2">
                 {phase.recoverTo && (
                   <Button
                     onClick={handleRetryCurrent}
                     variant="outline"
-                    className="gap-2"
+                    className={`gap-2 ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                   >
                     回到当前段
                   </Button>
@@ -767,13 +772,18 @@ export default function CoveragePassageAssessmentPage() {
                 <Button
                   onClick={handleStart}
                   variant="outline"
-                  className="gap-2"
+                  className={`gap-2 ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}
                 >
                   <RotateCcw className="h-4 w-4" />
                   重新开始
                 </Button>
-                <Link href="/settings">
-                  <Button variant="outline">检查设置</Button>
+                <Link href="/settings" className="max-w-full">
+                  <Button
+                    variant="outline"
+                    className={WRAP_SAFE_ACTION_BUTTON_CLASS}
+                  >
+                    检查设置
+                  </Button>
                 </Link>
               </div>
             </motion.div>
