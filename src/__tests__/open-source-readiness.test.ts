@@ -293,10 +293,16 @@ describe("open-source readiness files", () => {
       "Current command-by-command results, including exact test counts, live in",
     );
     expect(handoffDocs).not.toMatch(/89\s+(?:files|test files).*489\s+tests/);
+    expect(handoffDocs).not.toContain("72 test files and 363 tests");
+    expect(handoffDocs).not.toContain("74 files and 374 tests");
+    expect(handoffDocs).not.toContain("75` files and `380` tests");
     expect(handoffDocs).not.toContain("119` files and `666` tests");
     expect(handoffDocs).not.toContain("117` files and `646` tests");
+    expect(handoffDocs).not.toContain("Biome checked 308 files");
+    expect(handoffDocs).not.toContain("Biome checked 312 files");
     expect(handoffDocs).not.toContain("Biome checked 341 files");
     expect(handoffDocs).not.toContain("378` files checked");
+    expect(handoffDocs).toContain("Exact current counts live in");
     expect(handoffDocs).not.toContain("PID was `70112`");
   });
 

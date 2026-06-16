@@ -318,18 +318,16 @@ release notes and installation guide keep the unsigned warning visible.
 - Historical validation update: commit `94be1d4` (`chore: tighten desktop
   release validation`). Do not use this historical SHA as the latest RC state;
   current command results live in `docs/operations/RC_EVIDENCE_AUDIT.md`.
-- `npm.cmd run test`: 72 test files and 363 tests passed.
-- `npm.cmd run typecheck`: passed.
-- `npm.cmd run lint`: passed; Biome checked 308 files.
-- `npm.cmd run build:desktop-frontend`: passed; 144 static pages generated.
+- The historical gate included `npm.cmd run test`, `npm.cmd run typecheck`,
+  `npm.cmd run lint`, and `npm.cmd run build:desktop-frontend`. Exact current
+  counts live in `docs/operations/RC_EVIDENCE_AUDIT.md`.
 - `npm.cmd run desktop:live-validation`: passed.
 - First `npm.cmd run validate:desktop` attempt found a real process-lock issue:
   an already-running `speakright.exe` prevented Tauri from overwriting the
   release executable. After closing the release process, the full validation
   passed.
-- Bundled audio validated: English `1464/1464`, Spanish `398/398`, French
-  `509/509`, Russian `407/407`.
-- Bundled videos validated: `210/210`.
+- Bundled audio/video validation passed for that historical build. Current
+  bundled asset counts live in `docs/operations/RC_EVIDENCE_AUDIT.md`.
 - Azure live pronunciation-assessment sample: `220/220` passed.
 - ElevenLabs usage was checked before and after validation; no TTS smoke was run
   and estimated generated characters used were `0`.
@@ -351,17 +349,16 @@ release notes and installation guide keep the unsigned warning visible.
 - Non-English diagnosis now withholds trusted overall scores for silence, too
   few word-level items, target-text mismatch, missing phoneme alignment, invalid
   recordings, or partial/low-evidence readings.
-- Validation results after the fixes:
-  - `npm.cmd run test`: 74 files and 374 tests passed.
-  - `npm.cmd run typecheck`: passed.
-  - `npm.cmd run lint`: passed; Biome checked 312 files.
-  - `npm.cmd run build:desktop-frontend`: passed; 144 static pages generated.
+- Historical validation results after the fixes:
+  - `npm.cmd run test`, `npm.cmd run typecheck`, `npm.cmd run lint`, and
+    `npm.cmd run build:desktop-frontend` passed. Exact current counts live in
+    `docs/operations/RC_EVIDENCE_AUDIT.md`.
   - `npm.cmd run desktop:preflight`: passed after closing the stale release
     process.
   - `npm.cmd run desktop:ui-smoke`: passed, not served from `localhost`.
-  - `npm.cmd run desktop:live-validation`: passed; English `1464`, Spanish
-    `398`, French `509`, Russian `407`, videos `210`, Azure `220/220`,
-    ElevenLabs generated characters `0`.
+  - `npm.cmd run desktop:live-validation`: passed for bundled audio/video
+    assets, Azure sample coverage, and ElevenLabs generated characters `0`.
+    Current asset counts live in `docs/operations/RC_EVIDENCE_AUDIT.md`.
   - `npm.cmd run validate:desktop`: passed.
 - `npm.cmd run desktop:release-gate`: failed only because EXE/MSI/NSIS
     artifacts are unsigned, which remains the public-release blocker.
@@ -594,11 +591,10 @@ npm.cmd run desktop:launch-release
   Routine validation must not regenerate these files.
 - The phoneme detail card now has a compact A/B standard-voice selector. Manual
   QA should check both voices for at least a few words in each language.
-- Validation after the dual-voice expansion:
-  - `npm.cmd run test`: `75` files and `380` tests passed.
-  - `npm.cmd run typecheck`: passed.
-  - `npm.cmd run lint`: passed; Biome checked `317` files.
-  - `npm.cmd run build:desktop-frontend`: passed; `144` static pages generated.
+- Historical validation after the dual-voice expansion:
+  - `npm.cmd run test`, `npm.cmd run typecheck`, `npm.cmd run lint`, and
+    `npm.cmd run build:desktop-frontend` passed. Exact current counts live in
+    `docs/operations/RC_EVIDENCE_AUDIT.md`.
   - `npm.cmd run audio:parity:dry-run`: Spanish `880`, French `1090`, Russian
     `920`, total missing `0`.
   - `npm.cmd run desktop:live-validation`: English `1464`, Spanish `880`,
