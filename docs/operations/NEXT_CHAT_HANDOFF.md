@@ -296,6 +296,10 @@ git status --short --branch
   `/drill/scenarios` and `/drill/spontaneous` in English context during main,
   narrow, and low-height passes and checks their prompt/recording cards plus
   horizontal overflow.
+- The final `desktop:ui-smoke` summary now builds its `routes=` field from
+  `smokeSummaryRoutes`, so `/drill/scenarios` and `/drill/spontaneous` appear
+  in the human-readable output instead of being hidden behind only
+  `englishTransferRoutes=ok`.
 - English word/sentence/contrast drill routes now have page/config smoke hooks
   and wrap-ready page headers. Release EXE smoke opens `/drill/word`,
   `/drill/sentence`, and `/drill/contrast` in English context during main,

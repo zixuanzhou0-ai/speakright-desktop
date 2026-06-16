@@ -9,6 +9,22 @@ import { promisify } from "node:util";
 const execFileAsync = promisify(execFile);
 const root = process.cwd();
 const timeoutMs = Number(process.env.SPEAKRIGHT_UI_SMOKE_TIMEOUT_MS ?? 20_000);
+const smokeSummaryRoutes = [
+  "/drill",
+  "/drill/word",
+  "/drill/sentence",
+  "/drill/contrast",
+  "/drill/prosody",
+  "/drill/perception",
+  "/drill/evidence",
+  "/drill/pack/ee-ih",
+  "/drill/scenarios",
+  "/drill/spontaneous",
+  "/sentences",
+  "/assessment",
+  "/assessment/passage",
+  "/progress",
+];
 
 const languageChecks = [
   {
@@ -2474,7 +2490,7 @@ async function smoke() {
         `details=${details
           .map((item) => `${item.languageId}:${item.slug}`)
           .join(",")}`,
-        "routes=/drill,/drill/word,/drill/sentence,/drill/contrast,/drill/prosody,/drill/perception,/drill/evidence,/drill/pack/ee-ih,/sentences,/assessment,/assessment/passage,/progress",
+        `routes=${smokeSummaryRoutes.join(",")}`,
         "scoringTileAudioPolicy=ok",
         "englishTransferRoutes=ok",
         "englishCoreDrillRoutes=ok",

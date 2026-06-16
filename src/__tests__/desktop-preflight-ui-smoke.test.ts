@@ -205,9 +205,10 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("progress missing benchmark audio warning");
     expect(script).toContain("direct: true");
     expect(script).toContain("progress-experimental-blocker");
-    expect(script).toContain(
-      "routes=/drill,/drill/word,/drill/sentence,/drill/contrast,/drill/prosody,/drill/perception,/drill/evidence,/drill/pack/ee-ih,/sentences,/assessment,/assessment/passage,/progress",
-    );
+    expect(script).toContain("routes=");
+    expect(script).toContain("smokeSummaryRoutes.join");
+    expect(script).toContain('"/drill/scenarios"');
+    expect(script).toContain('"/drill/spontaneous"');
     expect(script).toContain("releaseServedFromDevServer=false");
     expect(script).toContain('data-smoke="language-option"');
     expect(script).toContain("textIsCentered");
