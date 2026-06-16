@@ -58,7 +58,10 @@ export function AzureConfigCard() {
 
   const handleTest = async () => {
     if (!key.trim()) {
-      toast.error("请先填写 Subscription Key");
+      const message = "请先填写 Subscription Key 后再测试连接";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
       return;
     }
     const regionError = getAzureRegionValidationError(region);

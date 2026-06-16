@@ -78,7 +78,10 @@ export function ElevenLabsConfigCard() {
 
   const handleTest = async () => {
     if (!apiKey.trim()) {
-      toast.error("请先填写 API Key");
+      const message = "请先填写 API Key 后再测试连接";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
       return;
     }
     setStatus("testing");

@@ -96,6 +96,43 @@ describe("settings connection errors", () => {
     expect(screen.getByText(/不会卡住评分流程/)).toBeInTheDocument();
   });
 
+  it("keeps missing connection-test config visible inline instead of toast-only", () => {
+    const azureView = render(<AzureConfigCard />);
+
+    fireEvent.click(screen.getByRole("button", { name: "测试连接" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "请先填写 Subscription Key 后再测试连接",
+    );
+    expect(mocks.toastError).toHaveBeenCalledWith(
+      "请先填写 Subscription Key 后再测试连接",
+    );
+    azureView.unmount();
+
+    const elevenLabsView = render(<ElevenLabsConfigCard />);
+
+    fireEvent.click(screen.getByRole("button", { name: "测试连接" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "请先填写 API Key 后再测试连接",
+    );
+    expect(mocks.toastError).toHaveBeenCalledWith(
+      "请先填写 API Key 后再测试连接",
+    );
+    elevenLabsView.unmount();
+
+    render(<LlmConfigCard />);
+
+    fireEvent.click(screen.getByRole("button", { name: "测试连接" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "请填写 API Key 后再测试连接",
+    );
+    expect(mocks.toastError).toHaveBeenCalledWith(
+      "请填写 API Key 后再测试连接",
+    );
+  });
+
   it("does not leak raw English ElevenLabs exceptions into Settings", async () => {
     mocks.testElevenLabs.mockRejectedValueOnce(new Error("Failed to fetch"));
 

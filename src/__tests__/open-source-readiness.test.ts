@@ -257,7 +257,7 @@ describe("open-source readiness files", () => {
       "Latest local full gate",
     );
     expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
-      "121 files / 679 tests passed",
+      "121 files / 680 tests passed",
     );
     expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
       "same left/detail sound-unit header clip",

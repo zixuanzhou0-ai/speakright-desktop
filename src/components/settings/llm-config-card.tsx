@@ -133,8 +133,18 @@ export function LlmConfigCard() {
       setStatusMsg(desktopPolicyError);
       return;
     }
-    if (!apiKey.trim() || !baseUrl.trim()) {
-      toast.error("请填写完整配置");
+    if (!apiKey.trim()) {
+      const message = "请填写 API Key 后再测试连接";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
+      return;
+    }
+    if (!baseUrl.trim()) {
+      const message = "请填写 Base URL 后再测试连接";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
       return;
     }
     setStatus("testing");
