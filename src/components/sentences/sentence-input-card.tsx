@@ -16,6 +16,8 @@ import type { LanguageId } from "@/types/language";
 
 const MAX_CHARS = 150;
 const WARN_CHARS = 120;
+const WRAP_SAFE_BADGE_CLASS =
+  "h-auto min-h-5 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]";
 
 interface SentenceInputCardProps {
   sentence: string;
@@ -367,6 +369,8 @@ function TargetPreviewPanel({
               <div className="flex flex-wrap items-center justify-center gap-1.5 text-center">
                 <Badge
                   variant={target.source === "review" ? "default" : "secondary"}
+                  className={WRAP_SAFE_BADGE_CLASS}
+                  data-smoke="free-practice-target-pack-badge"
                 >
                   {target.packTitle}
                 </Badge>
@@ -396,12 +400,18 @@ function TargetPreviewPanel({
         </p>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-1.5 text-center">
-        <Badge variant="outline">{suggestion.packTitle}</Badge>
+        <Badge
+          variant="outline"
+          className={WRAP_SAFE_BADGE_CLASS}
+          data-smoke="free-practice-suggestion-pack-badge"
+        >
+          {suggestion.packTitle}
+        </Badge>
         {suggestion.words.slice(0, 4).map((word) => (
           <Badge
             key={word}
             variant="secondary"
-            className="max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]"
+            className={WRAP_SAFE_BADGE_CLASS}
           >
             {word}
           </Badge>

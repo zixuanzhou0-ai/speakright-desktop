@@ -225,12 +225,16 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain('ariaLabel !== "播放单词发音"');
     expect(script).toContain("practiceAudioLabels=ok");
     expect(script).toContain("freePracticeSmoke=ok");
-    expect(
-      readProjectFile("src/components/sentences/sentence-input-card.tsx"),
-    ).toContain("free-practice-word-audio-error");
-    expect(
-      readProjectFile("src/components/sentences/sentence-input-card.tsx"),
-    ).toContain("free-practice-tts-error");
+    const sentenceInputCard = readProjectFile(
+      "src/components/sentences/sentence-input-card.tsx",
+    );
+    expect(sentenceInputCard).toContain("free-practice-word-audio-error");
+    expect(sentenceInputCard).toContain("free-practice-tts-error");
+    expect(sentenceInputCard).toContain("free-practice-target-pack-badge");
+    expect(sentenceInputCard).toContain("free-practice-suggestion-pack-badge");
+    expect(sentenceInputCard).toContain(
+      "h-auto min-h-5 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
+    );
     const sentenceRecordingCard = readProjectFile(
       "src/components/sentences/sentence-recording-card.tsx",
     );

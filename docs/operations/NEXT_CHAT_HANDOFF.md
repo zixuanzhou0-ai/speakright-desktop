@@ -85,6 +85,9 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - Free-practice input/listen controls now use a wrapping action row with a
   readable textarea minimum width; the word-mode icon button also has the
   explicit `播放单词发音` accessible label.
+- Free-practice target preview pack badges now wrap long training-pack titles,
+  so suggested or matched practice targets do not inherit the base badge nowrap
+  behavior.
 - Installation docs now include a source-build Release EXE path and first-launch
   expectations for no API keys, no network, no microphone permission, and
   missing bundled local audio. The runbook mirrors those degraded-state checks
