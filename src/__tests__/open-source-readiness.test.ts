@@ -114,12 +114,17 @@ describe("open-source readiness files", () => {
   });
 
   it("keeps public issue and PR templates aligned with release and privacy boundaries", () => {
+    const issueConfig = read(".github/ISSUE_TEMPLATE/config.yml");
     const bugReport = read(".github/ISSUE_TEMPLATE/bug_report.md");
     const featureRequest = read(".github/ISSUE_TEMPLATE/feature_request.md");
     const ipaAudit = read(".github/ISSUE_TEMPLATE/ipa_audit.md");
     const audioProvider = read(".github/ISSUE_TEMPLATE/audio_provider_request.md");
     const pullRequest = read(".github/pull_request_template.md");
 
+    expect(issueConfig).toContain("blank_issues_enabled: false");
+    expect(issueConfig).toContain("Support routing guide");
+    expect(issueConfig).toContain("SUPPORT.md");
+    expect(issueConfig).toContain("Security report");
     expect(bugReport).toContain("Release EXE");
     expect(bugReport).toContain("Spanish, French, or Russian");
     expect(bugReport).toContain("Do not attach API keys");
