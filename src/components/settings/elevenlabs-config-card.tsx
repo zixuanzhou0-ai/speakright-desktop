@@ -63,17 +63,29 @@ export function ElevenLabsConfigCard() {
 
   const handleSave = () => {
     if (!apiKey.trim()) {
-      toast.error("请输入 API Key");
+      const message = "请填写 API Key 后再保存配置";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
       return;
     }
     const voice = ELEVENLABS_VOICES.find((v) => v.voice_id === voiceId);
+    if (!voice) {
+      const message = "请选择默认声音后再保存配置";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
+      return;
+    }
     setElevenLabsConfig({
       apiKey: apiKey.trim(),
       voiceId,
-      voiceName: voice?.name,
+      voiceName: voice.name,
       modelId,
     });
     toast.success("ElevenLabs 配置已保存");
+    setStatus("success");
+    setStatusMsg("ElevenLabs 配置已保存，建议再测试连接。");
   };
 
   const handleTest = async () => {

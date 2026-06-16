@@ -41,12 +41,17 @@ export function AzureConfigCard() {
 
   const handleSave = () => {
     if (!key.trim()) {
-      toast.error("请输入 Subscription Key");
+      const message = "请填写 Subscription Key 后再保存配置";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
       return;
     }
     const regionError = getAzureRegionValidationError(region);
     if (regionError) {
       toast.error(regionError);
+      setStatus("error");
+      setStatusMsg(regionError);
       return;
     }
     setAzureConfig({
@@ -54,6 +59,8 @@ export function AzureConfigCard() {
       region: normalizeAzureRegion(region),
     });
     toast.success("Azure 配置已保存");
+    setStatus("success");
+    setStatusMsg("Azure 配置已保存，建议再测试连接。");
   };
 
   const handleTest = async () => {

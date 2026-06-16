@@ -133,6 +133,47 @@ describe("settings connection errors", () => {
     );
   });
 
+  it("keeps missing save config visible inline instead of toast-only", () => {
+    const azureView = render(<AzureConfigCard />);
+
+    fireEvent.click(screen.getByRole("button", { name: "保存" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "请填写 Subscription Key 后再保存配置",
+    );
+    expect(mocks.toastError).toHaveBeenCalledWith(
+      "请填写 Subscription Key 后再保存配置",
+    );
+    expect(mocks.setAzureConfig).not.toHaveBeenCalled();
+    azureView.unmount();
+
+    const elevenLabsView = render(<ElevenLabsConfigCard />);
+
+    fireEvent.change(screen.getByLabelText("API Key"), {
+      target: { value: "eleven-key" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "保存" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "请选择默认声音后再保存配置",
+    );
+    expect(mocks.toastError).toHaveBeenCalledWith("请选择默认声音后再保存配置");
+    expect(mocks.setElevenLabsConfig).not.toHaveBeenCalled();
+    elevenLabsView.unmount();
+
+    render(<LlmConfigCard />);
+
+    fireEvent.click(screen.getByRole("button", { name: "保存" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "请填写 API Key 后再保存配置",
+    );
+    expect(mocks.toastError).toHaveBeenCalledWith(
+      "请填写 API Key 后再保存配置",
+    );
+    expect(mocks.setLlmConfig).not.toHaveBeenCalled();
+  });
+
   it("does not leak raw English ElevenLabs exceptions into Settings", async () => {
     mocks.testElevenLabs.mockRejectedValueOnce(new Error("Failed to fetch"));
 

@@ -86,10 +86,15 @@ export function LlmConfigCard() {
   const handleSave = () => {
     if (desktopCustomBlocked) {
       toast.error(DESKTOP_LLM_POLICY_MESSAGE);
+      setStatus("error");
+      setStatusMsg(DESKTOP_LLM_POLICY_MESSAGE);
       return;
     }
     if (needsManualConfig && (!baseUrl.trim() || !model.trim())) {
-      toast.error("请填写官方 Base URL 和模型名称");
+      const message = "请填写官方 Base URL 和模型名称";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
       return;
     }
     const desktopPolicyError = isDesktop
@@ -97,10 +102,22 @@ export function LlmConfigCard() {
       : null;
     if (desktopPolicyError) {
       toast.error(desktopPolicyError);
+      setStatus("error");
+      setStatusMsg(desktopPolicyError);
       return;
     }
     if (!apiKey.trim()) {
-      toast.error("请输入 API Key");
+      const message = "请填写 API Key 后再保存配置";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
+      return;
+    }
+    if (!baseUrl.trim()) {
+      const message = "请填写 Base URL 后再保存配置";
+      toast.error(message);
+      setStatus("error");
+      setStatusMsg(message);
       return;
     }
     setLlmConfig({
@@ -110,6 +127,8 @@ export function LlmConfigCard() {
       model,
     });
     toast.success("LLM 配置已保存");
+    setStatus("success");
+    setStatusMsg("AI 教练配置已保存，建议再测试连接。");
   };
 
   const handleTest = async () => {
