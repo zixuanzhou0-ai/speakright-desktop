@@ -140,4 +140,62 @@ describe("AssessmentReport mastery display", () => {
     expect(primaryAction).toHaveClass("max-w-full");
     expect(screen.getByRole("button", { name: /开始：/ })).toBeInTheDocument();
   });
+
+  it("keeps long diagnosis issue badges and evidence text wrap-ready", () => {
+    const result = reportFor("es-ES");
+    const longTitle =
+      "跨词边界清浊同化与长短语证据需要继续复核 cross-boundary-voicing-assimilation";
+    const longPattern =
+      "ru-cross-word-voicing-assimilation-before-sonorant-needs-practice";
+    result.issues[0] = {
+      ...result.issues[0],
+      title: longTitle,
+      confidence: "medium",
+      evidenceStrength: "thin",
+      errorPatternIds: [longPattern],
+      suspectedSubstitution: "/druɡ doma/ -> /druk doma/",
+      impact:
+        "这类长短语证据如果被截断，学习者会看不到为什么需要补测或继续练习。",
+      fixCue:
+        "先完整读出跨词边界，再用短句复查同化位置，不能只看单词末尾。",
+      evidence: [
+        {
+          text: "друг дома",
+          score: 58,
+          detail:
+            "跨词边界证据较薄，需要更多样本确认，而不是把一次结果当成正式 mastery。",
+        },
+      ],
+    };
+
+    render(<AssessmentReport result={result} onRetake={vi.fn()} />);
+
+    const titleNodes = screen.getAllByText(longTitle);
+    const titleBadge = titleNodes.find(
+      (node) => node.tagName.toLowerCase() === "span",
+    );
+    const titleHeading = titleNodes.find(
+      (node) => node.tagName.toLowerCase() === "h3",
+    );
+    expect(titleBadge).toHaveClass("h-auto");
+    expect(titleBadge).toHaveClass("whitespace-normal");
+    expect(titleBadge).toHaveClass("break-words");
+    expect(titleBadge).toHaveClass("[overflow-wrap:anywhere]");
+    expect(titleBadge).not.toHaveClass("whitespace-nowrap");
+    expect(titleHeading).toHaveClass("break-words");
+    expect(titleHeading).toHaveClass("[overflow-wrap:anywhere]");
+
+    const patternBadge = screen.getByText(longPattern);
+    expect(patternBadge).toHaveClass("h-auto");
+    expect(patternBadge).toHaveClass("max-w-full");
+    expect(patternBadge).toHaveClass("whitespace-normal");
+    expect(patternBadge).toHaveClass("break-words");
+    expect(patternBadge).toHaveClass("[overflow-wrap:anywhere]");
+
+    expect(screen.getByText("置信度 medium")).toHaveClass("whitespace-normal");
+    expect(screen.getByText("证据 thin")).toHaveClass("whitespace-normal");
+    expect(screen.getByText(/跨词边界证据较薄/).parentElement).toHaveClass(
+      "break-words",
+    );
+  });
 });

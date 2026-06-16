@@ -40,6 +40,9 @@ interface AssessmentReportProps {
   onRetake: () => void;
 }
 
+const WRAP_SAFE_BADGE_CLASS =
+  "h-auto min-h-5 max-w-full whitespace-normal break-words text-center leading-snug [overflow-wrap:anywhere]";
+
 const MASTERY_STATE_LABELS: Record<MasteryState, string> = {
   unknown: "未建档",
   suspected: "疑似弱点",
@@ -127,7 +130,10 @@ export function AssessmentReport({ result, onRetake }: AssessmentReportProps) {
           </div>
           <div className="space-y-4">
             <div>
-              <Badge variant="secondary" className="mb-2">
+              <Badge
+                variant="secondary"
+                className={cn("mb-2", WRAP_SAFE_BADGE_CLASS)}
+              >
                 {result.source === "coverage-passage"
                   ? "全音覆盖朗读诊断"
                   : "诊断 + 训练处方"}
@@ -145,20 +151,28 @@ export function AssessmentReport({ result, onRetake }: AssessmentReportProps) {
               </p>
               {result.evidenceSummary && (
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  <Badge variant="outline">
+                  <Badge variant="outline" className={WRAP_SAFE_BADGE_CLASS}>
                     总证据 {result.evidenceSummary.overallStrength}
                   </Badge>
-                  <Badge variant="outline">
+                  <Badge variant="outline" className={WRAP_SAFE_BADGE_CLASS}>
                     可用录音 {result.evidenceSummary.usableRecordings}
                   </Badge>
                   {result.evidenceSummary.invalidRecordings > 0 && (
-                    <Badge variant="destructive">
+                    <Badge
+                      variant="destructive"
+                      className={WRAP_SAFE_BADGE_CLASS}
+                    >
                       无效录音 {result.evidenceSummary.invalidRecordings}
                     </Badge>
                   )}
                   {result.evidenceSummary.recommendedAction ===
                     "request-more-samples" && (
-                    <Badge variant="secondary">建议补测薄弱证据</Badge>
+                    <Badge
+                      variant="secondary"
+                      className={WRAP_SAFE_BADGE_CLASS}
+                    >
+                      建议补测薄弱证据
+                    </Badge>
                   )}
                 </div>
               )}
@@ -167,6 +181,7 @@ export function AssessmentReport({ result, onRetake }: AssessmentReportProps) {
               {result.issues.slice(0, 3).map((issue) => (
                 <Badge
                   key={issue.id}
+                  className={WRAP_SAFE_BADGE_CLASS}
                   variant={
                     issue.severity === "critical"
                       ? "destructive"
@@ -179,7 +194,7 @@ export function AssessmentReport({ result, onRetake }: AssessmentReportProps) {
                 </Badge>
               ))}
               {result.issues.length === 0 && (
-                <Badge variant="outline">
+                <Badge variant="outline" className={WRAP_SAFE_BADGE_CLASS}>
                   {hasScore ? "没有明显重灾区" : "证据不足，需复测"}
                 </Badge>
               )}
@@ -452,47 +467,66 @@ function IssueCard({
           : "bg-card",
       )}
     >
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <h3 className="text-sm font-bold">{issue.title}</h3>
+      <div className="mb-2 flex items-start justify-between gap-2">
+        <h3 className="min-w-0 break-words text-sm font-bold [overflow-wrap:anywhere]">
+          {issue.title}
+        </h3>
         <Badge
           variant={issue.severity === "critical" ? "destructive" : "secondary"}
+          className={cn("shrink-0", WRAP_SAFE_BADGE_CLASS)}
         >
           {issue.severity}
         </Badge>
       </div>
       {issue.suspectedSubstitution && (
-        <p className="mb-2 font-mono text-xs text-muted-foreground">
+        <p className="mb-2 break-words font-mono text-xs text-muted-foreground [overflow-wrap:anywhere]">
           {issue.suspectedSubstitution}
         </p>
       )}
-      <p className="text-sm text-muted-foreground">{issue.impact}</p>
-      <p className="mt-3 text-sm font-medium">{issue.fixCue}</p>
+      <p className="break-words text-sm text-muted-foreground [overflow-wrap:anywhere]">
+        {issue.impact}
+      </p>
+      <p className="mt-3 break-words text-sm font-medium [overflow-wrap:anywhere]">
+        {issue.fixCue}
+      </p>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {canShowFormalMastery ? (
           <>
-            <Badge variant="outline">
+            <Badge variant="outline" className={WRAP_SAFE_BADGE_CLASS}>
               阶段 {MASTERY_STATE_LABELS[masteryState]}
             </Badge>
             {nextLayer && (
-              <Badge variant="outline">下一层 {LAYER_LABELS[nextLayer]}</Badge>
+              <Badge variant="outline" className={WRAP_SAFE_BADGE_CLASS}>
+                下一层 {LAYER_LABELS[nextLayer]}
+              </Badge>
             )}
             {stageScore != null && stageCeiling != null && (
-              <Badge variant="outline">
+              <Badge variant="outline" className={WRAP_SAFE_BADGE_CLASS}>
                 阶段分 {stageScore}/{stageCeiling}
               </Badge>
             )}
           </>
         ) : (
-          <Badge variant="secondary">experimental 练习观察</Badge>
+          <Badge variant="secondary" className={WRAP_SAFE_BADGE_CLASS}>
+            experimental 练习观察
+          </Badge>
         )}
         {issue.confidence && (
-          <Badge variant="outline">置信度 {issue.confidence}</Badge>
+          <Badge variant="outline" className={WRAP_SAFE_BADGE_CLASS}>
+            置信度 {issue.confidence}
+          </Badge>
         )}
         {issue.evidenceStrength && (
-          <Badge variant="outline">证据 {issue.evidenceStrength}</Badge>
+          <Badge variant="outline" className={WRAP_SAFE_BADGE_CLASS}>
+            证据 {issue.evidenceStrength}
+          </Badge>
         )}
         {issue.errorPatternIds?.slice(0, 2).map((patternId) => (
-          <Badge key={patternId} variant="secondary">
+          <Badge
+            key={patternId}
+            variant="secondary"
+            className={WRAP_SAFE_BADGE_CLASS}
+          >
             {patternId}
           </Badge>
         ))}
@@ -511,41 +545,43 @@ function IssueCard({
               : "border-primary/20 bg-primary/5",
           )}
         >
-          <p className="font-semibold text-primary">
+          <p className="break-words font-semibold text-primary [overflow-wrap:anywhere]">
             {retestFirst
               ? "先补测，不直接训练"
               : `今天从：${levelTitle ?? "训练处方"}`}
           </p>
           {retestFirst && reviewItem && (
-            <p className="mt-1 text-muted-foreground">{reviewItem.reason}</p>
+            <p className="mt-1 break-words text-muted-foreground [overflow-wrap:anywhere]">
+              {reviewItem.reason}
+            </p>
           )}
           {retestFirst && reviewItem?.retestWords.length ? (
-            <p className="mt-2 text-muted-foreground">
+            <p className="mt-2 break-words text-muted-foreground [overflow-wrap:anywhere]">
               补测词：
               {reviewItem.retestWords.map((word) => word.word).join(" / ")}
             </p>
           ) : null}
           {!retestFirst && prescriptionItem?.learningObjective && (
-            <p className="mt-1 text-muted-foreground">
+            <p className="mt-1 break-words text-muted-foreground [overflow-wrap:anywhere]">
               {prescriptionItem.learningObjective}
             </p>
           )}
           {!retestFirst &&
             issue.nextLesson?.reason &&
             !prescriptionItem?.learningObjective && (
-              <p className="mt-1 text-muted-foreground">
+              <p className="mt-1 break-words text-muted-foreground [overflow-wrap:anywhere]">
                 {issue.nextLesson.reason}
               </p>
             )}
           {!retestFirst && prescriptionItem?.stageReason && (
-            <p className="mt-1 text-muted-foreground">
+            <p className="mt-1 break-words text-muted-foreground [overflow-wrap:anywhere]">
               {prescriptionItem.stageReason}
             </p>
           )}
         </div>
       )}
       {issue.evidence[0] && (
-        <div className="mt-3 rounded-lg bg-background/70 p-2 text-xs">
+        <div className="mt-3 break-words rounded-lg bg-background/70 p-2 text-xs [overflow-wrap:anywhere]">
           <span className="font-semibold">{issue.evidence[0].text}</span>
           <span className="text-muted-foreground">
             {" "}
