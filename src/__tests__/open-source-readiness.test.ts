@@ -200,6 +200,13 @@ describe("open-source readiness files", () => {
     const runbook = read("docs/operations/DESKTOP_STARTUP_RUNBOOK.md");
     const docs = [installation, runbook].join("\n");
 
+    expect(readme).toContain("Public review, source builds");
+    expect(readme).toContain("A signed public Windows release is not complete yet");
+    expect(readme).toContain("internal-test or controlled-test builds");
+    expect(installation).toContain("Download Controlled-Test Installer");
+    expect(installation).toContain("prefer **Build From Source** below");
+    expect(installation).toContain("wait for a signed");
+    expect(installation).toContain("public Windows release");
     expect(readme).toContain("source builds");
     expect(readme).toContain("docs/INSTALLATION.md");
     expect(installation).toContain("Build From Source");

@@ -1,11 +1,14 @@
 # Installation Guide
 
-## Download
+## Download Controlled-Test Installer
 
 Download the latest internal-test installer from the GitHub Releases page.
 
 This build is not code-signed yet. Use it only for controlled testing until the
 Windows EXE/MSI/NSIS artifacts are signed.
+If you are evaluating the public source repository without joining that
+controlled-test track, prefer **Build From Source** below or wait for a signed
+public Windows release.
 
 Recommended file:
 

@@ -12,6 +12,9 @@ not included in this release track.
 - This repository is public source code. `package.json` remains `private: true`
   to prevent accidental npm publication; releases are desktop artifacts, not an
   npm package.
+- Public review, source builds, and controlled Release EXE trials are supported.
+  A signed public Windows release is not complete yet; unsigned EXE/MSI/NSIS
+  artifacts must remain labeled as internal-test or controlled-test builds.
 - API keys are stored through the desktop secure/local credential layer where
   supported; they are never committed and are excluded from learning-data
   exports.
