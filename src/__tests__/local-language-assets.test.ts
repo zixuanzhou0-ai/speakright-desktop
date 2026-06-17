@@ -92,4 +92,18 @@ describe("local language assets", () => {
       expect(asset.notes?.join(" ").trim()).not.toBe("");
     }
   });
+
+  it("maps exact Russian hard stop anchors to same-unit local audio", () => {
+    for (const slug of ["ru-p", "ru-b", "ru-t", "ru-d", "ru-k", "ru-g"]) {
+      const asset = getLocalLanguagePhonemeAsset("ru-RU", slug);
+
+      expect(asset?.audioSrc, slug).toBe(
+        `/audio/language-assets/ru-RU/header-clips/${slug}.m4a`,
+      );
+      expect(asset?.isProxyForAssessment, slug).not.toBe(true);
+      expect(getPhonologyInventoryEntry("ru-RU", slug)?.tilePolicy).toBe(
+        "clickable-exact-header",
+      );
+    }
+  });
 });

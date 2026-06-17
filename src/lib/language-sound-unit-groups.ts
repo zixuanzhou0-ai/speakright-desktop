@@ -256,6 +256,12 @@ export const LANGUAGE_SOUND_UNIT_GROUPS: Record<
       description: "俄语需要重点建立舌位的核心辅音。",
       displayType: "phoneme",
       slugs: [
+        "ru-p",
+        "ru-b",
+        "ru-t",
+        "ru-d",
+        "ru-k",
+        "ru-g",
         "ru-r",
         "ru-x",
         "ru-sh-zh",

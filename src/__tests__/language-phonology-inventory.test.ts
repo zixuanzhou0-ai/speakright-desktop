@@ -116,6 +116,9 @@ describe("language phonology inventory", () => {
     expect(getPhonologyInventoryEntry("ru-RU", "ru-hard-soft")?.layer).toBe(
       "contrast",
     );
+    for (const slug of ["ru-p", "ru-b", "ru-t", "ru-d", "ru-k", "ru-g"]) {
+      expect(getPhonologyInventoryEntry("ru-RU", slug)?.layer).toBe("phoneme");
+    }
     expect(getPhonologyInventoryEntry("ru-RU", "ru-final-devoicing")?.layer).toBe(
       "connected-speech-rule",
     );
@@ -292,6 +295,27 @@ describe("language phonology inventory", () => {
       expect(getAssessmentAliasesForSlug(slug).length, slug).toBeGreaterThan(0);
       expect(entry?.exactAssessmentAliases, slug).toEqual([]);
       expect(entry?.headerAudioSrc, slug).toBeUndefined();
+    }
+  });
+
+  it("promotes exact Russian hard stop anchors to clickable same-unit header clips", () => {
+    for (const [slug, alias] of [
+      ["ru-p", "p"],
+      ["ru-b", "b"],
+      ["ru-t", "t"],
+      ["ru-d", "d"],
+      ["ru-k", "k"],
+      ["ru-g", "g"],
+    ] as const) {
+      const entry = getPhonologyInventoryEntry("ru-RU", slug);
+
+      expect(entry?.layer, slug).toBe("phoneme");
+      expect(entry?.audioStatus, slug).toBe("exact-local-header");
+      expect(entry?.tilePolicy, slug).toBe("clickable-exact-header");
+      expect(entry?.exactAssessmentAliases, slug).toEqual([alias]);
+      expect(entry?.headerAudioSrc, slug).toBe(
+        `/audio/language-assets/ru-RU/header-clips/${slug}.m4a`,
+      );
     }
   });
 });

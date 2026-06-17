@@ -52,6 +52,25 @@ describe("Russian pronunciation content", () => {
     }
   });
 
+  it("adds standalone hard Russian stop anchors with exact-audio-safe wording", () => {
+    for (const [slug, expectedIpa] of [
+      ["ru-p", "/p/"],
+      ["ru-b", "/b/"],
+      ["ru-t", "/t/"],
+      ["ru-d", "/d/"],
+      ["ru-k", "/k/"],
+      ["ru-g", "/g/"],
+    ] as const) {
+      const unit = getLanguagePhonemeBySlug("ru-RU", slug);
+
+      expect(unit?.soundUnitType ?? "phoneme", slug).toBe("phoneme");
+      expect(unit?.ipa, slug).toBe(expectedIpa);
+      expect(unit?.description, slug).toContain("硬");
+      expect(unit?.notes?.join(" "), slug).toMatch(/软|清化/);
+      expect(unit?.keywords.length, slug).toBeGreaterThanOrEqual(20);
+    }
+  });
+
   it("explains final devoicing without hiding connected-speech voicing", () => {
     const finalDevoicing = getLanguagePhonemeBySlug(
       "ru-RU",

@@ -554,6 +554,42 @@ const RUSSIAN_INVENTORY_BASE: PhonologyInventoryBaseEntry[] = [
     "seeing-speech-ru",
   ]),
   row(
+    "ru-p",
+    "phoneme",
+    "Hard Russian /p/ stop anchor; soft /pʲ/ remains a separate contrast target.",
+    [...RUSSIAN_CORE_SOURCES, "seeing-speech-ru"],
+  ),
+  row(
+    "ru-b",
+    "phoneme",
+    "Hard Russian /b/ stop anchor; final devoicing and soft /bʲ/ are trained separately.",
+    [...RUSSIAN_CORE_SOURCES, "seeing-speech-ru"],
+  ),
+  row(
+    "ru-t",
+    "phoneme",
+    "Hard Russian /t/ stop anchor; soft /tʲ/ remains a separate contrast target.",
+    [...RUSSIAN_CORE_SOURCES, "seeing-speech-ru"],
+  ),
+  row(
+    "ru-d",
+    "phoneme",
+    "Hard Russian /d/ stop anchor; final devoicing and soft /dʲ/ are trained separately.",
+    [...RUSSIAN_CORE_SOURCES, "seeing-speech-ru"],
+  ),
+  row(
+    "ru-k",
+    "phoneme",
+    "Hard Russian /k/ stop anchor; soft /kʲ/ and cluster behavior are trained separately.",
+    [...RUSSIAN_CORE_SOURCES, "seeing-speech-ru"],
+  ),
+  row(
+    "ru-g",
+    "phoneme",
+    "Hard Russian /g/ stop anchor; final devoicing and soft /gʲ/ are trained separately.",
+    [...RUSSIAN_CORE_SOURCES, "seeing-speech-ru"],
+  ),
+  row(
     "ru-hard-soft",
     "contrast",
     "Systemic hard/soft consonant contrast, not one added /j/ sound.",

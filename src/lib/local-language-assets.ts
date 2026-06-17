@@ -322,6 +322,42 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
     audioIpa: "/e/",
     exactAssessmentAliases: ["e", "ɛ"],
   }),
+  russianSeeingSpeechAsset("ru-p", "ru-p", [
+    "Russian hard п /p/ exact local asset.",
+  ], {
+    audioIpa: "/p/",
+    exactAssessmentAliases: ["p"],
+  }),
+  russianSeeingSpeechAsset("ru-b", "ru-b", [
+    "Russian hard б /b/ exact local asset; final devoicing is a separate rule.",
+  ], {
+    audioIpa: "/b/",
+    exactAssessmentAliases: ["b"],
+  }),
+  russianSeeingSpeechAsset("ru-t", "ru-t", [
+    "Russian hard т /t/ exact local asset.",
+  ], {
+    audioIpa: "/t/",
+    exactAssessmentAliases: ["t"],
+  }),
+  russianSeeingSpeechAsset("ru-d", "ru-d", [
+    "Russian hard д /d/ exact local asset; final devoicing is a separate rule.",
+  ], {
+    audioIpa: "/d/",
+    exactAssessmentAliases: ["d"],
+  }),
+  russianSeeingSpeechAsset("ru-k", "ru-k", [
+    "Russian hard к /k/ exact local asset.",
+  ], {
+    audioIpa: "/k/",
+    exactAssessmentAliases: ["k"],
+  }),
+  russianSeeingSpeechAsset("ru-g", "ru-g", [
+    "Russian hard г /g/ exact local asset; final devoicing is a separate rule.",
+  ], {
+    audioIpa: "/g/",
+    exactAssessmentAliases: ["g"],
+  }),
   russianSeeingSpeechAsset("ru-r", "ru-r", [
     "Russian trilled р /r/ primary local asset; palatalized trill audio is also available.",
   ], {
