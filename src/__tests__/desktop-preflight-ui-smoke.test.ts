@@ -301,6 +301,9 @@ describe("desktop preflight and UI smoke", () => {
     expect(sentenceInputCard).toContain("free-practice-tts-error");
     expect(sentenceInputCard).toContain("free-practice-target-pack-badge");
     expect(sentenceInputCard).toContain("free-practice-suggestion-pack-badge");
+    expect(sentenceInputCard).toContain("free-practice-suggestion-word");
+    expect(sentenceInputCard).toContain("suggestion.words.map");
+    expect(sentenceInputCard).not.toContain("suggestion.words.slice(0, 4)");
     expect(sentenceInputCard).toContain(
       "h-auto min-h-5 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]",
     );

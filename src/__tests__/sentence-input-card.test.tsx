@@ -148,7 +148,16 @@ describe("SentenceInputCard narrow layout", () => {
     );
   });
 
-  it("keeps long free-practice suggestion pack titles wrap-ready", () => {
+  it("keeps long free-practice suggestion pack titles and every suggested word visible", () => {
+    const suggestedWords = [
+      "very",
+      "voice",
+      "window",
+      "away",
+      "weather",
+      "vivid",
+    ];
+
     renderCard({
       sentence: "I want to practice this sentence clearly.",
       targetPreview: {
@@ -161,7 +170,7 @@ describe("SentenceInputCard narrow layout", () => {
             packTitle:
               "建议训练包：V/W 对比到自由句子迁移的长标题也必须完整换行显示",
             levelId: "word-ladder",
-            words: ["very", "voice", "window", "away"],
+            words: suggestedWords,
             prompt: "Try a sentence with very and window.",
             reason: "active pack",
           },
@@ -174,6 +183,15 @@ describe("SentenceInputCard narrow layout", () => {
         '[data-smoke="free-practice-suggestion-pack-badge"]',
       ),
     );
-    expect(screen.getByText("very")).toHaveClass("whitespace-normal");
+    const wordBadges = document.querySelectorAll(
+      '[data-smoke="free-practice-suggestion-word"]',
+    );
+    expect(wordBadges).toHaveLength(suggestedWords.length);
+    for (const word of suggestedWords) {
+      expect(screen.getByText(word)).toBeInTheDocument();
+    }
+    for (const wordBadge of wordBadges) {
+      expectBadgeWraps(wordBadge as HTMLElement);
+    }
   });
 });

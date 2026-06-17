@@ -407,11 +407,12 @@ function TargetPreviewPanel({
         >
           {suggestion.packTitle}
         </Badge>
-        {suggestion.words.slice(0, 4).map((word) => (
+        {suggestion.words.map((word) => (
           <Badge
             key={word}
             variant="secondary"
             className={WRAP_SAFE_BADGE_CLASS}
+            data-smoke="free-practice-suggestion-word"
           >
             {word}
           </Badge>
