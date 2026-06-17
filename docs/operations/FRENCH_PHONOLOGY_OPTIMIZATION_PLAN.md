@@ -16,19 +16,47 @@ enchaînement、elision、e caduc/schwa 和节奏组末突出。
 英语相同，例如 `/p t k f v s z m n l/`，但发音位置、送气、释放、词尾行为和短语连接
 不同；相同 IPA 符号不等于可以复用英语音频或英语课程讲法。
 
-## 权威依据
+## 权威来源与本轮查证结论
+
+本轮查证使用了 JIPA/IPA illustration、PFC、Phonetique.ca 和 IPA Handbook。结论：
+法语不缺成熟音标体系；真正的产品难点是不能把法语拆成孤立英语式 tile。法语的可懂度
+高度依赖短语级连接、词尾静音、e caduc/schwa 和节奏组。
 
 - Fougeron and Smith, "French", `Journal of the International Phonetic
   Association`, 23(2), 73-76:
   https://doi.org/10.1017/S0025100300004874
+  - 提供现代法语 IPA illustration，并说明元音库存存在 speaker/profile 差异。
+  - 确认前圆唇元音 `/y ø œ/`、鼻化元音 `/ɑ̃ ɛ̃ ɔ̃ œ̃/`、小舌 `/ʁ/` 和
+    glides `/j ɥ w/` 是法语学习关键。
+  - 对产品的约束：`/œ̃/`、`/ɑ/` 等不能写成所有现代法语 speaker 必须稳定区分。
+- PFC, `Phonologie du Francais Contemporain`: https://www.projet-pfc.net/
+  - 以真实口语语料研究 liaison、schwa/e caduc 和地域/语体差异。
+  - 对产品的约束：liaison 要区分 obligatory、optional、forbidden；schwa 不能
+    按固定单音规则硬判。
+- Phonetique.ca French pronunciation modules: https://www.phonetique.ca/
+  - 教学上强调先听辨口元音/鼻化元音和最小对立，再进入发音。
+  - 对产品的约束：法语 drill 需要“听辨 + 产出”双阶段，不能只给 IPA 读法。
 - International Phonetic Association, `Handbook of the International Phonetic
   Association`: https://www.internationalphoneticassociation.org/content/handbook-ipa
-- PFC, `Phonologie du Francais Contemporain`: https://www.projet-pfc.net/
-- Phonetique.ca French pronunciation modules: https://www.phonetique.ca/
+  - 提供 IPA illustration 的共同标注框架。
+  - 对产品的约束：IPA 符号是标注，不授权我们用整词或规则讲解当单音频。
 - 当前实现入口：`src/lib/language-sound-units/french.ts`,
   `src/lib/language-feedback-rules.ts`,
   `src/lib/language-phonology-inventory.ts`,
   `src/lib/local-language-assets.ts`。
+
+## 正确拆分答案
+
+法语应采用“库存 + 对比 + 短语规则 + 韵律”的模型：
+
+- 课程锚点：口元音、鼻化元音、核心辅音、`/ʁ ʃ ʒ ɲ/`、glides `/j ɥ w/`。
+- 对比层：`/i y u/`、`/e ɛ/`、`/ø œ/`、鼻化元音、`/ʃ ʒ/`、`/j ɥ w/`。
+- 规则层：liaison、enchaînement、elision、final consonant silence、schwa/e
+  caduc 必须在 phrase/sentence 里训练。
+- 变体层：`/œ̃/` 合并、`/ɑ/` 保留/合并和地域 schwa 行为只能作为 profile-aware
+  提示，不做全局硬判。
+- 音频层：只有 exact same-unit local short clip 可点击；liaison、elision、
+  enchaînement、schwa 规则和词尾静音不能做假单音 speaker。
 
 ## 当前覆盖结论
 

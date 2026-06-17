@@ -19,8 +19,15 @@ import {
   getAssessmentPhonemeLabel,
   getPhonemeAudioInfo,
   normalizeAssessmentPhoneme,
+  resolveAssessmentPhonemeUnit,
 } from "@/lib/azure-phoneme-map";
 import { isPlayableHeaderAudioSrc } from "@/lib/audio-playback-policy";
+import {
+  getPhonologyInventoryEntry,
+  getPhonologyTilePolicyDescription,
+  getPhonologyTilePolicyLabel,
+  type PhonologyInventoryTilePolicy,
+} from "@/lib/language-phonology-inventory";
 import { getBarColor } from "@/lib/score-utils";
 import { cn } from "@/lib/utils";
 import type { AzurePhoneme, AzureSyllable } from "@/types/azure";
@@ -50,8 +57,54 @@ interface PhonemeTilePlaybackOptions {
   fadeOutMs?: number;
 }
 
+interface ScoringTilePolicyInfo {
+  slug?: string;
+  tilePolicy?: PhonologyInventoryTilePolicy;
+  label?: string;
+  shortLabel?: string;
+  description?: string;
+}
+
 export function isScoringTileAudioPlayable(audioUrl?: string): boolean {
   return isPlayableHeaderAudioSrc(audioUrl);
+}
+
+function getScoringTilePolicyInfo(
+  phoneme: string,
+  languageId: LanguageId,
+  hasAudio: boolean,
+): ScoringTilePolicyInfo {
+  if (languageId === "en-US") return {};
+
+  const resolved = resolveAssessmentPhonemeUnit(phoneme, languageId);
+  const inventoryEntry = resolved
+    ? getPhonologyInventoryEntry(languageId, resolved.slug)
+    : undefined;
+  const tilePolicy = inventoryEntry?.tilePolicy;
+
+  if (!tilePolicy) {
+    return {
+      shortLabel: hasAudio ? "可听" : "未验证",
+      description: hasAudio
+        ? "该片段使用本地精确短音频。"
+        : "该片段没有匹配到已验证的目标语言 sound unit 音频策略，只显示分数。",
+    };
+  }
+
+  const shortLabel =
+    tilePolicy === "clickable-exact-header"
+      ? "可听"
+      : tilePolicy === "rule-guidance-only"
+        ? "规则"
+        : "未验证";
+
+  return {
+    slug: inventoryEntry.slug,
+    tilePolicy,
+    label: getPhonologyTilePolicyLabel(tilePolicy),
+    shortLabel,
+    description: getPhonologyTilePolicyDescription(tilePolicy),
+  };
 }
 
 function playPhonemeAudio(
@@ -166,6 +219,11 @@ export function PhonemeBlock({
       ? rawAudioInfo
       : null;
   const hasAudio = !!audioInfo;
+  const policyInfo = getScoringTilePolicyInfo(
+    ph.phoneme,
+    languageId,
+    hasAudio,
+  );
   const [isPlaying, setIsPlaying] = useState(false);
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
@@ -258,10 +316,19 @@ export function PhonemeBlock({
       tabIndex={hasAudio ? 0 : -1}
       aria-disabled={hasAudio ? "false" : "true"}
       aria-label={hasAudio ? `播放音标 ${displayLabel}` : undefined}
-      title={hasAudio ? undefined : `${score} 分 · ${ph.phoneme} · 暂无本地音频`}
+      title={
+        hasAudio
+          ? (policyInfo.description ?? undefined)
+          : `${score} 分 · ${displayLabel} · ${
+              policyInfo.label ?? "暂无本地音频"
+            }：${policyInfo.description ?? "只显示分数，不播放未验证音频。"}`
+      }
       data-smoke="assessment-phoneme-tile"
       data-audio-playable={hasAudio ? "true" : "false"}
       data-audio-kind={audioInfo?.kind ?? "none"}
+      data-audio-policy={policyInfo.tilePolicy ?? "none"}
+      data-audio-policy-label={policyInfo.label ?? ""}
+      data-audio-policy-slug={policyInfo.slug ?? ""}
       data-audio-src={audioInfo?.url ?? ""}
       data-audio-start-ms={audioInfo?.startMs ?? ""}
       data-audio-max-duration-ms={audioInfo?.maxDurationMs ?? ""}
@@ -298,6 +365,14 @@ export function PhonemeBlock({
           style={{ width: `${Math.min(score, 100)}%` }}
         />
       </div>
+      {policyInfo.shortLabel && (
+        <span
+          className="mt-0.5 max-w-full break-words text-center text-[9px] leading-none text-muted-foreground [overflow-wrap:anywhere]"
+          data-smoke="assessment-phoneme-tile-policy"
+        >
+          {policyInfo.shortLabel}
+        </span>
+      )}
     </motion.div>
   );
 
@@ -317,6 +392,11 @@ export function PhonemeBlock({
             ? "点击播放左侧同一音标标准音"
             : "点击播放 IPA 标准音"}
         </span>
+        {policyInfo.label && (
+          <span className="ml-1.5 text-xs text-muted-foreground">
+            · {policyInfo.label}
+          </span>
+        )}
       </TooltipContent>
     </Tooltip>
   );
@@ -343,6 +423,7 @@ export function PhonemeHighlight({
   const hasAnyAudio = visiblePhonemes.some((ph) =>
     getPhonemeAudioInfo(ph.phoneme, languageId),
   );
+  const showAudioPolicyHint = languageId !== "en-US";
   const occurrenceCounts = new Map<string, number>();
   const visiblePhonemeItems = visiblePhonemes.map((ph) => {
     const baseKey = `${ph.phoneme}-${ph.accuracyScore}`;
@@ -381,6 +462,14 @@ export function PhonemeHighlight({
             </span>
           )}
         </div>
+        {showAudioPolicyHint && (
+          <p
+            className="mb-3 break-words text-center text-[11px] leading-snug text-muted-foreground/70 [overflow-wrap:anywhere]"
+            data-smoke="assessment-phoneme-policy-hint"
+          >
+            可听 = 同一 sound unit 的精确短音频；未验证/规则只显示分数，不播放替代音频。
+          </p>
+        )}
         {playbackError && (
           <p
             className="mb-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-center text-xs text-destructive [overflow-wrap:anywhere]"

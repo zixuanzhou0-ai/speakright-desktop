@@ -124,6 +124,12 @@ describe("PhonemeHighlight", () => {
       expect(tile).toHaveAttribute("aria-disabled", "false");
       expect(tile.getAttribute("aria-label")).toContain("播放音标");
       expect(tile).toHaveAttribute("data-audio-kind", "sound-unit");
+      expect(tile).toHaveAttribute(
+        "data-audio-policy",
+        "clickable-exact-header",
+      );
+      expect(tile).toHaveAttribute("data-audio-policy-label", "精确短音频");
+      expect(tile.textContent).toContain("可听");
       expect(tile.getAttribute("data-audio-src")).toContain(
         "/audio/language-assets/es-ES/header-clips/",
       );
@@ -196,6 +202,10 @@ describe("PhonemeHighlight", () => {
       "data-smoke",
       "assessment-phoneme-audio-hint",
     );
+    expect(screen.getByText(/可听 = 同一 sound unit/)).toHaveAttribute(
+      "data-smoke",
+      "assessment-phoneme-policy-hint",
+    );
     expect(screen.queryByText("点击可听发音")).not.toBeInTheDocument();
     expect(screen.getAllByText("/n/")).toHaveLength(2);
     expect(screen.queryByText(/m n/)).not.toBeInTheDocument();
@@ -212,6 +222,13 @@ describe("PhonemeHighlight", () => {
       expect(tile).toHaveAttribute("data-audio-playable", "false");
       expect(tile).toHaveAttribute("aria-disabled", "true");
       expect(tile).toHaveAttribute("data-audio-kind", "none");
+      expect(tile).toHaveAttribute(
+        "data-audio-policy",
+        "score-only-unverified",
+      );
+      expect(tile).toHaveAttribute("data-audio-policy-label", "音频未验证");
+      expect(tile).toHaveAttribute("data-audio-policy-slug", "es-n");
+      expect(tile?.textContent).toContain("未验证");
       expect(tile?.getAttribute("data-audio-src")).toBe("");
     }
   });
@@ -267,6 +284,10 @@ describe("PhonemeHighlight", () => {
         .closest('[data-smoke="assessment-phoneme-tile"]');
       expect(tile).toHaveAttribute("data-audio-playable", "false");
       expect(tile).toHaveAttribute("data-audio-kind", "none");
+      expect(tile).toHaveAttribute(
+        "data-audio-policy",
+        "score-only-unverified",
+      );
     }
   });
 
@@ -363,15 +384,38 @@ describe("PhonemeHighlight", () => {
       );
     }
 
-    for (const label of ["/dʲ/", "/nʲ/", "/ɐ/"] as const) {
+    for (const label of ["/dʲ/", "/nʲ/"] as const) {
       const tile = screen
         .getByText(label)
         .closest('[data-smoke="assessment-phoneme-tile"]');
       expect(tile, label).not.toBeNull();
       expect(tile).toHaveAttribute("data-audio-playable", "false");
       expect(tile).toHaveAttribute("data-audio-kind", "none");
+      expect(tile).toHaveAttribute(
+        "data-audio-policy",
+        "score-only-unverified",
+      );
+      expect(tile).toHaveAttribute("data-audio-policy-label", "音频未验证");
       expect(tile?.getAttribute("data-audio-start-ms")).toBe("");
     }
+
+    const reductionTile = screen
+      .getByText("/ɐ/")
+      .closest('[data-smoke="assessment-phoneme-tile"]');
+    expect(reductionTile).not.toBeNull();
+    expect(reductionTile).toHaveAttribute("data-audio-playable", "false");
+    expect(reductionTile).toHaveAttribute("data-audio-kind", "none");
+    expect(reductionTile).toHaveAttribute(
+      "data-audio-policy",
+      "rule-guidance-only",
+    );
+    expect(reductionTile).toHaveAttribute("data-audio-policy-label", "规则说明");
+    expect(reductionTile).toHaveAttribute(
+      "data-audio-policy-slug",
+      "ru-unstressed-o-a",
+    );
+    expect(reductionTile).toHaveTextContent("规则");
+    expect(reductionTile?.getAttribute("data-audio-start-ms")).toBe("");
   });
 
   it("does not add the target IPA reference to English phoneme breakdowns", () => {
@@ -477,8 +521,41 @@ describe("PhonemeHighlight", () => {
     expect(howlerMock.instances[0].unload).toHaveBeenCalledTimes(1);
   });
 
-  it("keeps unverified non-English scoring tiles visible but unclickable", () => {
+  it("keeps score-only non-English scoring tiles visible but unclickable", () => {
     vi.useFakeTimers();
+    render(
+      <PhonemeHighlight
+        languageId="es-ES"
+        phonemes={[{ phoneme: "p", accuracyScore: 72 }]}
+      />,
+    );
+
+    const tile = document.querySelector(
+      '[data-smoke="assessment-phoneme-tile"]',
+    ) as HTMLElement;
+    expect(screen.getByText("/p/")).toBeInTheDocument();
+    expect(tile).toHaveAttribute("data-audio-playable", "false");
+    expect(tile).toHaveAttribute("aria-disabled", "true");
+    expect(tile).toHaveAttribute("data-audio-kind", "none");
+    expect(tile).toHaveAttribute("data-audio-policy", "score-only-unverified");
+    expect(tile).toHaveAttribute("data-audio-policy-label", "音频未验证");
+    expect(tile).toHaveAttribute("data-audio-policy-slug", "es-p");
+    expect(tile).toHaveTextContent("未验证");
+    expect(tile.getAttribute("aria-label")).toBeNull();
+    expect(tile.getAttribute("role")).toBeNull();
+    expect(tile.getAttribute("tabindex")).toBe("-1");
+    expect(tile.getAttribute("title")).toContain("音频未验证");
+    expect(tile.getAttribute("title")).toContain("只显示分数");
+
+    fireEvent.click(tile);
+    act(() => {
+      vi.advanceTimersByTime(130);
+    });
+
+    expect(howlerMock.instances).toHaveLength(0);
+  });
+
+  it("marks rule-like assessment segments as score-only rule guidance", () => {
     render(
       <PhonemeHighlight
         languageId="es-ES"
@@ -489,21 +566,16 @@ describe("PhonemeHighlight", () => {
     const tile = document.querySelector(
       '[data-smoke="assessment-phoneme-tile"]',
     ) as HTMLElement;
+
     expect(screen.getByText("/ɱ/")).toBeInTheDocument();
     expect(tile).toHaveAttribute("data-audio-playable", "false");
-    expect(tile).toHaveAttribute("aria-disabled", "true");
     expect(tile).toHaveAttribute("data-audio-kind", "none");
-    expect(tile.getAttribute("aria-label")).toBeNull();
-    expect(tile.getAttribute("role")).toBeNull();
-    expect(tile.getAttribute("tabindex")).toBe("-1");
-    expect(tile.getAttribute("title")).toContain("暂无本地音频");
-
-    fireEvent.click(tile);
-    act(() => {
-      vi.advanceTimersByTime(130);
-    });
-
-    expect(howlerMock.instances).toHaveLength(0);
+    expect(tile).toHaveAttribute("data-audio-policy", "rule-guidance-only");
+    expect(tile).toHaveAttribute("data-audio-policy-label", "规则说明");
+    expect(tile).toHaveAttribute("data-audio-policy-slug", "es-nasal-place");
+    expect(tile).toHaveTextContent("规则");
+    expect(tile.getAttribute("title")).toContain("规则说明");
+    expect(tile.getAttribute("title")).toContain("不作单音播放");
   });
 
   it("clears pending click playback and active audio on unmount", () => {

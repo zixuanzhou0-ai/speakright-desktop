@@ -1005,6 +1005,7 @@ function tilePolicyFor(
   languageId: NonEnglishLanguageId,
   unit: PhonemeData,
   audioStatus: PhonologyInventoryAudioStatus,
+  layer: PhonologyInventoryLayer,
 ): PhonologyInventoryTilePolicy {
   if (
     audioStatus === "exact-local-header" &&
@@ -1013,7 +1014,9 @@ function tilePolicyFor(
     return "clickable-exact-header";
   }
 
-  return isRuleLikeSoundUnit(unit)
+  return isRuleLikeSoundUnit(unit) ||
+    layer === "connected-speech-rule" ||
+    layer === "prosody"
     ? "rule-guidance-only"
     : "score-only-unverified";
 }
@@ -1049,7 +1052,7 @@ function buildLanguageInventory(
       ipa: unit.ipa,
       soundUnitType: unit.soundUnitType ?? "phoneme",
       audioStatus,
-      tilePolicy: tilePolicyFor(languageId, unit, audioStatus),
+      tilePolicy: tilePolicyFor(languageId, unit, audioStatus, base.layer),
       exactAssessmentAliases: exactAliasesFor(languageId, base.slug),
       headerAudioSrc: asset?.audioSrc,
       gaps: base.gaps ?? [],

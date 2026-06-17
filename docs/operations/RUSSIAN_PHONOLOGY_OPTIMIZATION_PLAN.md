@@ -17,20 +17,52 @@ Last updated: 2026-06-18
 把 `[ɐ ə ɪ]`、final devoicing、voicing assimilation、iotated vowels 和 clusters
 放到词/短语/句子环境中处理。
 
-## 权威依据
+## 权威来源与本轮查证结论
+
+本轮查证使用了 JIPA/IPA illustration、Vinogradov Institute/Ruslang 官方入口、
+Gramota 俄语正音词典入口线索和 IPA Handbook。结论：俄语有成熟 IPA 描写和正音体系；
+产品不能把俄语拆成英语辅音表。俄语必须先处理重音、弱化和硬软，再谈单音播放。
 
 - Yanushevskaya and Buncic, "Russian", `Journal of the International Phonetic
   Association`, 45(2), 221-228:
   https://doi.org/10.1017/S0025100314000395
-- Rogers and d'Archangeli, "Russian", earlier IPA illustration.
+  - 确认现代俄语 IPA illustration 的核心：重音、元音弱化、硬/软辅音对立、词尾清化
+    和逆行清浊同化。
+  - 对产品的约束：`[ɐ ə ɪ]` 是重音和环境驱动的实现，不是独立“已掌握音素”。
+  - 对产品的约束：软辅音 `[Cʲ]` 不能解释成硬辅音 + 完整 `/j/`。
+- V. V. Vinogradov Russian Language Institute: https://ruslang.ru/
+  - 是俄语规范、词典和语文研究的重要官方机构入口。
+  - 对产品的约束：stressText、正音变体和争议词必须走词典/正音来源，不靠直觉补写。
+- Gramota.ru dictionary entry for `Bolshoy Orthoepic Dictionary`:
+  https://gramota.ru/slovari/bolshoy-orfoepicheskiy-slovar-russkogo-yazyka
+  - 本轮批量读取未能完整抓取页面内容，但搜索结果确认其为俄语正音词典入口。
+  - 对产品的约束：它可作为后续逐词 stress/orthoepy 复核入口；不能把未读到的页面内容
+    当作具体 IPA 规则证据。
+- Rogers and d'Archangeli, "Russian", earlier IPA illustration; Avanesov,
+  `Russkoe literaturnoe proiznoshenie`; Jones and Ward, `The Phonetics of
+  Russian`; Timberlake, `A Reference Grammar of Russian`。
+  - 作为二级/背景来源，用来交叉确认 Moscow/St. Petersburg 和传统正音差异。
 - International Phonetic Association, `Handbook of the International Phonetic
   Association`: https://www.internationalphoneticassociation.org/content/handbook-ipa
-- Avanesov, `Russkoe literaturnoe proiznoshenie`; Jones and Ward,
-  `The Phonetics of Russian`; Timberlake, `A Reference Grammar of Russian`。
+  - 提供 IPA illustration 的共同标注框架。
 - 当前实现入口：`src/lib/language-sound-units/russian.ts`,
   `src/lib/language-phonology-inventory.ts`,
   `src/lib/local-language-assets.ts`,
   `src/lib/assessment-segment-audio.ts`。
+
+## 正确拆分答案
+
+俄语应采用“重音优先 + 硬软优先 + 规则环境”的模型：
+
+- 课程锚点：`/a o i ɨ u e/`、硬辅音、常硬/常软、`/r x ts tɕ ɕː j/` 和核心
+  hard/soft pair。
+- 对比层：硬/软 pair 是独立训练目标；软辅音是 palatalized consonant，不是额外加
+  `/j/`。
+- 实现层：`[ɐ ə ɪ]`、清化输出、位置性软化要依赖词重音和上下文。
+- 规则层：iotated vowels、`ь`、词尾清化、逆行清浊同化和 clusters 放到词/短语/句子
+  训练里。
+- 音频层：硬音 exact clip 不能代表软音；弱化、清化、同化和 cluster 没有 exact
+  same-unit clip 时只显示分数/规则，不播放假单音。
 
 ## 当前覆盖结论
 
