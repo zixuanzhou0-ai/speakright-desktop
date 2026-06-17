@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { LanguageConfigCard } from "@/components/settings/language-config-card";
+import { LANGUAGE_PROFILES } from "@/lib/language-profiles";
 import type { LanguageId } from "@/types/language";
 
 const mocks = vi.hoisted(() => ({
@@ -24,6 +25,23 @@ vi.mock("sonner", () => ({
 }));
 
 describe("language config card", () => {
+  it("keeps non-English modules labeled experimental instead of beta", () => {
+    render(<LanguageConfigCard />);
+
+    expect(
+      screen.getByText(/西语、法语、俄语仍为 experimental 实验板块/),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/开放 beta/)).not.toBeInTheDocument();
+
+    for (const languageId of ["es-ES", "fr-FR", "ru-RU"] as const) {
+      const profile = LANGUAGE_PROFILES[languageId];
+
+      expect(profile.status).toBe("experimental");
+      expect(profile.readiness.evidenceMastery).toBe(false);
+      expect(profile.knownGaps.join("\n")).not.toMatch(/作为 beta|开放 beta/);
+    }
+  });
+
   it("surfaces non-English phonology gaps separately from service capability gaps", () => {
     render(<LanguageConfigCard />);
 

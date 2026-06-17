@@ -129,7 +129,7 @@ export const LANGUAGE_PROFILES: Record<LanguageId, LanguageProfile> = {
     ],
     knownGaps: [
       "法语单词/短语音频已内置为桌面端静态资源；缺失长句时才退回实验性在线 TTS。",
-      "鼻化元音、连诵、enchaînement、elision 已作为 beta 训练单位开放，但 mastery 晋级仍需语言专属证据规则。",
+      "鼻化元音、连诵、enchaînement、elision 已作为 experimental 训练单位开放，但 mastery 晋级仍需语言专属证据规则。",
       "核心元音、辅音和 glide 已接入 Phonétique.ca / Sheffield 本地口型视频；liaison、enchaînement、elision、词尾静音仍需要短语级教学素材。",
     ],
   },
@@ -173,7 +173,7 @@ export const LANGUAGE_PROFILES: Record<LanguageId, LanguageProfile> = {
     ],
     knownGaps: [
       "俄语单词/短语音频已内置为桌面端静态资源；缺失长句时才退回实验性在线 TTS。",
-      "俄语重音、弱化、硬软辅音和清浊同化已作为 beta 训练单位开放，但 mastery 晋级仍需语言专属证据规则。",
+      "俄语重音、弱化、硬软辅音和清浊同化已作为 experimental 训练单位开放，但 mastery 晋级仍需语言专属证据规则。",
       "当前 27 个俄语 sound units 已接入 Seeing Speech / Wikimedia Commons 本地视频与音频；硬软辅音、重音弱化、词尾清化、清浊同化和辅音丛仍需要 SpeakRight 自制规则讲解视频。",
     ],
   },

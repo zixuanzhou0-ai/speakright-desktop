@@ -39,7 +39,7 @@ export function LanguageConfigCard() {
           <CardTitle className="text-base">学习语言</CardTitle>
         </div>
         <p className="text-sm text-muted-foreground">
-          当前：{activeProfile.displayName}。西语、法语、俄语已开放 beta；单词/短语音频已随桌面端内置，无需另行安装。
+          当前：{activeProfile.displayName}。西语、法语、俄语仍为 experimental 实验板块；单词/短语音频已随桌面端内置，无需另行安装。
         </p>
       </CardHeader>
       <CardContent className="grid gap-3 md:grid-cols-2">
