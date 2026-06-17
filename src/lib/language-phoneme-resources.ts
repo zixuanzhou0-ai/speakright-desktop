@@ -91,6 +91,9 @@ const LANGUAGE_SOURCE_REFS: Record<Exclude<LanguageId, "en-US">, string[]> = {
     "wiktionary-es",
     "forvo-es",
     "sounds-of-speech-es",
+    "rae-ngle-phonology",
+    "jipa-castilian-spanish",
+    "ipa-handbook",
   ],
   "fr-FR": [
     "easypronunciation-fr-ipa",
@@ -100,6 +103,8 @@ const LANGUAGE_SOURCE_REFS: Record<Exclude<LanguageId, "en-US">, string[]> = {
     "forvo-fr",
     "lawless-french-ipa",
     "phonetique-ca",
+    "jipa-french",
+    "ipa-handbook",
   ],
   "ru-RU": [
     "easypronunciation-ru-ipa",
@@ -108,6 +113,8 @@ const LANGUAGE_SOURCE_REFS: Record<Exclude<LanguageId, "en-US">, string[]> = {
     "forvo-ru",
     "wiktionary-ru-pronunciation-appendix",
     "wiktionary-ru",
+    "jipa-russian",
+    "ipa-handbook",
   ],
 };
 
