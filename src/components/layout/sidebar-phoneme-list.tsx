@@ -6,6 +6,10 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useLanguageConfig } from "@/hooks/use-api-keys";
 import {
+  getPhonologyInventoryEntry,
+  getPhonologyLayerLabel,
+} from "@/lib/language-phonology-inventory";
+import {
   getLanguageSoundUnitGroups,
   getSoundUnitDisplayTypeLabel,
 } from "@/lib/language-sound-unit-groups";
@@ -54,6 +58,11 @@ function SidebarSoundUnitItem({
 }) {
   const example = phoneme.chartWord ?? phoneme.example;
   const displayLabel = compact ? phoneme.ipa : getSoundUnitReadableLabel(phoneme);
+  const languageId = phoneme.languageId ?? "en-US";
+  const inventoryEntry =
+    languageId !== "en-US"
+      ? getPhonologyInventoryEntry(languageId, phoneme.slug)
+      : undefined;
 
   if (compact) {
     return (
@@ -87,8 +96,19 @@ function SidebarSoundUnitItem({
           : "hover:bg-accent/50 text-sidebar-foreground/70",
       )}
     >
-      <span className="min-w-0 break-words text-center text-sm font-semibold leading-tight text-primary [overflow-wrap:anywhere]">
-        {displayLabel}
+      <span className="min-w-0 text-center">
+        <span className="block break-words text-sm font-semibold leading-tight text-primary [overflow-wrap:anywhere]">
+          {displayLabel}
+        </span>
+        {inventoryEntry && (
+          <span
+            className="mt-1 inline-flex max-w-full items-center justify-center rounded border bg-background/70 px-1.5 py-0.5 text-[10px] leading-none text-muted-foreground [overflow-wrap:anywhere]"
+            data-smoke="sidebar-phonology-layer"
+            data-phonology-layer={inventoryEntry.layer}
+          >
+            {getPhonologyLayerLabel(inventoryEntry.layer)}
+          </span>
+        )}
       </span>
       <ScoreBadge score={score} />
       <span className="col-span-2 min-w-0 break-words text-center leading-snug text-muted-foreground [overflow-wrap:anywhere]">
