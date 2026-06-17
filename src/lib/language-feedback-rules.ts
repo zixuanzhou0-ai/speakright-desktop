@@ -63,6 +63,36 @@ export const LANGUAGE_FEEDBACK_RULES: LanguageFeedbackRule[] = [
     practiceCue: "la vida, nada, agua 慢读，元音间只轻轻接近，不完全堵住气流。",
   },
   {
+    id: "spanish-bdg-stop-position-anchors",
+    languageId: "es-ES",
+    title: "stop-position /b d g/",
+    triggerSlugs: ["es-b-stop", "es-d-stop", "es-g-stop"],
+    guidance:
+      "西语 /b d g/ 要分位置训练：停顿后或鼻音后通常是塞音，[d] 还常在 /l/ 后出现；元音间才多放松成 [β ð ɣ]。不要用英语 /v/，也不要用一个近音音频代表所有位置。",
+    practiceCue:
+      "boca/un beso, dos/un día/el doctor, gato/un gato 对比，再读 la vida, nada, agua。",
+  },
+  {
+    id: "spanish-ch-affricate",
+    languageId: "es-ES",
+    title: "Spanish ch /tʃ/",
+    triggerSlugs: ["es-ch"],
+    guidance:
+      "西语 ch 是紧凑的塞擦音 /tʃ/，不是 /ʃ/，也不要读成英语式强送气、拖长或明显分裂的 t + sh。",
+    practiceCue:
+      "chico, mucho, leche, noche 分组慢读；先闭塞再短促摩擦，保持一个紧凑音。",
+  },
+  {
+    id: "spanish-y-ll-yeismo",
+    languageId: "es-ES",
+    title: "y/ll yeismo",
+    triggerSlugs: ["es-y-ll"],
+    guidance:
+      "许多现代西语口音中 y 和 ll 合并，常见目标是 /ʝ/ 或更弱近音；少数地区仍可区分 /ʎ/。反馈应按目标方言说明，不能把所有变体绝对判错，也不能直接套英语 /j/。",
+    practiceCue:
+      "yo, llave, calle, ayuda 先练常见 /ʝ/；需要方言对比时再单独听辨 /ʎ/。",
+  },
+  {
     id: "spanish-theta-s-dialect",
     languageId: "es-ES",
     title: "Castilian /θ/ vs /s/",
@@ -131,6 +161,24 @@ export const LANGUAGE_FEEDBACK_RULES: LanguageFeedbackRule[] = [
     practiceCue: "sans, vin, bon, un 慢读，停在鼻化元音上，不加尾音。",
   },
   {
+    id: "french-oral-vowel-anchors",
+    languageId: "fr-FR",
+    title: "French oral vowels",
+    triggerSlugs: [
+      "fr-i",
+      "fr-u",
+      "fr-e",
+      "fr-e-open",
+      "fr-a",
+      "fr-o-close",
+      "fr-o-open",
+    ],
+    guidance:
+      "法语口腔元音要短、纯、稳定；/e/ vs /ɛ/、/o/ vs /ɔ/ 是法语内部对比，不能滑成英语 /eɪ/、/oʊ/，也不能只靠拼写猜开闭。",
+    practiceCue:
+      "si/vous/été/sel/pas/beau/porte 逐个稳口型，再做 été/elle、beau/bonne 对比。",
+  },
+  {
     id: "french-uvular-r-replaced",
     languageId: "fr-FR",
     title: "uvular r",
@@ -157,6 +205,16 @@ export const LANGUAGE_FEEDBACK_RULES: LanguageFeedbackRule[] = [
       "法语 /f v s z m n l/ 是普通辅音锚点，但不能直接照英语习惯读：/v z/ 要保留声带振动，/l/ 保持清晰前舌音，不做英语词尾 dark L。",
     practiceCue:
       "fou/vous, sous/zoo, ami/année, la lune 分组慢读；先稳住清浊和清晰 /l/，再放进短语。",
+  },
+  {
+    id: "french-sh-zh-ny-anchors",
+    languageId: "fr-FR",
+    title: "French /ʃ ʒ ɲ/",
+    triggerSlugs: ["fr-sh", "fr-zh", "fr-ny"],
+    guidance:
+      "法语 ch/j/gn 分别锚定 /ʃ ʒ ɲ/：/ʃ ʒ/ 是纯摩擦音，不是英语 /tʃ dʒ/；/ɲ/ 是硬腭鼻音，不要拆成 /n/ + /j/。",
+    practiceCue:
+      "chat/je/vigne 交替，再读 chercher, jour rouge, ligne droite；保持摩擦或鼻音位置清楚。",
   },
   {
     id: "french-final-consonant-silence",
@@ -230,12 +288,52 @@ export const LANGUAGE_FEEDBACK_RULES: LanguageFeedbackRule[] = [
     practiceCue: "молоко, Москва, семья, минута；先标重音，再读弱化。",
   },
   {
+    id: "russian-stressed-vowel-anchors",
+    languageId: "ru-RU",
+    title: "stressed vowel anchors",
+    triggerSlugs: ["ru-a", "ru-o", "ru-e", "ru-u"],
+    guidance:
+      "俄语重读 /a o e u/ 是完整元音锚点；弱化只发生在非重读环境。训练时先标重音，不能把所有 о/а/e/я 都按字母读，也不能把重读元音削弱成英语 schwa。",
+    practiceCue:
+      "дом, там, это, тут 先读重读元音，再对比 Москва, молоко, семья 的非重读弱化。",
+  },
+  {
     id: "russian-i-vs-y-collapse",
     languageId: "ru-RU",
     title: "/ɨ/ vs /i/",
     triggerSlugs: ["ru-y", "ru-i"],
     guidance: "/ɨ/ 舌身更靠后更紧，不是 /i/；ы 和 и 必须保持对比。",
     practiceCue: "и/ы, мир/мы, сыр/синий 交替。",
+  },
+  {
+    id: "russian-hard-stop-anchors",
+    languageId: "ru-RU",
+    title: "hard stop anchors",
+    triggerSlugs: ["ru-p", "ru-b", "ru-t", "ru-d", "ru-k", "ru-g"],
+    guidance:
+      "俄语硬 /p b t d k g/ 是硬辅音锚点：不要自动加 /j/ 变软，清塞音也不要按英语词首强送气；浊音的词尾清化和清浊同化要放到语流规则里判断。",
+    practiceCue:
+      "парк/брат, там/дом, кот/город 成组慢读，再对比 мать/мат、друг/друг дома。",
+  },
+  {
+    id: "russian-hard-continuant-anchors",
+    languageId: "ru-RU",
+    title: "hard continuant anchors",
+    triggerSlugs: ["ru-f", "ru-v", "ru-s", "ru-z", "ru-m", "ru-n", "ru-l"],
+    guidance:
+      "俄语硬 /f v s z m n l/ 要保持硬辅音目标；软化不是后面加一个完整 /j/，而是辅音本身带 [ʲ]。/v z/ 还要按清浊同化环境判断。",
+    practiceCue:
+      "фото/вот, сад/зуб, мама/нос/лампа 先读硬音，再和 мягкий/мел/люк 等软化环境对比。",
+  },
+  {
+    id: "russian-r-x-j-anchors",
+    languageId: "ru-RU",
+    title: "Russian /r x j/",
+    triggerSlugs: ["ru-r", "ru-x", "ru-j"],
+    guidance:
+      "俄语 /r/ 是舌尖颤音或轻颤，不是英语卷舌；/x/ 是软腭摩擦音，不是英语 /h/；/j/ 是短滑音，和辅音软化 [ʲ] 不是同一个训练目标。",
+    practiceCue:
+      "рука, хорошо, мой 分开读；再对比 ряд、химия、семья，区分软化和独立 /j/。",
   },
   {
     id: "russian-palatalization-missing",
