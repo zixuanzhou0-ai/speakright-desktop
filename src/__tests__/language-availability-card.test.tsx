@@ -75,6 +75,9 @@ describe("language availability card", () => {
     });
 
     expect(screen.getByText("内置资源可用")).toBeInTheDocument();
+    expect(screen.getByText(/负责单词\/短语复读/)).toBeInTheDocument();
+    expect(screen.getByText(/exact 单音短音频仍以音系清单为准/)).toBeInTheDocument();
+    expect(screen.getByText(/缺口不会冒充 speaker/)).toBeInTheDocument();
     expect(screen.queryByText("缺失或不可读")).not.toBeInTheDocument();
   });
 });

@@ -209,12 +209,13 @@ export function LanguageAvailabilityCard() {
                 ? "检查中"
                 : "缺失或不可读",
         detail:
-          languageConfig.languageId === "en-US" ||
-          effectiveStaticPack.status === "ready"
-            ? "负责单词/短语复读，随桌面端发布，不需要用户安装。"
-            : effectiveStaticPack.status === "loading"
-              ? "正在读取随应用打包的本地发音资源清单。"
-              : "没有读到本地发音资源清单，请重新安装最新版桌面端或反馈 Release EXE 问题。",
+          languageConfig.languageId === "en-US"
+            ? "负责英语本地发音播放，随桌面端发布，不需要用户安装。"
+            : effectiveStaticPack.status === "ready"
+              ? "负责单词/短语复读；exact 单音短音频仍以音系清单为准，缺口不会冒充 speaker。"
+              : effectiveStaticPack.status === "loading"
+                ? "正在读取随应用打包的本地发音资源清单。"
+                : "没有读到本地发音资源清单，请重新安装最新版桌面端或反馈 Release EXE 问题。",
         ready: localPackReady,
         statusKind: localPackReady
           ? "ready"
