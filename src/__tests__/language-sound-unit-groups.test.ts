@@ -89,6 +89,32 @@ describe("language sound unit groups", () => {
     }
   });
 
+  it("keeps non-English units inside the approved product type model", () => {
+    for (const languageId of ["es-ES", "fr-FR", "ru-RU"] as const) {
+      const deprecatedTypes = getLanguagePhonemes(languageId)
+        .filter(
+          (unit) =>
+            (unit.category as string) === "cluster" ||
+            (unit.soundUnitType as string | undefined) === "cluster",
+        )
+        .map((unit) => unit.slug);
+
+      expect(deprecatedTypes).toEqual([]);
+    }
+
+    const russianClusters = getLanguagePhonemes("ru-RU").find(
+      (unit) => unit.slug === "ru-clusters",
+    );
+
+    expect(russianClusters).toBeDefined();
+    if (!russianClusters) {
+      throw new Error("Expected Russian cluster rule unit to exist.");
+    }
+    expect(russianClusters?.category).toBe("prosody");
+    expect(russianClusters?.soundUnitType).toBe("prosody");
+    expect(isRuleLikeSoundUnit(russianClusters)).toBe(true);
+  });
+
   it("labels non-English cards by sound unit type instead of vowel/consonant fallback", () => {
     const units = getLanguagePhonemes("fr-FR");
     const liaison = units.find((unit) => unit.slug === "fr-liaison");

@@ -1,8 +1,8 @@
 import type { LanguageId } from "@/types/language";
 
-export type PhonemeCategory = "vowel" | "consonant" | "prosody" | "cluster";
+export type PhonemeCategory = "vowel" | "consonant" | "prosody";
 export type Difficulty = "high" | "medium" | "easy";
-export type SoundUnitType = "phoneme" | "contrast" | "prosody" | "cluster";
+export type SoundUnitType = "phoneme" | "contrast" | "prosody";
 export type PhonemeTeachingResourceKind =
   | "video"
   | "ipa"

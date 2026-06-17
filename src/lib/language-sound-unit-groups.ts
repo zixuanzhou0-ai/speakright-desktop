@@ -6,8 +6,7 @@ export type SoundUnitDisplayType =
   | "phoneme"
   | "contrast"
   | "rule"
-  | "flow"
-  | "cluster";
+  | "flow";
 
 export interface SoundUnitGroupDefinition {
   id: string;
@@ -298,14 +297,12 @@ const DISPLAY_TYPE_LABELS: Record<SoundUnitDisplayType, string> = {
   contrast: "对比",
   rule: "规则",
   flow: "语流",
-  cluster: "辅音丛",
 };
 
 const SOUND_UNIT_TYPE_LABELS: Record<SoundUnitType, string> = {
   phoneme: "音素",
   contrast: "对比",
   prosody: "规则",
-  cluster: "辅音丛",
 };
 
 export function getLanguageSoundUnitGroups(
@@ -352,8 +349,6 @@ export function getSoundUnitCardLabel(phoneme: PhonemeData): string {
 export function isRuleLikeSoundUnit(phoneme: PhonemeData): boolean {
   return (
     phoneme.soundUnitType === "prosody" ||
-    phoneme.soundUnitType === "cluster" ||
-    phoneme.category === "prosody" ||
-    phoneme.category === "cluster"
+    phoneme.category === "prosody"
   );
 }

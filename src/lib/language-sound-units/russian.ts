@@ -213,8 +213,8 @@ export const RUSSIAN_PHONEMES: PhonemeData[] = [
     slug: "ru-clusters",
     ipa: "/CC(C)/",
     name: "consonant clusters",
-    category: "cluster",
-    soundUnitType: "cluster",
+    category: "prosody",
+    soundUnitType: "prosody",
     example: "встреча",
     keywords: [
       { word: "встреча", ipa: "/ˈfstrʲetɕə/" },

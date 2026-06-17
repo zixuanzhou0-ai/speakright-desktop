@@ -295,9 +295,7 @@ export function getMissingAudioItemsFromStaticAudioPack(
 function isRuleLikeUnit(unit: PhonemeData): boolean {
   return (
     unit.category === "prosody" ||
-    unit.category === "cluster" ||
-    unit.soundUnitType === "prosody" ||
-    unit.soundUnitType === "cluster"
+    unit.soundUnitType === "prosody"
   );
 }
 
