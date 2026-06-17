@@ -113,10 +113,10 @@ A generated local copy may also exist at:
 `E:/SpeakRightDesktopRepo/src-tauri/target/ipa-audit/non-english-ipa-audit-input.json`
 
 It now contains the final expanded UI corpus rather than only the base source
-arrays. Current count: 1880 rows.
+arrays. Current count: 2192 rows.
 
 - `es-ES`: 516 rows
-- `fr-FR`: 599 rows
+- `fr-FR`: 911 rows
 - `ru-RU`: 621 rows
 
 The earlier 988-row audit input covered only base sound-unit arrays. The current

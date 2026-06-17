@@ -11,6 +11,7 @@ import {
 describe("French pronunciation content", () => {
   it("covers the French IPA-first beta inventory", () => {
     expectRequiredUnits("fr-FR", REQUIRED_FRENCH_UNITS);
+    expect(REQUIRED_FRENCH_UNITS).toHaveLength(39);
   });
 
   it("keeps French units source-backed and learner-facing", () => {

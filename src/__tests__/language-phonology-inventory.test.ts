@@ -56,6 +56,23 @@ describe("language phonology inventory", () => {
     for (const slug of ["es-p", "es-t", "es-k", "es-f", "es-m", "es-n"]) {
       expect(getPhonologyInventoryEntry("es-ES", slug)?.layer).toBe("phoneme");
     }
+    for (const slug of [
+      "fr-p",
+      "fr-b",
+      "fr-t",
+      "fr-d",
+      "fr-k",
+      "fr-g",
+      "fr-f",
+      "fr-v",
+      "fr-s",
+      "fr-z",
+      "fr-m",
+      "fr-n",
+      "fr-l",
+    ]) {
+      expect(getPhonologyInventoryEntry("fr-FR", slug)?.layer).toBe("phoneme");
+    }
     expect(getPhonologyInventoryEntry("es-ES", "es-bv")?.layer).toBe(
       "allophone",
     );
@@ -133,7 +150,7 @@ describe("language phonology inventory", () => {
       true,
     );
     expect(getLanguagePhonologyGaps("fr-FR").map((gap) => gap.label)).toContain(
-      "/p b t d k g f v s z m n l/",
+      "/p b t d k g f v s z m n l/ 精确短音频",
     );
     expect(getLanguagePhonologyGaps("ru-RU").map((gap) => gap.label)).toContain(
       "complete hard/soft consonant pairs",
@@ -164,6 +181,32 @@ describe("language phonology inventory", () => {
   it("keeps newly added plain Spanish consonants score-only until exact clips exist", () => {
     for (const slug of ["es-p", "es-t", "es-k", "es-f", "es-m", "es-n"]) {
       const entry = getPhonologyInventoryEntry("es-ES", slug);
+
+      expect(entry?.audioStatus, slug).toBe("gap-no-local-clip");
+      expect(entry?.tilePolicy, slug).toBe("score-only-unverified");
+      expect(getAssessmentAliasesForSlug(slug).length, slug).toBeGreaterThan(0);
+      expect(entry?.exactAssessmentAliases, slug).toEqual([]);
+      expect(entry?.headerAudioSrc, slug).toBeUndefined();
+    }
+  });
+
+  it("keeps newly added plain French consonants score-only until exact clips exist", () => {
+    for (const slug of [
+      "fr-p",
+      "fr-b",
+      "fr-t",
+      "fr-d",
+      "fr-k",
+      "fr-g",
+      "fr-f",
+      "fr-v",
+      "fr-s",
+      "fr-z",
+      "fr-m",
+      "fr-n",
+      "fr-l",
+    ]) {
+      const entry = getPhonologyInventoryEntry("fr-FR", slug);
 
       expect(entry?.audioStatus, slug).toBe("gap-no-local-clip");
       expect(entry?.tilePolicy, slug).toBe("score-only-unverified");

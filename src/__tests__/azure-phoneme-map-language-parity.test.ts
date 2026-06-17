@@ -44,19 +44,6 @@ describe("multilingual Azure phoneme map parity", () => {
       "fr-j",
       "fr-hui",
       "fr-w",
-      "fr-p",
-      "fr-b",
-      "fr-t",
-      "fr-d",
-      "fr-k",
-      "fr-g",
-      "fr-f",
-      "fr-v",
-      "fr-s",
-      "fr-z",
-      "fr-m",
-      "fr-n",
-      "fr-l",
     ];
 
     for (const slug of obsolete) {
@@ -105,6 +92,15 @@ describe("multilingual Azure phoneme map parity", () => {
         "fr-glide-hui",
       ),
     ).toBe(69);
+    expect(
+      getPhonemeAccuracy(result([{ phoneme: "p", accuracyScore: 71 }]), "fr-p"),
+    ).toBe(71);
+    expect(
+      getPhonemeAccuracy(result([{ phoneme: "v", accuracyScore: 78 }]), "fr-v"),
+    ).toBe(78);
+    expect(
+      getPhonemeAccuracy(result([{ phoneme: "z", accuracyScore: 73 }]), "fr-z"),
+    ).toBe(73);
     expect(
       getPhonemeAccuracy(
         result([{ phoneme: "ɨ", accuracyScore: 88 }]),

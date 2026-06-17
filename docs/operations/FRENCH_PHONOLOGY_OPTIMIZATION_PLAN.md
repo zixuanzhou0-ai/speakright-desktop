@@ -47,7 +47,7 @@ several layers:
 | --- | --- | --- |
 | Oral vowels | `/i y u e ɛ ø œ ə o ɔ a/` plus variant `/ɑ/` where taught | Main vowel units and vowel contrasts |
 | Nasal vowels | `/ɑ̃ ɛ̃ ɔ̃ œ̃/`, with `/œ̃/` often merged into `/ɛ̃/` | Dedicated nasal-vowel training and variant notes |
-| Consonants | `/p b t d k g f v s z ʃ ʒ m n ɲ l ʁ/` plus `/ŋ/` in loans | Inventory anchors; many common consonants are not yet standalone units |
+| Consonants | `/p b t d k g f v s z ʃ ʒ m n ɲ l ʁ/` plus `/ŋ/` in loans | Inventory anchors; common consonants now have standalone course units, exact clips pending |
 | Glides | `/j ɥ w/` | Contrast training, especially `/ɥ/` vs `/w/` |
 | Phrase phonology | liaison, enchainement, elision, schwa, final consonant silence | Phrase/sentence lessons and scoring feedback |
 | Prosody | no English-like lexical stress; prominence is phrase-final/rhythmic-group based | Sentence-level coaching |
@@ -71,13 +71,14 @@ Core content requirements:
 
 ## Current SpeakRight State
 
-Current `FRENCH_PHONEMES` contains 26 course sound units:
+Current `FRENCH_PHONEMES` contains 39 course sound units:
 
 - Vowels and nasal vowels: `fr-i`, `fr-y`, `fr-u`, `fr-e`, `fr-e-open`,
   `fr-eu-close`, `fr-eu-open`, `fr-an`, `fr-in`, `fr-on`, `fr-a`,
   `fr-schwa`, `fr-o-close`, `fr-o-open`, `fr-un`.
-- Consonants and glides: `fr-r`, `fr-sh`, `fr-zh`, `fr-ny`,
-  `fr-glide-j`, `fr-glide-hui`, `fr-glide-w`.
+- Consonants and glides: `fr-r`, `fr-p`, `fr-b`, `fr-t`, `fr-d`, `fr-k`,
+  `fr-g`, `fr-f`, `fr-v`, `fr-s`, `fr-z`, `fr-m`, `fr-n`, `fr-l`,
+  `fr-sh`, `fr-zh`, `fr-ny`, `fr-glide-j`, `fr-glide-hui`, `fr-glide-w`.
 - Phrase/rule units: `fr-liaison`, `fr-final-consonant-silence`,
   `fr-enchainement`, `fr-elision`.
 
@@ -87,8 +88,8 @@ Current exact scoring-tile audio:
   units listed in `assessment-segment-audio.test.ts`.
 - Phrase/rule units have no exact single-phoneme tile audio and should stay
   unclickable.
-- Common consonants `/p b t d k g f v s z m n l/` are real French sounds but
-  are not yet standalone course units with verified local header clips.
+- Common consonants `/p b t d k g f v s z m n l/` are now standalone course
+  units, but they still have no verified short local header clips.
 
 This is a strong experimental French-specific anchor set, but it is not a full
 French phoneme inventory.
@@ -109,7 +110,8 @@ French needs explicit layer separation:
 ## Required Content Changes
 
 1. Inventory completion
-   - Add standalone French units for `/p b t d k g f v s z m n l/`.
+   - Add standalone French units for `/p b t d k g f v s z m n l/`. Done in
+     source; exact short local header clips remain pending.
    - Decide whether `/ɑ/` is an optional variant note under `/a/` or a separate
      advanced regional target.
    - Keep `/ŋ/` as loanword/reference-only unless a clear training need exists.
@@ -152,8 +154,8 @@ French audio must follow the existing honest-playback rule:
 - Rule units such as liaison, enchainement, elision, and final consonant silence
   must not expose a single-symbol tile speaker.
 - If a rule has a sentence demo later, label it "短语/句子示范", not "音标发音".
-- Common consonants that are not yet verified local clips should show labels and
-  scores but stay unclickable.
+- Common consonants whose exact local clips are not yet verified should show
+  labels and scores but stay unclickable.
 - Do not generate ElevenLabs audio for French without explicit maintainer
   approval.
 
