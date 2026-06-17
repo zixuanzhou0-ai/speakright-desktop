@@ -95,6 +95,26 @@ export const LANGUAGE_FEEDBACK_RULES: LanguageFeedbackRule[] = [
     practiceCue: "papa/papá, hablo/habló 对比，然后读 Buenos días, muchas gracias。",
   },
   {
+    id: "spanish-nasal-place-assimilation",
+    languageId: "es-ES",
+    title: "nasal place assimilation",
+    triggerSlugs: ["es-nasal-place"],
+    guidance:
+      "西语鼻音会按后面辅音调整发音部位：双唇音前趋向 [m]，齿音前更靠牙齿，软腭音前趋向 [ŋ]；这是上下文实现，不是一个独立单音 speaker。",
+    practiceCue:
+      "un beso, un día, en casa, un gato 分组慢读；先看后一个辅音，再让鼻音自然贴到同一发音部位。",
+  },
+  {
+    id: "spanish-diphthong-glides",
+    languageId: "es-ES",
+    title: "Spanish diphthong glides",
+    triggerSlugs: ["es-diphthongs-j", "es-diphthongs-w"],
+    guidance:
+      "西语 /j w/ 在双元音里是短 glide，和相邻纯元音同属一个顺滑音节；不要拆成两个重读元音，也不要套英语式 /j/ 或 /w/ 起音。",
+    practiceCue:
+      "tierra, tiene, puerta, bueno 先慢后快；保留两个元音质量，但让 /j/ 或 /w/ 轻轻滑过去。",
+  },
+  {
     id: "french-front-rounded-vowel-collapse",
     languageId: "fr-FR",
     title: "front rounded vowels",
@@ -192,6 +212,16 @@ export const LANGUAGE_FEEDBACK_RULES: LanguageFeedbackRule[] = [
     practiceCue: "读 Le musée ferme à six heures. 时让 six heures 收束短语，前面的词保持平稳。",
   },
   {
+    id: "french-glide-contrast",
+    languageId: "fr-FR",
+    title: "French glides /j ɥ w/",
+    triggerSlugs: ["fr-glide-j", "fr-glide-hui", "fr-glide-w"],
+    guidance:
+      "法语 /j ɥ w/ 是短 glide 对比，/ɥ/ 需要前舌位加圆唇；不能把 /ɥ/ 合并成 /w/，也不能把每个 glide 拉成完整元音。",
+    practiceCue:
+      "fille, huit, oui 交替；先摆 /i y u/ 的舌位和唇形，再缩短成轻快滑音。",
+  },
+  {
     id: "russian-missing-stress-or-reduction",
     languageId: "ru-RU",
     title: "stress and reduction",
@@ -262,11 +292,22 @@ export const LANGUAGE_FEEDBACK_RULES: LanguageFeedbackRule[] = [
     practiceCue: "встреча, здравствуйте, текст, группа 慢到快。",
   },
   {
+    id: "russian-iotated-vowel-context",
+    languageId: "ru-RU",
+    title: "iotated vowels",
+    triggerSlugs: ["ru-iotated-vowels"],
+    guidance:
+      "я/е/ё/ю 要按位置判断：词首、元音后或 ь/ъ 后常带 /j/ 起音；辅音后主要是软化前一辅音再接元音，不能机械读成硬辅音 + 完整 /j/。",
+    practiceCue:
+      "язык, семья, пьёт, люк 分组读；先标出前一个位置，再决定是 /j/ 起音还是软化前一辅音。",
+  },
+  {
     id: "russian-sh-zh-ch-shch-confusion",
     languageId: "ru-RU",
     title: "ш/ж/ч/щ",
-    triggerSlugs: ["ru-sh-zh", "ru-ts", "ru-ch", "ru-shch"],
-    guidance: "ш/ж 厚而偏硬，ч/щ 偏软；ц 是硬 /ts/，不要全部用同一个中文近似音。",
+    triggerSlugs: ["ru-sh-zh", "ru-sh", "ru-zh", "ru-ts", "ru-ch", "ru-shch"],
+    guidance:
+      "ш/ж 是常硬、厚而偏后的 /ʂ ʐ/，ч/щ 是常软的 /tɕ ɕː/；ц 是硬 /ts/，不要全部用同一个中文近似音。",
     practiceCue: "шум/жук/чай/щи/царь 分组读，先分硬软再分清浊。",
   },
 ];

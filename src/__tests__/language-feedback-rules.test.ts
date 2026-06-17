@@ -6,7 +6,7 @@ import {
 } from "@/lib/language-feedback-rules";
 
 describe("language feedback rules", () => {
-  it("defines Spanish guidance for vowels, plain consonants, r/rr, approximants, dialect, x, ny, and stress", () => {
+  it("defines Spanish guidance for vowels, consonants, allophones, dialect, diphthongs, nasals, and stress", () => {
     const ruleIds = getLanguageFeedbackRules("es-ES").map((rule) => rule.id);
 
     expect(ruleIds).toEqual(
@@ -21,6 +21,8 @@ describe("language feedback rules", () => {
         "spanish-x-too-weak",
         "spanish-ny-split",
         "spanish-stress-error",
+        "spanish-nasal-place-assimilation",
+        "spanish-diphthong-glides",
       ]),
     );
     expect(
@@ -34,13 +36,37 @@ describe("language feedback rules", () => {
     const commonConsonants = matchLanguageFeedbackRules("es-ES", ["es-n"]);
     expect(commonConsonants[0]?.rule.guidance).toContain("音系");
     expect(commonConsonants[0]?.rule.practiceCue).toContain("鼻音同化");
+
+    const nasalPlace = matchLanguageFeedbackRules("es-ES", [
+      "es-nasal-place",
+    ])[0];
+    expect(nasalPlace?.matchedSlugs).toEqual(["es-nasal-place"]);
+    expect(nasalPlace?.rule.guidance).toContain("后面辅音");
+    expect(nasalPlace?.rule.guidance).toContain("上下文实现");
+    expect(nasalPlace?.rule.guidance).toContain("不是一个独立单音 speaker");
+    expect(nasalPlace?.rule.practiceCue).toContain("en casa");
+
+    const diphthongs = matchLanguageFeedbackRules("es-ES", [
+      "es-diphthongs-j",
+      "es-diphthongs-w",
+    ])[0];
+    expect(diphthongs?.matchedSlugs).toEqual([
+      "es-diphthongs-j",
+      "es-diphthongs-w",
+    ]);
+    expect(diphthongs?.rule.guidance).toContain("短 glide");
+    expect(diphthongs?.rule.guidance).toContain("一个顺滑音节");
+    expect(diphthongs?.rule.practiceCue).toContain("puerta");
   });
 
-  it("defines French guidance for front rounded vowels, nasal vowels, r, common consonants, and phrase rules", () => {
+  it("defines French guidance for front rounded vowels, nasal vowels, glides, r, common consonants, and phrase rules", () => {
     const matches = matchLanguageFeedbackRules("fr-FR", [
       "fr-y",
       "fr-an",
       "fr-r",
+      "fr-glide-j",
+      "fr-glide-hui",
+      "fr-glide-w",
       "fr-p",
       "fr-d",
       "fr-v",
@@ -59,6 +85,7 @@ describe("language feedback rules", () => {
         "french-front-rounded-vowel-collapse",
         "french-nasal-vowel-with-n-tail",
         "french-uvular-r-replaced",
+        "french-glide-contrast",
         "french-plain-stops-unaspirated",
         "french-common-consonant-anchors",
         "french-final-consonant-silence",
@@ -86,6 +113,19 @@ describe("language feedback rules", () => {
     const commonConsonants = matches.find(
       (match) => match.rule.id === "french-common-consonant-anchors",
     );
+    const glides = matches.find(
+      (match) => match.rule.id === "french-glide-contrast",
+    );
+
+    expect(glides?.matchedSlugs).toEqual([
+      "fr-glide-j",
+      "fr-glide-hui",
+      "fr-glide-w",
+    ]);
+    expect(glides?.rule.guidance).toContain("/j ɥ w/");
+    expect(glides?.rule.guidance).toContain("/ɥ/");
+    expect(glides?.rule.guidance).toContain("完整元音");
+    expect(glides?.rule.practiceCue).toContain("huit");
 
     expect(liaison?.matchedSlugs).toEqual(["fr-liaison"]);
     expect(liaison?.rule.guidance).toContain("潜在词尾辅音");
@@ -120,6 +160,9 @@ describe("language feedback rules", () => {
       "ru-final-devoicing",
       "ru-voicing-assimilation",
       "ru-clusters",
+      "ru-iotated-vowels",
+      "ru-sh",
+      "ru-zh",
       "ru-shch",
     ]);
     const ids = matches.map((match) => match.rule.id);
@@ -132,6 +175,7 @@ describe("language feedback rules", () => {
         "russian-final-devoicing",
         "russian-voicing-assimilation",
         "russian-cluster-epenthesis",
+        "russian-iotated-vowel-context",
         "russian-sh-zh-ch-shch-confusion",
       ]),
     );
@@ -147,6 +191,20 @@ describe("language feedback rules", () => {
     expect(finalDevoicing?.guidance).not.toContain("词尾有声辅音要清化");
     expect(finalDevoicing?.practiceCue).toContain("друг дома");
     expect(finalDevoicing?.practiceCue).toContain("снег идёт");
+
+    const iotated = matches.find(
+      (match) => match.rule.id === "russian-iotated-vowel-context",
+    )?.rule;
+    expect(iotated?.guidance).toContain("词首、元音后或 ь/ъ 后");
+    expect(iotated?.guidance).toContain("软化前一辅音");
+    expect(iotated?.guidance).toContain("不能机械读成硬辅音 + 完整 /j/");
+
+    const shZhChShch = matches.find(
+      (match) => match.rule.id === "russian-sh-zh-ch-shch-confusion",
+    );
+    expect(shZhChShch?.matchedSlugs).toEqual(["ru-sh", "ru-zh", "ru-shch"]);
+    expect(shZhChShch?.rule.guidance).toContain("常硬");
+    expect(shZhChShch?.rule.guidance).toContain("常软");
   });
 
   it("does not inject non-English rules into English feedback", () => {
