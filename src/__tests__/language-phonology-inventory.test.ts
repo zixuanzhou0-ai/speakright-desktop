@@ -5,6 +5,7 @@ import {
   getLanguagePhonologyGaps,
   getLanguagePhonologyInventory,
   getPhonologyInventoryEntry,
+  getVisibleLanguagePhonologyGaps,
   type NonEnglishLanguageId,
 } from "@/lib/language-phonology-inventory";
 import { getLanguageResourceSite } from "@/lib/language-resource-sites";
@@ -134,6 +135,19 @@ describe("language phonology inventory", () => {
           (gap) => gap.expectedBeforeStable,
         ),
       ).toBe(true);
+    }
+  });
+
+  it("only exposes phonology gap summaries for experimental non-English modules", () => {
+    expect(getVisibleLanguagePhonologyGaps("en-US")).toEqual([]);
+
+    for (const languageId of LANGUAGE_IDS) {
+      const gaps = getVisibleLanguagePhonologyGaps(languageId);
+
+      expect(gaps.length, languageId).toBeGreaterThan(0);
+      expect(gaps.every((gap) => gap.sourceRefs.length >= 2), languageId).toBe(
+        true,
+      );
     }
   });
 });

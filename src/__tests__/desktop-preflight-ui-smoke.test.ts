@@ -416,6 +416,10 @@ describe("desktop preflight and UI smoke", () => {
     const button = readProjectFile("src/components/ui/button.tsx");
 
     expect(languageCard).toContain('data-smoke="language-option-missing"');
+    expect(languageCard).toContain(
+      'data-smoke="language-option-phonology-gaps"',
+    );
+    expect(languageCard).toContain("getVisibleLanguagePhonologyGaps");
     expect(languageCard).toContain("overflow-wrap:anywhere");
     expect(languageCard).toContain('audit.missingCapabilities.join("、")');
     expect(languageCard).not.toContain("missingPreview");

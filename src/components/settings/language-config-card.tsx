@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { setLanguageConfig } from "@/lib/api-keys";
 import { auditLanguageCoverage } from "@/lib/language-content-audit";
+import { getVisibleLanguagePhonologyGaps } from "@/lib/language-phonology-inventory";
 import {
   getEnabledLanguageProfiles,
   getLanguageProfile,
@@ -45,6 +46,7 @@ export function LanguageConfigCard() {
         {profiles.map((profile) => {
           const selected = profile.id === config.languageId;
           const audit = auditLanguageCoverage(profile.id);
+          const phonologyGaps = getVisibleLanguagePhonologyGaps(profile.id);
           return (
             <button
               key={profile.id}
@@ -102,6 +104,16 @@ export function LanguageConfigCard() {
                   data-smoke="language-option-missing"
                 >
                   待补：{audit.missingCapabilities.join("、")}
+                </p>
+              )}
+
+              {phonologyGaps.length > 0 && (
+                <p
+                  className="mt-2 break-words text-center text-xs leading-snug text-amber-700 [overflow-wrap:anywhere] dark:text-amber-300"
+                  data-smoke="language-option-phonology-gaps"
+                  data-phonology-gap-count={phonologyGaps.length}
+                >
+                  音系待补：{phonologyGaps.map((gap) => gap.label).join("、")}
                 </p>
               )}
             </button>

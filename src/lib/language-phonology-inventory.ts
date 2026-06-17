@@ -722,6 +722,12 @@ export function getLanguagePhonologyGaps(
   return LANGUAGE_PHONOLOGY_GAPS[languageId];
 }
 
+export function getVisibleLanguagePhonologyGaps(
+  languageId: LanguageId,
+): LanguagePhonologyGap[] {
+  return languageId === "en-US" ? [] : LANGUAGE_PHONOLOGY_GAPS[languageId];
+}
+
 export function getPhonologyLayerLabel(
   layer: PhonologyInventoryLayer,
 ): string {
