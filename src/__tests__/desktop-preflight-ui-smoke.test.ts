@@ -704,6 +704,9 @@ describe("desktop preflight and UI smoke", () => {
     expect(passagePage).toContain("重置本机学习数据");
     expect(passagePage).toContain("canRecordFormalMastery(languageId)");
     expect(passagePage).toContain("英语全音覆盖文章");
+    expect(passagePage).toContain("各维度变化");
+    expect(passagePage).toContain("dimensionDeltas.map");
+    expect(passagePage).not.toContain(".slice(0, 3) as Array");
     expect(passagePage).toContain('data-smoke="assessment-passage-error"');
     expect(passagePage).toContain("azure.getLastError()");
     expect(passagePage).toContain("Azure Speech API 密钥、区域、网络或代理");

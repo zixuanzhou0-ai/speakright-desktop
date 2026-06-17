@@ -820,9 +820,9 @@ function CoverageBenchmarkCard({
 }) {
   if (!comparison) return null;
 
-  const topDimensionDeltas = Object.entries(comparison.dimensionDeltas)
-    .sort(([, a], [, b]) => Math.abs(b) - Math.abs(a))
-    .slice(0, 3) as Array<[keyof DiagnosisReport["dimensions"], number]>;
+  const dimensionDeltas = Object.entries(comparison.dimensionDeltas).sort(
+    ([, a], [, b]) => Math.abs(b) - Math.abs(a),
+  ) as Array<[keyof DiagnosisReport["dimensions"], number]>;
 
   return (
     <div className="mb-4 rounded-xl border bg-card p-5 shadow-sm">
@@ -889,10 +889,10 @@ function CoverageBenchmarkCard({
       <div className="mt-3 grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-lg border bg-background p-3">
           <p className="text-xs font-semibold text-muted-foreground">
-            变化最大的维度
+            各维度变化
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
-            {topDimensionDeltas.map(([key, delta]) => (
+            {dimensionDeltas.map(([key, delta]) => (
               <Badge
                 key={key}
                 variant={delta < 0 ? "destructive" : "outline"}

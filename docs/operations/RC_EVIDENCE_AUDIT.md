@@ -23,6 +23,7 @@ claimed as complete.
 | Drill landing review queue and training memory keep actionable tasks visible | `src/app/drill/page.tsx`, `src/lib/review-queue.ts`, `src/lib/training-memory.ts`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; after `buildReviewQueue` and `buildTrainingMemory` bound their source lists, the drill landing page renders every `drill-review-task-card`, merged `drill-today-item-card`, and `drill-memory-weakness-card`, rather than applying a second `slice(0, 2)` cap to review/today tasks or `activeWeaknesses.slice(0, 3)` to training-memory weaknesses |
 | Advanced transfer pages keep generated practice target lists visible | `src/app/drill/scenarios/page.tsx`, `src/app/drill/prosody/page.tsx`, `src/app/drill/spontaneous/page.tsx`, `src/lib/transfer-scenarios.ts`, `src/lib/prosody-training.ts`, `src/__tests__/spontaneous-page.test.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; scenario practice renders every `scenario-target-word-badge` from `plan.targetWords`, prosody practice renders every `prosody-weak-word-badge` from `exercise.weakWords`, and spontaneous transfer renders every `spontaneous-target-pack-badge` from the current review/active pack candidates, rather than applying second UI caps with `plan.targetWords.slice(0, 8)`, `exercise.weakWords.slice(0, 4)`, or `targetPacks.slice(0, 3)` |
 | Progress training history keeps retained sessions visible | `src/app/progress/page.tsx`, `src/lib/mastery-profile.ts`, `src/__tests__/progress-page.test.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; after `recordTrainingSession` applies the local storage retention limit to the latest 80 sessions, the Progress page renders every retained `profile.sessions` row and shows `progress-session-count`, rather than applying a second `slice(0, 6)` UI cap |
+| Full-passage stage retest comparison keeps every score dimension visible | `src/app/assessment/passage/page.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`; the benchmark comparison renders every `dimensionDeltas` badge under `各维度变化`, rather than hiding the lower-magnitude score dimensions with a page-level `.slice(0, 3)` cap |
 | Non-English rule units without local target audio do not show clickable speaker buttons | `src/lib/language-source-alignment.ts`, `src/components/phoneme/phoneme-study-card.tsx`, `src/components/drill/drill-phoneme-lesson.tsx`, `src/components/phoneme/phoneme-card.tsx`, `src/__tests__/phoneme-study-card.test.tsx`, `src/__tests__/language-source-alignment.test.ts`, `scripts/desktop-ui-smoke.mjs` |
 | Proxy or generic videos are not presented as exact teaching videos | `src/lib/language-source-alignment.ts`, `src/lib/language-teaching-videos.ts`, `src/components/phoneme/video-player.tsx`, `src/components/drill/drill-phoneme-lesson.tsx`, `src/__tests__/language-teaching-videos.test.ts`, `src/__tests__/video-player.test.tsx`, `src/__tests__/desktop-preflight-ui-smoke.test.ts`, `scripts/desktop-ui-smoke.mjs`; local teaching lessons take priority over external fallback cards, and when no precise local video is available the fallback panel renders every `video-fallback-resource-card` from `resources` rather than applying a second `resources.slice(0, 3)` cap |
 | Spanish/French/Russian local dual-voice audio has zero missing required items and dry-run makes no ElevenLabs calls | `scripts/multilingual-audio-parity-report.mjs`, `src/__tests__/multilingual-audio-parity.test.ts`, `src/__tests__/static-language-audio-pack-assets.test.ts`, `npm.cmd run audio:parity:dry-run` |
@@ -81,17 +82,17 @@ Latest local full gate recorded in this audit:
 ```text
 git status --short --branch
   initial gate status before this round's edits was
-  `## main...origin/main [ahead 100]`; the current full gate was run with the
-  spontaneous transfer target-pack full-rendering fix and evidence updates
-  still unstaged, so `desktop:preflight` correctly reported
+  `## main...origin/main [ahead 101]`; the current full gate was run with the
+  full-passage stage-retest dimension-delta full-rendering fix and evidence
+  updates still unstaged, so `desktop:preflight` correctly reported
   `Git: dirty`. After
   GitHub API fallback pushes, verify the GitHub `main` ref and local-vs-remote
   tree SHA before treating content as unpushed.
 
-npm.cmd run test -- src/__tests__/spontaneous-page.test.tsx src/__tests__/desktop-preflight-ui-smoke.test.ts
-  2 files / 21 tests passed; spontaneous transfer renders every current
-  review/active target pack badge with `spontaneous-target-pack-badge`, and the
-  static smoke guard rejects the old UI-level `.slice(0, 3)` target-pack cap.
+npm.cmd run test -- src/__tests__/desktop-preflight-ui-smoke.test.ts
+  1 file / 20 tests passed; the static smoke guard requires
+  `dimensionDeltas.map`, the `各维度变化` label, and rejects the old
+  full-passage benchmark `.slice(0, 3) as Array` dimension cap.
 
 npm.cmd run test
   126 files / 711 tests passed
@@ -107,7 +108,7 @@ npm.cmd run build:desktop-frontend
 
 npm.cmd run desktop:build
   passed; reran `build:desktop-frontend`, generated 144 static pages, compiled
-  the Tauri release app in 7m 01s, built
+  the Tauri release app in 5m 08s, built
   `src-tauri\target\release\speakright.exe`, and generated fresh MSI/NSIS
   bundles.
 
@@ -118,7 +119,7 @@ npm.cmd run desktop:preflight
 
 npm.cmd run desktop:ui-smoke
   passed; Release EXE runtime reported
-  `pid=19248 settings=ok`, detail coverage for English, Spanish, French, and
+  `pid=33036 settings=ok`, detail coverage for English, Spanish, French, and
   Russian sound units, routes `/drill`, `/drill/word`, `/drill/sentence`,
   `/drill/contrast`, `/drill/prosody`, `/drill/perception`, `/drill/evidence`,
   `/drill/pack/ee-ih`, `/drill/scenarios`, `/drill/spontaneous`,
@@ -131,11 +132,11 @@ npm.cmd run desktop:ui-smoke
 
 npm.cmd run desktop:launch-release
   passed; command printed `SpeakRight release desktop app launch requested`,
-  the Release EXE path, PID `47320`, and the no-localhost reminder; the Release
+  the Release EXE path, PID `71976`, and the no-localhost reminder; the Release
   EXE opened from `src-tauri\target\release\speakright.exe`.
 
 process cleanup
-  `Get-Process -Id 47320` confirmed `running pid=47320 name=speakright`; the
+  `Get-Process -Id 71976` confirmed `running pid=71976 name=speakright`; the
   process was stopped afterward, and no residual `speakright.exe` remained
   after cleanup
 ```

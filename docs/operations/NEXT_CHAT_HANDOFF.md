@@ -132,6 +132,9 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - Quick assessment action buttons and full-passage diagnosis segment text now
   use wrap-safe classes too, including intro/retry/submit buttons, segment
   focus/cue copy, segment titles, and the main passage prompt.
+- Full-passage stage retest comparison now shows every score dimension delta
+  under `各维度变化` instead of hiding the lower-magnitude dimensions behind a
+  top-three UI cap.
 - Scenario and spontaneous transfer pages now also wrap scenario kind/status
   badges, score badges, demo/template buttons, processing copy, and retry
   actions so advanced transfer tasks keep controls visible in narrow windows.
