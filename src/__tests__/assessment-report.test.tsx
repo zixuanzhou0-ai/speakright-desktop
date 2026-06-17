@@ -165,6 +165,18 @@ describe("AssessmentReport mastery display", () => {
           detail:
             "跨词边界证据较薄，需要更多样本确认，而不是把一次结果当成正式 mastery。",
         },
+        {
+          text: "луг был",
+          score: 61,
+          detail:
+            "第二条跨词证据也要保留，方便判断是不是边界前清化。",
+        },
+        {
+          text: "клуб большой",
+          score: 63,
+          detail:
+            "第三条证据不能被卡片层隐藏，否则补测原因会变得不透明。",
+        },
       ],
     };
 
@@ -195,6 +207,15 @@ describe("AssessmentReport mastery display", () => {
     expect(screen.getByText("置信度 medium")).toHaveClass("whitespace-normal");
     expect(screen.getByText("证据 thin")).toHaveClass("whitespace-normal");
     expect(screen.getByText(/跨词边界证据较薄/).parentElement).toHaveClass(
+      "break-words",
+    );
+    expect(
+      document.querySelectorAll(
+        '[data-smoke="assessment-report-issue-evidence"]',
+      ),
+    ).toHaveLength(3);
+    expect(screen.getByText("луг был")).toBeInTheDocument();
+    expect(screen.getByText(/第三条证据不能被卡片层隐藏/).parentElement).toHaveClass(
       "break-words",
     );
   });

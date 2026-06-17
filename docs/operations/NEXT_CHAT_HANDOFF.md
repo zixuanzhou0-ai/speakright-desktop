@@ -212,7 +212,9 @@ git status --short --branch
   so phrase, sentence, and rule units are not described as single-word examples.
 - Diagnosis reports now render every generated issue card from the bounded
   diagnosis-engine issue list instead of showing only the first three; the
-  section is labeled `学习处方与补测` rather than `Top 3`.
+  section is labeled `学习处方与补测` rather than `Top 3`. Each issue card also
+  renders every bounded evidence snippet from `issue.evidence`, not only the
+  first row.
 - Practice target text and IPA are not only visually wrapped but also enforced
   as centered at runtime. `desktop:ui-smoke` now checks computed
   `text-align: center` on detail-page reading targets.

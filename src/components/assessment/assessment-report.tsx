@@ -584,13 +584,21 @@ function IssueCard({
           )}
         </div>
       )}
-      {issue.evidence[0] && (
-        <div className="mt-3 break-words rounded-lg bg-background/70 p-2 text-xs [overflow-wrap:anywhere]">
-          <span className="font-semibold">{issue.evidence[0].text}</span>
-          <span className="text-muted-foreground">
-            {" "}
-            · {issue.evidence[0].score} 分 · {issue.evidence[0].detail}
-          </span>
+      {issue.evidence.length > 0 && (
+        <div className="mt-3 space-y-2">
+          {issue.evidence.map((evidence) => (
+            <div
+              key={`${evidence.text}-${evidence.score}-${evidence.detail}`}
+              className="break-words rounded-lg bg-background/70 p-2 text-xs [overflow-wrap:anywhere]"
+              data-smoke="assessment-report-issue-evidence"
+            >
+              <span className="font-semibold">{evidence.text}</span>
+              <span className="text-muted-foreground">
+                {" "}
+                · {evidence.score} 分 · {evidence.detail}
+              </span>
+            </div>
+          ))}
         </div>
       )}
       {pack && (
