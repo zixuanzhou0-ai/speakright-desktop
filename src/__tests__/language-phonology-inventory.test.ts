@@ -53,7 +53,17 @@ describe("language phonology inventory", () => {
   });
 
   it("classifies language-specific units by phonology layer instead of English template categories", () => {
-    for (const slug of ["es-p", "es-t", "es-k", "es-f", "es-m", "es-n"]) {
+    for (const slug of [
+      "es-p",
+      "es-t",
+      "es-k",
+      "es-f",
+      "es-m",
+      "es-n",
+      "es-b-stop",
+      "es-d-stop",
+      "es-g-stop",
+    ]) {
       expect(getPhonologyInventoryEntry("es-ES", slug)?.layer).toBe("phoneme");
     }
     for (const slug of [
@@ -74,6 +84,12 @@ describe("language phonology inventory", () => {
       expect(getPhonologyInventoryEntry("fr-FR", slug)?.layer).toBe("phoneme");
     }
     expect(getPhonologyInventoryEntry("es-ES", "es-bv")?.layer).toBe(
+      "allophone",
+    );
+    expect(getPhonologyInventoryEntry("es-ES", "es-d")?.layer).toBe(
+      "allophone",
+    );
+    expect(getPhonologyInventoryEntry("es-ES", "es-g")?.layer).toBe(
       "allophone",
     );
     expect(getPhonologyInventoryEntry("es-ES", "es-lexical-stress")?.layer).toBe(
@@ -143,7 +159,7 @@ describe("language phonology inventory", () => {
     expect(
       getLanguagePhonologyGaps("es-ES").some(
         (gap) =>
-          gap.label.includes("/p t k f m n/") &&
+          gap.label.includes("/p t k f m n b d g/") &&
           gap.reason.includes("phoneme units now exist"),
       ),
     ).toBe(
@@ -179,7 +195,17 @@ describe("language phonology inventory", () => {
   });
 
   it("keeps newly added plain Spanish consonants score-only until exact clips exist", () => {
-    for (const slug of ["es-p", "es-t", "es-k", "es-f", "es-m", "es-n"]) {
+    for (const slug of [
+      "es-p",
+      "es-t",
+      "es-k",
+      "es-f",
+      "es-m",
+      "es-n",
+      "es-b-stop",
+      "es-d-stop",
+      "es-g-stop",
+    ]) {
       const entry = getPhonologyInventoryEntry("es-ES", slug);
 
       expect(entry?.audioStatus, slug).toBe("gap-no-local-clip");

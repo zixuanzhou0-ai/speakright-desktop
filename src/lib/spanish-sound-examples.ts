@@ -6,9 +6,12 @@ export interface HighlightedIpaPart {
 }
 
 const SPECIAL_TARGETS: Record<string, string[]> = {
-  "es-bv": ["b", "β"],
-  "es-d": ["d", "ð"],
-  "es-g": ["g", "ɡ", "ɣ"],
+  "es-b-stop": ["b"],
+  "es-d-stop": ["d"],
+  "es-g-stop": ["g", "ɡ"],
+  "es-bv": ["β"],
+  "es-d": ["ð"],
+  "es-g": ["ɣ"],
   "es-ch": ["tʃ", "t͡ʃ"],
   "es-ny": ["ɲ"],
   "es-y-ll": ["ʝ", "ʎ", "j"],

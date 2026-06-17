@@ -121,7 +121,12 @@ const LANGUAGE_SOURCE_REFS: Record<Exclude<LanguageId, "en-US">, string[]> = {
 const SOUND_SPECIFIC_SOURCE_REFS: Record<string, string[]> = {
   "es-tap-r": ["ipatics-es-ipa", "sounds-of-speech-es"],
   "es-trill-r": ["ipatics-es-ipa", "sounds-of-speech-es"],
+  "es-b-stop": ["sounds-of-speech-es", "spanishdict-pronunciation"],
+  "es-d-stop": ["sounds-of-speech-es", "spanishdict-pronunciation"],
+  "es-g-stop": ["sounds-of-speech-es", "spanishdict-pronunciation"],
   "es-bv": ["spanishdict-pronunciation", "ipatics-es-ipa"],
+  "es-d": ["sounds-of-speech-es", "ipatics-es-ipa"],
+  "es-g": ["sounds-of-speech-es", "ipatics-es-ipa"],
   "es-theta": ["easypronunciation-es-ipa", "ipatics-es-ipa"],
   "fr-an": ["lawless-french-ipa", "phonetique-ca"],
   "fr-in": ["lawless-french-ipa", "phonetique-ca"],

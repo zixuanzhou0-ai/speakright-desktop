@@ -177,25 +177,43 @@ const SPANISH_INVENTORY_BASE: PhonologyInventoryBaseEntry[] = [
     ["No verified exact local /n/ header clip exists yet."],
   ),
   row(
+    "es-b-stop",
+    "phoneme",
+    "Plain Spanish /b/ phoneme anchor for stop-position realizations after pause or nasal; b/v spelling does not split into English /b/ vs /v/.",
+    [...SPANISH_CORE_SOURCES, "sounds-of-speech-es", "spanishdict-pronunciation"],
+    ["No verified exact local stop-position /b/ header clip exists yet."],
+  ),
+  row(
+    "es-d-stop",
+    "phoneme",
+    "Plain Spanish /d/ phoneme anchor for dental stop-position realizations after pause, /n/, or /l/.",
+    [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
+    ["No verified exact local dental stop-position /d/ header clip exists yet."],
+  ),
+  row(
+    "es-g-stop",
+    "phoneme",
+    "Plain Spanish /g/ phoneme anchor for stop-position realizations after pause or nasal; separate from /x/ for j/ge/gi.",
+    [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
+    ["No verified exact local stop-position /g/ header clip exists yet."],
+  ),
+  row(
     "es-bv",
     "allophone",
     "Spanish /b/ grapheme b/v has stop [b] after pause or nasal and approximant [β̞] between vowels.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es", "spanishdict-pronunciation"],
-    ["Separate exact [b] stop-position clip is not yet verified."],
   ),
   row(
     "es-d",
     "allophone",
     "Spanish /d/ alternates between dental stop [d] and intervocalic approximant [ð̞].",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["Separate exact dental [d] stop-position clip is not yet verified."],
   ),
   row(
     "es-g",
     "allophone",
     "Spanish /g/ alternates between stop [g] and intervocalic approximant [ɣ̞].",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["Separate exact [g] stop-position clip is not yet verified."],
   ),
   row(
     "es-theta",
@@ -730,10 +748,10 @@ export const LANGUAGE_PHONOLOGY_GAPS: Record<
   "es-ES": [
     {
       id: "es-common-plain-consonants",
-      label: "/p t k f m n/ 精确短音频",
+      label: "/p t k f m n b d g/ 精确短音频",
       layer: "phoneme",
       reason:
-        "These Spanish phoneme units now exist, but the current local header inventory has not verified exact standalone clips for them.",
+        "These Spanish phoneme units now exist as course/scoring anchors, but the current local header inventory has not verified exact standalone clips for them.",
       expectedBeforeStable: true,
       sourceRefs: SPANISH_CORE_SOURCES,
     },

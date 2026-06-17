@@ -11,7 +11,7 @@ import {
 describe("Spanish pronunciation content", () => {
   it("covers the Spanish IPA-first beta inventory", () => {
     expectRequiredUnits("es-ES", REQUIRED_SPANISH_UNITS);
-    expect(getLanguagePhonemes("es-ES").length).toBeGreaterThanOrEqual(28);
+    expect(getLanguagePhonemes("es-ES").length).toBeGreaterThanOrEqual(31);
   });
 
   it("keeps Spanish units source-backed and learner-facing", () => {
@@ -21,9 +21,9 @@ describe("Spanish pronunciation content", () => {
   it("expands Spanish diagnostic, contrast, and sentence decks", () => {
     const deck = LANGUAGE_LEARNING_DECKS["es-ES"];
 
-    expect(deck.diagnosticWords.length).toBeGreaterThanOrEqual(22);
-    expect(deck.contrastDeck.length).toBeGreaterThanOrEqual(16);
-    expect(deck.sentenceDeck.length).toBeGreaterThanOrEqual(16);
+    expect(deck.diagnosticWords.length).toBeGreaterThanOrEqual(31);
+    expect(deck.contrastDeck.length).toBeGreaterThanOrEqual(19);
+    expect(deck.sentenceDeck.length).toBeGreaterThanOrEqual(25);
     expectDeckTargetsResolvable("es-ES");
   });
 

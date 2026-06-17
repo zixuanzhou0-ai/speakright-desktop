@@ -35,7 +35,9 @@ describe("language config card", () => {
       expect(summary).toHaveAttribute("data-phonology-gap-count", "2");
     }
 
-    expect(screen.getByText(/音系待补：\/p t k f m n\//)).toBeInTheDocument();
+    expect(
+      screen.getByText(/音系待补：\/p t k f m n b d g\//),
+    ).toBeInTheDocument();
     expect(
       screen.getByText(/音系待补：\/p b t d k g f v s z m n l\//),
     ).toBeInTheDocument();

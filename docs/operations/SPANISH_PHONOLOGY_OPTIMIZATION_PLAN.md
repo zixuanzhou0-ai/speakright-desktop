@@ -65,14 +65,15 @@ Core content requirements:
 
 ## Current SpeakRight State
 
-Current `SPANISH_PHONEMES` contains 28 course sound units:
+Current `SPANISH_PHONEMES` contains 31 course sound units:
 
 - Five vowels: `es-a`, `es-e`, `es-i`, `es-o`, `es-u`.
 - Plain Spanish consonant units now include `es-p`, `es-t`, `es-k`, `es-f`,
-  `es-m`, and `es-n`.
-- Spanish-specific consonant or contrast units: `es-bv`, `es-d`, `es-g`,
-  `es-theta`, `es-x`, `es-ny`, `es-tap-r`, `es-trill-r`, `es-s`, `es-ch`,
-  `es-y-ll`, `es-l`.
+  `es-m`, `es-n`, and stop-position `/b d g/` anchors `es-b-stop`,
+  `es-d-stop`, `es-g-stop`.
+- Spanish-specific consonant, allophone, or contrast units: `es-bv`, `es-d`,
+  `es-g` for `[β ð ɣ]` realization teaching, plus `es-theta`, `es-x`,
+  `es-ny`, `es-tap-r`, `es-trill-r`, `es-s`, `es-ch`, `es-y-ll`, `es-l`.
 - Implementation/prosody units: `es-nasal-place`, `es-diphthongs-j`,
   `es-diphthongs-w`, `es-lexical-stress`, `es-syllable-rhythm`.
 
@@ -82,8 +83,8 @@ Current exact scoring-tile audio is intentionally narrower than the course list:
 - `es-nasal-place` is marked `isProxyForAssessment`.
 - `es-lexical-stress` and `es-syllable-rhythm` do not expose single-phoneme
   header audio.
-- Plain `/p t k f m n/` are now standalone Spanish sound units, but they still
-  have no verified short local header clips.
+- Plain `/p t k f m n b d g/` are now standalone Spanish course/scoring
+  anchors, but they still have no verified short local header clips.
 
 This is acceptable only as an experimental course-anchor layer. It is not a full
 Spanish phoneme inventory yet.
@@ -94,7 +95,7 @@ Each Spanish sound unit should be classified with one of these product layers:
 
 | `soundUnitLayer` target | Examples | UI/audio rule |
 | --- | --- | --- |
-| `phoneme` | `/a e i o u p t k f s x tʃ m n ɲ l ɾ r/` | May have a short exact speaker once locally verified |
+| `phoneme` | `/a e i o u p t k b d g f s x tʃ m n ɲ l ɾ r/` | May have a short exact speaker once locally verified |
 | `allophone` | `[β̞ ð̞ ɣ˕]` | Can be playable only if labeled as realization of `/b d g/`, not as separate phonemic mastery |
 | `contrast` | `/ɾ/` vs `/r/`, `/s/` vs Castilian `/θ/`, `/ʝ/` vs regional `/ʎ/` | Uses paired examples and dialect notes |
 | `prosody` | stress, syllable rhythm, diphthong timing | Score and teach at word/phrase/sentence level |
@@ -110,14 +111,18 @@ layer field.
 1. Inventory completion
    - Add standalone Spanish course units for `/p t k f m n/`. Done in source;
      exact short local header clips remain pending.
-   - Add `/g/`, `/b/`, `/d/` phoneme anchors only if they are clearly separate
-     from current `[β ð ɣ]` realization clips.
+   - Add `/b/`, `/d/`, `/g/` stop-position phoneme anchors clearly separate
+     from current `[β ð ɣ]` realization clips. Done in source as
+     `es-b-stop`, `es-d-stop`, and `es-g-stop`; exact short local header clips
+     remain pending.
    - Decide whether `/ʎ/` remains a variant note under `es-y-ll` or becomes a
      region-gated optional unit.
 
 2. Allophone cleanup
    - Rename or clarify `es-bv`, `es-d`, and `es-g` so the UI says "phoneme plus
-     realization", not "one IPA symbol equals one sound forever".
+     realization", not "one IPA symbol equals one sound forever". Done in
+     source and tests; assessment aliases now keep `/b d g/` on stop anchors
+     and `[β ð ɣ]` on realization units.
    - Keep `[β̞ ð̞ ɣ˕]` in training examples.
    - Keep scoring tiles unclickable for plain `/b d g/` until exact stop clips
      exist.

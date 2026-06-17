@@ -53,9 +53,17 @@ describe("spanish sound examples", () => {
   });
 
   it("extracts Spanish allophone target symbols", () => {
-    expect(getSpanishTargetSymbols(phoneme("es-bv", "/b ~ β/"))).toEqual([
+    expect(getSpanishTargetSymbols(phoneme("es-b-stop", "/b/"))).toEqual([
       "b",
+    ]);
+    expect(getSpanishTargetSymbols(phoneme("es-bv", "/b/ -> [β]"))).toEqual([
       "β",
+    ]);
+    expect(getSpanishTargetSymbols(phoneme("es-d-stop", "/d/"))).toEqual([
+      "d",
+    ]);
+    expect(getSpanishTargetSymbols(phoneme("es-d", "/d/ -> [ð]"))).toEqual([
+      "ð",
     ]);
     expect(getSpanishTargetSymbols(phoneme("es-tap-r", "/ɾ/"))).toEqual(["ɾ"]);
   });

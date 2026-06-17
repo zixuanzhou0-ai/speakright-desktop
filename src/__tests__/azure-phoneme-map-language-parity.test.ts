@@ -82,6 +82,42 @@ describe("multilingual Azure phoneme map parity", () => {
     ).toBe(82);
     expect(
       getPhonemeAccuracy(
+        result([{ phoneme: "b", accuracyScore: 84 }]),
+        "es-b-stop",
+      ),
+    ).toBe(84);
+    expect(
+      getPhonemeAccuracy(
+        result([{ phoneme: "d", accuracyScore: 72 }]),
+        "es-d-stop",
+      ),
+    ).toBe(72);
+    expect(
+      getPhonemeAccuracy(
+        result([{ phoneme: "g", accuracyScore: 75 }]),
+        "es-g-stop",
+      ),
+    ).toBe(75);
+    expect(
+      getPhonemeAccuracy(
+        result([{ phoneme: "β", accuracyScore: 86 }]),
+        "es-bv",
+      ),
+    ).toBe(86);
+    expect(
+      getPhonemeAccuracy(
+        result([{ phoneme: "ð", accuracyScore: 80 }]),
+        "es-d",
+      ),
+    ).toBe(80);
+    expect(
+      getPhonemeAccuracy(
+        result([{ phoneme: "ɣ", accuracyScore: 78 }]),
+        "es-g",
+      ),
+    ).toBe(78);
+    expect(
+      getPhonemeAccuracy(
         result([{ phoneme: "ɛ", accuracyScore: 74 }]),
         "fr-e-open",
       ),
@@ -159,6 +195,9 @@ describe("multilingual Azure phoneme map parity", () => {
       "/audio/language-assets/ru-RU/header-clips/ru-y.m4a",
     );
     expect(getPhonemeAudioUrl("k", "es-ES")).toBeNull();
+    expect(getPhonemeAudioUrl("b", "es-ES")).toBeNull();
+    expect(getPhonemeAudioUrl("d", "es-ES")).toBeNull();
+    expect(getPhonemeAudioUrl("g", "es-ES")).toBeNull();
     expect(getPhonemeAudioUrl("p", "fr-FR")).toBeNull();
     expect(getPhonemeAudioUrl("tʲ", "ru-RU")).toBeNull();
     expect(getPhonemeAudioUrl("dʲ", "ru-RU")).toBeNull();

@@ -14,12 +14,12 @@ const DECK_TARGETS: Record<
   DeckLanguageId,
   { diagnosticWords: number; contrastDeck: number; sentenceDeck: number }
 > = {
-  "es-ES": { diagnosticWords: 28, contrastDeck: 16, sentenceDeck: 22 },
+  "es-ES": { diagnosticWords: 31, contrastDeck: 19, sentenceDeck: 25 },
   "fr-FR": { diagnosticWords: 39, contrastDeck: 16, sentenceDeck: 29 },
   "ru-RU": { diagnosticWords: 31, contrastDeck: 25, sentenceDeck: 25 },
 };
 const SOUND_UNIT_TARGETS: Record<DeckLanguageId, number> = {
-  "es-ES": 28,
+  "es-ES": 31,
   "fr-FR": 39,
   "ru-RU": 34,
 };

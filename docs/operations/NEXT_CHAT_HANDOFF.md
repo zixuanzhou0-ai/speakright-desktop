@@ -68,9 +68,11 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - The Russian final-devoicing local asset note is now explicitly marked as a
   proxy anchor and points maintainers to current `Нож тупой /noʂ tʊˈpoj/`
   practice instead of stale `current example друг` wording.
-- `audio:parity:dry-run` now reports Russian `918` normalized lookup items with
-  `0` missing because terminal punctuation is normalized before local-pack
-  lookup; the bundled Russian manifest/file total remains `460 x 2`.
+- `audio:parity:dry-run` now reports explicit experimental audio gaps without
+  generating audio: Spanish `880` existing / `214` missing, French `1090`
+  existing / `344` missing, Russian `918` existing / `226` missing, total
+  missing `784`, estimated `6774` characters. Do not generate ElevenLabs audio
+  unless the maintainer explicitly confirms after reviewing that dry-run.
 - Language-pack audio manifests now keep their IPA metadata aligned with the
   sourced reviewed findings for applied French connected-speech rows and Russian
   connected-speech voicing rows. The Russian `поезд идёт` manifest entry remains
@@ -670,13 +672,13 @@ Start with the Release EXE and inspect these areas before adding new features:
   `docs/operations/non-english-ipa-audit-input.json`. A local generated copy may
   also exist at
   `E:/SpeakRightDesktopRepo/src-tauri/target/ipa-audit/non-english-ipa-audit-input.json`.
-  It now contains the final expanded UI corpus with `2360` rows: Spanish `660`,
+  It now contains the final expanded UI corpus with `2432` rows: Spanish `732`,
   French `911`, Russian `789`. The earlier `988`-row file covered only base
   sound-unit arrays.
 - The audit input is now reproducible with `npm.cmd run ipa:audit:export`.
   Rows include `auditRole`: `ipa-transcription` for real IPA rows and
   `deck-focus-hint` for `language-learning-decks` sentence `ipaHint` rows. The
-  current export contains `2360` total rows and marks `36` deck focus
+  current export contains `2432` total rows and marks `36` deck focus
   hints so GPT Research does not mistake compact cues such as `/s sʲ zʲ/` for
   complete sentence IPA. Recent source-synced rows also replaced generic
   `elision + nasal vowels` / `clusters` sentence labels with full IPA for
@@ -695,7 +697,12 @@ Start with the Release EXE and inspect these areas before adding new features:
   realization-layer IPA in learner-facing keyword rows. The code now normalizes
   final Spanish keyword IPA to the phoneme layer while preserving allophone
   teaching labels, assessment aliases, and exact header clips for scoring.
-- Remaining audit work: continue from the new `2360`-row final UI corpus and
+- Spanish stop-position anchors now exist as `es-b-stop`, `es-d-stop`, and
+  `es-g-stop`. Plain `/b d g/` scoring aliases point to those score-only
+  phoneme anchors, while `[β ð ɣ]` stay on `es-bv`, `es-d`, and `es-g` with the
+  existing exact realization clips. Do not map plain stops to the realization
+  clips unless exact stop-position header clips are added later.
+- Remaining audit work: continue from the new `2432`-row final UI corpus and
   ask GPT Research for a full row-level table, especially for French schwa
   style variants and Russian broad-vs-finer accepted variants.
 - Second GPT Research pass was applied for high-confidence rows:
