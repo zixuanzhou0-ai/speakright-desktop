@@ -21,6 +21,9 @@ const RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS = [
   "ru-m-mj",
   "ru-f-fj",
   "ru-v-vj",
+  "ru-k-kj",
+  "ru-g-gj",
+  "ru-x-xj",
 ];
 
 describe("local language assets", () => {

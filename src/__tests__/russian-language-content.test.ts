@@ -33,6 +33,9 @@ describe("Russian pronunciation content", () => {
       ["ru-m-mj", "/m mʲ/"],
       ["ru-f-fj", "/f fʲ/"],
       ["ru-v-vj", "/v vʲ/"],
+      ["ru-k-kj", "/k kʲ/"],
+      ["ru-g-gj", "/g gʲ/"],
+      ["ru-x-xj", "/x xʲ/"],
     ] as const) {
       const unit = getLanguagePhonemeBySlug("ru-RU", slug);
 

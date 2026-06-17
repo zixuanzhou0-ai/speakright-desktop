@@ -141,6 +141,9 @@ const SOUND_SPECIFIC_SOURCE_REFS: Record<string, string[]> = {
   "ru-m-mj": ["wiktionary-ru-pronunciation-appendix", "jipa-russian", "ipa-handbook"],
   "ru-f-fj": ["wiktionary-ru-pronunciation-appendix", "jipa-russian", "ipa-handbook"],
   "ru-v-vj": ["wiktionary-ru-pronunciation-appendix", "jipa-russian", "ipa-handbook"],
+  "ru-k-kj": ["wiktionary-ru-pronunciation-appendix", "jipa-russian", "ipa-handbook"],
+  "ru-g-gj": ["wiktionary-ru-pronunciation-appendix", "jipa-russian", "ipa-handbook"],
+  "ru-x-xj": ["wiktionary-ru-pronunciation-appendix", "jipa-russian", "ipa-handbook"],
   "ru-stress-reduction": [
     "easypronunciation-ru-trainer",
     "wiktionary-ru-pronunciation-appendix",

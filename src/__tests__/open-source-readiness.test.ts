@@ -287,8 +287,8 @@ describe("open-source readiness files", () => {
     expect(handoff).toContain("GitHub Git Data API push fallback");
     expect(handoff).toContain("local-vs-remote tree SHA comparison");
     expect(docs).toContain("local-vs-remote tree SHA");
-    expect(evidence).toContain("github.com:443");
-    expect(evidence).toContain("network timeouts");
+    expect(evidence).not.toContain("github.com:443");
+    expect(evidence).not.toContain("network timeouts");
   });
 
   it("keeps validation result counts centralized in the RC evidence audit", () => {
@@ -329,13 +329,13 @@ describe("open-source readiness files", () => {
       "Biome checked 392 files",
     );
     expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
-      "ru-RU 918 existing, 226 missing",
+      "ru-RU 918 existing, 332 missing",
     );
     expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
-      "Total missing audio items: 832",
+      "Total missing audio items: 938",
     );
     expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
-      "estimated characters/credits: 7542",
+      "estimated characters/credits: 8432",
     );
     expect(read("docs/operations/RC_EVIDENCE_AUDIT.md")).toContain(
       'reference video mean `-14.7 dB`',

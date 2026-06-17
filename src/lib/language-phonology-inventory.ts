@@ -680,6 +680,27 @@ const RUSSIAN_INVENTORY_BASE: PhonologyInventoryBaseEntry[] = [
     ["No verified exact single-segment /v/ or /vʲ/ short clip is bundled yet."],
   ),
   row(
+    "ru-k-kj",
+    "contrast",
+    "Hard/soft velar stop contrast /k kʲ/.",
+    [...RUSSIAN_CORE_SOURCES, "wiktionary-ru-pronunciation-appendix"],
+    ["No verified exact single-segment /k/ or /kʲ/ short clip is bundled yet."],
+  ),
+  row(
+    "ru-g-gj",
+    "contrast",
+    "Hard/soft voiced velar stop contrast /g gʲ/.",
+    [...RUSSIAN_CORE_SOURCES, "wiktionary-ru-pronunciation-appendix"],
+    ["No verified exact single-segment /g/ or /gʲ/ short clip is bundled yet."],
+  ),
+  row(
+    "ru-x-xj",
+    "contrast",
+    "Hard/soft velar fricative contrast /x xʲ/.",
+    [...RUSSIAN_CORE_SOURCES, "wiktionary-ru-pronunciation-appendix"],
+    ["No verified exact single-segment /x/ or /xʲ/ short clip is bundled yet."],
+  ),
+  row(
     "ru-soft-sign",
     "contrast",
     "Soft sign marks palatalization and is not an independent vowel or /j/.",
@@ -799,7 +820,7 @@ export const LANGUAGE_PHONOLOGY_GAPS: Record<
       label: "complete hard/soft consonant pairs",
       layer: "contrast",
       reason:
-        "Russian hard/soft consonants are systemic. The first standalone stop and labial pair anchors now exist, but the full per-consonant exact audio inventory is still incomplete.",
+        "Russian hard/soft consonants are systemic. Standalone stop, labial, and velar pair anchors now exist, but the full per-consonant exact audio inventory is still incomplete.",
       expectedBeforeStable: true,
       sourceRefs: RUSSIAN_CORE_SOURCES,
     },

@@ -122,13 +122,13 @@ describe("multilingual audio parity contract", () => {
     expect(report.targetItemsPerUnit).toBe(
       MULTILINGUAL_AUDIO_PARITY_TARGET_PER_UNIT,
     );
-    expect(report.totals.soundUnits).toBe(105);
+    expect(report.totals.soundUnits).toBe(108);
     expect(report.totals.requiredItems).toBe(
-      105 * MULTILINGUAL_AUDIO_PARITY_TARGET_PER_UNIT,
+      108 * MULTILINGUAL_AUDIO_PARITY_TARGET_PER_UNIT,
     );
     expect(report.totals.existingAudioItems).toBe(2888);
-    expect(report.totals.missingAudioItems).toBe(832);
-    expect(report.totals.estimatedNewCharacters).toBe(7542);
+    expect(report.totals.missingAudioItems).toBe(938);
+    expect(report.totals.estimatedNewCharacters).toBe(8432);
 
     const spanishReport = report.languages.find(
       (language) => language.languageId === "es-ES",
@@ -188,6 +188,9 @@ describe("multilingual audio parity contract", () => {
       "ru-m-mj",
       "ru-f-fj",
       "ru-v-vj",
+      "ru-k-kj",
+      "ru-g-gj",
+      "ru-x-xj",
     ]);
   });
 

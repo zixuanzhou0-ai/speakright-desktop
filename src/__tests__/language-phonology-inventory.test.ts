@@ -255,6 +255,9 @@ describe("language phonology inventory", () => {
       "ru-m-mj",
       "ru-f-fj",
       "ru-v-vj",
+      "ru-k-kj",
+      "ru-g-gj",
+      "ru-x-xj",
     ]) {
       const entry = getPhonologyInventoryEntry("ru-RU", slug);
 

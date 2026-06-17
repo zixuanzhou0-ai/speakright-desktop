@@ -117,6 +117,9 @@ const russianHardSoftUnits = [
   "ru-m-mj",
   "ru-f-fj",
   "ru-v-vj",
+  "ru-k-kj",
+  "ru-g-gj",
+  "ru-x-xj",
   "ru-iotated-vowels",
 ];
 

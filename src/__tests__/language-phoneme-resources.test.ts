@@ -40,6 +40,9 @@ const RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS = [
   "ru-m-mj",
   "ru-f-fj",
   "ru-v-vj",
+  "ru-k-kj",
+  "ru-g-gj",
+  "ru-x-xj",
 ];
 
 function baseEnglishPhoneme(overrides: Partial<PhonemeData> = {}): PhonemeData {
@@ -213,6 +216,9 @@ describe("non-English phoneme resource parity", () => {
       "ru-m-mj",
       "ru-f-fj",
       "ru-v-vj",
+      "ru-k-kj",
+      "ru-g-gj",
+      "ru-x-xj",
       "ru-stress-reduction",
       "ru-unstressed-o-a",
       "ru-unstressed-e-ya",

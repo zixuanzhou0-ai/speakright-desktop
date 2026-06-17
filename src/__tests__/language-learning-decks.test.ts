@@ -16,12 +16,12 @@ const DECK_TARGETS: Record<
 > = {
   "es-ES": { diagnosticWords: 31, contrastDeck: 19, sentenceDeck: 25 },
   "fr-FR": { diagnosticWords: 40, contrastDeck: 16, sentenceDeck: 30 },
-  "ru-RU": { diagnosticWords: 31, contrastDeck: 25, sentenceDeck: 25 },
+  "ru-RU": { diagnosticWords: 34, contrastDeck: 28, sentenceDeck: 28 },
 };
 const SOUND_UNIT_TARGETS: Record<DeckLanguageId, number> = {
   "es-ES": 31,
   "fr-FR": 40,
-  "ru-RU": 34,
+  "ru-RU": 37,
 };
 const ALLOWED_COMPACT_SENTENCE_HINTS = new Map([
   [
