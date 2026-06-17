@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getAllAssessmentSegmentAudioRegistryEntries } from "@/lib/assessment-segment-audio";
+import { getAssessmentAliasesForSlug } from "@/lib/azure-phoneme-map";
 import { getLanguagePhonemes } from "@/lib/language-phonemes";
 import {
   getLanguagePhonologyGaps,
@@ -52,6 +53,9 @@ describe("language phonology inventory", () => {
   });
 
   it("classifies language-specific units by phonology layer instead of English template categories", () => {
+    for (const slug of ["es-p", "es-t", "es-k", "es-f", "es-m", "es-n"]) {
+      expect(getPhonologyInventoryEntry("es-ES", slug)?.layer).toBe("phoneme");
+    }
     expect(getPhonologyInventoryEntry("es-ES", "es-bv")?.layer).toBe(
       "allophone",
     );
@@ -119,8 +123,14 @@ describe("language phonology inventory", () => {
   });
 
   it("documents current language-level gaps instead of implying full coverage", () => {
-    expect(getLanguagePhonologyGaps("es-ES").map((gap) => gap.label)).toContain(
-      "/p t k f m n/",
+    expect(
+      getLanguagePhonologyGaps("es-ES").some(
+        (gap) =>
+          gap.label.includes("/p t k f m n/") &&
+          gap.reason.includes("phoneme units now exist"),
+      ),
+    ).toBe(
+      true,
     );
     expect(getLanguagePhonologyGaps("fr-FR").map((gap) => gap.label)).toContain(
       "/p b t d k g f v s z m n l/",
@@ -148,6 +158,18 @@ describe("language phonology inventory", () => {
       expect(gaps.every((gap) => gap.sourceRefs.length >= 2), languageId).toBe(
         true,
       );
+    }
+  });
+
+  it("keeps newly added plain Spanish consonants score-only until exact clips exist", () => {
+    for (const slug of ["es-p", "es-t", "es-k", "es-f", "es-m", "es-n"]) {
+      const entry = getPhonologyInventoryEntry("es-ES", slug);
+
+      expect(entry?.audioStatus, slug).toBe("gap-no-local-clip");
+      expect(entry?.tilePolicy, slug).toBe("score-only-unverified");
+      expect(getAssessmentAliasesForSlug(slug).length, slug).toBeGreaterThan(0);
+      expect(entry?.exactAssessmentAliases, slug).toEqual([]);
+      expect(entry?.headerAudioSrc, slug).toBeUndefined();
     }
   });
 });

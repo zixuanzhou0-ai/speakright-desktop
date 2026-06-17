@@ -65,9 +65,11 @@ Core content requirements:
 
 ## Current SpeakRight State
 
-Current `SPANISH_PHONEMES` contains 22 course sound units:
+Current `SPANISH_PHONEMES` contains 28 course sound units:
 
 - Five vowels: `es-a`, `es-e`, `es-i`, `es-o`, `es-u`.
+- Plain Spanish consonant units now include `es-p`, `es-t`, `es-k`, `es-f`,
+  `es-m`, and `es-n`.
 - Spanish-specific consonant or contrast units: `es-bv`, `es-d`, `es-g`,
   `es-theta`, `es-x`, `es-ny`, `es-tap-r`, `es-trill-r`, `es-s`, `es-ch`,
   `es-y-ll`, `es-l`.
@@ -80,8 +82,8 @@ Current exact scoring-tile audio is intentionally narrower than the course list:
 - `es-nasal-place` is marked `isProxyForAssessment`.
 - `es-lexical-stress` and `es-syllable-rhythm` do not expose single-phoneme
   header audio.
-- Plain `/p t k f m n/` are real Spanish sounds but are not yet standalone
-  Spanish sound units with verified short local audio.
+- Plain `/p t k f m n/` are now standalone Spanish sound units, but they still
+  have no verified short local header clips.
 
 This is acceptable only as an experimental course-anchor layer. It is not a full
 Spanish phoneme inventory yet.
@@ -106,7 +108,8 @@ layer field.
 ## Required Content Changes
 
 1. Inventory completion
-   - Add standalone Spanish course units for `/p t k f m n/`.
+   - Add standalone Spanish course units for `/p t k f m n/`. Done in source;
+     exact short local header clips remain pending.
    - Add `/g/`, `/b/`, `/d/` phoneme anchors only if they are clearly separate
      from current `[β ð ɣ]` realization clips.
    - Decide whether `/ʎ/` remains a variant note under `es-y-ll` or becomes a

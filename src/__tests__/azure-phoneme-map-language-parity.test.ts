@@ -40,12 +40,6 @@ describe("multilingual Azure phoneme map parity", () => {
   it("does not keep aliases or exemptions for deleted or renamed non-English slugs", () => {
     const obsolete = [
       "es-ll-y",
-      "es-p",
-      "es-t",
-      "es-k",
-      "es-f",
-      "es-m",
-      "es-n",
       "fr-epsilon",
       "fr-j",
       "fr-hui",
@@ -90,6 +84,15 @@ describe("multilingual Azure phoneme map parity", () => {
         "es-diphthongs-j",
       ),
     ).toBe(83);
+    expect(
+      getPhonemeAccuracy(result([{ phoneme: "p", accuracyScore: 79 }]), "es-p"),
+    ).toBe(79);
+    expect(
+      getPhonemeAccuracy(result([{ phoneme: "k", accuracyScore: 76 }]), "es-k"),
+    ).toBe(76);
+    expect(
+      getPhonemeAccuracy(result([{ phoneme: "m", accuracyScore: 82 }]), "es-m"),
+    ).toBe(82);
     expect(
       getPhonemeAccuracy(
         result([{ phoneme: "ɛ", accuracyScore: 74 }]),

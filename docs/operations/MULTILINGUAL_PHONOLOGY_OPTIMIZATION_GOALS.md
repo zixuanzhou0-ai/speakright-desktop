@@ -40,8 +40,9 @@ playback honest.
 Spanish goal: five stable vowels, tap/trill, Castilian `/θ/`,
 dialect-aware `seseo/yeismo`, `/b d g/` stop-vs-approximant realizations,
 unaspirated `/p t k/`, dental `/t d/`, lexical stress, syllable rhythm,
-diphthongs, and nasal place assimilation. Current anchors still miss common
-standalone consonants such as `/p t k f m n/`.
+diphthongs, and nasal place assimilation. Plain standalone `/p t k f m n/`
+anchors now exist, but still need verified short local header clips before they
+can become clickable scoring-tile audio.
 
 French goal: oral vowels, nasal vowels, front rounded vowels, glides `/j ɥ w/`,
 uvular `/ʁ/`, common consonants, liaison, enchainement, elision, schwa, final

@@ -135,6 +135,48 @@ const SPANISH_INVENTORY_BASE: PhonologyInventoryBaseEntry[] = [
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
   ),
   row(
+    "es-p",
+    "phoneme",
+    "Plain Spanish /p/ is unaspirated; keep it short and separate from English aspirated word-initial p.",
+    [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
+    ["No verified exact local /p/ header clip exists yet."],
+  ),
+  row(
+    "es-t",
+    "phoneme",
+    "Plain Spanish /t/ is dental and unaspirated; do not import English alveolar aspiration.",
+    [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
+    ["No verified exact local /t/ header clip exists yet."],
+  ),
+  row(
+    "es-k",
+    "phoneme",
+    "Plain Spanish /k/ is unaspirated and can be spelled c, qu, or k depending on context.",
+    [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
+    ["No verified exact local /k/ header clip exists yet."],
+  ),
+  row(
+    "es-f",
+    "phoneme",
+    "Plain Spanish /f/ is a voiceless labiodental fricative, not an English /v/ substitute.",
+    [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
+    ["No verified exact local /f/ header clip exists yet."],
+  ),
+  row(
+    "es-m",
+    "phoneme",
+    "Plain Spanish /m/ is a bilabial nasal; contextual nasal place changes remain a separate rule unit.",
+    [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
+    ["No verified exact local /m/ header clip exists yet."],
+  ),
+  row(
+    "es-n",
+    "phoneme",
+    "Plain Spanish /n/ is a dental/alveolar nasal anchor; place assimilation is trained separately.",
+    [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
+    ["No verified exact local /n/ header clip exists yet."],
+  ),
+  row(
     "es-bv",
     "allophone",
     "Spanish /b/ grapheme b/v has stop [b] after pause or nasal and approximant [β̞] between vowels.",
@@ -548,10 +590,10 @@ export const LANGUAGE_PHONOLOGY_GAPS: Record<
   "es-ES": [
     {
       id: "es-common-plain-consonants",
-      label: "/p t k f m n/",
+      label: "/p t k f m n/ 精确短音频",
       layer: "phoneme",
       reason:
-        "These are real Spanish consonant targets, but the current local header inventory has not verified standalone clips for all of them.",
+        "These Spanish phoneme units now exist, but the current local header inventory has not verified exact standalone clips for them.",
       expectedBeforeStable: true,
       sourceRefs: SPANISH_CORE_SOURCES,
     },

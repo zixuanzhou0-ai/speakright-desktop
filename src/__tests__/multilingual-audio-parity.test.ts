@@ -122,13 +122,22 @@ describe("multilingual audio parity contract", () => {
     expect(report.targetItemsPerUnit).toBe(
       MULTILINGUAL_AUDIO_PARITY_TARGET_PER_UNIT,
     );
-    expect(report.totals.soundUnits).toBe(75);
+    expect(report.totals.soundUnits).toBe(81);
     expect(report.totals.requiredItems).toBe(
-      75 * MULTILINGUAL_AUDIO_PARITY_TARGET_PER_UNIT,
+      81 * MULTILINGUAL_AUDIO_PARITY_TARGET_PER_UNIT,
     );
     expect(report.totals.existingAudioItems).toBe(2888);
-    expect(report.totals.missingAudioItems).toBe(0);
-    expect(report.totals.estimatedNewCharacters).toBe(0);
+    expect(report.totals.missingAudioItems).toBe(150);
+    expect(report.totals.estimatedNewCharacters).toBe(1166);
+
+    const spanishReport = report.languages.find(
+      (language) => language.languageId === "es-ES",
+    );
+    expect(
+      spanishReport?.units
+        .filter((unit) => unit.missingAudioTexts.length > 0)
+        .map((unit) => unit.slug),
+    ).toEqual(["es-p", "es-t", "es-k", "es-f", "es-m", "es-n"]);
   });
 
   it("keeps existing language pack manifest entries pointing to real files", () => {

@@ -17,6 +17,12 @@ export interface LanguageTeachingVideoAsset {
 
 const spanishVowels = ["es-a", "es-e", "es-i", "es-o", "es-u"];
 const spanishLettersAndSounds = [
+  "es-p",
+  "es-t",
+  "es-k",
+  "es-f",
+  "es-m",
+  "es-n",
   "es-theta",
   "es-x",
   "es-ny",

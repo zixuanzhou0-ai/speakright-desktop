@@ -98,6 +98,12 @@ export const LANGUAGE_SOUND_UNIT_GROUPS: Record<
       description: "需要单独建立口型和舌位的西语核心辅音。",
       displayType: "phoneme",
       slugs: [
+        "es-p",
+        "es-t",
+        "es-k",
+        "es-f",
+        "es-m",
+        "es-n",
         "es-theta",
         "es-x",
         "es-ny",

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { REQUIRED_SPANISH_UNITS } from "@/lib/language-critical-units";
 import { LANGUAGE_LEARNING_DECKS } from "@/lib/language-learning-decks";
+import { getLanguagePhonemes } from "@/lib/language-phonemes";
 import {
   expectDeckTargetsResolvable,
   expectRequiredUnits,
@@ -10,6 +11,7 @@ import {
 describe("Spanish pronunciation content", () => {
   it("covers the Spanish IPA-first beta inventory", () => {
     expectRequiredUnits("es-ES", REQUIRED_SPANISH_UNITS);
+    expect(getLanguagePhonemes("es-ES").length).toBeGreaterThanOrEqual(28);
   });
 
   it("keeps Spanish units source-backed and learner-facing", () => {

@@ -664,13 +664,13 @@ Start with the Release EXE and inspect these areas before adding new features:
   `docs/operations/non-english-ipa-audit-input.json`. A local generated copy may
   also exist at
   `E:/SpeakRightDesktopRepo/src-tauri/target/ipa-audit/non-english-ipa-audit-input.json`.
-  It now contains the final expanded UI corpus with `1736` rows: Spanish `516`,
+  It now contains the final expanded UI corpus with `1880` rows: Spanish `660`,
   French `599`, Russian `621`. The earlier `988`-row file covered only base
   sound-unit arrays.
 - The audit input is now reproducible with `npm.cmd run ipa:audit:export`.
   Rows include `auditRole`: `ipa-transcription` for real IPA rows and
   `deck-focus-hint` for `language-learning-decks` sentence `ipaHint` rows. The
-  current export keeps the same `1736` total rows and marks `36` deck focus
+  current export keeps the same `1880` total rows and marks `36` deck focus
   hints so GPT Research does not mistake compact cues such as `/s sʲ zʲ/` for
   complete sentence IPA. Recent source-synced rows also replaced generic
   `elision + nasal vowels` / `clusters` sentence labels with full IPA for
@@ -689,7 +689,7 @@ Start with the Release EXE and inspect these areas before adding new features:
   realization-layer IPA in learner-facing keyword rows. The code now normalizes
   final Spanish keyword IPA to the phoneme layer while preserving allophone
   teaching labels, assessment aliases, and exact header clips for scoring.
-- Remaining audit work: continue from the new `1736`-row final UI corpus and
+- Remaining audit work: continue from the new `1880`-row final UI corpus and
   ask GPT Research for a full row-level table, especially for French schwa
   style variants and Russian broad-vs-finer accepted variants.
 - Second GPT Research pass was applied for high-confidence rows:
