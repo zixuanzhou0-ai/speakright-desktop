@@ -8,6 +8,7 @@ import {
   getPhonologyInventoryEntry,
   getVisibleLanguagePhonologyGaps,
   type NonEnglishLanguageId,
+  type PhonologyInventoryLayer,
 } from "@/lib/language-phonology-inventory";
 import { getLanguageResourceSite } from "@/lib/language-resource-sites";
 
@@ -18,6 +19,14 @@ const PRIMARY_SOURCE_IDS: Record<NonEnglishLanguageId, string[]> = {
   "fr-FR": ["jipa-french", "ipa-handbook"],
   "ru-RU": ["jipa-russian", "ipa-handbook"],
 };
+
+const ALLOWED_GOAL_LAYERS = new Set<PhonologyInventoryLayer>([
+  "phoneme",
+  "allophone",
+  "contrast",
+  "connected-speech-rule",
+  "prosody",
+]);
 
 describe("language phonology inventory", () => {
   it("covers every non-English sound unit exactly once", () => {
@@ -110,6 +119,17 @@ describe("language phonology inventory", () => {
     expect(getPhonologyInventoryEntry("ru-RU", "ru-final-devoicing")?.layer).toBe(
       "connected-speech-rule",
     );
+    expect(getPhonologyInventoryEntry("ru-RU", "ru-clusters")?.layer).toBe(
+      "connected-speech-rule",
+    );
+  });
+
+  it("keeps every non-English unit inside the goal-approved layer model", () => {
+    for (const languageId of LANGUAGE_IDS) {
+      for (const entry of getLanguagePhonologyInventory(languageId)) {
+        expect(ALLOWED_GOAL_LAYERS.has(entry.layer), entry.slug).toBe(true);
+      }
+    }
   });
 
   it("allows scoring tile playback only for exact local header clips", () => {

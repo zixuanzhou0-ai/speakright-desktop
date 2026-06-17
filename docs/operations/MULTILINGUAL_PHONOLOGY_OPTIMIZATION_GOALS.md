@@ -51,6 +51,10 @@ phrase-final prominence 作为短语/语流/韵律层，不做假单音频。
 vowels、弱化、词尾清化、清浊同化和 clusters 必须分层。硬软 pair 可以先
 score-only，不得在无 exact clip 时播放。
 
+实现层统一收敛为五类：phoneme、allophone/realization、contrast、
+connected-speech rule、prosody。俄语 `ь`、iotated vowels 和 clusters 是这些
+层里的训练对象，不新增第六类产品层。
+
 ## 实施目标
 
 1. 建立每语言 source-backed inventory table：IPA、层级、变体范围、source refs、

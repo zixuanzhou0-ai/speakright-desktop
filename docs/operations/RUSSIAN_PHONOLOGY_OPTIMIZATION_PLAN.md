@@ -68,17 +68,21 @@ Last updated: 2026-06-17
 | phoneme | `/a o u e i ɨ r x ts tɕ ɕː j/` 等 learner targets | 主课程和诊断标签 |
 | hardSoftPair | `/t tʲ/`, `/d dʲ/`, `/s sʲ/`, labials, velars 等 | 对比卡和 pair drill，默认 score-only |
 | unpairedConsonant | always hard `/ʂ ʐ ts/`, always soft `/tɕ ɕː j/` | 单独标注，不套普通硬软规则 |
-| orthographicRule | `ь`, `я/е/ё/ю` | 拼写到发音规则，不是单独元音/音节 |
 | reductionRule | unstressed `о/а`, `е/я` -> `[ɐ ə ɪ]` 等 | word-level implementation |
-| connectedSpeechRule | final devoicing, regressive voicing assimilation | phrase/sentence feedback |
-| cluster | `встреча`, `здравствуйте`, `текст` | 慢到快的词/短语训练 |
+| connected-speech rule | `я/е/ё/ю` 位置规则、final devoicing、regressive voicing assimilation、clusters | phrase/sentence feedback |
+
+实现层仍只使用目标允许的五类：`phoneme`, `allophone/realization`,
+`contrast`, `connected-speech rule`, `prosody`。`ь` 归入 contrast/硬软系统；
+`я/е/ё/ю` 和辅音丛归入 connected-speech rule，不新增第六类产品层。
 
 ## 修改计划
 
 1. 数据模型
-   - 为俄语加入最严格的 layer 区分：`phoneme`, `hardSoftPair`,
-     `unpairedConsonant`, `orthographicRule`, `reductionRule`,
-     `connectedSpeechRule`, `cluster`, `prosody`。
+   - 为俄语加入最严格的 layer 区分，但产品层仍收敛到五类：
+     `phoneme`, `allophone/realization`, `contrast`,
+     `connected-speech rule`, `prosody`。
+   - hard/soft pair、常硬/常软音和 `ь` 作为 `contrast` 处理；iotated vowels、
+     词尾清化、清浊同化和辅音丛作为 `connected-speech rule` 处理。
    - 建立 source-backed hard/soft pair table，记录每个 pair 的例词、重音、是否
      learner-facing、是否有 exact audio。
 

@@ -13,8 +13,7 @@ export type PhonologyInventoryLayer =
   | "allophone"
   | "contrast"
   | "connected-speech-rule"
-  | "prosody"
-  | "cluster";
+  | "prosody";
 
 export type PhonologyInventoryAudioStatus =
   | "exact-local-header"
@@ -62,7 +61,6 @@ const LAYER_LABELS: Record<PhonologyInventoryLayer, string> = {
   contrast: "对比/变体",
   "connected-speech-rule": "语流规则",
   prosody: "韵律/重音",
-  cluster: "辅音丛",
 };
 
 const AUDIO_STATUS_LABELS: Record<PhonologyInventoryAudioStatus, string> = {
@@ -593,7 +591,7 @@ const RUSSIAN_INVENTORY_BASE: PhonologyInventoryBaseEntry[] = [
   ),
   row(
     "ru-clusters",
-    "cluster",
+    "connected-speech-rule",
     "Russian consonant clusters should not gain inserted vowels.",
     [...RUSSIAN_CORE_SOURCES, "wiktionary-ru-pronunciation-appendix"],
     ["No exact single-click cluster lesson audio exists yet."],
