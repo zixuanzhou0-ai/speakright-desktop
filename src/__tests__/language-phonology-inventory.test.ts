@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getAllAssessmentSegmentAudioRegistryEntries } from "@/lib/assessment-segment-audio";
 import { getAssessmentAliasesForSlug } from "@/lib/azure-phoneme-map";
+import { REQUIRED_LANGUAGE_UNITS } from "@/lib/language-critical-units";
 import { getLanguagePhonemes } from "@/lib/language-phonemes";
 import {
   getLanguagePhonologyGaps,
@@ -42,6 +43,35 @@ describe("language phonology inventory", () => {
 
       expect(new Set(inventorySlugs).size).toBe(inventorySlugs.length);
       expect(inventorySlugs.sort()).toEqual(soundUnitSlugs.sort());
+    }
+  });
+
+  it("keeps every critical unit represented by a source-backed inventory row", () => {
+    for (const languageId of LANGUAGE_IDS) {
+      const inventory = getLanguagePhonologyInventory(languageId);
+      const inventoryBySlug = new Map(
+        inventory.map((entry) => [entry.slug, entry]),
+      );
+      const requiredUnits = REQUIRED_LANGUAGE_UNITS[languageId] ?? [];
+
+      expect(requiredUnits.length, languageId).toBeGreaterThan(0);
+
+      for (const slug of requiredUnits) {
+        const entry = inventoryBySlug.get(slug);
+
+        expect(entry, `${languageId}:${slug}`).toBeDefined();
+        expect(entry?.ipa, `${languageId}:${slug}`).toBeTruthy();
+        expect(entry?.variantScope, `${languageId}:${slug}`).toBeTruthy();
+        expect(entry?.sourceRefs.length, `${languageId}:${slug}`).toBeGreaterThanOrEqual(
+          2,
+        );
+        expect(entry?.audioStatus, `${languageId}:${slug}`).toMatch(
+          /^(exact-local-header|proxy-local-reference|rule-only|gap-no-local-clip)$/,
+        );
+        expect(entry?.tilePolicy, `${languageId}:${slug}`).toMatch(
+          /^(clickable-exact-header|score-only-unverified|rule-guidance-only)$/,
+        );
+      }
     }
   });
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { LOCAL_LANGUAGE_PHONEME_ASSETS } from "@/lib/local-language-assets";
+import { REQUIRED_LANGUAGE_UNITS } from "@/lib/language-critical-units";
 import {
   formatLanguageAssessmentAudioPolicyMarkdownDocument,
   formatLanguageAssessmentAudioPolicyMarkdownTable,
@@ -38,6 +39,38 @@ describe("language assessment audio policy", () => {
         expect(row.variantScope).toBeTruthy();
         expect(row.sourceRefs.length, row.slug).toBeGreaterThanOrEqual(2);
         expect(row.reason, row.slug).toBeTruthy();
+      }
+    }
+  });
+
+  it("exports audio-policy decisions for every critical non-English unit", () => {
+    for (const languageId of LANGUAGE_IDS) {
+      const rowsBySlug = new Map(
+        getLanguageAssessmentAudioPolicyRows(languageId).map((row) => [
+          row.slug,
+          row,
+        ]),
+      );
+      const requiredUnits = REQUIRED_LANGUAGE_UNITS[languageId] ?? [];
+
+      expect(requiredUnits.length, languageId).toBeGreaterThan(0);
+
+      for (const slug of requiredUnits) {
+        const row = rowsBySlug.get(slug);
+
+        expect(row, `${languageId}:${slug}`).toBeDefined();
+        expect(row?.sourceRefs.length, `${languageId}:${slug}`).toBeGreaterThanOrEqual(
+          2,
+        );
+        expect(row?.policyStatus, `${languageId}:${slug}`).toMatch(
+          /^(clickable-exact-header|blocked-proxy-reference|blocked-rule-guidance|blocked-unverified)$/,
+        );
+        if (row?.policyStatus !== "clickable-exact-header") {
+          expect(row?.shouldBeClickable, `${languageId}:${slug}`).toBe(false);
+          expect(row?.reason, `${languageId}:${slug}`).toMatch(
+            /proxy|rule|No verified/,
+          );
+        }
       }
     }
   });
