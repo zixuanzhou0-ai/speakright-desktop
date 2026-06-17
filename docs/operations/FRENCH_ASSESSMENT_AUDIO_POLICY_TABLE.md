@@ -1,0 +1,58 @@
+# French Assessment Audio Policy Table
+
+Generated from `src/lib/language-assessment-audio-policy.ts`. Do not edit the table by hand; run `npm.cmd run phonology:audio-policy:export` after changing language sound units, local assets, assessment registry entries, or playback policy.
+
+Language profile: `fr-FR`
+Product status: experimental
+
+## Policy Summary
+
+- Clickable exact scoring tiles: 22
+- Blocked or score-only tiles: 18
+- Clickable means the scoring tile uses the same local short header clip as the sound-unit header/detail card.
+- Proxy, rule guidance, whole-word, sentence, dictionary, generated TTS, and video-track material must stay unclickable.
+
+## Audio Policy
+
+| slug | IPA | layer | audio status | tile policy | policy status | clickable | header audio | registry audio | aliases | reason |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| fr-i | /i/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-i.m4a | /audio/language-assets/fr-FR/header-clips/fr-i.m4a | i | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-y | /y/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-y.m4a | /audio/language-assets/fr-FR/header-clips/fr-y.m4a | y | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-u | /u/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-u.m4a | /audio/language-assets/fr-FR/header-clips/fr-u.m4a | u | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-e | /e/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-e.m4a | /audio/language-assets/fr-FR/header-clips/fr-e.m4a | e | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-e-open | /ɛ/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-e-open.m4a | /audio/language-assets/fr-FR/header-clips/fr-e-open.m4a | ɛ, eh | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-eu-close | /ø/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-eu-close.m4a | /audio/language-assets/fr-FR/header-clips/fr-eu-close.m4a | ø | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-eu-open | /œ/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-eu-open.m4a | /audio/language-assets/fr-FR/header-clips/fr-eu-open.m4a | œ | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-an | /ɑ̃/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-an.m4a | /audio/language-assets/fr-FR/header-clips/fr-an.m4a | ɑ̃, ã, an | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-in | /ɛ̃/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-in.m4a | /audio/language-assets/fr-FR/header-clips/fr-in.m4a | ɛ̃, in | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-on | /ɔ̃/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-on.m4a | /audio/language-assets/fr-FR/header-clips/fr-on.m4a | ɔ̃, õ, on | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-r | /ʁ/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-r.m4a | /audio/language-assets/fr-FR/header-clips/fr-r.m4a | ʁ, r, χ | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-p | /p/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-b | /b/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-t | /t/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-d | /d/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-k | /k/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-g | /g/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-f | /f/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-v | /v/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-s | /s/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-z | /z/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-m | /m/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-n | /n/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-l | /l/ | phoneme | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| fr-liaison | /‿/ | connected-speech-rule | rule-only | rule-guidance-only | blocked-rule-guidance | no | none | none | none | This unit is trained as a rule, phrase, or prosody target and must not pretend to be standalone segment audio. |
+| fr-a | /a/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-a.m4a | /audio/language-assets/fr-FR/header-clips/fr-a.m4a | a | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-schwa | /ə/ | prosody | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-schwa.m4a | /audio/language-assets/fr-FR/header-clips/fr-schwa.m4a | ə, ax | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-o-close | /o/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-o-close.m4a | /audio/language-assets/fr-FR/header-clips/fr-o-close.m4a | o | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-o-open | /ɔ/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-o-open.m4a | /audio/language-assets/fr-FR/header-clips/fr-o-open.m4a | ɔ | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-un | /œ̃/ | contrast | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-un.m4a | /audio/language-assets/fr-FR/header-clips/fr-un.m4a | œ̃, un | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-sh | /ʃ/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-sh.m4a | /audio/language-assets/fr-FR/header-clips/fr-sh.m4a | ʃ, sh | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-zh | /ʒ/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-zh.m4a | /audio/language-assets/fr-FR/header-clips/fr-zh.m4a | ʒ, zh | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-ny | /ɲ/ | phoneme | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-ny.m4a | /audio/language-assets/fr-FR/header-clips/fr-ny.m4a | ɲ, ny | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-glide-j | /j/ | contrast | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-glide-j.m4a | /audio/language-assets/fr-FR/header-clips/fr-glide-j.m4a | j | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-glide-hui | /ɥ/ | contrast | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-glide-hui.m4a | /audio/language-assets/fr-FR/header-clips/fr-glide-hui.m4a | ɥ | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-glide-w | /w/ | contrast | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/fr-FR/header-clips/fr-glide-w.m4a | /audio/language-assets/fr-FR/header-clips/fr-glide-w.m4a | w | Uses an exact same-unit local short header clip from the assessment audio registry. |
+| fr-final-consonant-silence | silent final C | connected-speech-rule | rule-only | rule-guidance-only | blocked-rule-guidance | no | none | none | none | This unit is trained as a rule, phrase, or prosody target and must not pretend to be standalone segment audio. |
+| fr-enchainement | enchaînement | connected-speech-rule | rule-only | rule-guidance-only | blocked-rule-guidance | no | none | none | none | This unit is trained as a rule, phrase, or prosody target and must not pretend to be standalone segment audio. |
+| fr-elision | elision | connected-speech-rule | rule-only | rule-guidance-only | blocked-rule-guidance | no | none | none | none | This unit is trained as a rule, phrase, or prosody target and must not pretend to be standalone segment audio. |
+| fr-phrase-final-prominence | accent final | prosody | rule-only | rule-guidance-only | blocked-rule-guidance | no | none | none | none | This unit is trained as a rule, phrase, or prosody target and must not pretend to be standalone segment audio. |

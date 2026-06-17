@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { LOCAL_LANGUAGE_PHONEME_ASSETS } from "@/lib/local-language-assets";
 import {
+  formatLanguageAssessmentAudioPolicyMarkdownDocument,
   formatLanguageAssessmentAudioPolicyMarkdownTable,
   getAllLanguageAssessmentAudioPolicyRows,
   getLanguageAssessmentAudioPolicyRows,
@@ -174,6 +175,29 @@ describe("language assessment audio policy", () => {
       if (languageId !== "fr-FR") {
         expect(markdown).toContain("blocked-proxy-reference");
       }
+    }
+  });
+
+  it("formats generated policy documents with experimental status and playback boundaries", () => {
+    for (const languageId of LANGUAGE_IDS) {
+      const document =
+        formatLanguageAssessmentAudioPolicyMarkdownDocument(languageId);
+      const clickableCount = getLanguageAssessmentAudioPolicyRows(
+        languageId,
+      ).filter((row) => row.shouldBeClickable).length;
+
+      expect(document).toContain("Product status: experimental");
+      expect(document).toContain(
+        "Generated from `src/lib/language-assessment-audio-policy.ts`",
+      );
+      expect(document).toContain(
+        `- Clickable exact scoring tiles: ${clickableCount}`,
+      );
+      expect(document).toContain(
+        "Proxy, rule guidance, whole-word, sentence, dictionary, generated TTS, and video-track material must stay unclickable.",
+      );
+      expect(document).toContain("## Audio Policy");
+      expect(document).toContain("blocked-unverified");
     }
   });
 

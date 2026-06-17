@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { formatLanguageAssessmentAudioPolicyMarkdownDocument } from "@/lib/language-assessment-audio-policy";
 import {
   formatLanguagePhonologyInventoryMarkdownDocument,
   type NonEnglishLanguageId,
@@ -12,6 +13,12 @@ const DOCS: Array<[NonEnglishLanguageId, string]> = [
   ["ru-RU", "RUSSIAN_PHONOLOGY_INVENTORY_TABLE.md"],
 ];
 
+const AUDIO_POLICY_DOCS: Array<[NonEnglishLanguageId, string]> = [
+  ["es-ES", "SPANISH_ASSESSMENT_AUDIO_POLICY_TABLE.md"],
+  ["fr-FR", "FRENCH_ASSESSMENT_AUDIO_POLICY_TABLE.md"],
+  ["ru-RU", "RUSSIAN_ASSESSMENT_AUDIO_POLICY_TABLE.md"],
+];
+
 describe("phonology inventory table docs", () => {
   it("keeps generated language inventory docs in sync with the source-backed inventory", () => {
     for (const [languageId, filename] of DOCS) {
@@ -21,6 +28,19 @@ describe("phonology inventory table docs", () => {
       ).replace(/\r\n/g, "\n");
       const expected =
         formatLanguagePhonologyInventoryMarkdownDocument(languageId);
+
+      expect(actual, filename).toBe(expected);
+    }
+  });
+
+  it("keeps generated assessment audio policy docs in sync with playback policy", () => {
+    for (const [languageId, filename] of AUDIO_POLICY_DOCS) {
+      const actual = readFileSync(
+        path.join(process.cwd(), "docs", "operations", filename),
+        "utf8",
+      ).replace(/\r\n/g, "\n");
+      const expected =
+        formatLanguageAssessmentAudioPolicyMarkdownDocument(languageId);
 
       expect(actual, filename).toBe(expected);
     }

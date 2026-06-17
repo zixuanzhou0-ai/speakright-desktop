@@ -55,6 +55,12 @@ export interface LanguageAssessmentAudioPolicyTableRow {
 
 const LANGUAGE_IDS = ["es-ES", "fr-FR", "ru-RU"] as const;
 
+const LANGUAGE_DOCUMENT_LABELS: Record<NonEnglishLanguageId, string> = {
+  "es-ES": "Spanish",
+  "fr-FR": "French",
+  "ru-RU": "Russian",
+};
+
 const registryEntries = getAllAssessmentSegmentAudioRegistryEntries();
 
 function registryEntriesFor(languageId: NonEnglishLanguageId, slug: string) {
@@ -197,4 +203,35 @@ export function formatLanguageAssessmentAudioPolicyMarkdownTable(
   );
 
   return [header, separator, ...rows.map((row) => `| ${row} |`)].join("\n");
+}
+
+export function formatLanguageAssessmentAudioPolicyMarkdownDocument(
+  languageId: NonEnglishLanguageId,
+): string {
+  const languageLabel = LANGUAGE_DOCUMENT_LABELS[languageId];
+  const rows = getLanguageAssessmentAudioPolicyRows(languageId);
+  const clickableCount = rows.filter((row) => row.shouldBeClickable).length;
+  const blockedCount = rows.length - clickableCount;
+  const table = formatLanguageAssessmentAudioPolicyMarkdownTable(languageId);
+
+  return [
+    `# ${languageLabel} Assessment Audio Policy Table`,
+    "",
+    "Generated from `src/lib/language-assessment-audio-policy.ts`. Do not edit the table by hand; run `npm.cmd run phonology:audio-policy:export` after changing language sound units, local assets, assessment registry entries, or playback policy.",
+    "",
+    `Language profile: \`${languageId}\``,
+    "Product status: experimental",
+    "",
+    "## Policy Summary",
+    "",
+    `- Clickable exact scoring tiles: ${clickableCount}`,
+    `- Blocked or score-only tiles: ${blockedCount}`,
+    "- Clickable means the scoring tile uses the same local short header clip as the sound-unit header/detail card.",
+    "- Proxy, rule guidance, whole-word, sentence, dictionary, generated TTS, and video-track material must stay unclickable.",
+    "",
+    "## Audio Policy",
+    "",
+    table,
+    "",
+  ].join("\n");
 }
