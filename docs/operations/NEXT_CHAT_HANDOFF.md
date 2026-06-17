@@ -207,6 +207,9 @@ git status --short --branch
 - Non-English practice cards now prioritize the text the user must read.
   Words, phrases, and sentences should be visible in full instead of using
   ellipsis.
+- Drill teaching cards now render every bundled keyword/example for the current
+  sound unit instead of the first six only, and label the section as `示例文本`
+  so phrase, sentence, and rule units are not described as single-word examples.
 - Practice target text and IPA are not only visually wrapped but also enforced
   as centered at runtime. `desktop:ui-smoke` now checks computed
   `text-align: center` on detail-page reading targets.

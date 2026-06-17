@@ -123,10 +123,13 @@ export function DrillPhonemeLesson({
         {/* Example words to listen */}
         <div>
           <p className="text-sm font-medium text-muted-foreground mb-2">
-            示例单词（点击听发音）
+            示例文本（点击听发音）
           </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            {phoneme.keywords.slice(0, 6).map((kw) => {
+          <div
+            className="flex flex-wrap justify-center gap-2"
+            data-smoke="drill-lesson-example-list"
+          >
+            {phoneme.keywords.map((kw) => {
               const density = getPracticeTextDensity(kw.word);
 
               return (
@@ -138,6 +141,7 @@ export function DrillPhonemeLesson({
                   onClick={() => onPlayExample(kw.word)}
                   disabled={isLoadingExample}
                   className="flex max-w-full items-center justify-center gap-1.5 rounded-lg border bg-muted/30 px-3 py-1.5 text-center text-sm transition-colors hover:bg-primary/10 hover:border-primary/30 cursor-pointer disabled:opacity-50"
+                  data-smoke="drill-lesson-example"
                 >
                   <Volume2 className="h-3 w-3 shrink-0 text-muted-foreground" />
                   <span

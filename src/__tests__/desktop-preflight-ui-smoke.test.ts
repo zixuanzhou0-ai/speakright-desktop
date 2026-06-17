@@ -341,6 +341,19 @@ describe("desktop preflight and UI smoke", () => {
     );
     expect(freePracticeTransfer).toContain("const matchedWords = unique(targetWords);");
     expect(freePracticeTransfer).not.toContain("unique(targetWords).slice(0, 6)");
+    const drillPhonemeLesson = readProjectFile(
+      "src/components/drill/drill-phoneme-lesson.tsx",
+    );
+    expect(drillPhonemeLesson).toContain("示例文本（点击听发音）");
+    expect(drillPhonemeLesson).toContain(
+      'data-smoke="drill-lesson-example-list"',
+    );
+    expect(drillPhonemeLesson).toContain(
+      'data-smoke="drill-lesson-example"',
+    );
+    expect(drillPhonemeLesson).toContain("phoneme.keywords.map");
+    expect(drillPhonemeLesson).not.toContain("phoneme.keywords.slice(0, 6)");
+    expect(drillPhonemeLesson).not.toContain("示例单词（点击听发音）");
     const wordPronunciationHook = readProjectFile(
       "src/hooks/use-word-pronunciation.ts",
     );
