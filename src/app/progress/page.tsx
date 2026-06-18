@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { LanguageCoreOnlyBoundary } from "@/components/common/language-core-only-boundary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguageConfig } from "@/hooks/use-api-keys";
@@ -101,6 +102,14 @@ export default function ProgressPage() {
     setProfileStorageWarning(getMasteryProfileStorageWarning());
     setProfile(loadMasteryProfile());
   }, [canShowFormalProgress]);
+
+  if (!canShowFormalProgress) {
+    return (
+      <LanguageCoreOnlyBoundary moduleName="进步档案">
+        <div />
+      </LanguageCoreOnlyBoundary>
+    );
+  }
 
   const refreshRecordings = () => {
     if (!canShowFormalProgress) return;

@@ -167,11 +167,11 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("/drill/evidence");
     expect(script).toContain("/drill/pack/ee-ih");
     expect(script).toContain("evidence-page");
-    expect(script).toContain("evidence-experimental-blocker");
+    expect(script).toContain("non-english-core-only-boundary");
     expect(script).toContain("pack-runner-page");
     expect(script).toContain("pack-runner-intro-card");
     expect(script).toContain("pack-runner-course-map");
-    expect(script).toContain("pack-runner-experimental-blocker");
+    expect(script).toContain("non-english-core-only-boundary");
     expect(script).toContain("assertAdvancedDirectRoutes");
     expect(script).toContain("advancedDirectRoutes=ok");
     expect(script).toContain("assertCorruptLocalDataWarnings");
@@ -189,7 +189,7 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("/assessment/passage");
     expect(script).toContain("assessment-passage-page");
     expect(script).toContain("assessment-passage-intro-card");
-    expect(script).toContain("assessment-passage-experimental-blocker");
+    expect(script).toContain("公开版只开放音标");
     expect(script).toContain("/progress");
     expect(script).toContain("assertEnglishProgressArchive");
     expect(script).toContain("progress-benchmark-row");
@@ -211,7 +211,7 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("speakright_benchmark_recordings_v1");
     expect(script).toContain("progress missing benchmark audio warning");
     expect(script).toContain("direct: true");
-    expect(script).toContain("progress-experimental-blocker");
+    expect(script).toContain("coreBoundaryReady");
     expect(script).toContain("routes=");
     expect(script).toContain("smokeSummaryRoutes.join");
     expect(script).toContain('"/drill/scenarios"');
@@ -221,9 +221,8 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("textIsCentered");
     expect(script).toContain('textAlign === "center"');
     expect(script).toContain("assertNarrowViewportRoutes");
-    expect(script).toContain("experimentalDrillBoundaryReady");
-    expect(script).toContain("drill-experimental-boundary-warning");
-    expect(script).toContain("不会用整词分冒充掌握证据");
+    expect(script).toContain("non-english-core-only-boundary");
+    expect(script).toContain("去自由练习");
     expect(script).toContain("narrowViewport=ok");
     expect(script).toContain("assertLowHeightViewportRoutes");
     expect(script).toContain("lowHeightViewport=ok");

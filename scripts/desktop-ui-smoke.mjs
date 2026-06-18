@@ -1720,23 +1720,36 @@ async function assertScoringTileAudioPolicy(cdp) {
 
 async function assertMainRoutes(cdp) {
   const routes = [
-    { path: "/drill", selector: '[data-smoke="drill-page"]' },
+    {
+      path: "/drill",
+      selector: '[data-smoke="non-english-core-only-boundary"]',
+      direct: true,
+      boundary: true,
+    },
     {
       path: "/drill/prosody",
-      selector: '[data-smoke="prosody-page"]',
+      selector: '[data-smoke="non-english-core-only-boundary"]',
       direct: true,
+      boundary: true,
     },
     {
       path: "/drill/perception",
-      selector: '[data-smoke="perception-experimental-blocker"]',
+      selector: '[data-smoke="non-english-core-only-boundary"]',
       direct: true,
+      boundary: true,
     },
     { path: "/sentences", selector: '[data-smoke="sentences-page"]' },
-    { path: "/assessment", selector: '[data-smoke="assessment-page"]' },
+    {
+      path: "/assessment",
+      selector: '[data-smoke="non-english-core-only-boundary"]',
+      direct: true,
+      boundary: true,
+    },
     {
       path: "/progress",
-      selector: '[data-smoke="progress-experimental-blocker"]',
+      selector: '[data-smoke="non-english-core-only-boundary"]',
       direct: true,
+      boundary: true,
     },
   ];
 
@@ -1748,46 +1761,54 @@ async function assertMainRoutes(cdp) {
 (() => {
   const bodyText = document.body?.innerText ?? "";
   const routePath = ${JSON.stringify(route.path)};
+  const expectsBoundary = ${JSON.stringify(Boolean(route.boundary))};
   const sentenceHooksReady =
     routePath !== "/sentences" ||
     (Boolean(document.querySelector('[data-smoke="sentences-page"]')) &&
       Boolean(document.querySelector('[data-smoke="sentence-input-card"]')) &&
       Boolean(document.querySelector('[data-smoke="sentence-recording-card"]')));
   const assessmentHooksReady =
+    expectsBoundary ||
     routePath !== "/assessment" ||
     (Boolean(document.querySelector('[data-smoke="assessment-page"]')) &&
       Boolean(document.querySelector('[data-smoke="assessment-intro-card"]')) &&
       Boolean(document.querySelector('[data-smoke="assessment-start-button"]')) &&
       Boolean(document.querySelector('[data-smoke="assessment-passage-link"]')));
   const prosodyHooksReady =
+    expectsBoundary ||
     routePath !== "/drill/prosody" ||
     (Boolean(document.querySelector('[data-smoke="prosody-page"]')) &&
       Boolean(document.querySelector('[data-smoke="prosody-exercise-header"]')));
-  const experimentalDrillBoundaryReady =
-    routePath !== "/drill" ||
-    (Boolean(document.querySelector('[data-smoke="drill-experimental-boundary-warning"]')) &&
-      bodyText.includes("不生成正式") &&
-      bodyText.includes("不会用整词分冒充掌握证据"));
   const perceptionHooksReady =
+    expectsBoundary ||
     routePath !== "/drill/perception" ||
     (Boolean(document.querySelector('[data-smoke="perception-page"]')) &&
       Boolean(document.querySelector('[data-smoke="perception-experimental-blocker"]')));
+  const coreBoundaryReady =
+    !expectsBoundary ||
+    (Boolean(document.querySelector('[data-smoke="non-english-core-only-boundary"]')) &&
+      bodyText.includes("公开版只开放音标") &&
+      bodyText.includes("去音标练习") &&
+      bodyText.includes("去自由练习") &&
+      !bodyText.includes("实验训练") &&
+      !bodyText.includes("发音诊断\\n") &&
+      !bodyText.includes("今日学习计划"));
   return {
     ok:
       bodyText.trim().length > 20 &&
       sentenceHooksReady &&
       assessmentHooksReady &&
       prosodyHooksReady &&
-      experimentalDrillBoundaryReady &&
       perceptionHooksReady &&
+      coreBoundaryReady &&
       !bodyText.includes("Merriam-Webster") &&
       !bodyText.includes("多语言发音包") &&
       !bodyText.includes("无法访问此页面"),
     sentenceHooksReady,
     assessmentHooksReady,
     prosodyHooksReady,
-    experimentalDrillBoundaryReady,
     perceptionHooksReady,
+    coreBoundaryReady,
     bodyText: bodyText.slice(0, 800)
   };
 })()
@@ -2015,18 +2036,15 @@ async function assertAdvancedDirectRoutes(cdp) {
   const experimentalRoutes = [
     {
       path: "/assessment/passage",
-      selector: '[data-smoke="assessment-passage-experimental-blocker"]',
-      blockerSmoke: "assessment-passage-experimental-blocker",
+      selector: '[data-smoke="non-english-core-only-boundary"]',
     },
     {
       path: "/drill/evidence",
-      selector: '[data-smoke="evidence-experimental-blocker"]',
-      blockerSmoke: "evidence-experimental-blocker",
+      selector: '[data-smoke="non-english-core-only-boundary"]',
     },
     {
       path: "/drill/pack/ee-ih",
-      selector: '[data-smoke="pack-runner-experimental-blocker"]',
-      blockerSmoke: "pack-runner-experimental-blocker",
+      selector: '[data-smoke="non-english-core-only-boundary"]',
     },
   ];
 
@@ -2036,7 +2054,7 @@ async function assertAdvancedDirectRoutes(cdp) {
       cdp,
       `
 (() => {
-  const blocker = document.querySelector('[data-smoke="${route.blockerSmoke}"]');
+  const blocker = document.querySelector('[data-smoke="non-english-core-only-boundary"]');
   const bodyText = document.body?.innerText ?? "";
   const readableText = [...document.querySelectorAll("h1,h2,p")].every((element) => {
     const rect = element.getBoundingClientRect();
@@ -2051,12 +2069,14 @@ async function assertAdvancedDirectRoutes(cdp) {
   return {
     ok:
       Boolean(blocker) &&
-      bodyText.includes("experimental") &&
-      bodyText.includes("mastery") &&
+      bodyText.includes("公开版只开放音标") &&
+      bodyText.includes("去音标练习") &&
+      bodyText.includes("去自由练习") &&
       !bodyText.includes("训练证据库\\n汇总训练中的错题") &&
       !bodyText.includes("完整朗读稿") &&
       !bodyText.includes("词尾别吞") &&
       !bodyText.includes("课前任务单") &&
+      !bodyText.includes("实验训练") &&
       readableText &&
       document.documentElement.scrollWidth <= window.innerWidth + 24,
     hasBlocker: Boolean(blocker),
@@ -2289,23 +2309,36 @@ async function assertNarrowViewportRoutes(cdp) {
     await clickLanguage(cdp, "fr-FR");
 
     for (const route of [
-      { path: "/drill", selector: '[data-smoke="drill-page"]' },
+      {
+        path: "/drill",
+        selector: '[data-smoke="non-english-core-only-boundary"]',
+        direct: true,
+        boundary: true,
+      },
       {
         path: "/drill/prosody",
-        selector: '[data-smoke="prosody-page"]',
+        selector: '[data-smoke="non-english-core-only-boundary"]',
         direct: true,
+        boundary: true,
       },
       {
         path: "/drill/perception",
-        selector: '[data-smoke="perception-experimental-blocker"]',
+        selector: '[data-smoke="non-english-core-only-boundary"]',
         direct: true,
+        boundary: true,
       },
       { path: "/sentences", selector: '[data-smoke="sentences-page"]' },
-      { path: "/assessment", selector: '[data-smoke="assessment-page"]' },
+      {
+        path: "/assessment",
+        selector: '[data-smoke="non-english-core-only-boundary"]',
+        direct: true,
+        boundary: true,
+      },
       {
         path: "/progress",
-        selector: '[data-smoke="progress-experimental-blocker"]',
+        selector: '[data-smoke="non-english-core-only-boundary"]',
         direct: true,
+        boundary: true,
       },
     ]) {
       await navigate(cdp, route.path, route.selector, route);
@@ -2315,25 +2348,36 @@ async function assertNarrowViewportRoutes(cdp) {
 (() => {
   const bodyText = document.body?.innerText ?? "";
   const routePath = ${JSON.stringify(route.path)};
+  const expectsBoundary = ${JSON.stringify(Boolean(route.boundary))};
   const sentenceHooksReady =
     routePath !== "/sentences" ||
     (Boolean(document.querySelector('[data-smoke="sentences-page"]')) &&
       Boolean(document.querySelector('[data-smoke="sentence-input-card"]')) &&
       Boolean(document.querySelector('[data-smoke="sentence-recording-card"]')));
   const assessmentHooksReady =
+    expectsBoundary ||
     routePath !== "/assessment" ||
     (Boolean(document.querySelector('[data-smoke="assessment-page"]')) &&
       Boolean(document.querySelector('[data-smoke="assessment-intro-card"]')) &&
       Boolean(document.querySelector('[data-smoke="assessment-start-button"]')) &&
       Boolean(document.querySelector('[data-smoke="assessment-passage-link"]')));
   const prosodyHooksReady =
+    expectsBoundary ||
     routePath !== "/drill/prosody" ||
     (Boolean(document.querySelector('[data-smoke="prosody-page"]')) &&
       Boolean(document.querySelector('[data-smoke="prosody-exercise-header"]')));
   const perceptionHooksReady =
+    expectsBoundary ||
     routePath !== "/drill/perception" ||
     (Boolean(document.querySelector('[data-smoke="perception-page"]')) &&
       Boolean(document.querySelector('[data-smoke="perception-experimental-blocker"]')));
+  const coreBoundaryReady =
+    !expectsBoundary ||
+    (Boolean(document.querySelector('[data-smoke="non-english-core-only-boundary"]')) &&
+      bodyText.includes("公开版只开放音标") &&
+      bodyText.includes("去音标练习") &&
+      bodyText.includes("去自由练习") &&
+      !bodyText.includes("实验训练"));
   const visibleButtons = [...document.querySelectorAll("button,a")].filter((element) => {
     const rect = element.getBoundingClientRect();
     return rect.width > 0 && rect.height > 0;
@@ -2349,12 +2393,14 @@ async function assertNarrowViewportRoutes(cdp) {
       assessmentHooksReady &&
       prosodyHooksReady &&
       perceptionHooksReady &&
+      coreBoundaryReady &&
       buttonTextReadable &&
       document.documentElement.scrollWidth <= window.innerWidth + 24,
     sentenceHooksReady,
     assessmentHooksReady,
     prosodyHooksReady,
     perceptionHooksReady,
+    coreBoundaryReady,
     buttonTextReadable,
     scrollWidth: document.documentElement.scrollWidth,
     innerWidth: window.innerWidth,
@@ -2488,23 +2534,36 @@ async function assertLowHeightViewportRoutes(cdp) {
     await clickLanguage(cdp, "fr-FR");
 
     for (const route of [
-      { path: "/drill", selector: '[data-smoke="drill-page"]' },
+      {
+        path: "/drill",
+        selector: '[data-smoke="non-english-core-only-boundary"]',
+        direct: true,
+        boundary: true,
+      },
       {
         path: "/drill/prosody",
-        selector: '[data-smoke="prosody-page"]',
+        selector: '[data-smoke="non-english-core-only-boundary"]',
         direct: true,
+        boundary: true,
       },
       {
         path: "/drill/perception",
-        selector: '[data-smoke="perception-experimental-blocker"]',
+        selector: '[data-smoke="non-english-core-only-boundary"]',
         direct: true,
+        boundary: true,
       },
       { path: "/sentences", selector: '[data-smoke="sentences-page"]' },
-      { path: "/assessment", selector: '[data-smoke="assessment-page"]' },
+      {
+        path: "/assessment",
+        selector: '[data-smoke="non-english-core-only-boundary"]',
+        direct: true,
+        boundary: true,
+      },
       {
         path: "/progress",
-        selector: '[data-smoke="progress-experimental-blocker"]',
+        selector: '[data-smoke="non-english-core-only-boundary"]',
         direct: true,
+        boundary: true,
       },
     ]) {
       await navigate(cdp, route.path, route.selector, route);
@@ -2514,25 +2573,36 @@ async function assertLowHeightViewportRoutes(cdp) {
 (() => {
   const bodyText = document.body?.innerText ?? "";
   const routePath = ${JSON.stringify(route.path)};
+  const expectsBoundary = ${JSON.stringify(Boolean(route.boundary))};
   const sentenceHooksReady =
     routePath !== "/sentences" ||
     (Boolean(document.querySelector('[data-smoke="sentences-page"]')) &&
       Boolean(document.querySelector('[data-smoke="sentence-input-card"]')) &&
       Boolean(document.querySelector('[data-smoke="sentence-recording-card"]')));
   const assessmentHooksReady =
+    expectsBoundary ||
     routePath !== "/assessment" ||
     (Boolean(document.querySelector('[data-smoke="assessment-page"]')) &&
       Boolean(document.querySelector('[data-smoke="assessment-intro-card"]')) &&
       Boolean(document.querySelector('[data-smoke="assessment-start-button"]')) &&
       Boolean(document.querySelector('[data-smoke="assessment-passage-link"]')));
   const prosodyHooksReady =
+    expectsBoundary ||
     routePath !== "/drill/prosody" ||
     (Boolean(document.querySelector('[data-smoke="prosody-page"]')) &&
       Boolean(document.querySelector('[data-smoke="prosody-exercise-header"]')));
   const perceptionHooksReady =
+    expectsBoundary ||
     routePath !== "/drill/perception" ||
     (Boolean(document.querySelector('[data-smoke="perception-page"]')) &&
       Boolean(document.querySelector('[data-smoke="perception-experimental-blocker"]')));
+  const coreBoundaryReady =
+    !expectsBoundary ||
+    (Boolean(document.querySelector('[data-smoke="non-english-core-only-boundary"]')) &&
+      bodyText.includes("公开版只开放音标") &&
+      bodyText.includes("去音标练习") &&
+      bodyText.includes("去自由练习") &&
+      !bodyText.includes("实验训练"));
   const visibleInteractive = [...document.querySelectorAll("button,a")].filter((element) => {
     const rect = element.getBoundingClientRect();
     return rect.width > 0 && rect.height > 0;
@@ -2549,12 +2619,14 @@ async function assertLowHeightViewportRoutes(cdp) {
       assessmentHooksReady &&
       prosodyHooksReady &&
       perceptionHooksReady &&
+      coreBoundaryReady &&
       interactiveTextReadable &&
       document.documentElement.scrollWidth <= window.innerWidth + 24,
     sentenceHooksReady,
     assessmentHooksReady,
     prosodyHooksReady,
     perceptionHooksReady,
+    coreBoundaryReady,
     interactiveTextReadable,
     scrollWidth: document.documentElement.scrollWidth,
     innerWidth: window.innerWidth,

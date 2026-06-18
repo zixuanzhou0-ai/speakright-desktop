@@ -1,15 +1,21 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { Sidebar } from "@/components/layout/sidebar";
 import { SidebarPhonemeList } from "@/components/layout/sidebar-phoneme-list";
 
 const languageMock = vi.hoisted(() => ({
   languageId: "fr-FR" as "en-US" | "es-ES" | "fr-FR" | "ru-RU",
+  pathname: "/phonemes/fr-i",
 }));
 
 vi.mock("@/hooks/use-api-keys", () => ({
   useLanguageConfig: () => ({
     languageId: languageMock.languageId,
   }),
+}));
+
+vi.mock("next/navigation", () => ({
+  usePathname: () => languageMock.pathname,
 }));
 
 afterEach(() => cleanup());
@@ -23,6 +29,27 @@ function renderWithLanguage(
 }
 
 describe("SidebarPhonemeList layout", () => {
+  it("keeps full navigation for English and core-only navigation for non-English", () => {
+    languageMock.languageId = "en-US";
+    languageMock.pathname = "/phonemes/ee";
+    render(<Sidebar />);
+
+    expect(screen.getByText("音标练习")).toBeInTheDocument();
+    expect(screen.getByText("刻意练习")).toBeInTheDocument();
+    expect(screen.getByText("自由练习")).toBeInTheDocument();
+    expect(screen.getByText("发音诊断")).toBeInTheDocument();
+
+    cleanup();
+    languageMock.languageId = "fr-FR";
+    languageMock.pathname = "/phonemes/fr-i";
+    render(<Sidebar />);
+
+    expect(screen.getByText("音标练习")).toBeInTheDocument();
+    expect(screen.getByText("自由练习")).toBeInTheDocument();
+    expect(screen.queryByText("刻意练习")).not.toBeInTheDocument();
+    expect(screen.queryByText("发音诊断")).not.toBeInTheDocument();
+  });
+
   it("keeps English sound units compact on one row", () => {
     renderWithLanguage("en-US", "ee");
 

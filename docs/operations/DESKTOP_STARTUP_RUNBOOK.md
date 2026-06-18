@@ -131,11 +131,11 @@ Release EXE.
   should not appear as phoneme-practice cards; if directly opened from an old
   URL, they should show a Chinese explanation that the content belongs to
   rule/phrase training rather than single-phoneme practice.
-- Drill, free practice, and diagnosis: check that missing/low evidence never
-  presents a confident perfect diagnosis for experimental languages. In both
-  word/sentence drill sessions, quick diagnosis, and full-passage diagnosis,
-  microphone and Azure failures should appear inline in Chinese with a clear
-  recovery path.
+- Drill, diagnosis, and progress: check English remains complete, while
+  Spanish/French/Russian direct access shows the shared core-only boundary and
+  does not expose incomplete training, diagnosis, or mastery evidence. English
+  microphone and Azure failures should still appear inline in Chinese with a
+  clear recovery path.
 - Progress archive: if a benchmark list record remains but the local audio blob
   is missing, playback should show an inline Chinese warning instead of doing
   nothing; delete/clear failures should also stay visible inline.
@@ -271,9 +271,10 @@ videos, bundled A/B word audio, and IPA chart normal/slow word audio, writes
 calls.
 
 Use `desktop:ui-smoke` for release-window page coverage. It opens Settings,
-English, Spanish, French, Russian, drill, free practice, and diagnosis routes,
-checks that the runtime is not `localhost`, and avoids recording, Azure live
-scoring, and ElevenLabs TTS generation. It also checks detail-page reading
+English full-flow routes, Spanish/French/Russian core routes, and non-English
+core-only boundary routes for hidden modules, checks that the runtime is not
+`localhost`, and avoids recording, Azure live scoring, and ElevenLabs TTS
+generation. It also checks detail-page reading
 targets for centered text, no ellipsis/nowrap, no practice-button overlap,
 expected header-audio visibility/clickability readiness, wrapping video selector labels plus selector
 no-overlap/no-overflow runtime checks, Settings/usage long-text wrapping,
@@ -304,8 +305,10 @@ policy.
 ## 2026-06-10 Handoff Notes
 
 - English remains the stable baseline.
-- `es-ES`, `fr-FR`, and `ru-RU` remain experimental; `evidenceMastery` is still
-  disabled for these languages.
+- `es-ES`, `fr-FR`, and `ru-RU` remain experimental. Their public navigation is
+  core-only: phoneme/sound-unit practice and free practice are visible; drill,
+  diagnosis, progress/archive, and mastery/evidence routes show the shared
+  `non-english-core-only-boundary` if opened directly.
 - The Settings language-pack installer UI has been removed because multilingual
   audio is bundled.
 - The phoneme sidebar uses compact rows for English and two-line wrapping rows
@@ -385,7 +388,8 @@ policy.
 - If the window does not appear, check for an existing `speakright.exe` process,
   close it, then run `npm run desktop:launch-release` again.
 - If the app opens, spend the first pass on manual QA rather than new features:
-  settings, English, Spanish, French, Russian, drill, free practice, diagnosis.
+  Settings, English full flow, Spanish/French/Russian phoneme practice and free
+  practice, plus the non-English core-only boundary pages.
 - If a bug appears, capture the language, page, sound unit or word, action taken,
   and whether it is audio, video, scoring, recording replay, layout, or wording.
 - Only rebuild with `npm run desktop:run-release` after code changes or if the
@@ -421,14 +425,15 @@ policy.
   matrix. It maps each RC requirement to source files, tests, smoke checks, or
   validation commands.
 - Formal mastery recording remains English-only. Spanish, French, and Russian
-  can practice, score, and receive feedback, but they stay experimental and do
-  not write formal mastery/evidenceMastery.
+  expose only phoneme/sound-unit practice and free practice in the public
+  navigation; they stay experimental and do not write formal
+  mastery/evidenceMastery.
 - `desktop:ui-smoke` is the authoritative Release EXE smoke for UI regressions:
-  it checks Settings, English, Spanish, French, Russian, drill, free practice,
-  diagnosis, direct progress-archive access, detail task text readability,
-  expected header-audio visibility/clickability readiness, no practice-button
-  overlap, wrapping video selector labels, and that the app is not served from
-  localhost.
+  it checks Settings, English full-flow routes, Spanish/French/Russian core
+  routes, non-English core-only boundary routes for drill/diagnosis/progress,
+  detail task text readability, expected header-audio visibility/clickability
+  readiness, no practice-button overlap, wrapping video selector labels, and
+  that the app is not served from localhost.
 - Use `audio:parity:dry-run` for the non-English audio gate; it must remain a
   zero-generation audit.
 
@@ -443,8 +448,9 @@ policy.
   visibility/clickability/label runtime checks, video selector
   no-overlap/no-overflow runtime checks, a
   narrow desktop window, and a low-height desktop window.
-- Non-English diagnosis remains experimental and now treats omission/insertion
-  miscues as insufficient evidence for trusted overall scores.
+- Non-English diagnosis remains experimental and is not exposed in public
+  navigation. Direct non-English diagnosis routes show the shared core-only
+  boundary rather than presenting an incomplete trusted score.
 - Bundled local A/B word audio now uses peak-safe Web Audio gain at playback
   time so English and Spanish/French/Russian local word examples are closer to
   teaching video loudness without regenerating TTS or allowing obvious clipping.
@@ -468,12 +474,13 @@ policy.
   breakdown. The header speaker component also refuses external-only references
   and browser-TTS fallback audio, so page-level filtering is no longer the only
   guard.
-- Advanced pack-runner and HVPT perception mastery writes are now gated by
-  `canRecordFormalMastery(languageId)`, keeping Spanish, French, and Russian
-  practice/feedback-only while experimental.
+- Advanced pack-runner and HVPT perception mastery writes are gated by
+  `canRecordFormalMastery(languageId)`, and non-English direct access to those
+  routes now shows `non-english-core-only-boundary` while the languages remain
+  experimental.
 - Direct progress-archive access is also language-gated: English can show the
-  formal archive, while Spanish, French, and Russian see an experimental blocker
-  instead of English mastery archive wording.
+  formal archive, while Spanish, French, and Russian see the shared core-only
+  boundary instead of English mastery archive wording.
 - Latest local verification:
   - Focused quick diagnosis report storage tests: `3` files and `23` tests
     passed, covering current report reads, legacy English migration,
@@ -507,8 +514,8 @@ policy.
     then `6` files and `28` tests, passed.
   - Mastery/HVPT policy focused tests: `4` files and `22` tests passed.
   - Progress-archive boundary focused tests: `3` files and `13` tests passed,
-    including the direct `/progress` experimental blocker and updated Release
-    smoke route coverage.
+    including the direct `/progress` non-English core-only boundary and updated
+    Release smoke route coverage.
   - Latest settled-main validation results are centralized in
     `docs/operations/RC_EVIDENCE_AUDIT.md` to avoid stale counts across
     multiple handoff documents.
@@ -520,7 +527,7 @@ policy.
   - `npm.cmd run desktop:ui-smoke`: passed from Release EXE with centered target
     text assertions, scoring-breakdown visibility/readability checks in normal,
     narrow, and low-height detail windows,
-    `/progress` experimental blocker route coverage,
+    `/progress` non-English core-only boundary route coverage,
     corrupt `/assessment` quick diagnosis report storage warning coverage,
     corrupt `/drill` diagnosis-report storage warning coverage,
     `scoringTileAudioPolicy=ok`,

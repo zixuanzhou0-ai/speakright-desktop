@@ -9,21 +9,36 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLanguageConfig } from "@/hooks/use-api-keys";
 import { cn } from "@/lib/utils";
 import { SidebarPhonemeList } from "./sidebar-phoneme-list";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV_ITEMS = [
-  { href: "/phonemes", label: "音标练习", icon: AudioLines },
-  { href: "/drill", label: "刻意练习", icon: Target },
-  { href: "/sentences", label: "自由练习", icon: MessageSquareText },
-  { href: "/assessment", label: "发音诊断", icon: ClipboardCheck },
+  { href: "/phonemes", label: "音标练习", icon: AudioLines, englishOnly: false },
+  { href: "/drill", label: "刻意练习", icon: Target, englishOnly: true },
+  {
+    href: "/sentences",
+    label: "自由练习",
+    icon: MessageSquareText,
+    englishOnly: false,
+  },
+  {
+    href: "/assessment",
+    label: "发音诊断",
+    icon: ClipboardCheck,
+    englishOnly: true,
+  },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { languageId } = useLanguageConfig();
   const isPhonemes = pathname.startsWith("/phonemes");
   const isSettings = pathname === "/settings";
+  const visibleNavItems = NAV_ITEMS.filter(
+    (item) => !item.englishOnly || languageId === "en-US",
+  );
 
   // Extract current phoneme slug from path like /phonemes/ee
   const currentSlug = isPhonemes ? (pathname.split("/")[2] ?? null) : null;
@@ -32,7 +47,7 @@ export function Sidebar() {
     <aside className="flex h-full w-[260px] shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground">
       {/* Navigation */}
       <div className="flex flex-col gap-0.5 px-2 py-3">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+        {visibleNavItems.map(({ href, label, icon: Icon }) => {
           const isActive = pathname.startsWith(href);
           return (
             <Link

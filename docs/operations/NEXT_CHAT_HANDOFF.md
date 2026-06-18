@@ -24,8 +24,10 @@ Use this repository for SpeakRight Desktop. Do not switch to the older
 E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 ```
 
-- `es-ES`, `fr-FR`, and `ru-RU` remain experimental. They can provide training
-  feedback, but `evidenceMastery` remains disabled.
+- `es-ES`, `fr-FR`, and `ru-RU` remain experimental. Their public navigation is
+  core-only: phoneme/sound-unit practice and free practice are visible; drill,
+  diagnosis, progress/archive, and mastery/evidence surfaces show the shared
+  `non-english-core-only-boundary` if directly opened.
 - Do not generate ElevenLabs audio or spend TTS credits unless the user
   explicitly confirms it.
 - Windows artifacts are still unsigned; this remains the public-release blocker.
@@ -129,10 +131,12 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - The `/drill` landing page now stacks its header actions on narrow windows and
   uses wrap-safe classes for top CTA buttons, status badges, today-plan badges,
   training-memory badges, and training-pack metadata badges.
-- The non-English `/drill` landing page now exposes
-  `drill-experimental-boundary-warning` as a visible `role="status"` warning
-  and Release EXE smoke verifies that it says experimental practice does not
-  generate formal mastery or use whole-word scores as fake mastery evidence.
+- Non-English `/drill`, `/assessment`, `/progress`, and direct advanced
+  training routes now expose the shared
+  `non-english-core-only-boundary` as a visible `role="status"` page. Release
+  EXE smoke verifies that the boundary says the public version only opens
+  phoneme/sound-unit practice and free practice, with buttons back to those two
+  core paths.
 - Full-passage diagnosis badges for target packs, feature labels, evidence
   words, and benchmark deltas now use the same wrap-safe badge treatment.
 - Quick assessment action buttons and full-passage diagnosis segment text now
@@ -374,10 +378,10 @@ git status --short --branch
   horizontal overflow.
 - Full-passage diagnosis and training evidence are now protected as English
   advanced/formal-evidence surfaces. Direct `/assessment/passage` and
-  `/drill/evidence` access under Spanish/French/Russian shows experimental
-  blockers instead of loading English coverage passages, English training-pack
-  evidence, or formal mastery archives; English direct routes keep page hooks
-  and wrap-ready headers for Release smoke.
+  `/drill/evidence` access under Spanish/French/Russian shows the shared
+  core-only boundary instead of loading English coverage passages, English
+  training-pack evidence, or formal mastery archives; English direct routes keep
+  page hooks and wrap-ready headers for Release smoke.
 - Corrupt English mastery profile storage now falls back to a temporary empty
   profile with a visible Chinese recovery alert instead of silently showing a
   blank archive. `/progress` and `/drill/evidence` show the alert; corrupt
@@ -395,8 +399,8 @@ git status --short --branch
   Chinese reset/export guidance instead of silently hiding the broken history.
 - English training-pack direct routes now have page/intro/course-map smoke hooks
   and wrap-ready headers. Release EXE smoke opens `/drill/pack/ee-ih` in English
-  and checks French direct access shows `pack-runner-experimental-blocker`
-  instead of English pack content.
+  and checks French direct access shows `non-english-core-only-boundary` instead
+  of English pack content.
 - Quick diagnosis word and paragraph recording cards now show recorder startup
   errors and Azure scoring errors inline with `role="alert"`, so missing
   microphone permission, missing Azure keys, network failure, or quota failure
@@ -547,19 +551,17 @@ git status --short --branch
   `lowHeightViewport=ok`, covering Settings, long rule detail pages, drill, free
   practice, and diagnosis from the Release EXE. The narrow and low-height detail
   passes also require scoring-breakdown placeholder/IPA-reference readiness.
-- Formal mastery recording is English-only. Non-English free practice and
-  advanced drill pages may score and provide feedback, but they should not write
-  formal mastery/evidenceMastery while the languages remain experimental.
-  Direct English advanced pack-runner routes now show the
-  `pack-runner-experimental-blocker` page for Spanish/French/Russian instead of
-  loading English pack content in an experimental-language context. HVPT
-  perception writes and any remaining formal mastery writes are gated by
-  `canRecordFormalMastery(languageId)`.
+- Formal mastery recording is English-only. Non-English public navigation only
+  exposes phoneme/sound-unit practice and free practice; drill, diagnosis,
+  advanced pack routes, and progress/archive routes show the shared
+  `non-english-core-only-boundary` instead of incomplete experimental pages or
+  English pack content. HVPT perception writes and any remaining formal mastery
+  writes are gated by `canRecordFormalMastery(languageId)`.
 - Direct progress-archive access is language-gated too: English still shows the
-  formal archive, while Spanish/French/Russian show
-  `progress-experimental-blocker` instead of English mastery archive metrics or
-  stage wording. The blocker path also avoids loading the formal mastery profile
-  or benchmark archive data for experimental languages.
+  formal archive, while Spanish/French/Russian show the shared core-only
+  boundary instead of English mastery archive metrics or stage wording. The
+  boundary path also avoids loading the formal mastery profile or benchmark
+  archive data for experimental languages.
 - Recording startup failures now surface actionable Chinese messages instead of
   a generic permission prompt: denied permission, missing microphone, busy
   device, unsupported recorder runtime, and generic startup failure are
@@ -624,12 +626,13 @@ Current gate summary is intentionally compact here:
   `npm.cmd run desktop:ui-smoke`, and `npm.cmd run desktop:launch-release`.
 - Focused suites cover open-source governance, no-secret scans, source-build
   docs, IPA audit exports, centered/wrapping target text, failure-state Chinese
-  alerts, experimental-language blockers, audio-source policy, and local-save
+  alerts, non-English core-only boundaries, audio-source policy, and local-save
   warnings.
-- Release EXE smoke covers Settings, English, Spanish, French, Russian, drill,
-  free practice, diagnosis, progress, narrow-window layout, low-height layout,
-  scoring tile audio policy, detail-header/scoring-tile source parity, corrupt
-  local-data warnings, and confirms `releaseServedFromDevServer=false`.
+- Release EXE smoke covers Settings, English full-flow routes,
+  Spanish/French/Russian core routes and core-only boundary routes,
+  narrow-window layout, low-height layout, scoring tile audio policy,
+  detail-header/scoring-tile source parity, corrupt local-data warnings, and
+  confirms `releaseServedFromDevServer=false`.
 - Release EXE launch opens the static Tauri bundle and the verification process
   should be closed afterward.
 - No ElevenLabs generation or TTS spend is part of this validation path.
@@ -656,9 +659,9 @@ Start with the Release EXE and inspect these areas before adding new features:
   wrapping, hidden speaker icons for units without local target audio.
 - Russian: rule units, spelling-to-sound units, long Cyrillic text, local audio
   playback.
-- Drill, free practice, and diagnosis: confirm no English content leaks into
-  non-English training and low-evidence diagnosis does not show trusted perfect
-  scores.
+- Drill, diagnosis, and progress: confirm English remains complete, while
+  Spanish/French/Russian direct access shows the shared core-only boundary and
+  does not leak English training, diagnosis, or mastery evidence.
 - RC evidence: confirm `docs/operations/RC_EVIDENCE_AUDIT.md` still maps every
   quality claim to a test, smoke check, validation command, or source file.
 

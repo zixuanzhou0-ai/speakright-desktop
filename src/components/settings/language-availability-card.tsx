@@ -66,7 +66,10 @@ function hasSecret(value?: string): boolean {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function recommendation(rows: AvailabilityRow[]): string {
+function recommendation(
+  rows: AvailabilityRow[],
+  languageId: string,
+): string {
   const missingScoring = rows.find(
     (row) => row.id === "azure" && row.statusKind === "warning",
   );
@@ -76,7 +79,11 @@ function recommendation(rows: AvailabilityRow[]): string {
   if (pending) return "正在检查内置发音资源；检查完成前不需要安装额外语言包。";
 
   const missing = rows.find((row) => !row.ready);
-  if (!missing) return "可以直接开始今日训练。";
+  if (!missing) {
+    return languageId === "en-US"
+      ? "可以直接开始今日训练。"
+      : "可以直接开始音标/发音单位练习或自由练习；刻意练习和发音诊断仍在建设中。";
+  }
   if (missing.id === "tts") {
     return "下一步：配置 ElevenLabs；内置资源之外的长句示范需要 TTS。";
   }
@@ -255,7 +262,8 @@ export function LanguageAvailabilityCard() {
             </div>
             <CardDescription className="break-words [overflow-wrap:anywhere]">
               当前：{profile.displayName}。这里把评分、标准示范、单词词典发音和
-              AI 教练分开显示，避免把不同服务混在一起。
+              AI 教练分开显示，避免把不同服务混在一起。英语开放完整训练流；
+              西语、法语、俄语公开版先聚焦核心练习。
             </CardDescription>
           </div>
           <Badge
@@ -304,6 +312,16 @@ export function LanguageAvailabilityCard() {
             );
           })}
         </div>
+        <div
+          className="rounded-lg border bg-muted/35 px-3 py-2 text-sm text-muted-foreground"
+          data-smoke="language-availability-public-scope"
+        >
+          <p className="break-words [overflow-wrap:anywhere]">
+            {languageConfig.languageId === "en-US"
+              ? "英语当前包含音标练习、自由练习、刻意练习、发音诊断和训练证据。"
+              : `${profile.shortLabel}当前公开入口为音标/发音单位练习和自由练习；刻意练习、发音诊断和 mastery 证据暂不展示。`}
+          </p>
+        </div>
         <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-sm">
           <Volume2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
           <p
@@ -311,7 +329,7 @@ export function LanguageAvailabilityCard() {
             data-smoke="language-availability-recommendation"
           >
             <span className="font-medium">推荐：</span>
-            {recommendation(rows)}
+            {recommendation(rows, languageConfig.languageId)}
           </p>
         </div>
       </CardContent>

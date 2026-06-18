@@ -78,6 +78,8 @@ describe("language availability card", () => {
     expect(screen.getByText(/负责单词\/短语复读/)).toBeInTheDocument();
     expect(screen.getByText(/exact 单音短音频仍以音系清单为准/)).toBeInTheDocument();
     expect(screen.getByText(/缺口不会冒充 speaker/)).toBeInTheDocument();
+    expect(screen.getByText(/当前公开入口为音标\/发音单位练习和自由练习/)).toBeInTheDocument();
+    expect(screen.getByText(/刻意练习、发音诊断和 mastery 证据暂不展示/)).toBeInTheDocument();
     expect(screen.queryByText("缺失或不可读")).not.toBeInTheDocument();
   });
 });

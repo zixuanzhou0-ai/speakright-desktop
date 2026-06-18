@@ -23,6 +23,11 @@ not included in this release track.
   Each bundled item now has `blue` and `pink` voice variants, matching the
   English local-audio model.
 - Local articulation assets live under `public/videos/language-assets/`.
+- Public navigation scope is intentionally conservative: all four languages
+  expose phoneme/sound-unit practice and free practice. Deliberate practice,
+  pronunciation diagnosis, formal progress, and mastery/evidence views are
+  English-only until each non-English language has language-specific evidence
+  gates and release proof. Spanish, French, and Russian remain experimental.
 
 ## Public Download Status
 
@@ -76,9 +81,9 @@ For Windows installer use, source builds, and first-launch expectations, see
 
 For the next Codex chat or manual-testing pass, start with
 `docs/operations/NEXT_CHAT_HANDOFF.md` and the runbook's `Start Next Chat`
-checklist. The first pass should use the Release EXE and cover Settings,
-English, Spanish, French, Russian, drill, free practice, and diagnosis before
-adding new work.
+checklist. The first pass should use the Release EXE and cover Settings, the
+full English flow, and Spanish/French/Russian core practice plus the
+non-English boundary pages before adding new work.
 
 For the current Release Candidate evidence matrix, see
 `docs/operations/RC_EVIDENCE_AUDIT.md`.
@@ -150,8 +155,9 @@ building. `desktop:launch-release` also refuses stale static-export packages and
 duplicate `speakright.exe` processes, reports the running process IDs, and prints
 a visible launch request, Release EXE path, child PID, and no-localhost boundary
 before it detaches the app process. `desktop:ui-smoke` launches the Release EXE,
-opens Settings, English, Spanish, French, Russian, drill, free practice, and
-diagnosis routes, and confirms the runtime is not served from `localhost`.
+opens Settings, English full-flow routes, Spanish/French/Russian core routes,
+non-English training/diagnosis boundary routes, and confirms the runtime is not
+served from `localhost`.
 
 GitHub Actions are split by change type: source, public asset, script,
 `src-tauri`, or package changes still run the full Windows desktop build, while
@@ -239,9 +245,9 @@ README/docs-only changes run the lightweight Docs Check workflow.
   through the shared header playback policy.
 - Recording replay and benchmark playback now use the shared audio-player hook,
   so repeated replay clicks stop the previous blob and cleanup stays centralized.
-- Direct advanced pack-runner routes and direct progress-archive access now show
-  experimental-language blockers instead of loading English training packs or
-  formal English mastery archives for Spanish, French, or Russian. HVPT
+- Direct non-English access to drill, diagnosis, advanced pack-runner, and
+  progress/archive routes now shows the shared core-only boundary instead of
+  loading incomplete training or English formal-evidence surfaces. HVPT
   perception and formal mastery writes remain gated by the English-only formal
-  mastery policy, so Spanish, French, and Russian stay practice/feedback-only
+  mastery policy, so Spanish, French, and Russian stay core-practice
   experimental modules.
