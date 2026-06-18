@@ -157,7 +157,7 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
   }),
   spanishAnimationAsset("es-x", "chi-sound", {
     audioIpa: "/x/",
-    exactAssessmentAliases: ["x", "h"],
+    exactAssessmentAliases: ["x"],
   }),
   spanishAnimationAsset("es-ny", "n-left-sound", {
     audioIpa: "/ɲ/",
@@ -410,7 +410,7 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
     "Russian х /x/ primary local asset.",
   ], {
     audioIpa: "/x/",
-    exactAssessmentAliases: ["x", "h"],
+    exactAssessmentAliases: ["x"],
   }),
   russianSeeingSpeechAsset("ru-ts", "ru-ts", [
     "Russian ц /ts/ primary local asset; Commons /ts/ audio is available as extra reference.",
@@ -427,7 +427,7 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
     {
       headerAudioSrc: "/audio/language-assets/ru-RU/header-clips/ru-ch.m4a",
       audioIpa: "/tɕ/",
-      exactAssessmentAliases: ["tɕ", "t͡ɕ", "tʃ", "ch"],
+      exactAssessmentAliases: ["tɕ", "t͡ɕ"],
     },
   ),
   russianSeeingSpeechAsset(
@@ -439,7 +439,7 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
     {
       headerAudioSrc: "/audio/language-assets/ru-RU/header-clips/ru-shch.m4a",
       audioIpa: "/ɕː/",
-      exactAssessmentAliases: ["ɕː", "ʃː"],
+      exactAssessmentAliases: ["ɕː"],
     },
   ),
   russianSeeingSpeechAsset("ru-sh-zh", "ru-sh", [
@@ -451,13 +451,13 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
     "Russian always-hard ш /ʂ/ exact local asset; distinct from soft щ /ɕː/.",
   ], {
     audioIpa: "/ʂ/",
-    exactAssessmentAliases: ["ʂ", "ʃ", "sh"],
+    exactAssessmentAliases: ["ʂ"],
   }),
   russianSeeingSpeechAsset("ru-zh", "ru-zh", [
     "Russian always-hard ж /ʐ/ exact local asset; final devoicing is a separate rule.",
   ], {
     audioIpa: "/ʐ/",
-    exactAssessmentAliases: ["ʐ", "ʒ", "zh"],
+    exactAssessmentAliases: ["ʐ"],
   }),
   russianSeeingSpeechAsset("ru-ts-ch-shch", "ru-ts", [
     "ц/ч/щ group: ц /ts/ is primary; ч and щ use Commons audio plus /ɕ/ proxy video.",
