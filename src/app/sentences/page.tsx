@@ -280,6 +280,7 @@ export default function SentencesPage() {
           const reliability = reliabilityFromRecordingQuality(
             recordingQuality.report,
             {
+              languageId,
               evidenceStrength:
                 transfer.evidences.length >= 2 ? "strong" : "fair",
               note:

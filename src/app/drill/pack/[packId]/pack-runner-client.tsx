@@ -609,6 +609,7 @@ export default function TrainingPackPage() {
         qualityReportsRef.current.length > 0
           ? {
               ...reliabilityFromRecordingQuality(null, {
+                languageId,
                 evidenceStrength: targetScores.length >= 3 ? "strong" : "fair",
                 note:
                   uniqueQualityIssues.length > 0
@@ -814,7 +815,9 @@ export default function TrainingPackPage() {
           nextCue: analysis.nextCue,
           passed: false,
           usedFallback: analysis.usedFallback,
-          assessmentReliability: reliabilityFromRecordingQuality(qualityReport),
+          assessmentReliability: reliabilityFromRecordingQuality(qualityReport, {
+            languageId,
+          }),
         },
       ]);
     }

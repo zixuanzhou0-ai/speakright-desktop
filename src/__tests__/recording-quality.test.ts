@@ -1,7 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { buildRecordingQualityReportFromMetrics } from "@/lib/recording-quality";
+import {
+  buildRecordingQualityReportFromMetrics,
+  reliabilityFromRecordingQuality,
+} from "@/lib/recording-quality";
 
 describe("recording quality", () => {
+  const stableReport = () =>
+    buildRecordingQualityReportFromMetrics({
+      durationMs: 2_000,
+      peak: 0.35,
+      rms: 0.08,
+      silentRatio: 0.08,
+      clippedRatio: 0,
+      expectedMode: "sentence",
+    });
+
   it("blocks recordings that are too short", () => {
     const report = buildRecordingQualityReportFromMetrics({
       durationMs: 320,
@@ -66,5 +79,28 @@ describe("recording quality", () => {
       "clipping",
       "long-silence",
     ]);
+  });
+
+  it("keeps stable English recordings eligible for formal mastery evidence", () => {
+    const reliability = reliabilityFromRecordingQuality(stableReport(), {
+      languageId: "en-US",
+    });
+
+    expect(reliability.canPromoteMastery).toBe(true);
+    expect(reliability.note).toContain("可计入掌握度");
+  });
+
+  it("blocks formal mastery promotion for experimental languages", () => {
+    for (const languageId of ["es-ES", "fr-FR", "ru-RU"] as const) {
+      const reliability = reliabilityFromRecordingQuality(stableReport(), {
+        languageId,
+        note: "录音质量稳定，可计入掌握度。",
+      });
+
+      expect(reliability.canPromoteMastery, languageId).toBe(false);
+      expect(reliability.note, languageId).toContain("experimental");
+      expect(reliability.note, languageId).toContain("不生成正式 mastery");
+      expect(reliability.note, languageId).not.toContain("可计入掌握度");
+    }
   });
 });

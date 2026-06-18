@@ -1,3 +1,5 @@
+import { canRecordFormalMastery } from "@/lib/mastery-language-policy";
+import type { LanguageId } from "@/types/language";
 import type { AssessmentReliability } from "@/types/training";
 
 export type RecordingQualitySeverity = "blocker" | "warning" | "info";
@@ -297,21 +299,31 @@ export function reliabilityFromRecordingQuality(
   options: {
     alignment?: AssessmentReliability["alignment"];
     evidenceStrength?: AssessmentReliability["evidenceStrength"];
+    languageId?: LanguageId;
     note?: string;
   } = {},
 ): AssessmentReliability {
   const alignment = options.alignment ?? "good";
   const evidenceStrength = options.evidenceStrength ?? "strong";
+  const languageId = options.languageId ?? "en-US";
+  const canUseFormalMastery = canRecordFormalMastery(languageId);
   const issues = report?.issues ?? [];
   const hasWarning = issues.some((item) => item.severity === "warning");
   const hasBlocker = issues.some((item) => item.severity === "blocker");
   const canPromoteMastery =
+    canUseFormalMastery &&
     !!report?.canSubmit &&
     !hasWarning &&
     !hasBlocker &&
     alignment === "good" &&
     evidenceStrength !== "thin" &&
     evidenceStrength !== "invalid";
+  const note = !canUseFormalMastery
+    ? "当前语言为 experimental，本次只作为练习观察，不生成正式 mastery。"
+    : (options.note ??
+      (canPromoteMastery
+        ? "录音质量和对齐足够稳定，可计入掌握度。"
+        : "这次评分可作为观察，但不会提升掌握度。"));
 
   return {
     audioQualityScore: report?.score,
@@ -319,10 +331,6 @@ export function reliabilityFromRecordingQuality(
     alignment,
     evidenceStrength,
     canPromoteMastery,
-    note:
-      options.note ??
-      (canPromoteMastery
-        ? "录音质量和对齐足够稳定，可计入掌握度。"
-        : "这次评分可作为观察，但不会提升掌握度。"),
+    note,
   };
 }

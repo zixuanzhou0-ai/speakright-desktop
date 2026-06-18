@@ -126,6 +126,7 @@ export default function ScenariosPage() {
       transferSummary.evidences.length > 0
     ) {
       const reliability = reliabilityFromRecordingQuality(quality.report, {
+        languageId,
         evidenceStrength:
           transferSummary.evidences.length >= 2 ? "strong" : "fair",
         note:

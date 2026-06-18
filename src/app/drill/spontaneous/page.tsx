@@ -165,6 +165,7 @@ export default function SpontaneousPage() {
         transferLayer: "spontaneous" as const,
       };
       const reliability = reliabilityFromRecordingQuality(quality.report, {
+        languageId,
         evidenceStrength:
           transferSummary.evidences.length >= 2 ? "strong" : "fair",
         note:
