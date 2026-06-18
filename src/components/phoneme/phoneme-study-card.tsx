@@ -17,6 +17,7 @@ import {
   getPhonologyAudioStatusLabel,
   getPhonologyInventoryEntry,
   getPhonologyLayerLabel,
+  getPhonologyTilePolicyLabel,
   getPhonologyTilePolicyDescription,
 } from "@/lib/language-phonology-inventory";
 import { getLanguageResourceSite } from "@/lib/language-resource-sites";
@@ -429,6 +430,9 @@ export function PhonemeStudyCard({
               </Badge>
               <Badge variant="outline" className="text-[10px]">
                 {getPhonologyAudioStatusLabel(inventoryEntry.audioStatus)}
+              </Badge>
+              <Badge variant="outline" className="text-[10px]">
+                tile：{getPhonologyTilePolicyLabel(inventoryEntry.tilePolicy)}
               </Badge>
             </div>
             {phoneme.description && (
