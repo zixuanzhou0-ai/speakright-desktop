@@ -24,8 +24,10 @@ import {
 import { isPlayableHeaderAudioSrc } from "@/lib/audio-playback-policy";
 import {
   getPhonologyInventoryEntry,
+  getPhonologyLayerLabel,
   getPhonologyTilePolicyDescription,
   getPhonologyTilePolicyLabel,
+  type PhonologyInventoryLayer,
   type PhonologyInventoryTilePolicy,
 } from "@/lib/language-phonology-inventory";
 import { getBarColor } from "@/lib/score-utils";
@@ -59,11 +61,21 @@ interface PhonemeTilePlaybackOptions {
 
 interface ScoringTilePolicyInfo {
   slug?: string;
+  layer?: PhonologyInventoryLayer;
+  layerLabel?: string;
   tilePolicy?: PhonologyInventoryTilePolicy;
   label?: string;
   shortLabel?: string;
   description?: string;
 }
+
+const TILE_LAYER_SHORT_LABELS: Record<PhonologyInventoryLayer, string> = {
+  phoneme: "音素",
+  allophone: "实现音",
+  contrast: "对比",
+  "connected-speech-rule": "语流",
+  prosody: "韵律",
+};
 
 export function isScoringTileAudioPlayable(audioUrl?: string): boolean {
   return isPlayableHeaderAudioSrc(audioUrl);
@@ -81,6 +93,9 @@ function getScoringTilePolicyInfo(
     ? getPhonologyInventoryEntry(languageId, resolved.slug)
     : undefined;
   const tilePolicy = inventoryEntry?.tilePolicy;
+  const layerShortLabel = inventoryEntry
+    ? TILE_LAYER_SHORT_LABELS[inventoryEntry.layer]
+    : "";
 
   if (!tilePolicy) {
     return {
@@ -93,13 +108,15 @@ function getScoringTilePolicyInfo(
 
   const shortLabel =
     tilePolicy === "clickable-exact-header"
-      ? "可听"
+      ? `${layerShortLabel}可听`
       : tilePolicy === "rule-guidance-only"
-        ? "规则"
-        : "未验证";
+        ? `${layerShortLabel}规则`
+        : `${layerShortLabel}未验证`;
 
   return {
     slug: inventoryEntry.slug,
+    layer: inventoryEntry.layer,
+    layerLabel: getPhonologyLayerLabel(inventoryEntry.layer),
     tilePolicy,
     label: getPhonologyTilePolicyLabel(tilePolicy),
     shortLabel,
@@ -317,13 +334,15 @@ export function PhonemeBlock({
       aria-disabled={hasAudio ? "false" : "true"}
       aria-label={hasAudio ? `播放音标 ${displayLabel}` : undefined}
       title={
-        hasAudio
-          ? (policyInfo.description ?? undefined)
-          : `${score} 分 · ${displayLabel} · ${
-              policyInfo.label ?? "暂无本地音频"
-            }：${policyInfo.description ?? "只显示分数，不播放未验证音频。"}`
+        `${score} 分 · ${displayLabel}${
+          policyInfo.layerLabel ? ` · ${policyInfo.layerLabel}` : ""
+        } · ${policyInfo.label ?? (hasAudio ? "可听" : "暂无本地音频")}：${
+          policyInfo.description ?? "只显示分数，不播放未验证音频。"
+        }`
       }
       data-smoke="assessment-phoneme-tile"
+      data-phonology-layer={policyInfo.layer ?? ""}
+      data-phonology-layer-label={policyInfo.layerLabel ?? ""}
       data-audio-playable={hasAudio ? "true" : "false"}
       data-audio-kind={audioInfo?.kind ?? "none"}
       data-audio-policy={policyInfo.tilePolicy ?? "none"}

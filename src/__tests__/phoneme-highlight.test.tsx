@@ -129,7 +129,11 @@ describe("PhonemeHighlight", () => {
         "clickable-exact-header",
       );
       expect(tile).toHaveAttribute("data-audio-policy-label", "精确短音频");
-      expect(tile.textContent).toContain("可听");
+      expect(tile).toHaveAttribute("data-phonology-layer", "phoneme");
+      expect(tile).toHaveAttribute("data-phonology-layer-label", "音素");
+      expect(tile.textContent).toContain("音素可听");
+      expect(tile.getAttribute("title")).toContain("音素");
+      expect(tile.getAttribute("title")).toContain("精确短音频");
       expect(tile.getAttribute("data-audio-src")).toContain(
         "/audio/language-assets/es-ES/header-clips/",
       );
@@ -228,7 +232,10 @@ describe("PhonemeHighlight", () => {
       );
       expect(tile).toHaveAttribute("data-audio-policy-label", "音频未验证");
       expect(tile).toHaveAttribute("data-audio-policy-slug", "es-n");
-      expect(tile?.textContent).toContain("未验证");
+      expect(tile).toHaveAttribute("data-phonology-layer", "phoneme");
+      expect(tile).toHaveAttribute("data-phonology-layer-label", "音素");
+      expect(tile?.textContent).toContain("音素未验证");
+      expect(tile?.getAttribute("title")).toContain("音素");
       expect(tile?.getAttribute("data-audio-src")).toBe("");
     }
   });
@@ -396,6 +403,11 @@ describe("PhonemeHighlight", () => {
         "score-only-unverified",
       );
       expect(tile).toHaveAttribute("data-audio-policy-label", "音频未验证");
+      expect(tile).toHaveAttribute("data-phonology-layer", "contrast");
+      expect(tile).toHaveAttribute(
+        "data-phonology-layer-label",
+        "对比/变体",
+      );
       expect(tile?.getAttribute("data-audio-start-ms")).toBe("");
     }
 
@@ -414,7 +426,13 @@ describe("PhonemeHighlight", () => {
       "data-audio-policy-slug",
       "ru-unstressed-o-a",
     );
-    expect(reductionTile).toHaveTextContent("规则");
+    expect(reductionTile).toHaveAttribute("data-phonology-layer", "prosody");
+    expect(reductionTile).toHaveAttribute(
+      "data-phonology-layer-label",
+      "韵律/重音",
+    );
+    expect(reductionTile).toHaveTextContent("韵律规则");
+    expect(reductionTile?.getAttribute("title")).toContain("韵律/重音");
     expect(reductionTile?.getAttribute("data-audio-start-ms")).toBe("");
   });
 
@@ -540,12 +558,15 @@ describe("PhonemeHighlight", () => {
     expect(tile).toHaveAttribute("data-audio-policy", "score-only-unverified");
     expect(tile).toHaveAttribute("data-audio-policy-label", "音频未验证");
     expect(tile).toHaveAttribute("data-audio-policy-slug", "es-p");
-    expect(tile).toHaveTextContent("未验证");
+    expect(tile).toHaveAttribute("data-phonology-layer", "phoneme");
+    expect(tile).toHaveAttribute("data-phonology-layer-label", "音素");
+    expect(tile).toHaveTextContent("音素未验证");
     expect(tile.getAttribute("aria-label")).toBeNull();
     expect(tile.getAttribute("role")).toBeNull();
     expect(tile.getAttribute("tabindex")).toBe("-1");
     expect(tile.getAttribute("title")).toContain("音频未验证");
     expect(tile.getAttribute("title")).toContain("只显示分数");
+    expect(tile.getAttribute("title")).toContain("音素");
 
     fireEvent.click(tile);
     act(() => {
@@ -573,9 +594,15 @@ describe("PhonemeHighlight", () => {
     expect(tile).toHaveAttribute("data-audio-policy", "rule-guidance-only");
     expect(tile).toHaveAttribute("data-audio-policy-label", "规则说明");
     expect(tile).toHaveAttribute("data-audio-policy-slug", "es-nasal-place");
-    expect(tile).toHaveTextContent("规则");
+    expect(tile).toHaveAttribute(
+      "data-phonology-layer",
+      "connected-speech-rule",
+    );
+    expect(tile).toHaveAttribute("data-phonology-layer-label", "语流规则");
+    expect(tile).toHaveTextContent("语流规则");
     expect(tile.getAttribute("title")).toContain("规则说明");
     expect(tile.getAttribute("title")).toContain("不作单音播放");
+    expect(tile.getAttribute("title")).toContain("语流规则");
   });
 
   it("clears pending click playback and active audio on unmount", () => {
