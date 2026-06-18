@@ -1,7 +1,7 @@
 const CJK_TEXT_PATTERN = /[\u3400-\u9fff]/;
 
 export const STANDARD_TTS_UNAVAILABLE_MESSAGE =
-  "无法播放标准示范：请先在设置页配置 ElevenLabs，或改用已内置发音资源的练习内容。单词词典发音只负责单词复读。";
+  "无法播放标准示范：请先在设置页配置 ElevenLabs，或改用随应用提供示范音频的练习内容。单词词典发音只负责单词复读。";
 
 function truncateTtsDetail(text: string): string {
   return text.replace(/\s+/g, " ").trim().slice(0, 180);

@@ -157,10 +157,11 @@ If microphone permission is denied, the microphone is missing, or another app is
 using the device, recording controls should show an inline Chinese recovery
 message and should not leave the learner stuck in a recording/scoring state.
 
-If bundled local audio is missing or unreadable, Settings should show the
-language-pack `缺失或不可读` state with a reinstall or Release EXE feedback hint.
-Practice pages should avoid pretending that browser TTS, teaching-video audio,
-proxy rule audio, or unrelated samples are exact local sound-unit audio.
+If bundled local audio is missing or unreadable, Settings should say that the
+app did not read the bundled demo audio and should offer a reinstall or Release
+EXE feedback hint. Practice pages should avoid pretending that browser TTS,
+teaching-video audio, proxy rule audio, or unrelated samples are verified local
+single-sound audio.
 
 Installation verification should not generate ElevenLabs audio or spend TTS
 credits. Use the dry-run audio audits when you need to inspect bundled audio

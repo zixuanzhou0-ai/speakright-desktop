@@ -39,7 +39,7 @@ export function LanguageConfigCard() {
           <CardTitle className="text-base">学习语言</CardTitle>
         </div>
         <p className="text-sm text-muted-foreground">
-          当前：{activeProfile.displayName}。西语、法语、俄语仍为 experimental 实验板块；部分练习音频随桌面端内置，exact 短音频缺口会在下方标出。
+          当前：{activeProfile.displayName}。英语包含完整训练流；西语、法语、俄语仍为实验板块，公开版先开放音标/发音单位练习和自由练习。
         </p>
       </CardHeader>
       <CardContent className="grid gap-3 md:grid-cols-2">
@@ -103,7 +103,7 @@ export function LanguageConfigCard() {
                   className="mt-2 break-words text-center text-xs leading-snug text-muted-foreground [overflow-wrap:anywhere]"
                   data-smoke="language-option-missing"
                 >
-                  待补：{audit.missingCapabilities.join("、")}
+                  建设中：训练进度和高级练习能力会逐步补齐。
                 </p>
               )}
 
@@ -113,8 +113,7 @@ export function LanguageConfigCard() {
                   data-smoke="language-option-phonology-gaps"
                   data-phonology-gap-count={phonologyGaps.length}
                 >
-                  音系/短音频待补：
-                  {phonologyGaps.map((gap) => gap.label).join("、")}
+                  部分进阶发音规则或单个音标仍在核验中；没有已核验本地短音频时，不会播放替代音频。
                 </p>
               )}
             </button>

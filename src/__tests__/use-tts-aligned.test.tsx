@@ -207,7 +207,7 @@ describe("useTtsAligned", () => {
 
     expect(result.current.error).toContain("无法播放标准示范");
     expect(result.current.error).toContain("设置页配置 ElevenLabs");
-    expect(result.current.error).toContain("内置发音资源");
+    expect(result.current.error).toContain("随应用提供示范音频");
     expect(result.current.error).toContain("单词词典发音只负责单词复读");
   });
 

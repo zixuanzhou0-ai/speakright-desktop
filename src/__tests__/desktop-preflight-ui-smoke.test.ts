@@ -431,7 +431,9 @@ describe("desktop preflight and UI smoke", () => {
     );
     expect(languageCard).toContain("getVisibleLanguagePhonologyGaps");
     expect(languageCard).toContain("overflow-wrap:anywhere");
-    expect(languageCard).toContain('audit.missingCapabilities.join("、")');
+    expect(languageCard).toContain("建设中：训练进度和高级练习能力会逐步补齐。");
+    expect(languageCard).toContain("不会播放替代音频");
+    expect(languageCard).not.toContain('audit.missingCapabilities.join("、")');
     expect(languageCard).not.toContain("missingPreview");
     expect(languageCard).not.toContain("…");
     expect(languageCard).not.toContain("line-clamp");
@@ -480,8 +482,9 @@ describe("desktop preflight and UI smoke", () => {
       "data-smoke={`language-availability-",
     );
     expect(languageAvailabilityCard).toContain("检查中");
-    expect(languageAvailabilityCard).toContain("缺失或不可读");
+    expect(languageAvailabilityCard).toContain("没有读到随应用提供的示范音频");
     expect(languageAvailabilityCard).toContain("重新安装最新版桌面端");
+    expect(languageAvailabilityCard).not.toContain("缺失或不可读");
     expect(languageAvailabilityCard).toContain("overflow-wrap:anywhere");
     expect(languageAvailabilityCard).toContain("WRAP_SAFE_LANGUAGE_BADGE_CLASS");
     expect(languageAvailabilityCard).toContain(

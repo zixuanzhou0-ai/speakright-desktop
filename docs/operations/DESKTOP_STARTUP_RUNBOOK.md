@@ -1,6 +1,6 @@
 # Desktop Startup Runbook
 
-Last verified: 2026-06-16
+Last verified: 2026-06-19
 
 This repository is the current SpeakRight Desktop workspace:
 
@@ -19,10 +19,12 @@ For user testing and release acceptance, start the static Release EXE. This is
 the same runtime shape as the packaged desktop app and does not depend on
 `localhost` or the Next dev server.
 
-1. Read the current handoff before changing code:
+1. Read the active goal, progress note, and current handoff before changing code:
 
 ```bat
 cd /d E:\SpeakRightDesktopRepo
+type docs\operations\NEXT_RC_AUDIO_SETTINGS_GOALS.md
+type docs\operations\NEXT_RC_AUDIO_SETTINGS_PROGRESS.md
 type docs\operations\NEXT_CHAT_HANDOFF.md
 type docs\operations\RC_EVIDENCE_AUDIT.md
 ```
@@ -210,10 +212,11 @@ the release-readiness or user-testing entrypoint.
   `public/audio/language-packs/` with `blue` and `pink` voice variants.
 - Spanish, French, and Russian audio density is now tracked by
   `npm run audio:parity:dry-run`; the target is 24 practice items per sound
-  unit with two local voice files per item, and the latest report explicitly
-  lists experimental gaps instead of generating audio: Spanish `214` missing,
-  French `392` missing, Russian `466` missing, total `1072`, estimated `9772`
-  characters.
+  unit with two local voice files per item. The latest zero-generation report
+  for the current bundle showed Spanish `1094` existing / `0` missing, French
+  `1482` existing / `0` missing, and Russian `1640` existing / `0` missing.
+  If a future dry-run reports gaps, stop and request explicit approval before
+  any ElevenLabs generation.
 - Multilingual audio packs are not installed from Settings anymore.
 - Local articulation/video assets live under `public/videos/language-assets/`.
 - API keys are not stored in Git and are excluded from learning-data export.
@@ -534,10 +537,12 @@ policy.
     Settings/usage wrapping,
     `narrowViewport=ok`, `lowHeightViewport=ok`, and
     `releaseServedFromDevServer=false`.
-  - `npm.cmd run audio:parity:dry-run`: Spanish `880` existing / `214`
-    missing, French `1090` existing / `392` missing, Russian `918` existing /
-    `466` missing, total missing `1072`, estimated `9772` characters, no
-    ElevenLabs calls.
+  - Historical `npm.cmd run audio:parity:dry-run` snapshot from that gate:
+    Spanish `880` existing / `214` missing, French `1090` existing / `392`
+    missing, Russian `918` existing / `466` missing, total missing `1072`,
+    estimated `9772` characters, no ElevenLabs calls. The active audio/settings
+    progress file records the newer current dry-run with `0` missing word/phrase
+    demo items.
   - Latest recorded `npm.cmd run audio:loudness:dry-run`: reference video mean `-14.7 dB`,
     word floor `-21.6 dB`; representative English, Spanish, French, Russian
     A/B word samples, plus IPA chart normal/slow word samples, passed after

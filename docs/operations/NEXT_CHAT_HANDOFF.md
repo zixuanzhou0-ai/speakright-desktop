@@ -1,6 +1,6 @@
 # Next Chat Handoff
 
-Date: 2026-06-17
+Date: 2026-06-19
 
 This file exists so the next Codex chat can continue without relying on the long
 conversation history.
@@ -33,6 +33,10 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - Windows artifacts are still unsigned; this remains the public-release blocker.
 - The current Release Candidate evidence matrix is
   `docs/operations/RC_EVIDENCE_AUDIT.md`.
+- The active next-loop goal is
+  `docs/operations/NEXT_RC_AUDIO_SETTINGS_GOALS.md`. The current in-progress
+  state is `docs/operations/NEXT_RC_AUDIO_SETTINGS_PROGRESS.md`. Start there if
+  this handoff is read in a fresh Codex window.
 - Public repository governance files now exist: `LICENSE`, `CONTRIBUTING.md`,
   `CODE_OF_CONDUCT.md`, `SUPPORT.md`, `SECURITY.md`, `THIRD_PARTY_NOTICES.md`,
   issue templates, PR template, and `.env.example`. The MIT license covers source
@@ -74,11 +78,11 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - The Russian final-devoicing local asset note is now explicitly marked as a
   proxy anchor and points maintainers to current `Нож тупой /noʂ tʊˈpoj/`
   practice instead of stale `current example друг` wording.
-- `audio:parity:dry-run` now reports explicit experimental audio gaps without
-  generating audio: Spanish `880` existing / `214` missing, French `1090`
-  existing / `392` missing, Russian `918` existing / `466` missing, total
-  missing `1072`, estimated `9772` characters. Do not generate ElevenLabs audio
-  unless the maintainer explicitly confirms after reviewing that dry-run.
+- Latest zero-generation audio parity check for the current bundled
+  Spanish/French/Russian language packs reported no word/phrase demo gaps:
+  Spanish `1094` existing / `0` missing, French `1482` existing / `0` missing,
+  Russian `1640` existing / `0` missing. Do not generate ElevenLabs audio
+  unless the maintainer explicitly confirms a new nonzero dry-run gap report.
 - Language-pack audio manifests now keep their IPA metadata aligned with the
   sourced reviewed findings for applied French connected-speech rows and Russian
   connected-speech voicing rows. The Russian `поезд идёт` manifest entry remains
@@ -154,10 +158,10 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 - Settings provider action rows now use wrap-safe save/test buttons for Azure,
   ElevenLabs, AI coach, and pronunciation fallback checks, so narrow Settings
   layouts do not inherit one-line button defaults.
-- Settings language cards now render the full `missingCapabilities` list for
-  each language instead of showing only the first three items followed by an
-  ellipsis; the static smoke guard rejects `missingPreview` and `…` in that
-  component.
+- Settings language cards now use learner-facing scope text instead of exposing
+  internal capability or phonology-gap labels. English is described as the full
+  training flow; Spanish/French/Russian remain experimental and publicly expose
+  phoneme/sound-unit practice plus free practice.
 - Experimental-language module gates now render the full
   `missingCapabilities` and `knownGaps` lists instead of only the first three
   items, so learners see the complete reason a module is still gated.
@@ -198,14 +202,18 @@ E:\SpeakRightDesktopRepo\src-tauri\target\release\speakright.exe
 
 ## Current Local Worktree
 
-At the time of the latest settled handoff, the working tree had no local file
-edits and no local `speakright.exe` process was expected to be running. The
-local branch may still show `main...origin/main [ahead N]` because several
-recent rounds used the GitHub Git Data API push fallback after HTTPS
-push/fetch failed or rejected a non-fast-forward update. Treat the GitHub `main`
-ref and a local-vs-remote tree SHA comparison as authoritative before assuming
-content is unpushed. Do not use `git reset` merely to make the local tracking
-ref look tidy.
+At the time of this handoff update, the RC audio/settings batch has passed the
+full Release EXE gate and is ready to commit/push. The changed files and command
+results are listed in `docs/operations/NEXT_RC_AUDIO_SETTINGS_PROGRESS.md`. If
+this batch has already been committed, the working tree should be clean apart
+from any newer user edits.
+
+The local branch may still show `main...origin/main [ahead N]` in later work
+because several recent rounds used the GitHub Git Data API push fallback after
+HTTPS push/fetch failed or rejected a non-fast-forward update. Treat the GitHub
+`main` ref and a local-vs-remote tree SHA comparison as authoritative before
+assuming content is unpushed. Do not use `git reset` merely to make the local
+tracking ref look tidy.
 
 If `git status --short --branch` shows local file edits in a future chat,
 preserve them unless the user explicitly asks to discard them; do not clean the

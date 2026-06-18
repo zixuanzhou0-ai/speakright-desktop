@@ -80,7 +80,9 @@ For Windows installer use, source builds, and first-launch expectations, see
 `docs/INSTALLATION.md`.
 
 For the next Codex chat or manual-testing pass, start with
-`docs/operations/NEXT_CHAT_HANDOFF.md` and the runbook's `Start Next Chat`
+`docs/operations/NEXT_RC_AUDIO_SETTINGS_GOALS.md`,
+`docs/operations/NEXT_RC_AUDIO_SETTINGS_PROGRESS.md`,
+`docs/operations/NEXT_CHAT_HANDOFF.md`, and the runbook's `Start Next Chat`
 checklist. The first pass should use the Release EXE and cover Settings, the
 full English flow, and Spanish/French/Russian core practice plus the
 non-English boundary pages before adding new work.

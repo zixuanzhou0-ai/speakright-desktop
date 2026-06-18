@@ -30,36 +30,40 @@ describe("language availability card", () => {
     mocks.llmConfig = null;
   });
 
-  it("shows a pending local-pack check instead of briefly claiming resources are missing", () => {
+  it("shows a pending demo-audio check instead of briefly claiming resources are missing", () => {
     mocks.getStaticLanguageAudioPackSummary.mockReturnValue(new Promise(() => {}));
 
     render(<LanguageAvailabilityCard />);
 
     expect(screen.getByText("检查中")).toBeInTheDocument();
-    expect(screen.getByText("检查内置资源")).toBeInTheDocument();
+    expect(
+      screen.getByText(/正在确认随应用提供的单词和短语示范音频/),
+    ).toBeInTheDocument();
     expect(screen.getByText("实验板块")).toHaveClass("whitespace-normal");
     expect(screen.getByText("检查中")).toHaveClass("whitespace-normal");
     expect(screen.queryByText("缺失或不可读")).not.toBeInTheDocument();
-    expect(screen.getByText(/检查完成前不需要安装额外语言包/)).toBeInTheDocument();
+    expect(screen.getByText(/不需要额外安装语言包/)).toBeInTheDocument();
     expect(
       document.querySelector('[data-smoke="language-availability-recommendation"]'),
     ).not.toBeNull();
   });
 
-  it("surfaces missing local-pack manifests as a Chinese reinstall hint", async () => {
+  it("surfaces missing demo audio as a Chinese reinstall hint", async () => {
     mocks.getStaticLanguageAudioPackSummary.mockResolvedValue(null);
 
     render(<LanguageAvailabilityCard />);
 
     await waitFor(() => {
-      expect(screen.getByText("缺失或不可读")).toBeInTheDocument();
+      expect(
+        screen.getByText(/没有读到随应用提供的示范音频/),
+      ).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/重新安装最新版桌面端/)).toBeInTheDocument();
+    expect(screen.getAllByText(/重新安装最新版桌面端/).length).toBeGreaterThan(0);
     expect(screen.getByText(/反馈 Release EXE 问题/)).toBeInTheDocument();
   });
 
-  it("shows bundled local-pack counts once the manifest is readable", async () => {
+  it("shows user-facing bundled demo audio status once the manifest is readable", async () => {
     mocks.getStaticLanguageAudioPackSummary.mockResolvedValue({
       languageId: "fr-FR",
       itemCount: 545,
@@ -71,15 +75,18 @@ describe("language availability card", () => {
     render(<LanguageAvailabilityCard />);
 
     await waitFor(() => {
-      expect(screen.getByText("内置 545 条")).toBeInTheDocument();
+      expect(screen.getByText("内置资源可用")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("内置资源可用")).toBeInTheDocument();
-    expect(screen.getByText(/负责单词\/短语复读/)).toBeInTheDocument();
-    expect(screen.getByText(/exact 单音短音频仍以音系清单为准/)).toBeInTheDocument();
-    expect(screen.getByText(/缺口不会冒充 speaker/)).toBeInTheDocument();
+    expect(screen.getByText(/单词和短语示范已随桌面端提供/)).toBeInTheDocument();
+    expect(screen.getByText(/小喇叭会保持不可点击/)).toBeInTheDocument();
     expect(screen.getByText(/当前公开入口为音标\/发音单位练习和自由练习/)).toBeInTheDocument();
-    expect(screen.getByText(/刻意练习、发音诊断和 mastery 证据暂不展示/)).toBeInTheDocument();
-    expect(screen.queryByText("缺失或不可读")).not.toBeInTheDocument();
+    expect(screen.getByText(/刻意练习和发音诊断仍在建设中/)).toBeInTheDocument();
+    expect(
+      document.querySelector('[data-smoke="language-availability-local-pack"]'),
+    ).toBeNull();
+    expect(document.body.textContent).not.toMatch(
+      /exact|speaker|音系清单|待补|mastery|evidenceMastery/,
+    );
   });
 });
