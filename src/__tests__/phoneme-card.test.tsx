@@ -351,7 +351,7 @@ describe("PhonemeCard header audio", () => {
     expect(badges).toHaveAttribute("data-audio-status", "exact-local-header");
     expect(badges).toHaveAttribute("data-tile-policy", "clickable-exact-header");
     expect(screen.getByText("实验")).toBeInTheDocument();
-    expect(screen.getByText("实现音")).toBeInTheDocument();
+    expect(screen.getAllByText("实现音").length).toBeGreaterThanOrEqual(2);
     expect(screen.getByText("音频：精确短音频")).toBeInTheDocument();
     expect(screen.getByText("拆解：精确短音频")).toBeInTheDocument();
   });
@@ -370,7 +370,7 @@ describe("PhonemeCard header audio", () => {
     expect(badges).toHaveAttribute("data-phonology-layer", "prosody");
     expect(badges).toHaveAttribute("data-audio-status", "rule-only");
     expect(badges).toHaveAttribute("data-tile-policy", "rule-guidance-only");
-    expect(screen.getByText("韵律/重音")).toBeInTheDocument();
+    expect(screen.getAllByText("韵律/重音").length).toBeGreaterThanOrEqual(2);
     expect(screen.getByText("音频：规则说明")).toBeInTheDocument();
     expect(screen.getByText("拆解：规则说明")).toBeInTheDocument();
     expect(

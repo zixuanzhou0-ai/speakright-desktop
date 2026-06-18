@@ -200,6 +200,9 @@ describe("language phonology inventory", () => {
     for (const languageId of LANGUAGE_IDS) {
       for (const entry of getLanguagePhonologyInventory(languageId)) {
         expect(ALLOWED_GOAL_LAYERS.has(entry.layer), entry.slug).toBe(true);
+        expect(entry.soundUnitType, `${languageId}:${entry.slug}`).toBe(
+          entry.layer,
+        );
       }
     }
   });

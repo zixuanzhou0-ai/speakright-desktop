@@ -40,7 +40,7 @@ describe("practice text presentation", () => {
     expect(presentation).toMatchObject({
       mode: "rule",
       density: "sentence",
-      titleLabel: "规则训练 · 音节节奏",
+      titleLabel: "韵律/重音训练 · 音节节奏",
       primaryText: "Buenos dias, muchas gracias.",
       secondaryText: "/ˈbwenos ˈdias ˈmutʃas ˈɣɾaθjas/",
       textAlign: "center",
@@ -93,7 +93,7 @@ describe("practice text presentation", () => {
     expect(presentation).toMatchObject({
       mode: "rule",
       density: "sentence",
-      titleLabel: "规则训练 · 重音弱化",
+      titleLabel: "韵律/重音训练 · 重音弱化",
       primaryText: "Здравствуйте, встретиться с сестрой трудно.",
       textAlign: "center",
     });

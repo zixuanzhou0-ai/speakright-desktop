@@ -1666,7 +1666,7 @@ export const RUSSIAN_PHONEMES: PhonemeData[] = [
     ipa: "/j/",
     name: "Russian й",
     category: "consonant",
-    soundUnitType: "contrast",
+    soundUnitType: "phoneme",
     example: "йогурт",
     keywords: [
       { word: "йогурт", ipa: "/ˈjogʊrt/", stressText: "йо́гурт" },

@@ -158,8 +158,8 @@ describe("language sound unit groups", () => {
     if (!liaison || !nasalVowel || !approximant) {
       throw new Error("Expected French test fixtures to exist.");
     }
-    expect(getSoundUnitCardLabel(liaison)).toBe("规则");
+    expect(getSoundUnitCardLabel(liaison)).toBe("语流规则");
     expect(getSoundUnitCardLabel(nasalVowel)).toBe("音素");
-    expect(getSoundUnitCardLabel(approximant)).toBe("实现");
+    expect(getSoundUnitCardLabel(approximant)).toBe("实现音");
   });
 });

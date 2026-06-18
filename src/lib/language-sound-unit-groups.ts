@@ -316,10 +316,10 @@ const DISPLAY_TYPE_LABELS: Record<SoundUnitDisplayType, string> = {
 
 const SOUND_UNIT_TYPE_LABELS: Record<SoundUnitType, string> = {
   phoneme: "音素",
-  allophone: "实现",
-  contrast: "对比",
-  "connected-speech-rule": "规则",
-  prosody: "规则",
+  allophone: "实现音",
+  contrast: "对比/变体",
+  "connected-speech-rule": "语流规则",
+  prosody: "韵律/重音",
 };
 
 export function getLanguageSoundUnitGroups(

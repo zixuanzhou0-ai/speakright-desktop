@@ -78,7 +78,9 @@ describe("PhonemeStudyCard non-English reading layout", () => {
     });
 
     expect(screen.getByText("请朗读")).toBeInTheDocument();
-    expect(screen.getAllByText("规则训练 · 音节节奏").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("韵律/重音训练 · 音节节奏").length).toBeGreaterThan(
+      0,
+    );
     expect(screen.queryByText("syllable timing")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "播放发音" }),
