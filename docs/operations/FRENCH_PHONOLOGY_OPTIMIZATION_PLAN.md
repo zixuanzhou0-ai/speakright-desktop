@@ -16,6 +16,21 @@ enchaînement、elision、e caduc/schwa 和节奏组末突出。
 英语相同，例如 `/p t k f v s z m n l/`，但发音位置、送气、释放、词尾行为和短语连接
 不同；相同 IPA 符号不等于可以复用英语音频或英语课程讲法。
 
+## 明确答案
+
+- 法语有成熟 IPA/音系体系；真正难点是法语学习不能被压成英语式“孤立音标按钮表”。
+- 当前法语 inventory 覆盖了 public experimental 所需的核心学习入口，但 phrase/
+  sentence 规则、speaker/profile 变体和 exact short clips 还不齐；不能宣称
+  mastery、evidenceMastery 或 full coverage。
+- 法语拆分必须是 inventory + contrast + connected-speech rule + prosody：
+  鼻化元音、前圆唇元音和 `/ʁ ʃ ʒ ɲ j ɥ w/` 可以做课程锚点；liaison、
+  enchaînement、elision、final consonant silence、e caduc/schwa 必须在短语/句子
+  层训练。
+- 看起来和英语一样的 `/p t k f v s z m n l/` 也不能直接复用英语发音。法语送气、
+  齿/齿龈位置、词尾释放、词尾静音、liaison 和音节重切分都会改变真实训练目标。
+- 之前没放进来的很多“音标”不是没有依据，而是不适合做单音 tile：有些是短语级潜在
+  辅音，有些是 schwa/e caduc 的保留或脱落，有些是 speaker/profile 变体。
+
 ## 权威来源与本轮查证结论
 
 本轮查证使用了 JIPA/IPA illustration、PFC、Phonetique.ca 和 IPA Handbook。结论：

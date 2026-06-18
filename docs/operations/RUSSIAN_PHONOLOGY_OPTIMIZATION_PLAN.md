@@ -17,6 +17,22 @@ Last updated: 2026-06-18
 把 `[ɐ ə ɪ]`、final devoicing、voicing assimilation、iotated vowels 和 clusters
 放到词/短语/句子环境中处理。
 
+## 明确答案
+
+- 俄语有成熟 IPA/音系和正音体系；问题不是“俄语没有成熟音标”，而是俄语不能按英语
+  辅音表或西里尔字母表逐项迁移。
+- 当前俄语 inventory 是 stress-aware experimental 锚点层，方向正确，但 hard/soft
+  pair、弱化、同化、cluster 和 exact short clips 不齐；不能宣称 mastery、
+  evidenceMastery 或 full coverage。
+- 俄语拆分必须 stress-first、hard/soft-first：先标重音，再判断元音弱化；先区分硬
+  辅音和软辅音，再解释 `ь`、iotated vowels、词尾清化、逆行清浊同化和辅音丛。
+- 看起来和英语一样的 `/p b t d k g f v s z m n l/` 也不能直接复用。俄语有硬/软、
+  清浊同化、词尾清化、不同的 `/r x ɨ/` 和常硬/常软限制；硬音 exact clip 不等于软音
+  或 pair lesson 已完成。
+- 之前没有放进来的许多“拆解音标”属于环境实现或规则输出，例如 `[ɐ ə ɪ]`、清化结果、
+  同化结果、软化 pair 和 cluster 训练；没有 exact same-unit clip 时只能 score-only
+  或 rule-guidance-only。
+
 ## 权威来源与本轮查证结论
 
 本轮查证使用了 JIPA/IPA illustration、Vinogradov Institute/Ruslang 官方入口、

@@ -16,6 +16,18 @@ Last updated: 2026-06-18
 allophone/realization、contrast、connected-speech rule、prosody。课程、评分、
 反馈和音频必须忠于这个层级，不能为了 UI 整齐而把语言事实压平。
 
+## 本轮明确结论
+
+西语、法语、俄语都有成熟 IPA/音系和母语者/外语学习传统。正确答案不是“它们没有
+音标体系”，而是 SpeakRight 要停止把英语 inventory 当作跨语言模板。相同 IPA 符号
+只表示同一类 IPA 记号，不自动表示英语同音、同发音动作、同音频、同评分目标。
+
+当前三语都只能定位为 public experimental：课程锚点层已经可继续打磨，但单音音频、
+phrase/sentence 规则、speaker/profile 变体、hard/soft 或 realization 覆盖都没有齐到
+可以宣称 mastery/evidenceMastery/full coverage。被拆解出来但暂时没有 speaker 的单位，
+如果是真实存在的语言单位，应归入 phoneme、realization、contrast、rule 或 prosody；
+没有 verified exact same-unit short clip 时只显示分数/规则，不做可点击单音频。
+
 ## 最终计划文档位置
 
 - 西语最终优化计划：
