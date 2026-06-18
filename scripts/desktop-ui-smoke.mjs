@@ -1487,7 +1487,6 @@ async function assertScoringTileAudioPolicy(cdp) {
     audioHint?.textContent?.includes("有本地音频的片段可点击") &&
     tiles.length >= 2 &&
     hasPlayableExactHeaderClip &&
-    hasLockedUnverifiedTile &&
     tilePoliciesAreStrict &&
     headerPolicyIsStrict &&
     hasTileMatchingHeader;
@@ -1522,6 +1521,137 @@ async function assertScoringTileAudioPolicy(cdp) {
   if (!result?.ok) {
     throw new Error(
       `Scoring tile audio policy smoke failed: ${JSON.stringify(result)}`,
+    );
+  }
+
+  await clickLanguage(cdp, "ru-RU");
+  await forceNavigate(cdp, "/phonemes/ru-a?smokeAssessmentTiles=1");
+  await waitForCondition(
+    cdp,
+    `
+(() => ({
+  ok:
+    window.location.pathname === "/phonemes/ru-a" &&
+    window.location.search.includes("smokeAssessmentTiles=1") &&
+    document.readyState !== "loading" &&
+    document.querySelectorAll('[data-smoke="assessment-phoneme-tile"]').length >= 2,
+  href: window.location.href,
+  bodyText: (document.body?.innerText ?? "").slice(0, 800)
+}))()
+`,
+    "unverified scoring tile smoke fixture to render",
+  );
+  const lockedResult = await evaluate(
+    cdp,
+    `
+(() => {
+  const fixture = document.querySelector('[data-smoke="assessment-phoneme-tile-fixture"]');
+  const audioHint = document.querySelector('[data-smoke="assessment-phoneme-audio-hint"]');
+  const tiles = [...document.querySelectorAll('[data-smoke="assessment-phoneme-tile"]')];
+  const hasVisibleRect = (element) => {
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
+  const tilePolicies = tiles.map((tile) => {
+    const startMs = Number(tile.getAttribute("data-audio-start-ms") ?? 0);
+    const maxDurationMs = Number(tile.getAttribute("data-audio-max-duration-ms") ?? 0);
+    const fadeOutMs = Number(tile.getAttribute("data-audio-fade-out-ms") ?? 0);
+    const audioSrc = tile.getAttribute("data-audio-src") ?? "";
+    const playable = tile.getAttribute("data-audio-playable") === "true";
+    const ariaDisabled = tile.getAttribute("aria-disabled") === "true";
+    const ariaLabel = tile.getAttribute("aria-label") ?? "";
+    const role = tile.getAttribute("role") ?? "";
+    const tabIndex = tile.getAttribute("tabindex") ?? "";
+    const kind = tile.getAttribute("data-audio-kind") ?? "none";
+
+    return {
+      hasVisibleRect: hasVisibleRect(tile),
+      playable,
+      ariaDisabled,
+      ariaLabel,
+      role,
+      tabIndex,
+      kind,
+      audioSrc,
+      startMs,
+      maxDurationMs,
+      fadeOutMs,
+      isVideo: /\\.(mp4|m4v|webm)(?:$|\\?)/i.test(audioSrc),
+      isLanguagePack: audioSrc.includes("/audio/language-packs/"),
+      isHeaderClip:
+        /^\\/audio\\/language-assets\\/ru-RU\\/header-clips\\/.+\\.m4a$/i.test(
+          audioSrc,
+        )
+    };
+  });
+  const isLockedUnverifiedTile = (tile) =>
+    tile.hasVisibleRect &&
+    !tile.playable &&
+    tile.ariaDisabled &&
+    tile.role === "" &&
+    tile.tabIndex === "-1" &&
+    tile.kind === "none" &&
+    tile.audioSrc === "" &&
+    tile.startMs === 0 &&
+    tile.maxDurationMs === 0 &&
+    tile.fadeOutMs === 0 &&
+    tile.ariaLabel === "" &&
+    !tile.isVideo &&
+    !tile.isLanguagePack;
+  const hasLockedUnverifiedTile = tilePolicies.some(isLockedUnverifiedTile);
+  const tilePoliciesAreStrict = tilePolicies.every((tile) => {
+    if (isLockedUnverifiedTile(tile)) return true;
+    return (
+      tile.hasVisibleRect &&
+      tile.playable &&
+      !tile.ariaDisabled &&
+      tile.role === "button" &&
+      tile.tabIndex === "0" &&
+      tile.ariaLabel.includes("播放音标") &&
+      tile.kind === "sound-unit" &&
+      tile.isHeaderClip &&
+      tile.startMs >= 0 &&
+      tile.startMs <= 25 &&
+      tile.maxDurationMs > 0 &&
+      tile.maxDurationMs <= 560 &&
+      tile.fadeOutMs > 0 &&
+      !tile.isVideo &&
+      !tile.isLanguagePack
+    );
+  });
+  const lockedTilePolicyReady =
+    Boolean(fixture) &&
+    audioHint?.textContent?.includes("有本地音频的片段可点击") &&
+    tiles.length >= 2 &&
+    hasLockedUnverifiedTile &&
+    tilePoliciesAreStrict;
+  return {
+    ok: lockedTilePolicyReady,
+    tileCount: tiles.length,
+    lockedTilePolicyReady,
+    hasLockedUnverifiedTile,
+    tilePoliciesAreStrict,
+    audioHint: audioHint?.textContent ?? "",
+    tileAudio: tiles.map((tile) => ({
+      kind: tile.getAttribute("data-audio-kind"),
+      src: tile.getAttribute("data-audio-src"),
+      startMs: tile.getAttribute("data-audio-start-ms"),
+      maxDurationMs: tile.getAttribute("data-audio-max-duration-ms"),
+      fadeOutMs: tile.getAttribute("data-audio-fade-out-ms"),
+      playable: tile.getAttribute("data-audio-playable"),
+      ariaDisabled: tile.getAttribute("aria-disabled"),
+      ariaLabel: tile.getAttribute("aria-label"),
+      role: tile.getAttribute("role"),
+      tabIndex: tile.getAttribute("tabindex")
+    })),
+    bodyText: (document.body?.innerText ?? "").slice(0, 800)
+  };
+})()
+`,
+  );
+  if (!lockedResult?.ok) {
+    throw new Error(
+      `Locked scoring tile audio policy smoke failed: ${JSON.stringify(lockedResult)}`,
     );
   }
 }

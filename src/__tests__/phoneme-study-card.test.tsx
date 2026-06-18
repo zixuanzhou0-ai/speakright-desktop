@@ -280,7 +280,7 @@ describe("PhonemeStudyCard non-English reading layout", () => {
     expect(button).toHaveAttribute("data-audio-fade-out-ms", "60");
   });
 
-  it("shows source-backed inventory details for exact non-English sound units", () => {
+  it("does not show the removed experimental inventory detail block for exact non-English sound units", () => {
     const frenchSchwa = getLanguagePhonemeBySlug("fr-FR", "fr-schwa");
 
     expect(frenchSchwa).toBeDefined();
@@ -294,50 +294,16 @@ describe("PhonemeStudyCard non-English reading layout", () => {
       },
     });
 
-    const detail = document.querySelector(
-      '[data-smoke="phonology-inventory-detail"]',
-    );
-    expect(detail).toHaveAttribute("data-phonology-layer", "prosody");
-    expect(detail).toHaveAttribute("data-tile-policy", "clickable-exact-header");
-    expect(detail).toHaveAttribute("data-audio-status", "exact-local-header");
-    expect(detail).toHaveAttribute("data-source-ref-count", "3");
-    expect(detail).toHaveAttribute(
-      "data-variant-scope",
-      "E caduc /ə/ is context-sensitive and may be present, reduced, or deleted.",
-    );
-    expect(screen.getByText("实验模块")).toBeInTheDocument();
-    expect(screen.getByText("韵律/重音")).toBeInTheDocument();
-    expect(screen.getByText("精确短音频")).toBeInTheDocument();
-    expect(screen.getByText("拆解：精确短音频")).toBeInTheDocument();
     expect(
-      screen.getByText("评分拆解块可播放同源本地短音频。"),
-    ).toBeInTheDocument();
+      document.querySelector('[data-smoke="phonology-inventory-detail"]'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("实验模块")).not.toBeInTheDocument();
     expect(
-      screen.getByText(/法语 e caduc .*可听见/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "音系口径：E caduc /ə/ is context-sensitive and may be present, reduced, or deleted.",
-      ),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/来源：Journal of the IPA: French/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Handbook of the International Phonetic Association/),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/Phonetique\.ca/)).toBeInTheDocument();
-    const gapDetails = document.querySelector(
-      '[data-smoke="phonology-inventory-gap-details"]',
-    );
-    expect(gapDetails).toHaveAttribute("data-gap-count", "1");
-    expect(gapDetails).toHaveTextContent("待补：");
-    expect(gapDetails).toHaveTextContent(
-      "Sentence-level schwa deletion rules still need fuller coaching coverage.",
-    );
+      document.querySelector('[data-smoke="phonology-inventory-gap-details"]'),
+    ).not.toBeInTheDocument();
   });
 
-  it("shows concrete exact-audio gaps for score-only plain consonant units", () => {
+  it("keeps repaired plain Spanish consonants playable without showing the removed experimental block", () => {
     const spanishP = getLanguagePhonemeBySlug("es-ES", "es-p");
 
     expect(spanishP).toBeDefined();
@@ -351,25 +317,16 @@ describe("PhonemeStudyCard non-English reading layout", () => {
       },
     });
 
-    const detail = document.querySelector(
-      '[data-smoke="phonology-inventory-detail"]',
+    const button = screen.getByRole("button", { name: "播放发音" });
+    expect(button).toHaveAttribute("data-audio-playable", "true");
+    expect(button).toHaveAttribute(
+      "data-audio-src",
+      "/audio/language-assets/es-ES/header-clips/es-p.m4a",
     );
-    expect(detail).toHaveAttribute("data-phonology-layer", "phoneme");
-    expect(detail).toHaveAttribute("data-tile-policy", "score-only-unverified");
-    expect(detail).toHaveAttribute("data-audio-status", "gap-no-local-clip");
-    expect(screen.getByText("缺少短音频")).toBeInTheDocument();
-    expect(screen.getByText("拆解：音频未验证")).toBeInTheDocument();
     expect(
-      screen.getByText("评分拆解块只显示分数，不播放未验证音频。"),
-    ).toBeInTheDocument();
-
-    const gapDetails = document.querySelector(
-      '[data-smoke="phonology-inventory-gap-details"]',
-    );
-    expect(gapDetails).toHaveAttribute("data-gap-count", "1");
-    expect(gapDetails).toHaveTextContent(
-      "No verified exact local /p/ header clip exists yet.",
-    );
+      document.querySelector('[data-smoke="phonology-inventory-detail"]'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("实验模块")).not.toBeInTheDocument();
   });
 
   it("shows inventory rule guidance for phrase-level units instead of implying single-sound playback", () => {
@@ -386,33 +343,10 @@ describe("PhonemeStudyCard non-English reading layout", () => {
       },
     });
 
-    const detail = document.querySelector(
-      '[data-smoke="phonology-inventory-detail"]',
-    );
-    expect(detail).toHaveAttribute(
-      "data-phonology-layer",
-      "connected-speech-rule",
-    );
-    expect(detail).toHaveAttribute("data-tile-policy", "rule-guidance-only");
-    expect(detail).toHaveAttribute("data-audio-status", "rule-only");
-    expect(detail).toHaveAttribute("data-source-ref-count", "4");
-    expect(detail).toHaveAttribute(
-      "data-variant-scope",
-      "Latent final consonants surface only in licensed phrase contexts.",
-    );
-    expect(screen.getByText("语流规则")).toBeInTheDocument();
-    expect(screen.getByText("规则说明")).toBeInTheDocument();
-    expect(screen.getByText("拆解：规则说明")).toBeInTheDocument();
     expect(
-      screen.getByText("按规则/短语证据训练，不作单音播放。"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "音系口径：Latent final consonants surface only in licensed phrase contexts.",
-      ),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/来源：Journal of the IPA: French/)).toBeInTheDocument();
-    expect(screen.getByText(/Open IPA French/)).toBeInTheDocument();
+      document.querySelector('[data-smoke="phonology-inventory-detail"]'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("实验模块")).not.toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "播放发音" }),
     ).not.toBeInTheDocument();

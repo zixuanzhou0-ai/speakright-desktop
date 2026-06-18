@@ -31,6 +31,8 @@ const SEEING_SPEECH_LICENSE =
   "CC BY-NC-ND 4.0; user-stated noncommercial educational/open-source local use; preserve unmodified file and attribution.";
 const SEEING_SPEECH_ATTRIBUTION =
   "Lawson, E., Stuart-Smith, J., Scobbie, J. M., Nakai, S. (2018). Seeing Speech: an articulatory web resource for the study of Phonetics. University of Glasgow.";
+const WIKIMEDIA_COMMONS_PALATALIZED_TRILL_URL =
+  "https://commons.wikimedia.org/wiki/File:Voiced_palatalized_alveolar_trill.ogg";
 
 function spanishAnimationAsset(
   slug: string,
@@ -118,6 +120,29 @@ function russianSeeingSpeechAsset(
   };
 }
 
+function russianCommonsPalatalizedTrillAsset(): LocalLanguagePhonemeAsset {
+  return {
+    languageId: "ru-RU",
+    slug: "ru-r-rj",
+    folderName: "ru-r-rj",
+    label: "Wikimedia Commons 俄语软 /rʲ/ 精确短音频",
+    source: "Wikimedia Commons IPA audio",
+    sourceUrl: WIKIMEDIA_COMMONS_PALATALIZED_TRILL_URL,
+    license:
+      "See Wikimedia Commons file page for license and attribution details; user-stated educational/open-source local use.",
+    attribution:
+      "Wikimedia Commons File:Voiced palatalized alveolar trill.ogg.",
+    videoSrc: "/videos/language-assets/ru-RU/seeing-speech/ru-r.mp4",
+    audioSrc: "/audio/language-assets/ru-RU/header-clips/ru-r-rj.m4a",
+    audioIpa: "/rʲ/",
+    exactAssessmentAliases: ["rʲ", "rj"],
+    notes: [
+      "Exact header audio is the palatalized alveolar trill /rʲ/ reference clip.",
+      "The visible video remains the related hard /r/ articulation anchor; other Russian hard/soft pair units stay score-only until exact soft clips exist.",
+    ],
+  };
+}
+
 export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
   spanishAnimationAsset("es-a", "a-sound", {
     audioIpa: "/a/",
@@ -138,6 +163,42 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
   spanishAnimationAsset("es-u", "u-sound", {
     audioIpa: "/u/",
     exactAssessmentAliases: ["u"],
+  }),
+  spanishAnimationAsset("es-p", "p-sound", {
+    audioIpa: "/p/",
+    exactAssessmentAliases: ["p"],
+  }),
+  spanishAnimationAsset("es-t", "t-sound", {
+    audioIpa: "/t/",
+    exactAssessmentAliases: ["t"],
+  }),
+  spanishAnimationAsset("es-k", "k-sound", {
+    audioIpa: "/k/",
+    exactAssessmentAliases: ["k"],
+  }),
+  spanishAnimationAsset("es-f", "f-sound", {
+    audioIpa: "/f/",
+    exactAssessmentAliases: ["f"],
+  }),
+  spanishAnimationAsset("es-m", "m-sound", {
+    audioIpa: "/m/",
+    exactAssessmentAliases: ["m"],
+  }),
+  spanishAnimationAsset("es-n", "n-sound", {
+    audioIpa: "/n/",
+    exactAssessmentAliases: ["n"],
+  }),
+  spanishAnimationAsset("es-b-stop", "b-sound", {
+    audioIpa: "/b/",
+    exactAssessmentAliases: ["b"],
+  }),
+  spanishAnimationAsset("es-d-stop", "d-sound", {
+    audioIpa: "/d/",
+    exactAssessmentAliases: ["d"],
+  }),
+  spanishAnimationAsset("es-g-stop", "g-sound", {
+    audioIpa: "/g/",
+    exactAssessmentAliases: ["g"],
   }),
   spanishAnimationAsset("es-bv", "beta-low-sound", {
     audioIpa: "/β/",
@@ -257,6 +318,58 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
   frenchPhonetiqueAsset("fr-un", "Tb_Resources/un2.mp4", {
     audioIpa: "/œ̃/",
     exactAssessmentAliases: ["œ̃", "un"],
+  }),
+  frenchPhonetiqueAsset("fr-p", "C_Resources/p.mp4", {
+    audioIpa: "/p/",
+    exactAssessmentAliases: ["p"],
+  }),
+  frenchPhonetiqueAsset("fr-b", "C_Resources/b.mp4", {
+    audioIpa: "/b/",
+    exactAssessmentAliases: ["b"],
+  }),
+  frenchPhonetiqueAsset("fr-t", "C_Resources/t.mp4", {
+    audioIpa: "/t/",
+    exactAssessmentAliases: ["t"],
+  }),
+  frenchPhonetiqueAsset("fr-d", "C_Resources/d.mp4", {
+    audioIpa: "/d/",
+    exactAssessmentAliases: ["d"],
+  }),
+  frenchPhonetiqueAsset("fr-k", "C_Resources/k.mp4", {
+    audioIpa: "/k/",
+    exactAssessmentAliases: ["k"],
+  }),
+  frenchPhonetiqueAsset("fr-g", "C_Resources/g.mp4", {
+    audioIpa: "/g/",
+    exactAssessmentAliases: ["g", "ɡ"],
+  }),
+  frenchPhonetiqueAsset("fr-f", "C_Resources/f.mp4", {
+    audioIpa: "/f/",
+    exactAssessmentAliases: ["f"],
+  }),
+  frenchPhonetiqueAsset("fr-v", "C_Resources/v.mp4", {
+    audioIpa: "/v/",
+    exactAssessmentAliases: ["v"],
+  }),
+  frenchPhonetiqueAsset("fr-s", "C_Resources/s.mp4", {
+    audioIpa: "/s/",
+    exactAssessmentAliases: ["s"],
+  }),
+  frenchPhonetiqueAsset("fr-z", "C_Resources/z.mp4", {
+    audioIpa: "/z/",
+    exactAssessmentAliases: ["z"],
+  }),
+  frenchPhonetiqueAsset("fr-m", "C_Resources/m.mp4", {
+    audioIpa: "/m/",
+    exactAssessmentAliases: ["m"],
+  }),
+  frenchPhonetiqueAsset("fr-n", "C_Resources/n.mp4", {
+    audioIpa: "/n/",
+    exactAssessmentAliases: ["n"],
+  }),
+  frenchPhonetiqueAsset("fr-l", "C_Resources/l.mp4", {
+    audioIpa: "/l/",
+    exactAssessmentAliases: ["l"],
   }),
   frenchPhonetiqueAsset("fr-r", "C_Resources/r.mp4", {
     audioIpa: "/ʁ/",
@@ -406,6 +519,7 @@ export const LOCAL_LANGUAGE_PHONEME_ASSETS: LocalLanguagePhonemeAsset[] = [
     audioIpa: "/r/",
     exactAssessmentAliases: ["r"],
   }),
+  russianCommonsPalatalizedTrillAsset(),
   russianSeeingSpeechAsset("ru-x", "ru-x", [
     "Russian х /x/ primary local asset.",
   ], {

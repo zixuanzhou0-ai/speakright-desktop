@@ -13,11 +13,11 @@
     "style": 0.05,
     "use_speaker_boost": true
   },
-  "itemCount": 440,
-  "generated": 429,
+  "itemCount": 547,
+  "generated": 536,
   "skipped": 0,
   "failed": 0,
-  "estimatedCredits": 3244,
+  "estimatedCredits": 4114,
   "failures": [],
   "items": [
     {
@@ -249,6 +249,35 @@
       "bytesByVoice": {
         "blue": 15090,
         "pink": 13836
+      }
+    },
+    {
+      "key": "alto",
+      "text": "alto",
+      "ipa": "/ˈalto/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "alto-1c1092e639.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/alto-1c1092e639.mp3",
+      "bytes": 18016,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/alto-1c1092e639.mp3",
+        "pink": "/audio/language-packs/es-ES/alto-pink-e808684e04.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "alto-1c1092e639.mp3",
+        "pink": "alto-pink-e808684e04.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18016,
+        "pink": 15926
       }
     },
     {
@@ -634,6 +663,35 @@
       }
     },
     {
+      "key": "banco blanco",
+      "text": "banco blanco",
+      "ipa": "/ˈbaŋko ˈblaŋko/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "banco-blanco-653013d97f.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/banco-blanco-653013d97f.mp3",
+      "bytes": 31391,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/banco-blanco-653013d97f.mp3",
+        "pink": "/audio/language-packs/es-ES/banco-blanco-pink-7df6553e22.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "banco-blanco-653013d97f.mp3",
+        "pink": "banco-blanco-pink-7df6553e22.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 31391,
+        "pink": 20942
+      }
+    },
+    {
       "key": "baño",
       "text": "baño",
       "ipa": "/ˈbaɲo/",
@@ -767,6 +825,35 @@
       }
     },
     {
+      "key": "bebe bien",
+      "text": "bebe bien",
+      "ipa": "/ˈbebe bjen/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "bebe-bien-3e6fe4c21f.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/bebe-bien-3e6fe4c21f.mp3",
+      "bytes": 24703,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/bebe-bien-3e6fe4c21f.mp3",
+        "pink": "/audio/language-packs/es-ES/bebe-bien-pink-b7bbb9de1a.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "bebe-bien-3e6fe4c21f.mp3",
+        "pink": "bebe-bien-pink-b7bbb9de1a.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 24703,
+        "pink": 19688
+      }
+    },
+    {
       "key": "beber",
       "text": "beber",
       "ipa": "/beˈβeɾ/",
@@ -808,6 +895,36 @@
       "bytesByVoice": {
         "blue": 15090,
         "pink": 15926
+      }
+    },
+    {
+      "key": "beto busca un banco",
+      "text": "Beto busca un banco.",
+      "ipa": "/ˈbeto ˈbuska um ˈbaŋko/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "phoneme-keyword",
+        "sentence"
+      ],
+      "fileName": "beto-busca-un-banco-125e96dc86.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/beto-busca-un-banco-125e96dc86.mp3",
+      "bytes": 39750,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/beto-busca-un-banco-125e96dc86.mp3",
+        "pink": "/audio/language-packs/es-ES/beto-busca-un-banco-pink-984b45654d.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "beto-busca-un-banco-125e96dc86.mp3",
+        "pink": "beto-busca-un-banco-pink-984b45654d.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 39750,
+        "pink": 27211
       }
     },
     {
@@ -855,6 +972,35 @@
       }
     },
     {
+      "key": "blanco",
+      "text": "blanco",
+      "ipa": "/ˈblaŋko/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "blanco-67986a22d2.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/blanco-67986a22d2.mp3",
+      "bytes": 20942,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/blanco-67986a22d2.mp3",
+        "pink": "/audio/language-packs/es-ES/blanco-pink-c37bf1f4d1.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "blanco-67986a22d2.mp3",
+        "pink": "blanco-pink-c37bf1f4d1.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20942,
+        "pink": 15090
+      }
+    },
+    {
       "key": "boca",
       "text": "boca",
       "ipa": "/ˈboka/",
@@ -874,6 +1020,93 @@
       },
       "bytesByVoice": {
         "blue": 15090,
+        "pink": 15926
+      }
+    },
+    {
+      "key": "boca bonita",
+      "text": "boca bonita",
+      "ipa": "/ˈboka boˈnita/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "boca-bonita-c6bed774bb.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/boca-bonita-c6bed774bb.mp3",
+      "bytes": 27629,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/boca-bonita-c6bed774bb.mp3",
+        "pink": "/audio/language-packs/es-ES/boca-bonita-pink-df323c7895.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "boca-bonita-c6bed774bb.mp3",
+        "pink": "boca-bonita-pink-df323c7895.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 27629,
+        "pink": 20942
+      }
+    },
+    {
+      "key": "boca y beso empiezan con /b/",
+      "text": "Boca y beso empiezan con /b/.",
+      "ipa": "/ˈboka i ˈbeso emˈpjeθan kon be/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "boca-y-beso-empiezan-con-b-241d1d240d.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/boca-y-beso-empiezan-con-b-241d1d240d.mp3",
+      "bytes": 56050,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/boca-y-beso-empiezan-con-b-241d1d240d.mp3",
+        "pink": "/audio/language-packs/es-ES/boca-y-beso-empiezan-con-b-pink-7823156516.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "boca-y-beso-empiezan-con-b-241d1d240d.mp3",
+        "pink": "boca-y-beso-empiezan-con-b-pink-7823156516.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 56050,
+        "pink": 35988
+      }
+    },
+    {
+      "key": "bonito",
+      "text": "bonito",
+      "ipa": "/boˈnito/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "bonito-e84e59fe86.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/bonito-e84e59fe86.mp3",
+      "bytes": 20942,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/bonito-e84e59fe86.mp3",
+        "pink": "/audio/language-packs/es-ES/bonito-pink-116754b65e.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "bonito-e84e59fe86.mp3",
+        "pink": "bonito-pink-116754b65e.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20942,
         "pink": 15926
       }
     },
@@ -939,6 +1172,64 @@
       "bytesByVoice": {
         "blue": 17598,
         "pink": 16762
+      }
+    },
+    {
+      "key": "broma",
+      "text": "broma",
+      "ipa": "/ˈbɾoma/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "broma-872a8199e3.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/broma-872a8199e3.mp3",
+      "bytes": 18852,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/broma-872a8199e3.mp3",
+        "pink": "/audio/language-packs/es-ES/broma-pink-874af6e588.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "broma-872a8199e3.mp3",
+        "pink": "broma-pink-874af6e588.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18852,
+        "pink": 15090
+      }
+    },
+    {
+      "key": "buen día",
+      "text": "buen día",
+      "ipa": "/bwen ˈdia/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "buen-dia-251b2e54b1.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/buen-dia-251b2e54b1.mp3",
+      "bytes": 24703,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/buen-dia-251b2e54b1.mp3",
+        "pink": "/audio/language-packs/es-ES/buen-dia-pink-6c397ea0ed.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "buen-dia-251b2e54b1.mp3",
+        "pink": "buen-dia-pink-6c397ea0ed.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 24703,
+        "pink": 17598
       }
     },
     {
@@ -1157,6 +1448,35 @@
       "bytesByVoice": {
         "blue": 18016,
         "pink": 17598
+      }
+    },
+    {
+      "key": "cada cosa",
+      "text": "cada cosa",
+      "ipa": "/ˈkada ˈkosa/",
+      "soundUnitSlugs": [
+        "es-k"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "cada-cosa-2ddb045fcc.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/cada-cosa-2ddb045fcc.mp3",
+      "bytes": 24703,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/cada-cosa-2ddb045fcc.mp3",
+        "pink": "/audio/language-packs/es-ES/cada-cosa-pink-1ab6575d95.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "cada-cosa-2ddb045fcc.mp3",
+        "pink": "cada-cosa-pink-1ab6575d95.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 24703,
+        "pink": 20942
       }
     },
     {
@@ -1497,6 +1817,35 @@
       "bytesByVoice": {
         "blue": 20942,
         "pink": 18852
+      }
+    },
+    {
+      "key": "cantar",
+      "text": "cantar",
+      "ipa": "/kanˈtaɾ/",
+      "soundUnitSlugs": [
+        "es-k"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "cantar-b66289535e.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/cantar-b66289535e.mp3",
+      "bytes": 23449,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/cantar-b66289535e.mp3",
+        "pink": "/audio/language-packs/es-ES/cantar-pink-bab39046ce.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "cantar-b66289535e.mp3",
+        "pink": "cantar-pink-bab39046ce.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 23449,
+        "pink": 17598
       }
     },
     {
@@ -2145,6 +2494,35 @@
       }
     },
     {
+      "key": "clase corta",
+      "text": "clase corta",
+      "ipa": "/ˈklase ˈkoɾta/",
+      "soundUnitSlugs": [
+        "es-k"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "clase-corta-a458bf7db6.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/clase-corta-a458bf7db6.mp3",
+      "bytes": 28465,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/clase-corta-a458bf7db6.mp3",
+        "pink": "/audio/language-packs/es-ES/clase-corta-pink-727b8ac4c4.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "clase-corta-a458bf7db6.mp3",
+        "pink": "clase-corta-pink-727b8ac4c4.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 28465,
+        "pink": 20942
+      }
+    },
+    {
       "key": "coche",
       "text": "coche",
       "ipa": "/ˈkotʃe/",
@@ -2301,6 +2679,35 @@
       }
     },
     {
+      "key": "con",
+      "text": "con",
+      "ipa": "/kon/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "con-39ed48f504.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/con-39ed48f504.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/con-39ed48f504.mp3",
+        "pink": "/audio/language-packs/es-ES/con-pink-052c5e2f79.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "con-39ed48f504.mp3",
+        "pink": "con-pink-052c5e2f79.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 14254
+      }
+    },
+    {
       "key": "con él",
       "text": "con él",
       "ipa": "/kon el/",
@@ -2432,6 +2839,35 @@
       "bytesByVoice": {
         "blue": 18016,
         "pink": 16762
+      }
+    },
+    {
+      "key": "cosa",
+      "text": "cosa",
+      "ipa": "/ˈkosa/",
+      "soundUnitSlugs": [
+        "es-k"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "cosa-666a0f35c0.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/cosa-666a0f35c0.mp3",
+      "bytes": 18016,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/cosa-666a0f35c0.mp3",
+        "pink": "/audio/language-packs/es-ES/cosa-pink-1db22f8340.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "cosa-666a0f35c0.mp3",
+        "pink": "cosa-pink-1db22f8340.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18016,
+        "pink": 15926
       }
     },
     {
@@ -2713,6 +3149,64 @@
       }
     },
     {
+      "key": "dar",
+      "text": "dar",
+      "ipa": "/daɾ/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "dar-8759a6e563.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/dar-8759a6e563.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/dar-8759a6e563.mp3",
+        "pink": "/audio/language-packs/es-ES/dar-pink-5501b7e2e1.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "dar-8759a6e563.mp3",
+        "pink": "dar-pink-5501b7e2e1.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 17598
+      }
+    },
+    {
+      "key": "dato",
+      "text": "dato",
+      "ipa": "/ˈdato/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "dato-e0b7877387.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/dato-e0b7877387.mp3",
+      "bytes": 20524,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/dato-e0b7877387.mp3",
+        "pink": "/audio/language-packs/es-ES/dato-pink-3bbeccde11.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "dato-e0b7877387.mp3",
+        "pink": "dato-pink-3bbeccde11.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20524,
+        "pink": 18016
+      }
+    },
+    {
       "key": "dedo",
       "text": "dedo",
       "ipa": "/ˈdeðo/",
@@ -2754,6 +3248,64 @@
       },
       "bytesByVoice": {
         "blue": 20524,
+        "pink": 18852
+      }
+    },
+    {
+      "key": "dental",
+      "text": "dental",
+      "ipa": "/denˈtal/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "dental-f25d8a2a54.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/dental-f25d8a2a54.mp3",
+      "bytes": 20942,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/dental-f25d8a2a54.mp3",
+        "pink": "/audio/language-packs/es-ES/dental-pink-d9ad8d71c2.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "dental-f25d8a2a54.mp3",
+        "pink": "dental-pink-d9ad8d71c2.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20942,
+        "pink": 16762
+      }
+    },
+    {
+      "key": "deporte",
+      "text": "deporte",
+      "ipa": "/deˈpoɾte/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "deporte-e5bba92bdd.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/deporte-e5bba92bdd.mp3",
+      "bytes": 22613,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/deporte-e5bba92bdd.mp3",
+        "pink": "/audio/language-packs/es-ES/deporte-pink-41a91a2663.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "deporte-e5bba92bdd.mp3",
+        "pink": "deporte-pink-41a91a2663.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 22613,
         "pink": 18852
       }
     },
@@ -2913,6 +3465,35 @@
       }
     },
     {
+      "key": "digo",
+      "text": "digo",
+      "ipa": "/ˈdigo/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "digo-319e3636b8.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/digo-319e3636b8.mp3",
+      "bytes": 16762,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/digo-319e3636b8.mp3",
+        "pink": "/audio/language-packs/es-ES/digo-pink-6795148d0f.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "digo-319e3636b8.mp3",
+        "pink": "digo-pink-6795148d0f.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 16762,
+        "pink": 16762
+      }
+    },
+    {
       "key": "doce",
       "text": "doce",
       "ipa": "/ˈdoθe/",
@@ -2980,6 +3561,65 @@
       }
     },
     {
+      "key": "donde duerme",
+      "text": "donde duerme",
+      "ipa": "/ˈdonde ˈdweɾme/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "donde-duerme-7800c9a390.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/donde-duerme-7800c9a390.mp3",
+      "bytes": 29301,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/donde-duerme-7800c9a390.mp3",
+        "pink": "/audio/language-packs/es-ES/donde-duerme-pink-edfa653f54.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "donde-duerme-7800c9a390.mp3",
+        "pink": "donde-duerme-pink-edfa653f54.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 29301,
+        "pink": 20524
+      }
+    },
+    {
+      "key": "dora da dos datos",
+      "text": "Dora da dos datos.",
+      "ipa": "/ˈdoɾa da dos ˈdatos/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "phoneme-keyword",
+        "sentence"
+      ],
+      "fileName": "dora-da-dos-datos-e305746b5f.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/dora-da-dos-datos-e305746b5f.mp3",
+      "bytes": 33898,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/dora-da-dos-datos-e305746b5f.mp3",
+        "pink": "/audio/language-packs/es-ES/dora-da-dos-datos-pink-6251e07fce.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "dora-da-dos-datos-e305746b5f.mp3",
+        "pink": "dora-da-dos-datos-pink-6251e07fce.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 33898,
+        "pink": 27211
+      }
+    },
+    {
       "key": "dormir",
       "text": "dormir",
       "ipa": "/doɾˈmiɾ/",
@@ -3021,6 +3661,35 @@
       "bytesByVoice": {
         "blue": 13836,
         "pink": 14254
+      }
+    },
+    {
+      "key": "dos datos",
+      "text": "dos datos",
+      "ipa": "/dos ˈdatos/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "dos-datos-29c4edc6d1.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/dos-datos-29c4edc6d1.mp3",
+      "bytes": 25539,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/dos-datos-29c4edc6d1.mp3",
+        "pink": "/audio/language-packs/es-ES/dos-datos-pink-e655e552ef.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "dos-datos-29c4edc6d1.mp3",
+        "pink": "dos-datos-pink-e655e552ef.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 25539,
+        "pink": 19688
       }
     },
     {
@@ -3068,6 +3737,35 @@
       }
     },
     {
+      "key": "duda",
+      "text": "duda",
+      "ipa": "/ˈduda/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "duda-9d554cf7dc.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/duda-9d554cf7dc.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/duda-9d554cf7dc.mp3",
+        "pink": "/audio/language-packs/es-ES/duda-pink-95e85f56fd.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "duda-9d554cf7dc.mp3",
+        "pink": "duda-pink-95e85f56fd.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 15926
+      }
+    },
+    {
       "key": "dulce",
       "text": "dulce",
       "ipa": "/ˈdulθe/",
@@ -3087,6 +3785,35 @@
       "bytesByVoice": {
         "blue": 17598,
         "pink": 15926
+      }
+    },
+    {
+      "key": "duro",
+      "text": "duro",
+      "ipa": "/ˈduɾo/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "duro-17141237b9.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/duro-17141237b9.mp3",
+      "bytes": 16762,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/duro-17141237b9.mp3",
+        "pink": "/audio/language-packs/es-ES/duro-pink-a4b26dfccf.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "duro-17141237b9.mp3",
+        "pink": "duro-pink-a4b26dfccf.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 16762,
+        "pink": 15090
       }
     },
     {
@@ -3185,6 +3912,35 @@
       "bytesByVoice": {
         "blue": 53960,
         "pink": 37660
+      }
+    },
+    {
+      "key": "el doctor",
+      "text": "el doctor",
+      "ipa": "/el dokˈtoɾ/",
+      "soundUnitSlugs": [
+        "es-d-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "el-doctor-9d00d923af.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/el-doctor-9d00d923af.mp3",
+      "bytes": 24703,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/el-doctor-9d00d923af.mp3",
+        "pink": "/audio/language-packs/es-ES/el-doctor-pink-1c4df3d01f.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "el-doctor-9d00d923af.mp3",
+        "pink": "el-doctor-pink-1c4df3d01f.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 24703,
+        "pink": 18852
       }
     },
     {
@@ -3530,6 +4286,35 @@
       }
     },
     {
+      "key": "esta tarde",
+      "text": "esta tarde",
+      "ipa": "/ˈesta ˈtaɾde/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "esta-tarde-79aabc46b7.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/esta-tarde-79aabc46b7.mp3",
+      "bytes": 24703,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/esta-tarde-79aabc46b7.mp3",
+        "pink": "/audio/language-packs/es-ES/esta-tarde-pink-99b42c2f44.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "esta-tarde-79aabc46b7.mp3",
+        "pink": "esta-tarde-pink-99b42c2f44.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 24703,
+        "pink": 19688
+      }
+    },
+    {
       "key": "este",
       "text": "este",
       "ipa": "/ˈeste/",
@@ -3574,6 +4359,64 @@
       }
     },
     {
+      "key": "falda",
+      "text": "falda",
+      "ipa": "/ˈfalda/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "falda-ccc6dfd016.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/falda-ccc6dfd016.mp3",
+      "bytes": 18852,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/falda-ccc6dfd016.mp3",
+        "pink": "/audio/language-packs/es-ES/falda-pink-a5b8672aea.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "falda-ccc6dfd016.mp3",
+        "pink": "falda-pink-a5b8672aea.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18852,
+        "pink": 16762
+      }
+    },
+    {
+      "key": "falso",
+      "text": "falso",
+      "ipa": "/ˈfalso/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "falso-2feeb1c0c7.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/falso-2feeb1c0c7.mp3",
+      "bytes": 20524,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/falso-2feeb1c0c7.mp3",
+        "pink": "/audio/language-packs/es-ES/falso-pink-b772cd4103.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "falso-2feeb1c0c7.mp3",
+        "pink": "falso-pink-b772cd4103.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20524,
+        "pink": 15926
+      }
+    },
+    {
       "key": "familia",
       "text": "familia",
       "ipa": "/faˈmilja/",
@@ -3595,6 +4438,35 @@
       "bytesByVoice": {
         "blue": 18016,
         "pink": 18016
+      }
+    },
+    {
+      "key": "familia feliz",
+      "text": "familia feliz",
+      "ipa": "/faˈmilja feˈliθ/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "familia-feliz-689d06cf53.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/familia-feliz-689d06cf53.mp3",
+      "bytes": 30973,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/familia-feliz-689d06cf53.mp3",
+        "pink": "/audio/language-packs/es-ES/familia-feliz-pink-8d65e22c64.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "familia-feliz-689d06cf53.mp3",
+        "pink": "familia-feliz-pink-8d65e22c64.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 30973,
+        "pink": 24285
       }
     },
     {
@@ -3671,6 +4543,35 @@
       }
     },
     {
+      "key": "febrero",
+      "text": "febrero",
+      "ipa": "/feˈbɾeɾo/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "febrero-2b28008380.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/febrero-2b28008380.mp3",
+      "bytes": 20942,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/febrero-2b28008380.mp3",
+        "pink": "/audio/language-packs/es-ES/febrero-pink-812104f2d2.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "febrero-2b28008380.mp3",
+        "pink": "febrero-pink-812104f2d2.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20942,
+        "pink": 18016
+      }
+    },
+    {
       "key": "fecha",
       "text": "fecha",
       "ipa": "/ˈfetʃa/",
@@ -3737,6 +4638,122 @@
       }
     },
     {
+      "key": "fiesta",
+      "text": "fiesta",
+      "ipa": "/ˈfjesta/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "fiesta-a01e9263a1.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/fiesta-a01e9263a1.mp3",
+      "bytes": 20942,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/fiesta-a01e9263a1.mp3",
+        "pink": "/audio/language-packs/es-ES/fiesta-pink-67942a2ba9.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "fiesta-a01e9263a1.mp3",
+        "pink": "fiesta-pink-67942a2ba9.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20942,
+        "pink": 18852
+      }
+    },
+    {
+      "key": "fin",
+      "text": "fin",
+      "ipa": "/fin/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "fin-c8efd20639.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/fin-c8efd20639.mp3",
+      "bytes": 14254,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/fin-c8efd20639.mp3",
+        "pink": "/audio/language-packs/es-ES/fin-pink-339118d242.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "fin-c8efd20639.mp3",
+        "pink": "fin-pink-339118d242.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 14254,
+        "pink": 14254
+      }
+    },
+    {
+      "key": "final",
+      "text": "final",
+      "ipa": "/fiˈnal/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "final-ab23ad79af.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/final-ab23ad79af.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/final-ab23ad79af.mp3",
+        "pink": "/audio/language-packs/es-ES/final-pink-d5a28add15.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "final-ab23ad79af.mp3",
+        "pink": "final-pink-d5a28add15.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 15090
+      }
+    },
+    {
+      "key": "firma",
+      "text": "firma",
+      "ipa": "/ˈfiɾma/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "firma-dc15e93343.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/firma-dc15e93343.mp3",
+      "bytes": 20524,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/firma-dc15e93343.mp3",
+        "pink": "/audio/language-packs/es-ES/firma-pink-fa09f0aced.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "firma-dc15e93343.mp3",
+        "pink": "firma-pink-fa09f0aced.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20524,
+        "pink": 18016
+      }
+    },
+    {
       "key": "flor",
       "text": "flor",
       "ipa": "/floɾ/",
@@ -3760,6 +4777,64 @@
       }
     },
     {
+      "key": "flor fresca",
+      "text": "flor fresca",
+      "ipa": "/floɾ ˈfɾeska/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "flor-fresca-5fdc0c73ae.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/flor-fresca-5fdc0c73ae.mp3",
+      "bytes": 28465,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/flor-fresca-5fdc0c73ae.mp3",
+        "pink": "/audio/language-packs/es-ES/flor-fresca-pink-1557f96449.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "flor-fresca-5fdc0c73ae.mp3",
+        "pink": "flor-fresca-pink-1557f96449.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 28465,
+        "pink": 20524
+      }
+    },
+    {
+      "key": "forma",
+      "text": "forma",
+      "ipa": "/ˈfoɾma/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "forma-e6695bc288.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/forma-e6695bc288.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/forma-e6695bc288.mp3",
+        "pink": "/audio/language-packs/es-ES/forma-pink-42518c1f33.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "forma-e6695bc288.mp3",
+        "pink": "forma-pink-42518c1f33.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 15926
+      }
+    },
+    {
       "key": "foto",
       "text": "foto",
       "ipa": "/ˈfoto/",
@@ -3779,6 +4854,64 @@
       "bytesByVoice": {
         "blue": 16762,
         "pink": 16762
+      }
+    },
+    {
+      "key": "foto fácil",
+      "text": "foto fácil",
+      "ipa": "/ˈfoto ˈfaθil/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "foto-facil-9bf774483f.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/foto-facil-9bf774483f.mp3",
+      "bytes": 27629,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/foto-facil-9bf774483f.mp3",
+        "pink": "/audio/language-packs/es-ES/foto-facil-pink-8465f33ef7.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "foto-facil-9bf774483f.mp3",
+        "pink": "foto-facil-pink-8465f33ef7.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 27629,
+        "pink": 21777
+      }
+    },
+    {
+      "key": "frío",
+      "text": "frío",
+      "ipa": "/ˈfɾio/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "frio-30a9570858.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/frio-30a9570858.mp3",
+      "bytes": 18016,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/frio-30a9570858.mp3",
+        "pink": "/audio/language-packs/es-ES/frio-pink-b73f378583.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "frio-30a9570858.mp3",
+        "pink": "frio-pink-b73f378583.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18016,
+        "pink": 15090
       }
     },
     {
@@ -3877,6 +5010,123 @@
       }
     },
     {
+      "key": "gabi guarda guantes",
+      "text": "Gabi guarda guantes.",
+      "ipa": "/ˈgabi ˈgwaɾda ˈgwantes/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "phoneme-keyword",
+        "sentence"
+      ],
+      "fileName": "gabi-guarda-guantes-56bba0d23d.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/gabi-guarda-guantes-56bba0d23d.mp3",
+      "bytes": 35988,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/gabi-guarda-guantes-56bba0d23d.mp3",
+        "pink": "/audio/language-packs/es-ES/gabi-guarda-guantes-pink-33a99cea8a.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "gabi-guarda-guantes-56bba0d23d.mp3",
+        "pink": "gabi-guarda-guantes-pink-33a99cea8a.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 35988,
+        "pink": 28465
+      }
+    },
+    {
+      "key": "galleta",
+      "text": "galleta",
+      "ipa": "/gaˈʝeta/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "galleta-8767a769e1.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/galleta-8767a769e1.mp3",
+      "bytes": 22613,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/galleta-8767a769e1.mp3",
+        "pink": "/audio/language-packs/es-ES/galleta-pink-02a0adb646.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "galleta-8767a769e1.mp3",
+        "pink": "galleta-pink-02a0adb646.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 22613,
+        "pink": 18016
+      }
+    },
+    {
+      "key": "gana gonzalo",
+      "text": "gana Gonzalo",
+      "ipa": "/ˈgana gonˈθalo/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "gana-gonzalo-0451a6c0f7.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/gana-gonzalo-0451a6c0f7.mp3",
+      "bytes": 31391,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/gana-gonzalo-0451a6c0f7.mp3",
+        "pink": "/audio/language-packs/es-ES/gana-gonzalo-pink-3dad03a3b7.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "gana-gonzalo-0451a6c0f7.mp3",
+        "pink": "gana-gonzalo-pink-3dad03a3b7.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 31391,
+        "pink": 22613
+      }
+    },
+    {
+      "key": "ganar",
+      "text": "ganar",
+      "ipa": "/gaˈnaɾ/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "ganar-a62aba027a.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/ganar-a62aba027a.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/ganar-a62aba027a.mp3",
+        "pink": "/audio/language-packs/es-ES/ganar-pink-c32e6d32f3.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "ganar-a62aba027a.mp3",
+        "pink": "ganar-pink-c32e6d32f3.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 18016
+      }
+    },
+    {
       "key": "gato",
       "text": "gato",
       "ipa": "/ˈgato/",
@@ -3900,6 +5150,35 @@
       }
     },
     {
+      "key": "gato grande",
+      "text": "gato grande",
+      "ipa": "/ˈgato ˈgɾande/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "gato-grande-7544f96868.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/gato-grande-7544f96868.mp3",
+      "bytes": 26375,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/gato-grande-7544f96868.mp3",
+        "pink": "/audio/language-packs/es-ES/gato-grande-pink-5430706c0a.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "gato-grande-7544f96868.mp3",
+        "pink": "gato-grande-pink-5430706c0a.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 26375,
+        "pink": 21777
+      }
+    },
+    {
       "key": "gente",
       "text": "gente",
       "ipa": "/ˈxente/",
@@ -3919,6 +5198,35 @@
       "bytesByVoice": {
         "blue": 17598,
         "pink": 18016
+      }
+    },
+    {
+      "key": "globo",
+      "text": "globo",
+      "ipa": "/ˈglobo/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "globo-33d5229ebf.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/globo-33d5229ebf.mp3",
+      "bytes": 20524,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/globo-33d5229ebf.mp3",
+        "pink": "/audio/language-packs/es-ES/globo-pink-fb04390c9f.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "globo-33d5229ebf.mp3",
+        "pink": "globo-pink-fb04390c9f.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20524,
+        "pink": 16762
       }
     },
     {
@@ -3963,6 +5271,64 @@
       "bytesByVoice": {
         "blue": 14254,
         "pink": 14254
+      }
+    },
+    {
+      "key": "goma",
+      "text": "goma",
+      "ipa": "/ˈgoma/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "goma-3b90f172f3.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/goma-3b90f172f3.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/goma-3b90f172f3.mp3",
+        "pink": "/audio/language-packs/es-ES/goma-pink-d1e758e4a9.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "goma-3b90f172f3.mp3",
+        "pink": "goma-pink-d1e758e4a9.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 16762
+      }
+    },
+    {
+      "key": "gorro",
+      "text": "gorro",
+      "ipa": "/ˈgoro/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "gorro-6efb414cc4.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/gorro-6efb414cc4.mp3",
+      "bytes": 20524,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/gorro-6efb414cc4.mp3",
+        "pink": "/audio/language-packs/es-ES/gorro-pink-c6f3eb867f.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "gorro-6efb414cc4.mp3",
+        "pink": "gorro-pink-c6f3eb867f.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20524,
+        "pink": 15926
       }
     },
     {
@@ -4077,6 +5443,35 @@
       }
     },
     {
+      "key": "grupo grande",
+      "text": "grupo grande",
+      "ipa": "/ˈgɾupo ˈgɾande/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "grupo-grande-9ce2b9d5e0.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/grupo-grande-9ce2b9d5e0.mp3",
+      "bytes": 27629,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/grupo-grande-9ce2b9d5e0.mp3",
+        "pink": "/audio/language-packs/es-ES/grupo-grande-pink-6212acb6d0.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "grupo-grande-9ce2b9d5e0.mp3",
+        "pink": "grupo-grande-pink-6212acb6d0.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 27629,
+        "pink": 20942
+      }
+    },
+    {
       "key": "guapo",
       "text": "guapo",
       "ipa": "/ˈgwapo/",
@@ -4141,6 +5536,35 @@
       "bytesByVoice": {
         "blue": 18852,
         "pink": 15926
+      }
+    },
+    {
+      "key": "guía",
+      "text": "guía",
+      "ipa": "/ˈgia/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "guia-5a50a497f0.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/guia-5a50a497f0.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/guia-5a50a497f0.mp3",
+        "pink": "/audio/language-packs/es-ES/guia-pink-caec38894b.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "guia-5a50a497f0.mp3",
+        "pink": "guia-pink-caec38894b.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 14254
       }
     },
     {
@@ -4829,6 +6253,35 @@
       }
     },
     {
+      "key": "kilo",
+      "text": "kilo",
+      "ipa": "/ˈkilo/",
+      "soundUnitSlugs": [
+        "es-k"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "kilo-4a28ebddff.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/kilo-4a28ebddff.mp3",
+      "bytes": 18016,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/kilo-4a28ebddff.mp3",
+        "pink": "/audio/language-packs/es-ES/kilo-pink-f626fdce5c.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "kilo-4a28ebddff.mp3",
+        "pink": "kilo-pink-f626fdce5c.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18016,
+        "pink": 16762
+      }
+    },
+    {
       "key": "la boca",
       "text": "la boca",
       "ipa": "/la ˈboka/",
@@ -4956,6 +6409,35 @@
       "bytesByVoice": {
         "blue": 17598,
         "pink": 16762
+      }
+    },
+    {
+      "key": "la familia toma fotos",
+      "text": "La familia toma fotos.",
+      "ipa": "/f/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "sentence"
+      ],
+      "fileName": "la-familia-toma-fotos-b2be82bcaa.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/la-familia-toma-fotos-b2be82bcaa.mp3",
+      "bytes": 39750,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/la-familia-toma-fotos-b2be82bcaa.mp3",
+        "pink": "/audio/language-packs/es-ES/la-familia-toma-fotos-pink-780d438e49.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "la-familia-toma-fotos-b2be82bcaa.mp3",
+        "pink": "la-familia-toma-fotos-pink-780d438e49.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 39750,
+        "pink": 30137
       }
     },
     {
@@ -5584,6 +7066,35 @@
       }
     },
     {
+      "key": "lunes",
+      "text": "lunes",
+      "ipa": "/ˈlunes/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "lunes-9f67244d2f.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/lunes-9f67244d2f.mp3",
+      "bytes": 18016,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/lunes-9f67244d2f.mp3",
+        "pink": "/audio/language-packs/es-ES/lunes-pink-986c57c6c2.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "lunes-9f67244d2f.mp3",
+        "pink": "lunes-pink-986c57c6c2.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18016,
+        "pink": 15926
+      }
+    },
+    {
       "key": "luz",
       "text": "luz",
       "ipa": "/luθ/",
@@ -5625,6 +7136,35 @@
       "bytesByVoice": {
         "blue": 18016,
         "pink": 17598
+      }
+    },
+    {
+      "key": "mamá",
+      "text": "mamá",
+      "ipa": "/maˈma/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "mama-a80fc14e62.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/mama-a80fc14e62.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/mama-a80fc14e62.mp3",
+        "pink": "/audio/language-packs/es-ES/mama-pink-85f6602137.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "mama-a80fc14e62.mp3",
+        "pink": "mama-pink-85f6602137.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 16762
       }
     },
     {
@@ -5695,6 +7235,35 @@
       }
     },
     {
+      "key": "mar",
+      "text": "mar",
+      "ipa": "/maɾ/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "mar-9679696a8e.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/mar-9679696a8e.mp3",
+      "bytes": 16762,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/mar-9679696a8e.mp3",
+        "pink": "/audio/language-packs/es-ES/mar-pink-a9d6bf5151.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "mar-9679696a8e.mp3",
+        "pink": "mar-pink-a9d6bf5151.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 16762,
+        "pink": 14254
+      }
+    },
+    {
       "key": "mayo",
       "text": "mayo",
       "ipa": "/ˈmaʝo/",
@@ -5736,6 +7305,35 @@
       "bytesByVoice": {
         "blue": 15926,
         "pink": 15090
+      }
+    },
+    {
+      "key": "me gusta",
+      "text": "me gusta",
+      "ipa": "/me ˈgusta/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "me-gusta-ad6fc3dc71.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/me-gusta-ad6fc3dc71.mp3",
+      "bytes": 24285,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/me-gusta-ad6fc3dc71.mp3",
+        "pink": "/audio/language-packs/es-ES/me-gusta-pink-7c86083551.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "me-gusta-ad6fc3dc71.mp3",
+        "pink": "me-gusta-pink-7c86083551.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 24285,
+        "pink": 18016
       }
     },
     {
@@ -5878,6 +7476,35 @@
       }
     },
     {
+      "key": "menos",
+      "text": "menos",
+      "ipa": "/ˈmenos/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "menos-24a01a178f.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/menos-24a01a178f.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/menos-24a01a178f.mp3",
+        "pink": "/audio/language-packs/es-ES/menos-pink-ad3f4c0c37.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "menos-24a01a178f.mp3",
+        "pink": "menos-pink-ad3f4c0c37.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 15926
+      }
+    },
+    {
       "key": "mercado",
       "text": "mercado",
       "ipa": "/meɾˈkaðo/",
@@ -5967,6 +7594,35 @@
       }
     },
     {
+      "key": "mi",
+      "text": "mi",
+      "ipa": "/mi/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "mi-b69fe2f067.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/mi-b69fe2f067.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/mi-b69fe2f067.mp3",
+        "pink": "/audio/language-packs/es-ES/mi-pink-abb94b0d58.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "mi-b69fe2f067.mp3",
+        "pink": "mi-pink-abb94b0d58.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 14254
+      }
+    },
+    {
       "key": "mi amigo",
       "text": "mi amigo",
       "ipa": "/mi aˈmiɣo/",
@@ -6040,6 +7696,64 @@
       "bytesByVoice": {
         "blue": 50199,
         "pink": 35988
+      }
+    },
+    {
+      "key": "mi mamá",
+      "text": "mi mamá",
+      "ipa": "/mi maˈma/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "mi-mama-402ec133b1.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/mi-mama-402ec133b1.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/mi-mama-402ec133b1.mp3",
+        "pink": "/audio/language-packs/es-ES/mi-mama-pink-7fbea5cd68.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "mi-mama-402ec133b1.mp3",
+        "pink": "mi-mama-pink-7fbea5cd68.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 17598
+      }
+    },
+    {
+      "key": "mi mamá mira el mapa",
+      "text": "Mi mamá mira el mapa.",
+      "ipa": "/m/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "sentence"
+      ],
+      "fileName": "mi-mama-mira-el-mapa-5dde5f0340.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/mi-mama-mira-el-mapa-5dde5f0340.mp3",
+      "bytes": 37660,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/mi-mama-mira-el-mapa-5dde5f0340.mp3",
+        "pink": "/audio/language-packs/es-ES/mi-mama-mira-el-mapa-pink-4eff3796e2.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "mi-mama-mira-el-mapa-5dde5f0340.mp3",
+        "pink": "mi-mama-mira-el-mapa-pink-4eff3796e2.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 37660,
+        "pink": 27629
       }
     },
     {
@@ -6143,6 +7857,35 @@
       }
     },
     {
+      "key": "miel",
+      "text": "miel",
+      "ipa": "/mjel/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "miel-25da4f28d3.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/miel-25da4f28d3.mp3",
+      "bytes": 18016,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/miel-25da4f28d3.mp3",
+        "pink": "/audio/language-packs/es-ES/miel-pink-37b55ed323.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "miel-25da4f28d3.mp3",
+        "pink": "miel-pink-37b55ed323.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18016,
+        "pink": 16762
+      }
+    },
+    {
       "key": "mil",
       "text": "mil",
       "ipa": "/mil/",
@@ -6228,6 +7971,35 @@
       "bytesByVoice": {
         "blue": 13836,
         "pink": 15926
+      }
+    },
+    {
+      "key": "momento",
+      "text": "momento",
+      "ipa": "/moˈmento/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "momento-af7b790a69.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/momento-af7b790a69.mp3",
+      "bytes": 23449,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/momento-af7b790a69.mp3",
+        "pink": "/audio/language-packs/es-ES/momento-pink-63535a468b.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "momento-af7b790a69.mp3",
+        "pink": "momento-pink-63535a468b.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 23449,
+        "pink": 18852
       }
     },
     {
@@ -6364,6 +8136,35 @@
       }
     },
     {
+      "key": "mucho más",
+      "text": "mucho más",
+      "ipa": "/ˈmutʃo mas/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "mucho-mas-043161380a.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/mucho-mas-043161380a.mp3",
+      "bytes": 20942,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/mucho-mas-043161380a.mp3",
+        "pink": "/audio/language-packs/es-ES/mucho-mas-pink-55cf38cf49.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "mucho-mas-043161380a.mp3",
+        "pink": "mucho-mas-pink-55cf38cf49.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20942,
+        "pink": 18016
+      }
+    },
+    {
       "key": "mujer",
       "text": "mujer",
       "ipa": "/muˈxeɾ/",
@@ -6428,6 +8229,35 @@
       },
       "bytesByVoice": {
         "blue": 18016,
+        "pink": 17598
+      }
+    },
+    {
+      "key": "museo",
+      "text": "museo",
+      "ipa": "/muˈseo/",
+      "soundUnitSlugs": [
+        "es-m"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "museo-97edc274e8.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/museo-97edc274e8.mp3",
+      "bytes": 21777,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/museo-97edc274e8.mp3",
+        "pink": "/audio/language-packs/es-ES/museo-pink-d3b238034f.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "museo-97edc274e8.mp3",
+        "pink": "museo-pink-d3b238034f.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 21777,
         "pink": 17598
       }
     },
@@ -6499,6 +8329,35 @@
       }
     },
     {
+      "key": "nada nuevo",
+      "text": "nada nuevo",
+      "ipa": "/ˈnada ˈnwebo/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "nada-nuevo-86179a8dab.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/nada-nuevo-86179a8dab.mp3",
+      "bytes": 25539,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/nada-nuevo-86179a8dab.mp3",
+        "pink": "/audio/language-packs/es-ES/nada-nuevo-pink-bf3f12d703.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "nada-nuevo-86179a8dab.mp3",
+        "pink": "nada-nuevo-pink-bf3f12d703.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 25539,
+        "pink": 19688
+      }
+    },
+    {
       "key": "naranja",
       "text": "naranja",
       "ipa": "/naˈɾaŋxa/",
@@ -6567,6 +8426,35 @@
       }
     },
     {
+      "key": "no",
+      "text": "no",
+      "ipa": "/no/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "no-ac7e0a8c6f.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/no-ac7e0a8c6f.mp3",
+      "bytes": 13836,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/no-ac7e0a8c6f.mp3",
+        "pink": "/audio/language-packs/es-ES/no-pink-8165d749a6.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "no-ac7e0a8c6f.mp3",
+        "pink": "no-pink-8165d749a6.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 13836,
+        "pink": 14254
+      }
+    },
+    {
       "key": "no comas deprisa",
       "text": "No comas deprisa",
       "ipa": "/no ˈkomas deˈpɾisa/",
@@ -6589,6 +8477,64 @@
       }
     },
     {
+      "key": "no entiendo",
+      "text": "no entiendo",
+      "ipa": "/no enˈtjendo/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "no-entiendo-5f4e01262c.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/no-entiendo-5f4e01262c.mp3",
+      "bytes": 27629,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/no-entiendo-5f4e01262c.mp3",
+        "pink": "/audio/language-packs/es-ES/no-entiendo-pink-9623739b7e.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "no-entiendo-5f4e01262c.mp3",
+        "pink": "no-entiendo-pink-9623739b7e.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 27629,
+        "pink": 20942
+      }
+    },
+    {
+      "key": "no necesito nada nuevo",
+      "text": "No necesito nada nuevo.",
+      "ipa": "/n/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "sentence"
+      ],
+      "fileName": "no-necesito-nada-nuevo-5dca428c75.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/no-necesito-nada-nuevo-5dca428c75.mp3",
+      "bytes": 42675,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/no-necesito-nada-nuevo-5dca428c75.mp3",
+        "pink": "/audio/language-packs/es-ES/no-necesito-nada-nuevo-pink-3315062d00.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "no-necesito-nada-nuevo-5dca428c75.mp3",
+        "pink": "no-necesito-nada-nuevo-pink-3315062d00.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 42675,
+        "pink": 29301
+      }
+    },
+    {
       "key": "noche",
       "text": "noche",
       "ipa": "/ˈnotʃe/",
@@ -6608,6 +8554,94 @@
       },
       "bytesByVoice": {
         "blue": 15090,
+        "pink": 16762
+      }
+    },
+    {
+      "key": "nombre",
+      "text": "nombre",
+      "ipa": "/ˈnombɾe/",
+      "soundUnitSlugs": [
+        "es-m",
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "nombre-680d1afb51.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/nombre-680d1afb51.mp3",
+      "bytes": 18852,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/nombre-680d1afb51.mp3",
+        "pink": "/audio/language-packs/es-ES/nombre-pink-98f74f47e1.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "nombre-680d1afb51.mp3",
+        "pink": "nombre-pink-98f74f47e1.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18852,
+        "pink": 15090
+      }
+    },
+    {
+      "key": "normal",
+      "text": "normal",
+      "ipa": "/noɾˈmal/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "normal-d7fc40dca5.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/normal-d7fc40dca5.mp3",
+      "bytes": 20524,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/normal-d7fc40dca5.mp3",
+        "pink": "/audio/language-packs/es-ES/normal-pink-7ceee4baf0.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "normal-d7fc40dca5.mp3",
+        "pink": "normal-pink-7ceee4baf0.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20524,
+        "pink": 17598
+      }
+    },
+    {
+      "key": "norte",
+      "text": "norte",
+      "ipa": "/ˈnoɾte/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "norte-7c5b88b07f.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/norte-7c5b88b07f.mp3",
+      "bytes": 18852,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/norte-7c5b88b07f.mp3",
+        "pink": "/audio/language-packs/es-ES/norte-pink-1e40e46dba.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "norte-7c5b88b07f.mp3",
+        "pink": "norte-pink-1e40e46dba.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18852,
         "pink": 16762
       }
     },
@@ -6663,6 +8697,64 @@
       }
     },
     {
+      "key": "nuevo",
+      "text": "nuevo",
+      "ipa": "/ˈnwebo/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "nuevo-891c6d536d.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/nuevo-891c6d536d.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/nuevo-891c6d536d.mp3",
+        "pink": "/audio/language-packs/es-ES/nuevo-pink-b209117c38.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "nuevo-891c6d536d.mp3",
+        "pink": "nuevo-pink-b209117c38.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 18016
+      }
+    },
+    {
+      "key": "número",
+      "text": "número",
+      "ipa": "/ˈnumeɾo/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "numero-b9b6cd8fa0.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/numero-b9b6cd8fa0.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/numero-b9b6cd8fa0.mp3",
+        "pink": "/audio/language-packs/es-ES/numero-pink-fc24d0075d.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "numero-b9b6cd8fa0.mp3",
+        "pink": "numero-pink-fc24d0075d.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 16762
+      }
+    },
+    {
       "key": "numero número",
       "text": "numero número",
       "ipa": "/nuˈmeɾo ˈnumeɾo/",
@@ -6689,6 +8781,35 @@
       "bytesByVoice": {
         "blue": 26375,
         "pink": 20942
+      }
+    },
+    {
+      "key": "nunca",
+      "text": "nunca",
+      "ipa": "/ˈnuŋka/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "nunca-42be145466.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/nunca-42be145466.mp3",
+      "bytes": 20524,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/nunca-42be145466.mp3",
+        "pink": "/audio/language-packs/es-ES/nunca-pink-1f3438c8bb.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "nunca-42be145466.mp3",
+        "pink": "nunca-pink-1f3438c8bb.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20524,
+        "pink": 17598
       }
     },
     {
@@ -6754,6 +8875,35 @@
       },
       "bytesByVoice": {
         "blue": 18016,
+        "pink": 16762
+      }
+    },
+    {
+      "key": "oficina",
+      "text": "oficina",
+      "ipa": "/ofiˈθina/",
+      "soundUnitSlugs": [
+        "es-f"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "oficina-fe35b97213.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/oficina-fe35b97213.mp3",
+      "bytes": 21777,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/oficina-fe35b97213.mp3",
+        "pink": "/audio/language-packs/es-ES/oficina-pink-ac05b8708e.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "oficina-fe35b97213.mp3",
+        "pink": "oficina-pink-ac05b8708e.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 21777,
         "pink": 16762
       }
     },
@@ -7074,6 +9224,35 @@
       }
     },
     {
+      "key": "papá pide pan para paco",
+      "text": "Papá pide pan para Paco.",
+      "ipa": "/p/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "sentence"
+      ],
+      "fileName": "papa-pide-pan-para-paco-20f6e6d285.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/papa-pide-pan-para-paco-20f6e6d285.mp3",
+      "bytes": 38914,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/papa-pide-pan-para-paco-20f6e6d285.mp3",
+        "pink": "/audio/language-packs/es-ES/papa-pide-pan-para-paco-pink-284dc9bcde.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "papa-pide-pan-para-paco-20f6e6d285.mp3",
+        "pink": "papa-pide-pan-para-paco-pink-284dc9bcde.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 38914,
+        "pink": 29301
+      }
+    },
+    {
       "key": "papa y papá",
       "text": "papa y papá",
       "ipa": "/ˈpapa i paˈpa/",
@@ -7103,6 +9282,93 @@
       }
     },
     {
+      "key": "papel",
+      "text": "papel",
+      "ipa": "/paˈpel/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "papel-5dc4094d42.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/papel-5dc4094d42.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/papel-5dc4094d42.mp3",
+        "pink": "/audio/language-packs/es-ES/papel-pink-ac4c2330f1.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "papel-5dc4094d42.mp3",
+        "pink": "papel-pink-ac4c2330f1.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 16762
+      }
+    },
+    {
+      "key": "papel pequeño",
+      "text": "papel pequeño",
+      "ipa": "/paˈpel peˈkeɲo/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "papel-pequeno-e4c0117dd7.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/papel-pequeno-e4c0117dd7.mp3",
+      "bytes": 30973,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/papel-pequeno-e4c0117dd7.mp3",
+        "pink": "/audio/language-packs/es-ES/papel-pequeno-pink-036523247e.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "papel-pequeno-e4c0117dd7.mp3",
+        "pink": "papel-pequeno-pink-036523247e.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 30973,
+        "pink": 22613
+      }
+    },
+    {
+      "key": "paquete",
+      "text": "paquete",
+      "ipa": "/paˈkete/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "paquete-50468a8b38.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/paquete-50468a8b38.mp3",
+      "bytes": 20942,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/paquete-50468a8b38.mp3",
+        "pink": "/audio/language-packs/es-ES/paquete-pink-8c1601c9b1.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "paquete-50468a8b38.mp3",
+        "pink": "paquete-pink-8c1601c9b1.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20942,
+        "pink": 18852
+      }
+    },
+    {
       "key": "para",
       "text": "para",
       "ipa": "/ˈpaɾa/",
@@ -7121,6 +9387,93 @@
       },
       "bytesByVoice": {
         "blue": 14254,
+        "pink": 15090
+      }
+    },
+    {
+      "key": "patata",
+      "text": "patata",
+      "ipa": "/paˈtata/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "patata-06cb173a0d.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/patata-06cb173a0d.mp3",
+      "bytes": 22613,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/patata-06cb173a0d.mp3",
+        "pink": "/audio/language-packs/es-ES/patata-pink-961635b9e4.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "patata-06cb173a0d.mp3",
+        "pink": "patata-pink-961635b9e4.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 22613,
+        "pink": 18852
+      }
+    },
+    {
+      "key": "pato",
+      "text": "pato",
+      "ipa": "/ˈpato/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "pato-2fbd2ba2e7.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/pato-2fbd2ba2e7.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/pato-2fbd2ba2e7.mp3",
+        "pink": "/audio/language-packs/es-ES/pato-pink-f7d8e5f218.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "pato-2fbd2ba2e7.mp3",
+        "pink": "pato-pink-f7d8e5f218.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 15926
+      }
+    },
+    {
+      "key": "paz",
+      "text": "paz",
+      "ipa": "/paθ/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "paz-53427fd27a.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/paz-53427fd27a.mp3",
+      "bytes": 15926,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/paz-53427fd27a.mp3",
+        "pink": "/audio/language-packs/es-ES/paz-pink-e372dd57a6.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "paz-53427fd27a.mp3",
+        "pink": "paz-pink-e372dd57a6.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 15926,
         "pink": 15090
       }
     },
@@ -7144,6 +9497,35 @@
       "bytesByVoice": {
         "blue": 16762,
         "pink": 16762
+      }
+    },
+    {
+      "key": "pelo",
+      "text": "pelo",
+      "ipa": "/ˈpelo/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "pelo-a0728eb052.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/pelo-a0728eb052.mp3",
+      "bytes": 16762,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/pelo-a0728eb052.mp3",
+        "pink": "/audio/language-packs/es-ES/pelo-pink-e8c0e2d055.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "pelo-a0728eb052.mp3",
+        "pink": "pelo-pink-e8c0e2d055.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 16762,
+        "pink": 15090
       }
     },
     {
@@ -7358,6 +9740,35 @@
       }
     },
     {
+      "key": "plato",
+      "text": "plato",
+      "ipa": "/ˈplato/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "plato-80abddf601.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/plato-80abddf601.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/plato-80abddf601.mp3",
+        "pink": "/audio/language-packs/es-ES/plato-pink-0bad7927a0.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "plato-80abddf601.mp3",
+        "pink": "plato-pink-0bad7927a0.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 17598
+      }
+    },
+    {
       "key": "playa",
       "text": "playa",
       "ipa": "/ˈplaʝa/",
@@ -7423,6 +9834,64 @@
       "bytesByVoice": {
         "blue": 15090,
         "pink": 16762
+      }
+    },
+    {
+      "key": "poco a poco",
+      "text": "poco a poco",
+      "ipa": "/ˈpoko a ˈpoko/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "poco-a-poco-28ab27c3fa.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/poco-a-poco-28ab27c3fa.mp3",
+      "bytes": 30137,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/poco-a-poco-28ab27c3fa.mp3",
+        "pink": "/audio/language-packs/es-ES/poco-a-poco-pink-deffac3975.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "poco-a-poco-28ab27c3fa.mp3",
+        "pink": "poco-a-poco-pink-deffac3975.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 30137,
+        "pink": 20942
+      }
+    },
+    {
+      "key": "porque",
+      "text": "porque",
+      "ipa": "/ˈpoɾke/",
+      "soundUnitSlugs": [
+        "es-k"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "porque-79131db212.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/porque-79131db212.mp3",
+      "bytes": 18852,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/porque-79131db212.mp3",
+        "pink": "/audio/language-packs/es-ES/porque-pink-f65a72c573.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "porque-79131db212.mp3",
+        "pink": "porque-pink-f65a72c573.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18852,
+        "pink": 15926
       }
     },
     {
@@ -7518,6 +9987,64 @@
       "bytesByVoice": {
         "blue": 37660,
         "pink": 27629
+      }
+    },
+    {
+      "key": "pregunta",
+      "text": "pregunta",
+      "ipa": "/pɾeˈgunta/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "pregunta-3c954d16c0.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/pregunta-3c954d16c0.mp3",
+      "bytes": 24703,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/pregunta-3c954d16c0.mp3",
+        "pink": "/audio/language-packs/es-ES/pregunta-pink-237477f0be.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "pregunta-3c954d16c0.mp3",
+        "pink": "pregunta-pink-237477f0be.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 24703,
+        "pink": 17598
+      }
+    },
+    {
+      "key": "primavera",
+      "text": "primavera",
+      "ipa": "/pɾimaˈbeɾa/",
+      "soundUnitSlugs": [
+        "es-p"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "primavera-a6b3dcd60e.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/primavera-a6b3dcd60e.mp3",
+      "bytes": 26375,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/primavera-a6b3dcd60e.mp3",
+        "pink": "/audio/language-packs/es-ES/primavera-pink-b96742cb70.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "primavera-a6b3dcd60e.mp3",
+        "pink": "primavera-pink-b96742cb70.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 26375,
+        "pink": 18016
       }
     },
     {
@@ -7726,6 +10253,64 @@
       "bytesByVoice": {
         "blue": 16762,
         "pink": 16762
+      }
+    },
+    {
+      "key": "quiero queso caliente",
+      "text": "Quiero queso caliente.",
+      "ipa": "/k/",
+      "soundUnitSlugs": [
+        "es-k"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "sentence"
+      ],
+      "fileName": "quiero-queso-caliente-54c7e6eae3.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/quiero-queso-caliente-54c7e6eae3.mp3",
+      "bytes": 41839,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/quiero-queso-caliente-54c7e6eae3.mp3",
+        "pink": "/audio/language-packs/es-ES/quiero-queso-caliente-pink-da082dd96a.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "quiero-queso-caliente-54c7e6eae3.mp3",
+        "pink": "quiero-queso-caliente-pink-da082dd96a.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 41839,
+        "pink": 27211
+      }
+    },
+    {
+      "key": "quince",
+      "text": "quince",
+      "ipa": "/ˈkinθe/",
+      "soundUnitSlugs": [
+        "es-k"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "quince-8885a7ab1f.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/quince-8885a7ab1f.mp3",
+      "bytes": 22613,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/quince-8885a7ab1f.mp3",
+        "pink": "/audio/language-packs/es-ES/quince-pink-b8f74ab31a.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "quince-8885a7ab1f.mp3",
+        "pink": "quince-pink-b8f74ab31a.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 22613,
+        "pink": 15926
       }
     },
     {
@@ -8742,6 +11327,122 @@
       }
     },
     {
+      "key": "tarde tranquila",
+      "text": "tarde tranquila",
+      "ipa": "/ˈtaɾde tɾaŋˈkila/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "tarde-tranquila-2954e39317.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/tarde-tranquila-2954e39317.mp3",
+      "bytes": 34316,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/tarde-tranquila-2954e39317.mp3",
+        "pink": "/audio/language-packs/es-ES/tarde-tranquila-pink-8e7d80fd0b.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "tarde-tranquila-2954e39317.mp3",
+        "pink": "tarde-tranquila-pink-8e7d80fd0b.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 34316,
+        "pink": 23449
+      }
+    },
+    {
+      "key": "tarjeta",
+      "text": "tarjeta",
+      "ipa": "/taɾˈxeta/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "tarjeta-7eb0083fc9.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/tarjeta-7eb0083fc9.mp3",
+      "bytes": 24703,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/tarjeta-7eb0083fc9.mp3",
+        "pink": "/audio/language-packs/es-ES/tarjeta-pink-d61bc20285.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "tarjeta-7eb0083fc9.mp3",
+        "pink": "tarjeta-pink-d61bc20285.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 24703,
+        "pink": 18852
+      }
+    },
+    {
+      "key": "taza",
+      "text": "taza",
+      "ipa": "/ˈtaθa/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "taza-895616f6b7.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/taza-895616f6b7.mp3",
+      "bytes": 18852,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/taza-895616f6b7.mp3",
+        "pink": "/audio/language-packs/es-ES/taza-pink-694ee4ab83.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "taza-895616f6b7.mp3",
+        "pink": "taza-pink-694ee4ab83.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 18852,
+        "pink": 16762
+      }
+    },
+    {
+      "key": "té",
+      "text": "té",
+      "ipa": "/te/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "te-8960d640e6.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/te-8960d640e6.mp3",
+      "bytes": 15090,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/te-8960d640e6.mp3",
+        "pink": "/audio/language-packs/es-ES/te-pink-5e0ad04810.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "te-8960d640e6.mp3",
+        "pink": "te-pink-5e0ad04810.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 15090,
+        "pink": 12164
+      }
+    },
+    {
       "key": "teléfono",
       "text": "teléfono",
       "ipa": "/teˈlefono/",
@@ -8762,6 +11463,35 @@
       "bytesByVoice": {
         "blue": 19688,
         "pink": 18016
+      }
+    },
+    {
+      "key": "tengo tiempo",
+      "text": "tengo tiempo",
+      "ipa": "/ˈteŋgo ˈtjempo/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "tengo-tiempo-2f5d2f2183.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/tengo-tiempo-2f5d2f2183.mp3",
+      "bytes": 30973,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/tengo-tiempo-2f5d2f2183.mp3",
+        "pink": "/audio/language-packs/es-ES/tengo-tiempo-pink-04ed987f54.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "tengo-tiempo-2f5d2f2183.mp3",
+        "pink": "tengo-tiempo-pink-04ed987f54.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 30973,
+        "pink": 19688
       }
     },
     {
@@ -8813,6 +11543,35 @@
       "bytesByVoice": {
         "blue": 37660,
         "pink": 24703
+      }
+    },
+    {
+      "key": "texto",
+      "text": "texto",
+      "ipa": "/ˈteksto/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "texto-eeb30cf5ef.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/texto-eeb30cf5ef.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/texto-eeb30cf5ef.mp3",
+        "pink": "/audio/language-packs/es-ES/texto-pink-280cc1c43e.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "texto-eeb30cf5ef.mp3",
+        "pink": "texto-pink-280cc1c43e.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 16762
       }
     },
     {
@@ -8922,6 +11681,35 @@
       }
     },
     {
+      "key": "tío",
+      "text": "tío",
+      "ipa": "/ˈtio/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "tio-3611ff3e61.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/tio-3611ff3e61.mp3",
+      "bytes": 17598,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/tio-3611ff3e61.mp3",
+        "pink": "/audio/language-packs/es-ES/tio-pink-9ce2c8d4bb.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "tio-3611ff3e61.mp3",
+        "pink": "tio-pink-9ce2c8d4bb.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 17598,
+        "pink": 14254
+      }
+    },
+    {
       "key": "todo",
       "text": "todo",
       "ipa": "/ˈtoðo/",
@@ -8941,6 +11729,64 @@
       "bytesByVoice": {
         "blue": 15090,
         "pink": 15926
+      }
+    },
+    {
+      "key": "todo listo",
+      "text": "todo listo",
+      "ipa": "/ˈtodo ˈlisto/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "todo-listo-f96267cc61.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/todo-listo-f96267cc61.mp3",
+      "bytes": 26375,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/todo-listo-f96267cc61.mp3",
+        "pink": "/audio/language-packs/es-ES/todo-listo-pink-a0765fc9a7.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "todo-listo-f96267cc61.mp3",
+        "pink": "todo-listo-pink-a0765fc9a7.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 26375,
+        "pink": 18852
+      }
+    },
+    {
+      "key": "toma",
+      "text": "toma",
+      "ipa": "/ˈtoma/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "toma-7a94b5c520.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/toma-7a94b5c520.mp3",
+      "bytes": 19688,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/toma-7a94b5c520.mp3",
+        "pink": "/audio/language-packs/es-ES/toma-pink-23c61eed3b.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "toma-7a94b5c520.mp3",
+        "pink": "toma-pink-23c61eed3b.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 19688,
+        "pink": 15090
       }
     },
     {
@@ -9106,6 +11952,35 @@
       }
     },
     {
+      "key": "tres tomates",
+      "text": "tres tomates",
+      "ipa": "/tɾes toˈmates/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "tres-tomates-c065453080.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/tres-tomates-c065453080.mp3",
+      "bytes": 27629,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/tres-tomates-c065453080.mp3",
+        "pink": "/audio/language-packs/es-ES/tres-tomates-pink-2f2f81adaf.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "tres-tomates-c065453080.mp3",
+        "pink": "tres-tomates-pink-2f2f81adaf.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 27629,
+        "pink": 21777
+      }
+    },
+    {
       "key": "tres veces",
       "text": "tres veces",
       "ipa": "/tɾes ˈbeθes/",
@@ -9172,6 +12047,64 @@
       }
     },
     {
+      "key": "tú también",
+      "text": "tú también",
+      "ipa": "/tu tamˈbjen/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "tu-tambien-4fd1071cf5.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/tu-tambien-4fd1071cf5.mp3",
+      "bytes": 29301,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/tu-tambien-4fd1071cf5.mp3",
+        "pink": "/audio/language-packs/es-ES/tu-tambien-pink-29fd22ce26.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "tu-tambien-4fd1071cf5.mp3",
+        "pink": "tu-tambien-pink-29fd22ce26.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 29301,
+        "pink": 19688
+      }
+    },
+    {
+      "key": "tú tomas té temprano",
+      "text": "Tú tomas té temprano.",
+      "ipa": "/t/",
+      "soundUnitSlugs": [
+        "es-t"
+      ],
+      "kinds": [
+        "sentence"
+      ],
+      "sources": [
+        "sentence"
+      ],
+      "fileName": "tu-tomas-te-temprano-4acde7a0cd.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/tu-tomas-te-temprano-4acde7a0cd.mp3",
+      "bytes": 43511,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/tu-tomas-te-temprano-4acde7a0cd.mp3",
+        "pink": "/audio/language-packs/es-ES/tu-tomas-te-temprano-pink-8ca7aa7ca2.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "tu-tomas-te-temprano-4acde7a0cd.mp3",
+        "pink": "tu-tomas-te-temprano-pink-8ca7aa7ca2.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 43511,
+        "pink": 26375
+      }
+    },
+    {
       "key": "último",
       "text": "último",
       "ipa": "/ˈultimo/",
@@ -9213,6 +12146,35 @@
       "bytesByVoice": {
         "blue": 17598,
         "pink": 16762
+      }
+    },
+    {
+      "key": "un barco",
+      "text": "un barco",
+      "ipa": "/um ˈbaɾko/",
+      "soundUnitSlugs": [
+        "es-b-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "un-barco-0862d7c288.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/un-barco-0862d7c288.mp3",
+      "bytes": 22613,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/un-barco-0862d7c288.mp3",
+        "pink": "/audio/language-packs/es-ES/un-barco-pink-daffc523f1.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "un-barco-0862d7c288.mp3",
+        "pink": "un-barco-pink-daffc523f1.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 22613,
+        "pink": 17598
       }
     },
     {
@@ -9314,6 +12276,35 @@
       }
     },
     {
+      "key": "un grupo",
+      "text": "un grupo",
+      "ipa": "/uŋ ˈgɾupo/",
+      "soundUnitSlugs": [
+        "es-g-stop"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "un-grupo-f011fdaf14.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/un-grupo-f011fdaf14.mp3",
+      "bytes": 20942,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/un-grupo-f011fdaf14.mp3",
+        "pink": "/audio/language-packs/es-ES/un-grupo-pink-2e7c12a10f.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "un-grupo-f011fdaf14.mp3",
+        "pink": "un-grupo-pink-2e7c12a10f.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 20942,
+        "pink": 17598
+      }
+    },
+    {
       "key": "un niño",
       "text": "un niño",
       "ipa": "/un ˈniɲo/",
@@ -9358,6 +12349,35 @@
       }
     },
     {
+      "key": "una",
+      "text": "una",
+      "ipa": "/ˈuna/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "una-206b041362.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/una-206b041362.mp3",
+      "bytes": 16762,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/una-206b041362.mp3",
+        "pink": "/audio/language-packs/es-ES/una-pink-98187ba2f6.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "una-206b041362.mp3",
+        "pink": "una-pink-98187ba2f6.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 16762,
+        "pink": 14254
+      }
+    },
+    {
       "key": "uña",
       "text": "uña",
       "ipa": "/ˈuɲa/",
@@ -9377,6 +12397,35 @@
       "bytesByVoice": {
         "blue": 14254,
         "pink": 14254
+      }
+    },
+    {
+      "key": "una casa",
+      "text": "una casa",
+      "ipa": "/ˈuna ˈkasa/",
+      "soundUnitSlugs": [
+        "es-k"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "una-casa-3ba7defccc.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/una-casa-3ba7defccc.mp3",
+      "bytes": 22613,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/una-casa-3ba7defccc.mp3",
+        "pink": "/audio/language-packs/es-ES/una-casa-pink-7419554474.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "una-casa-3ba7defccc.mp3",
+        "pink": "una-casa-pink-7419554474.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 22613,
+        "pink": 18852
       }
     },
     {
@@ -9453,6 +12502,35 @@
       "bytesByVoice": {
         "blue": 18016,
         "pink": 17598
+      }
+    },
+    {
+      "key": "una noche",
+      "text": "una noche",
+      "ipa": "/ˈuna ˈnotʃe/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "phrase"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "una-noche-a1504daedf.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/una-noche-a1504daedf.mp3",
+      "bytes": 21777,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/una-noche-a1504daedf.mp3",
+        "pink": "/audio/language-packs/es-ES/una-noche-pink-87dbfb4655.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "una-noche-a1504daedf.mp3",
+        "pink": "una-noche-pink-87dbfb4655.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 21777,
+        "pink": 18852
       }
     },
     {
@@ -9605,6 +12683,35 @@
       "bytesByVoice": {
         "blue": 13000,
         "pink": 13836
+      }
+    },
+    {
+      "key": "ventana",
+      "text": "ventana",
+      "ipa": "/benˈtana/",
+      "soundUnitSlugs": [
+        "es-n"
+      ],
+      "kinds": [
+        "word"
+      ],
+      "sources": [
+        "phoneme-keyword"
+      ],
+      "fileName": "ventana-d3447379fd.mp3",
+      "audioSrc": "/audio/language-packs/es-ES/ventana-d3447379fd.mp3",
+      "bytes": 21777,
+      "audioByVoice": {
+        "blue": "/audio/language-packs/es-ES/ventana-d3447379fd.mp3",
+        "pink": "/audio/language-packs/es-ES/ventana-pink-def61c1885.mp3"
+      },
+      "fileNameByVoice": {
+        "blue": "ventana-d3447379fd.mp3",
+        "pink": "ventana-pink-def61c1885.mp3"
+      },
+      "bytesByVoice": {
+        "blue": 21777,
+        "pink": 18016
       }
     },
     {
@@ -10111,7 +13218,7 @@
       }
     }
   ],
-  "updatedAt": "2026-06-11T15:02:24.318Z",
+  "updatedAt": "2026-06-18T11:22:56.845Z",
   "voiceSlots": [
     "blue",
     "pink"
@@ -10169,7 +13276,7 @@
       }
     ]
   },
-  "secondaryVoiceGeneratedAt": "2026-06-11T15:02:24.318Z",
-  "secondaryVoiceGenerated": 440,
-  "secondaryVoiceEstimatedCredits": 3289
+  "secondaryVoiceGeneratedAt": "2026-06-18T11:22:56.845Z",
+  "secondaryVoiceGenerated": 547,
+  "secondaryVoiceEstimatedCredits": 4159
 }

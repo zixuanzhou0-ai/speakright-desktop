@@ -52,15 +52,17 @@ describe("language config card", () => {
       '[data-smoke="language-option-phonology-gaps"]',
     );
     expect(gapSummaries).toHaveLength(3);
-    for (const summary of gapSummaries) {
-      expect(summary).toHaveAttribute("data-phonology-gap-count", "2");
-    }
+    expect(gapSummaries[0]).toHaveAttribute("data-phonology-gap-count", "1");
+    expect(gapSummaries[1]).toHaveAttribute("data-phonology-gap-count", "1");
+    expect(gapSummaries[2]).toHaveAttribute("data-phonology-gap-count", "2");
 
     expect(
-      screen.getByText(/音系\/短音频待补：\/p t k f m n b d g\//),
+      screen.getByText(/音系\/短音频待补：seseo \/ yeismo variants/),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/音系\/短音频待补：\/p b t d k g f v s z m n l\//),
+      screen.getByText(
+        /音系\/短音频待补：liaison \/ enchainement \/ elision/,
+      ),
     ).toBeInTheDocument();
     expect(
       screen.getByText(/音系\/短音频待补：complete hard\/soft consonant pairs/),

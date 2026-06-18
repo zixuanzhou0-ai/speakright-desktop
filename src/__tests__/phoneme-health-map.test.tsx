@@ -50,7 +50,7 @@ describe("PhonemeHealthMap language policy", () => {
     ).toBeInTheDocument();
   });
 
-  it("marks Spanish units without exact clips as score-only observations", () => {
+  it("marks repaired Spanish plain consonants as clickable exact observations", () => {
     render(
       <PhonemeHealthMap
         languageId="es-ES"
@@ -61,12 +61,12 @@ describe("PhonemeHealthMap language policy", () => {
     const link = linkForSlug("es-p");
     expect(link).toHaveAccessibleName(/中等/);
     expect(link).toHaveAccessibleName(/音素/);
-    expect(link).toHaveAccessibleName(/音频：缺少短音频/);
-    expect(link).toHaveAccessibleName(/拆解：音频未验证/);
+    expect(link).toHaveAccessibleName(/音频：精确短音频/);
+    expect(link).toHaveAccessibleName(/拆解：精确短音频/);
     expect(link).not.toHaveAccessibleName(/掌握/);
     expect(
       document.querySelector(
-        '[data-smoke="phoneme-health-cell"][data-phonology-layer="phoneme"][data-audio-status="gap-no-local-clip"][data-tile-policy="score-only-unverified"]',
+        '[data-smoke="phoneme-health-cell"][data-phonology-layer="phoneme"][data-audio-status="exact-local-header"][data-tile-policy="clickable-exact-header"]',
       ),
     ).toBeInTheDocument();
   });

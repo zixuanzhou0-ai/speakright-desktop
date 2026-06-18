@@ -160,12 +160,10 @@ describe("language assessment audio policy", () => {
 
   it("keeps score-only gaps visibly unverified instead of treating nearby assets as audio", () => {
     const expectedUnverifiedRows = [
-      ["es-ES", "es-p"],
-      ["es-ES", "es-b-stop"],
-      ["fr-FR", "fr-p"],
-      ["fr-FR", "fr-v"],
       ["ru-RU", "ru-t-tj"],
-      ["ru-RU", "ru-r-rj"],
+      ["ru-RU", "ru-d-dj"],
+      ["ru-RU", "ru-s-sj"],
+      ["ru-RU", "ru-p-pj"],
     ] as const;
 
     for (const [languageId, slug] of expectedUnverifiedRows) {
@@ -190,6 +188,36 @@ describe("language assessment audio policy", () => {
     }
   });
 
+  it("marks repaired Spanish, French, and verified Russian soft-r clips as clickable exact headers", () => {
+    const expectedClickableRows = [
+      ["es-ES", "es-k"],
+      ["es-ES", "es-b-stop"],
+      ["fr-FR", "fr-p"],
+      ["fr-FR", "fr-v"],
+      ["ru-RU", "ru-r-rj"],
+    ] as const;
+
+    for (const [languageId, slug] of expectedClickableRows) {
+      const row = getLanguageAssessmentAudioPolicyRows(languageId).find(
+        (candidate) => candidate.slug === slug,
+      );
+
+      expect(row?.policyStatus, `${languageId}:${slug}`).toBe(
+        "clickable-exact-header",
+      );
+      expect(row?.audioStatus, `${languageId}:${slug}`).toBe(
+        "exact-local-header",
+      );
+      expect(row?.tilePolicy, `${languageId}:${slug}`).toBe(
+        "clickable-exact-header",
+      );
+      expect(row?.shouldBeClickable, `${languageId}:${slug}`).toBe(true);
+      expect(row?.registryMatchesHeaderAudio, `${languageId}:${slug}`).toBe(
+        true,
+      );
+    }
+  });
+
   it("formats policy tables with release-auditable columns", () => {
     for (const languageId of LANGUAGE_IDS) {
       const tableRows = getLanguageAssessmentAudioPolicyTableRows(languageId);
@@ -203,7 +231,9 @@ describe("language assessment audio policy", () => {
       );
       expect(markdown.split("\n")).toHaveLength(tableRows.length + 2);
       expect(markdown).toContain("clickable-exact-header");
-      expect(markdown).toContain("blocked-unverified");
+      if (tableRows.some((row) => row.policyStatus === "blocked-unverified")) {
+        expect(markdown).toContain("blocked-unverified");
+      }
 
       if (languageId !== "fr-FR") {
         expect(markdown).toContain("blocked-proxy-reference");
@@ -230,7 +260,13 @@ describe("language assessment audio policy", () => {
         "Proxy, rule guidance, whole-word, sentence, dictionary, generated TTS, and video-track material must stay unclickable.",
       );
       expect(document).toContain("## Audio Policy");
-      expect(document).toContain("blocked-unverified");
+      if (
+        getLanguageAssessmentAudioPolicyRows(languageId).some(
+          (row) => row.policyStatus === "blocked-unverified",
+        )
+      ) {
+        expect(document).toContain("blocked-unverified");
+      }
     }
   });
 

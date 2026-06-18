@@ -7,8 +7,8 @@ Product status: experimental
 
 ## Policy Summary
 
-- Clickable exact scoring tiles: 27
-- Blocked or score-only tiles: 30
+- Clickable exact scoring tiles: 28
+- Blocked or score-only tiles: 29
 - Clickable means the scoring tile uses the same local short header clip as the sound-unit header/detail card.
 - Proxy, rule guidance, whole-word, sentence, dictionary, generated TTS, and video-track material must stay unclickable.
 
@@ -53,7 +53,7 @@ Product status: experimental
 | ru-z-zj | /z zʲ/ | contrast | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
 | ru-n-nj | /n nʲ/ | contrast | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
 | ru-l-lj | /l lʲ/ | contrast | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
-| ru-r-rj | /r rʲ/ | contrast | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
+| ru-r-rj | /r rʲ/ | contrast | exact-local-header | clickable-exact-header | clickable-exact-header | yes | /audio/language-assets/ru-RU/header-clips/ru-r-rj.m4a | /audio/language-assets/ru-RU/header-clips/ru-r-rj.m4a | rʲ, rj | Uses an exact same-unit local short header clip from the assessment audio registry. |
 | ru-soft-labials | /pʲ bʲ mʲ fʲ vʲ/ | contrast | proxy-local-reference | score-only-unverified | blocked-proxy-reference | no | /audio/language-assets/ru-RU/header-clips/ru-p.m4a | none | none | Local material is a proxy/reference asset, so the scoring tile must remain unclickable. |
 | ru-p-pj | /p pʲ/ | contrast | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |
 | ru-b-bj | /b bʲ/ | contrast | gap-no-local-clip | score-only-unverified | blocked-unverified | no | none | none | none | No verified exact same-unit local short header clip is available for scoring tile playback. |

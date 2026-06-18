@@ -60,7 +60,7 @@ const SMOKE_ASSESSMENT_TILE_PHONEMES: Record<
   ],
   "ru-RU": [
     { phoneme: "a", accuracyScore: 74 },
-    { phoneme: "t", accuracyScore: 69 },
+    { phoneme: "tʲ", accuracyScore: 69 },
   ],
 };
 

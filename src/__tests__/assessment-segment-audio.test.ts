@@ -20,6 +20,15 @@ const VERIFIED_SEGMENTS: Record<Exclude<LanguageId, "en-US">, string[]> = {
     "i",
     "o",
     "u",
+    "p",
+    "t",
+    "k",
+    "f",
+    "m",
+    "n",
+    "b",
+    "d",
+    "g",
     "β",
     "ð",
     "ɣ",
@@ -53,6 +62,20 @@ const VERIFIED_SEGMENTS: Record<Exclude<LanguageId, "en-US">, string[]> = {
     "ɛ̃",
     "ɔ̃",
     "œ̃",
+    "p",
+    "b",
+    "t",
+    "d",
+    "k",
+    "g",
+    "ɡ",
+    "f",
+    "v",
+    "s",
+    "z",
+    "m",
+    "n",
+    "l",
     "ʁ",
     "ʃ",
     "ʒ",
@@ -92,6 +115,8 @@ const VERIFIED_SEGMENTS: Record<Exclude<LanguageId, "en-US">, string[]> = {
     "t͡ɕ",
     "ɕː",
     "j",
+    "rʲ",
+    "rj",
   ],
 };
 
@@ -132,8 +157,31 @@ describe("assessment segment audio inventory", () => {
       ["es-ES", "β", "es-bv"],
       ["es-ES", "ð", "es-d"],
       ["es-ES", "ɣ", "es-g"],
+      ["es-ES", "p", "es-p"],
+      ["es-ES", "t", "es-t"],
+      ["es-ES", "k", "es-k"],
+      ["es-ES", "f", "es-f"],
+      ["es-ES", "m", "es-m"],
+      ["es-ES", "n", "es-n"],
+      ["es-ES", "b", "es-b-stop"],
+      ["es-ES", "d", "es-d-stop"],
+      ["es-ES", "g", "es-g-stop"],
       ["es-ES", "θ", "es-theta"],
       ["es-ES", "j", "es-diphthongs-j"],
+      ["fr-FR", "p", "fr-p"],
+      ["fr-FR", "b", "fr-b"],
+      ["fr-FR", "t", "fr-t"],
+      ["fr-FR", "d", "fr-d"],
+      ["fr-FR", "k", "fr-k"],
+      ["fr-FR", "g", "fr-g"],
+      ["fr-FR", "ɡ", "fr-g"],
+      ["fr-FR", "f", "fr-f"],
+      ["fr-FR", "v", "fr-v"],
+      ["fr-FR", "s", "fr-s"],
+      ["fr-FR", "z", "fr-z"],
+      ["fr-FR", "m", "fr-m"],
+      ["fr-FR", "n", "fr-n"],
+      ["fr-FR", "l", "fr-l"],
       ["fr-FR", "ɛ", "fr-e-open"],
       ["fr-FR", "ə", "fr-schwa"],
       ["fr-FR", "ʁ", "fr-r"],
@@ -151,6 +199,8 @@ describe("assessment segment audio inventory", () => {
       ["ru-RU", "ʐ", "ru-zh"],
       ["ru-RU", "tɕ", "ru-ch"],
       ["ru-RU", "ɕː", "ru-shch"],
+      ["ru-RU", "rʲ", "ru-r-rj"],
+      ["ru-RU", "rj", "ru-r-rj"],
     ] as const;
 
     for (const [languageId, segment, slug] of expected) {
@@ -160,9 +210,11 @@ describe("assessment segment audio inventory", () => {
     }
   });
 
-  it("keeps the canción breakdown honest: exact vowels/fricatives/glides play, plain k/n stay unclickable", () => {
+  it("keeps the canción breakdown honest: exact vowels, plain consonants, fricatives, and glides play", () => {
     const exactSources = [
       ["a", "/audio/language-assets/es-ES/header-clips/es-a.m4a"],
+      ["k", "/audio/language-assets/es-ES/header-clips/es-k.m4a"],
+      ["n", "/audio/language-assets/es-ES/header-clips/es-n.m4a"],
       ["θ", "/audio/language-assets/es-ES/header-clips/es-theta.m4a"],
       ["j", "/audio/language-assets/es-ES/header-clips/es-diphthongs-j.m4a"],
       ["o", "/audio/language-assets/es-ES/header-clips/es-o.m4a"],
@@ -173,15 +225,22 @@ describe("assessment segment audio inventory", () => {
       expect(audioInfo?.kind, segment).toBe("sound-unit");
       expect(audioInfo?.url, segment).toBe(source);
     }
-
-    for (const segment of ["k", "n"] as const) {
-      expect(getPhonemeAudioInfo(segment, "es-ES")).toBeNull();
-      expect(getPhonemeAudioUrl(segment, "es-ES")).toBeNull();
-    }
   });
 
-  it("does not pretend Spanish allophone clips are plain stops", () => {
-    for (const segment of ["b", "v", "d", "g", "p", "t", "k", "f"] as const) {
+  it("keeps Spanish plain stops and approximant allophones on separate clips", () => {
+    for (const [segment, source] of [
+      ["b", "/audio/language-assets/es-ES/header-clips/es-b-stop.m4a"],
+      ["d", "/audio/language-assets/es-ES/header-clips/es-d-stop.m4a"],
+      ["g", "/audio/language-assets/es-ES/header-clips/es-g-stop.m4a"],
+      ["p", "/audio/language-assets/es-ES/header-clips/es-p.m4a"],
+      ["t", "/audio/language-assets/es-ES/header-clips/es-t.m4a"],
+      ["k", "/audio/language-assets/es-ES/header-clips/es-k.m4a"],
+      ["f", "/audio/language-assets/es-ES/header-clips/es-f.m4a"],
+    ] as const) {
+      expect(getPhonemeAudioUrl(segment, "es-ES")).toBe(source);
+    }
+
+    for (const segment of ["v"] as const) {
       expect(getPhonemeAudioInfo(segment, "es-ES")).toBeNull();
       expect(getPhonemeAudioUrl(segment, "es-ES")).toBeNull();
     }
@@ -199,15 +258,11 @@ describe("assessment segment audio inventory", () => {
 
   it("keeps rule/proxy-only or unverified segments unclickable instead of falling back to word audio", () => {
     for (const [languageId, segment] of [
-      ["es-ES", "m"],
-      ["es-ES", "n"],
       ["es-ES", "ŋ"],
       ["es-ES", "h"],
       ["es-ES", "ʎ"],
       ["es-ES", "y"],
       ["es-ES", "ll"],
-      ["fr-FR", "p"],
-      ["fr-FR", "b"],
       ["fr-FR", "‿"],
       ["fr-FR", "liaison"],
       ["ru-RU", "h"],
@@ -221,6 +276,7 @@ describe("assessment segment audio inventory", () => {
       ["ru-RU", "ɐ"],
       ["ru-RU", "ə"],
       ["ru-RU", "tʲ"],
+      ["ru-RU", "dʲ"],
       ["ru-RU", "final devoicing"],
       ["ru-RU", "cluster"],
       ["ru-RU", "not-a-real-code"],

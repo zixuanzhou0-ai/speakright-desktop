@@ -6,21 +6,12 @@ import Image from "next/image";
 import { useState } from "react";
 import { PhonemePlayButton } from "@/components/phoneme/phoneme-play-button";
 import { VideoPlayer } from "@/components/phoneme/video-player";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   type AudioPlaybackOptions,
   getChartWordPlaybackOptions,
 } from "@/lib/audio-playback-policy";
 import { getExactTeachingVideosForSoundUnit } from "@/lib/language-teaching-videos";
-import {
-  getPhonologyAudioStatusLabel,
-  getPhonologyInventoryEntry,
-  getPhonologyLayerLabel,
-  getPhonologyTilePolicyLabel,
-  getPhonologyTilePolicyDescription,
-} from "@/lib/language-phonology-inventory";
-import { getLanguageResourceSite } from "@/lib/language-resource-sites";
 import {
   getSoundUnitSourceAlignment,
   shouldShowLocalVideoAsPrimary,
@@ -308,10 +299,6 @@ export function PhonemeStudyCard({
     phoneme.languageId ?? "en-US",
     phoneme.slug,
   );
-  const inventoryEntry =
-    languageProfile.id !== "en-US"
-      ? getPhonologyInventoryEntry(languageProfile.id, phoneme.slug)
-      : undefined;
   const sourceAlignment = getSoundUnitSourceAlignment(
     phoneme.languageId ?? "en-US",
     phoneme.slug,
@@ -320,9 +307,6 @@ export function PhonemeStudyCard({
     phoneme.languageId ?? "en-US",
     phoneme.slug,
   );
-  const inventorySourceSummary = inventoryEntry?.sourceRefs
-    .map((ref) => getLanguageResourceSite(ref)?.title ?? ref)
-    .join("、");
 
   return (
     <div className="shrink-0 rounded-xl border bg-card shadow-sm overflow-hidden">
@@ -410,58 +394,6 @@ export function PhonemeStudyCard({
             </motion.button>
           )}
         </div>
-
-        {inventoryEntry && (
-          <div
-            className="mt-3 rounded-lg border bg-muted/20 px-3 py-2"
-            data-smoke="phonology-inventory-detail"
-            data-phonology-layer={inventoryEntry.layer}
-            data-tile-policy={inventoryEntry.tilePolicy}
-            data-audio-status={inventoryEntry.audioStatus}
-            data-source-ref-count={inventoryEntry.sourceRefs.length}
-            data-variant-scope={inventoryEntry.variantScope}
-          >
-            <div className="flex flex-wrap items-center justify-center gap-1.5">
-              <Badge variant="outline" className="text-[10px]">
-                实验模块
-              </Badge>
-              <Badge variant="secondary" className="text-[10px]">
-                {getPhonologyLayerLabel(inventoryEntry.layer)}
-              </Badge>
-              <Badge variant="outline" className="text-[10px]">
-                {getPhonologyAudioStatusLabel(inventoryEntry.audioStatus)}
-              </Badge>
-              <Badge variant="outline" className="text-[10px]">
-                拆解：{getPhonologyTilePolicyLabel(inventoryEntry.tilePolicy)}
-              </Badge>
-            </div>
-            {phoneme.description && (
-              <p className="mt-1.5 break-words text-center text-xs leading-snug text-muted-foreground [overflow-wrap:anywhere]">
-                {phoneme.description}
-              </p>
-            )}
-            <p className="mt-1 break-words text-center text-xs leading-snug text-muted-foreground [overflow-wrap:anywhere]">
-              {getPhonologyTilePolicyDescription(inventoryEntry.tilePolicy)}
-            </p>
-            <p className="mt-1 break-words text-center text-xs leading-snug text-muted-foreground [overflow-wrap:anywhere]">
-              音系口径：{inventoryEntry.variantScope}
-            </p>
-            {inventorySourceSummary && (
-              <p className="mt-1 break-words text-center text-xs leading-snug text-muted-foreground [overflow-wrap:anywhere]">
-                来源：{inventorySourceSummary}
-              </p>
-            )}
-            {inventoryEntry.gaps.length > 0 && (
-              <p
-                className="mt-1 break-words text-center text-xs leading-snug text-amber-700 [overflow-wrap:anywhere] dark:text-amber-300"
-                data-smoke="phonology-inventory-gap-details"
-                data-gap-count={inventoryEntry.gaps.length}
-              >
-                待补：{inventoryEntry.gaps.join("；")}
-              </p>
-            )}
-          </div>
-        )}
 
         {/* Word navigation */}
         {currentWord ? (

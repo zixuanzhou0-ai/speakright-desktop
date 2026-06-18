@@ -7,7 +7,6 @@ Product status: experimental
 
 ## Current Stable-Before-Release Gaps
 
-- /p b t d k g f v s z m n l/ 精确短音频: These French phoneme units now exist, but the current local header inventory has not verified exact standalone clips for them. Source refs: jipa-french, ipa-handbook.
 - liaison / enchainement / elision / final silence / phrase-final prominence: Phrase rules and phrase-final prominence are modeled in content, but no exact local rule/prosody audio exists for clickable scoring tiles. Source refs: jipa-french, ipa-handbook.
 
 ## Inventory
@@ -25,19 +24,19 @@ Product status: experimental
 | fr-in | /ɛ̃/ | phoneme | Nasal vowel /ɛ̃/; contrast with /ɑ̃/ and /ɔ̃/. | jipa-french, ipa-handbook, lawless-french-ipa, phonetique-ca | exact-local-header | clickable-exact-header | none |
 | fr-on | /ɔ̃/ | phoneme | Rounded nasal vowel /ɔ̃/. | jipa-french, ipa-handbook, lawless-french-ipa, phonetique-ca | exact-local-header | clickable-exact-header | none |
 | fr-r | /ʁ/ | phoneme | Uvular /ʁ/ target, not English rhotic or Spanish trill. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
-| fr-p | /p/ | phoneme | Plain French /p/ is a voiceless bilabial stop; keep it short and avoid English-style aspiration. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /p/ header clip exists yet. |
-| fr-b | /b/ | phoneme | Plain French /b/ is a voiced bilabial stop and contrasts with /p/ by voicing. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /b/ header clip exists yet. |
-| fr-t | /t/ | phoneme | Plain French /t/ is a short coronal stop with less aspiration than English word-initial t. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /t/ header clip exists yet. |
-| fr-d | /d/ | phoneme | Plain French /d/ is a voiced coronal stop; do not turn it into an English-style flap. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /d/ header clip exists yet. |
-| fr-k | /k/ | phoneme | Plain French /k/ is a voiceless velar stop and may be spelled c, qu, or k. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /k/ header clip exists yet. |
-| fr-g | /g/ | phoneme | Plain French hard /g/ is a voiced velar stop; soft g before front vowels belongs to /ʒ/. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /g/ header clip exists yet. |
-| fr-f | /f/ | phoneme | Plain French /f/ is a voiceless labiodental fricative and contrasts with /v/. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /f/ header clip exists yet. |
-| fr-v | /v/ | phoneme | Plain French /v/ is a voiced labiodental fricative; avoid /w/ or /f/ transfer. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /v/ header clip exists yet. |
-| fr-s | /s/ | phoneme | Plain French /s/ is a voiceless alveolar fricative; intervocalic spelling s may instead map to /z/. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /s/ header clip exists yet. |
-| fr-z | /z/ | phoneme | Plain French /z/ is the voiced counterpart of /s/ and occurs in z, intervocalic s, and some final spellings. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /z/ header clip exists yet. |
-| fr-m | /m/ | phoneme | Plain French /m/ is a bilabial nasal; keep it separate from nasal vowel spelling. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /m/ header clip exists yet. |
-| fr-n | /n/ | phoneme | Plain French /n/ is an alveolar nasal; do not pronounce silent nasal letters after nasal vowels as full /n/. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /n/ header clip exists yet. |
-| fr-l | /l/ | phoneme | Plain French /l/ stays clear and forward; avoid English word-final dark-L transfer. | jipa-french, ipa-handbook, phonetique-ca | gap-no-local-clip | score-only-unverified | No verified exact local /l/ header clip exists yet. |
+| fr-p | /p/ | phoneme | Plain French /p/ is a voiceless bilabial stop; keep it short and avoid English-style aspiration. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-b | /b/ | phoneme | Plain French /b/ is a voiced bilabial stop and contrasts with /p/ by voicing. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-t | /t/ | phoneme | Plain French /t/ is a short coronal stop with less aspiration than English word-initial t. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-d | /d/ | phoneme | Plain French /d/ is a voiced coronal stop; do not turn it into an English-style flap. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-k | /k/ | phoneme | Plain French /k/ is a voiceless velar stop and may be spelled c, qu, or k. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-g | /g/ | phoneme | Plain French hard /g/ is a voiced velar stop; soft g before front vowels belongs to /ʒ/. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-f | /f/ | phoneme | Plain French /f/ is a voiceless labiodental fricative and contrasts with /v/. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-v | /v/ | phoneme | Plain French /v/ is a voiced labiodental fricative; avoid /w/ or /f/ transfer. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-s | /s/ | phoneme | Plain French /s/ is a voiceless alveolar fricative; intervocalic spelling s may instead map to /z/. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-z | /z/ | phoneme | Plain French /z/ is the voiced counterpart of /s/ and occurs in z, intervocalic s, and some final spellings. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-m | /m/ | phoneme | Plain French /m/ is a bilabial nasal; keep it separate from nasal vowel spelling. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-n | /n/ | phoneme | Plain French /n/ is an alveolar nasal; do not pronounce silent nasal letters after nasal vowels as full /n/. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
+| fr-l | /l/ | phoneme | Plain French /l/ stays clear and forward; avoid English word-final dark-L transfer. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
 | fr-liaison | /‿/ | connected-speech-rule | Latent final consonants surface only in licensed phrase contexts. | jipa-french, ipa-handbook, openipa-fr, lawless-french-ipa | rule-only | rule-guidance-only | No exact local single-click liaison rule clip exists yet. |
 | fr-a | /a/ | phoneme | Core /a/; modern /ɑ/ merger is treated as a variant. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | none |
 | fr-schwa | /ə/ | prosody | E caduc /ə/ is context-sensitive and may be present, reduced, or deleted. | jipa-french, ipa-handbook, phonetique-ca | exact-local-header | clickable-exact-header | Sentence-level schwa deletion rules still need fuller coaching coverage. |

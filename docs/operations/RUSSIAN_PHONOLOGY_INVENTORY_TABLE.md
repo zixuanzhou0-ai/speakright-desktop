@@ -7,7 +7,7 @@ Product status: experimental
 
 ## Current Stable-Before-Release Gaps
 
-- complete hard/soft consonant pairs: Russian hard/soft consonants are systemic. Standalone coronal stop, sibilant, sonorant, labial, and velar pair anchors now exist, but the full per-consonant exact audio inventory is still incomplete. Source refs: jipa-russian, ipa-handbook.
+- complete hard/soft consonant pairs: Russian hard/soft consonants are systemic. Standalone hard anchors and soft /rʲ/ now exist, but the full per-consonant exact soft audio inventory is still incomplete. Source refs: jipa-russian, ipa-handbook.
 - reduction / devoicing / assimilation / clusters: The rule units are useful, but exact phrase-level evidence and tile playback remain incomplete. Source refs: jipa-russian, ipa-handbook.
 
 ## Inventory
@@ -51,7 +51,7 @@ Product status: experimental
 | ru-z-zj | /z zʲ/ | contrast | Hard/soft voiced sibilant contrast /z zʲ/. | jipa-russian, ipa-handbook, wiktionary-ru-pronunciation-appendix | gap-no-local-clip | score-only-unverified | Hard /z/ now has a standalone exact clip; soft /zʲ/ and pair-lesson clips are still missing. |
 | ru-n-nj | /n nʲ/ | contrast | Hard/soft nasal contrast /n nʲ/. | jipa-russian, ipa-handbook, wiktionary-ru-pronunciation-appendix | gap-no-local-clip | score-only-unverified | Hard /n/ now has a standalone exact clip; soft /nʲ/ and pair-lesson clips are still missing. |
 | ru-l-lj | /l lʲ/ | contrast | Hard/soft lateral contrast /l lʲ/. | jipa-russian, ipa-handbook, wiktionary-ru-pronunciation-appendix | gap-no-local-clip | score-only-unverified | Hard /l/ now has a standalone exact clip; soft /lʲ/ and pair-lesson clips are still missing. |
-| ru-r-rj | /r rʲ/ | contrast | Hard/soft rhotic contrast /r rʲ/. | jipa-russian, ipa-handbook, wiktionary-ru-pronunciation-appendix | gap-no-local-clip | score-only-unverified | Hard /r/ now has a standalone exact clip; soft /rʲ/ and pair-lesson clips are still missing. |
+| ru-r-rj | /r rʲ/ | contrast | Hard/soft rhotic contrast /r rʲ/. | jipa-russian, ipa-handbook, wiktionary-ru-pronunciation-appendix | exact-local-header | clickable-exact-header | Hard /r/ and soft /rʲ/ now have standalone exact clips; a full hard/soft pair-lesson clip is still missing. |
 | ru-soft-labials | /pʲ bʲ mʲ fʲ vʲ/ | contrast | Soft labial contrast /pʲ bʲ mʲ fʲ vʲ/. | jipa-russian, ipa-handbook, wiktionary-ru-pronunciation-appendix | proxy-local-reference | score-only-unverified | Proxy anchor only; exact per-segment soft labial clips are incomplete. |
 | ru-p-pj | /p pʲ/ | contrast | Hard/soft labial stop contrast /p pʲ/. | jipa-russian, ipa-handbook, wiktionary-ru-pronunciation-appendix | gap-no-local-clip | score-only-unverified | Hard /p/ now has a standalone exact clip; soft /pʲ/ and pair-lesson clips are still missing. |
 | ru-b-bj | /b bʲ/ | contrast | Hard/soft voiced labial stop contrast /b bʲ/. | jipa-russian, ipa-handbook, wiktionary-ru-pronunciation-appendix | gap-no-local-clip | score-only-unverified | Hard /b/ now has a standalone exact clip; soft /bʲ/ and pair-lesson clips are still missing. |

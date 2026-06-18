@@ -110,7 +110,7 @@ describe("multilingual audio parity contract", () => {
     }
   });
 
-  it("reports local audio gaps without requiring an ElevenLabs key", () => {
+  it("reports complete local audio parity without requiring an ElevenLabs key", () => {
     const audioKeysByLanguage = Object.fromEntries(
       MULTILINGUAL_AUDIO_PARITY_LANGUAGES.map((languageId) => [
         languageId,
@@ -126,9 +126,9 @@ describe("multilingual audio parity contract", () => {
     expect(report.totals.requiredItems).toBe(
       128 * MULTILINGUAL_AUDIO_PARITY_TARGET_PER_UNIT,
     );
-    expect(report.totals.existingAudioItems).toBe(2888);
-    expect(report.totals.missingAudioItems).toBe(1328);
-    expect(report.totals.estimatedNewCharacters).toBe(11502);
+    expect(report.totals.existingAudioItems).toBe(4216);
+    expect(report.totals.missingAudioItems).toBe(0);
+    expect(report.totals.estimatedNewCharacters).toBe(0);
 
     const spanishReport = report.languages.find(
       (language) => language.languageId === "es-ES",
@@ -137,17 +137,7 @@ describe("multilingual audio parity contract", () => {
       spanishReport?.units
         .filter((unit) => unit.missingAudioTexts.length > 0)
         .map((unit) => unit.slug),
-    ).toEqual([
-      "es-p",
-      "es-t",
-      "es-k",
-      "es-f",
-      "es-m",
-      "es-n",
-      "es-b-stop",
-      "es-d-stop",
-      "es-g-stop",
-    ]);
+    ).toEqual([]);
 
     const frenchReport = report.languages.find(
       (language) => language.languageId === "fr-FR",
@@ -156,22 +146,7 @@ describe("multilingual audio parity contract", () => {
       frenchReport?.units
         .filter((unit) => unit.missingAudioTexts.length > 0)
         .map((unit) => unit.slug),
-    ).toEqual([
-      "fr-p",
-      "fr-b",
-      "fr-t",
-      "fr-d",
-      "fr-k",
-      "fr-g",
-      "fr-f",
-      "fr-v",
-      "fr-s",
-      "fr-z",
-      "fr-m",
-      "fr-n",
-      "fr-l",
-      "fr-phrase-final-prominence",
-    ]);
+    ).toEqual([]);
 
     const russianReport = report.languages.find(
       (language) => language.languageId === "ru-RU",
@@ -180,38 +155,7 @@ describe("multilingual audio parity contract", () => {
       russianReport?.units
         .filter((unit) => unit.missingAudioTexts.length > 0)
         .map((unit) => unit.slug),
-    ).toEqual([
-      "ru-p",
-      "ru-b",
-      "ru-t",
-      "ru-d",
-      "ru-k",
-      "ru-g",
-      "ru-f",
-      "ru-v",
-      "ru-s",
-      "ru-z",
-      "ru-m",
-      "ru-n",
-      "ru-l",
-      "ru-sh",
-      "ru-zh",
-      "ru-t-tj",
-      "ru-d-dj",
-      "ru-s-sj",
-      "ru-z-zj",
-      "ru-n-nj",
-      "ru-l-lj",
-      "ru-r-rj",
-      "ru-p-pj",
-      "ru-b-bj",
-      "ru-m-mj",
-      "ru-f-fj",
-      "ru-v-vj",
-      "ru-k-kj",
-      "ru-g-gj",
-      "ru-x-xj",
-    ]);
+    ).toEqual([]);
   });
 
   it("keeps existing language pack manifest entries pointing to real files", () => {

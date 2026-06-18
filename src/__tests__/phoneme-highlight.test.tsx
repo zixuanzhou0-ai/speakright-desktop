@@ -184,7 +184,7 @@ describe("PhonemeHighlight", () => {
     expect(alert).toHaveTextContent("Release EXE 音频缺口");
   });
 
-  it("shows Spanish nasal assessment segments as visible but unclickable /n/ tiles", () => {
+  it("uses exact Spanish /n/ clips for nasal assessment segments without falling back to nasal-place proxies", () => {
     render(
       <PhonemeHighlight
         languageId="es-ES"
@@ -210,9 +210,6 @@ describe("PhonemeHighlight", () => {
       "data-smoke",
       "assessment-phoneme-policy-hint",
     );
-    expect(
-      screen.getByText(/未验证 =\s*真实音素但缺 exact clip/),
-    ).toBeInTheDocument();
     expect(screen.getByText(/规则 =\s*短语\/韵律训练/)).toBeInTheDocument();
     expect(screen.queryByText("点击可听发音")).not.toBeInTheDocument();
     expect(screen.getAllByText("/n/")).toHaveLength(2);
@@ -221,26 +218,28 @@ describe("PhonemeHighlight", () => {
     const nasalTiles = Array.from(
       document.querySelectorAll('[aria-label="播放音标 /n/"]'),
     );
-    expect(nasalTiles).toHaveLength(0);
+    expect(nasalTiles).toHaveLength(2);
 
     const visibleNasalTiles = screen
       .getAllByText("/n/")
       .map((label) => label.closest('[data-smoke="assessment-phoneme-tile"]'));
     for (const tile of visibleNasalTiles) {
-      expect(tile).toHaveAttribute("data-audio-playable", "false");
-      expect(tile).toHaveAttribute("aria-disabled", "true");
-      expect(tile).toHaveAttribute("data-audio-kind", "none");
+      expect(tile).toHaveAttribute("data-audio-playable", "true");
+      expect(tile).not.toHaveAttribute("aria-disabled", "true");
+      expect(tile).toHaveAttribute("data-audio-kind", "sound-unit");
       expect(tile).toHaveAttribute(
         "data-audio-policy",
-        "score-only-unverified",
+        "clickable-exact-header",
       );
-      expect(tile).toHaveAttribute("data-audio-policy-label", "音频未验证");
+      expect(tile).toHaveAttribute("data-audio-policy-label", "精确短音频");
       expect(tile).toHaveAttribute("data-audio-policy-slug", "es-n");
       expect(tile).toHaveAttribute("data-phonology-layer", "phoneme");
       expect(tile).toHaveAttribute("data-phonology-layer-label", "音素");
-      expect(tile?.textContent).toContain("音素未验证");
+      expect(tile?.textContent).toContain("可听");
       expect(tile?.getAttribute("title")).toContain("音素");
-      expect(tile?.getAttribute("data-audio-src")).toBe("");
+      expect(tile?.getAttribute("data-audio-src")).toBe(
+        "/audio/language-assets/es-ES/header-clips/es-n.m4a",
+      );
     }
   });
 
@@ -263,7 +262,9 @@ describe("PhonemeHighlight", () => {
     );
 
     const exactSources = [
+      ["播放音标 /k/", "/audio/language-assets/es-ES/header-clips/es-k.m4a"],
       ["播放音标 /a/", "/audio/language-assets/es-ES/header-clips/es-a.m4a"],
+      ["播放音标 /n/", "/audio/language-assets/es-ES/header-clips/es-n.m4a"],
       [
         "播放音标 /θ/",
         "/audio/language-assets/es-ES/header-clips/es-theta.m4a",
@@ -286,18 +287,6 @@ describe("PhonemeHighlight", () => {
       expect(Number(tile?.getAttribute("data-audio-start-ms"))).toBe(15);
       expect(Number(tile?.getAttribute("data-audio-max-duration-ms"))).toBe(
         500,
-      );
-    }
-
-    for (const label of ["/k/", "/n/"] as const) {
-      const tile = screen
-        .getAllByText(label)[0]
-        .closest('[data-smoke="assessment-phoneme-tile"]');
-      expect(tile).toHaveAttribute("data-audio-playable", "false");
-      expect(tile).toHaveAttribute("data-audio-kind", "none");
-      expect(tile).toHaveAttribute(
-        "data-audio-policy",
-        "score-only-unverified",
       );
     }
   });
@@ -351,7 +340,7 @@ describe("PhonemeHighlight", () => {
     }
   });
 
-  it("uses exact Russian header clips for affricates and leaves proxy soft/reduction tiles unclickable", () => {
+  it("uses exact Russian header clips for affricates and verified soft-r, leaving unverified soft/reduction tiles unclickable", () => {
     render(
       <PhonemeHighlight
         languageId="ru-RU"
@@ -362,6 +351,7 @@ describe("PhonemeHighlight", () => {
           { phoneme: "ɕː", accuracyScore: 62 },
           { phoneme: "dʲ", accuracyScore: 70 },
           { phoneme: "nʲ", accuracyScore: 73 },
+          { phoneme: "rʲ", accuracyScore: 79 },
           { phoneme: "ɨ", accuracyScore: 75 },
           { phoneme: "ɐ", accuracyScore: 64 },
           { phoneme: "ʂ", accuracyScore: 80 },
@@ -375,6 +365,10 @@ describe("PhonemeHighlight", () => {
       [
         "播放音标 /ɕː/",
         "/audio/language-assets/ru-RU/header-clips/ru-shch.m4a",
+      ],
+      [
+        "播放音标 /rʲ/",
+        "/audio/language-assets/ru-RU/header-clips/ru-r-rj.m4a",
       ],
       ["播放音标 /ɨ/", "/audio/language-assets/ru-RU/header-clips/ru-y.m4a"],
       ["播放音标 /ʂ/", "/audio/language-assets/ru-RU/header-clips/ru-sh.m4a"],
@@ -547,30 +541,30 @@ describe("PhonemeHighlight", () => {
     vi.useFakeTimers();
     render(
       <PhonemeHighlight
-        languageId="es-ES"
-        phonemes={[{ phoneme: "p", accuracyScore: 72 }]}
+        languageId="ru-RU"
+        phonemes={[{ phoneme: "dʲ", accuracyScore: 72 }]}
       />,
     );
 
     const tile = document.querySelector(
       '[data-smoke="assessment-phoneme-tile"]',
     ) as HTMLElement;
-    expect(screen.getByText("/p/")).toBeInTheDocument();
+    expect(screen.getByText("/dʲ/")).toBeInTheDocument();
     expect(tile).toHaveAttribute("data-audio-playable", "false");
     expect(tile).toHaveAttribute("aria-disabled", "true");
     expect(tile).toHaveAttribute("data-audio-kind", "none");
     expect(tile).toHaveAttribute("data-audio-policy", "score-only-unverified");
     expect(tile).toHaveAttribute("data-audio-policy-label", "音频未验证");
-    expect(tile).toHaveAttribute("data-audio-policy-slug", "es-p");
-    expect(tile).toHaveAttribute("data-phonology-layer", "phoneme");
-    expect(tile).toHaveAttribute("data-phonology-layer-label", "音素");
-    expect(tile).toHaveTextContent("音素未验证");
+    expect(tile).toHaveAttribute("data-audio-policy-slug", "ru-d-dj");
+    expect(tile).toHaveAttribute("data-phonology-layer", "contrast");
+    expect(tile).toHaveAttribute("data-phonology-layer-label", "对比/变体");
+    expect(tile).toHaveTextContent("对比未验证");
     expect(tile.getAttribute("aria-label")).toBeNull();
     expect(tile.getAttribute("role")).toBeNull();
     expect(tile.getAttribute("tabindex")).toBe("-1");
     expect(tile.getAttribute("title")).toContain("音频未验证");
     expect(tile.getAttribute("title")).toContain("只显示分数");
-    expect(tile.getAttribute("title")).toContain("音素");
+    expect(tile.getAttribute("title")).toContain("对比/变体");
 
     fireEvent.click(tile);
     act(() => {

@@ -380,19 +380,19 @@ describe("PhonemeCard header audio", () => {
 
   it("labels real sound units with missing exact clips as score-only audio gaps", () => {
     const player = mockPlayer();
-    const spanishP = getLanguagePhonemeBySlug("es-ES", "es-p");
-    expect(spanishP).toBeDefined();
-    if (!spanishP) return;
+    const russianSoftD = getLanguagePhonemeBySlug("ru-RU", "ru-d-dj");
+    expect(russianSoftD).toBeDefined();
+    if (!russianSoftD) return;
 
-    render(<PhonemeCard player={player} phoneme={spanishP} />);
+    render(<PhonemeCard player={player} phoneme={russianSoftD} />);
 
     const badges = document.querySelector(
       '[data-smoke="phonology-inventory-card-badges"]',
     );
-    expect(badges).toHaveAttribute("data-phonology-layer", "phoneme");
+    expect(badges).toHaveAttribute("data-phonology-layer", "contrast");
     expect(badges).toHaveAttribute("data-audio-status", "gap-no-local-clip");
     expect(badges).toHaveAttribute("data-tile-policy", "score-only-unverified");
-    expect(screen.getAllByText("音素").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("对比/变体").length).toBeGreaterThan(0);
     expect(screen.getByText("音频：缺少短音频")).toBeInTheDocument();
     expect(screen.getByText("拆解：音频未验证")).toBeInTheDocument();
     expect(

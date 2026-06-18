@@ -39,7 +39,6 @@ const RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS = [
   "ru-z-zj",
   "ru-n-nj",
   "ru-l-lj",
-  "ru-r-rj",
   "ru-p-pj",
   "ru-b-bj",
   "ru-m-mj",
@@ -220,7 +219,6 @@ describe("non-English phoneme resource parity", () => {
       "ru-z-zj",
       "ru-n-nj",
       "ru-l-lj",
-      "ru-r-rj",
       "ru-p-pj",
       "ru-b-bj",
       "ru-m-mj",
@@ -316,6 +314,17 @@ describe("non-English phoneme resource parity", () => {
       RUSSIAN_PHONEMES.length - RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS.length,
     );
     for (const asset of russianAssets) {
+      if (asset.slug === "ru-r-rj") {
+        expect(asset.source).toContain("Wikimedia Commons");
+        expect(asset.sourceUrl).toMatch(/^https:\/\/commons\.wikimedia\.org/);
+        expect(asset.license).toContain("Wikimedia Commons file page");
+        expect(asset.attribution).toContain("Voiced palatalized alveolar trill");
+        expect(asset.notes?.join(" ")).toContain(
+          "other Russian hard/soft pair units stay score-only",
+        );
+        continue;
+      }
+
       expect(asset.source).toContain("Seeing Speech");
       expect(asset.sourceUrl).toMatch(/^https:\/\/www\.seeingspeech\.ac\.uk/);
       expect(asset.license).toContain("CC BY-NC-ND 4.0");

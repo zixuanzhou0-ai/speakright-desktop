@@ -20,7 +20,6 @@ const RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS = [
   "ru-z-zj",
   "ru-n-nj",
   "ru-l-lj",
-  "ru-r-rj",
   "ru-p-pj",
   "ru-b-bj",
   "ru-m-mj",
@@ -85,6 +84,17 @@ describe("local language assets", () => {
       RUSSIAN_PHONEMES.length - RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS.length,
     );
     for (const asset of russianAssets) {
+      if (asset.slug === "ru-r-rj") {
+        expect(asset.source).toContain("Wikimedia Commons");
+        expect(asset.sourceUrl).toMatch(/^https:\/\/commons\.wikimedia\.org/);
+        expect(asset.license).toContain("Wikimedia Commons file page");
+        expect(asset.attribution).toContain("Voiced palatalized alveolar trill");
+        expect(asset.notes?.join(" ").trim()).toContain(
+          "other Russian hard/soft pair units stay score-only",
+        );
+        continue;
+      }
+
       expect(asset.source).toContain("Seeing Speech");
       expect(asset.sourceUrl).toMatch(/^https:\/\/www\.seeingspeech\.ac\.uk/);
       expect(asset.license).toContain("CC BY-NC-ND 4.0");
@@ -124,6 +134,20 @@ describe("local language assets", () => {
 
     expect(getLocalLanguagePhonemeAsset("ru-RU", "ru-sh-zh")?.isProxyForAssessment).toBe(
       true,
+    );
+  });
+
+  it("maps the verified Russian soft rhotic contrast to its Commons header clip", () => {
+    const asset = getLocalLanguagePhonemeAsset("ru-RU", "ru-r-rj");
+
+    expect(asset?.source).toContain("Wikimedia Commons");
+    expect(asset?.audioSrc).toBe(
+      "/audio/language-assets/ru-RU/header-clips/ru-r-rj.m4a",
+    );
+    expect(asset?.audioIpa).toBe("/rʲ/");
+    expect(asset?.exactAssessmentAliases).toEqual(["rʲ", "rj"]);
+    expect(getPhonologyInventoryEntry("ru-RU", "ru-r-rj")?.tilePolicy).toBe(
+      "clickable-exact-header",
     );
   });
 });

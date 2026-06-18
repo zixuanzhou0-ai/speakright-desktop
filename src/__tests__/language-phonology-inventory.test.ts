@@ -301,26 +301,23 @@ describe("language phonology inventory", () => {
     expect(
       getLanguagePhonologyGaps("es-ES").some(
         (gap) =>
-          gap.label.includes("/p t k f m n b d g/") &&
-          gap.reason.includes("phoneme units now exist"),
+          gap.label.includes("seseo / yeismo") &&
+          gap.reason.includes("dialect-aware scoring UI is not implemented"),
       ),
-    ).toBe(
-      true,
-    );
+    ).toBe(true);
     expect(getLanguagePhonologyGaps("fr-FR").map((gap) => gap.label)).toContain(
-      "/p b t d k g f v s z m n l/ 精确短音频",
+      "liaison / enchainement / elision / final silence / phrase-final prominence",
     );
     expect(getLanguagePhonologyGaps("ru-RU").map((gap) => gap.label)).toContain(
       "complete hard/soft consonant pairs",
     );
 
-    for (const languageId of LANGUAGE_IDS) {
-      expect(
-        getLanguagePhonologyGaps(languageId).some(
-          (gap) => gap.expectedBeforeStable,
-        ),
-      ).toBe(true);
-    }
+    expect(
+      getLanguagePhonologyGaps("fr-FR").some((gap) => gap.expectedBeforeStable),
+    ).toBe(true);
+    expect(
+      getLanguagePhonologyGaps("ru-RU").some((gap) => gap.expectedBeforeStable),
+    ).toBe(true);
   });
 
   it("only exposes phonology gap summaries for experimental non-English modules", () => {
@@ -336,55 +333,59 @@ describe("language phonology inventory", () => {
     }
   });
 
-  it("keeps newly added plain Spanish consonants score-only until exact clips exist", () => {
-    for (const slug of [
-      "es-p",
-      "es-t",
-      "es-k",
-      "es-f",
-      "es-m",
-      "es-n",
-      "es-b-stop",
-      "es-d-stop",
-      "es-g-stop",
-    ]) {
+  it("promotes newly added plain Spanish consonants to clickable exact clips", () => {
+    for (const [slug, alias] of [
+      ["es-p", "p"],
+      ["es-t", "t"],
+      ["es-k", "k"],
+      ["es-f", "f"],
+      ["es-m", "m"],
+      ["es-n", "n"],
+      ["es-b-stop", "b"],
+      ["es-d-stop", "d"],
+      ["es-g-stop", "g"],
+    ] as const) {
       const entry = getPhonologyInventoryEntry("es-ES", slug);
 
-      expect(entry?.audioStatus, slug).toBe("gap-no-local-clip");
-      expect(entry?.tilePolicy, slug).toBe("score-only-unverified");
-      expect(getAssessmentAliasesForSlug(slug).length, slug).toBeGreaterThan(0);
-      expect(entry?.exactAssessmentAliases, slug).toEqual([]);
-      expect(entry?.headerAudioSrc, slug).toBeUndefined();
+      expect(entry?.audioStatus, slug).toBe("exact-local-header");
+      expect(entry?.tilePolicy, slug).toBe("clickable-exact-header");
+      expect(getAssessmentAliasesForSlug(slug), slug).toContain(alias);
+      expect(entry?.exactAssessmentAliases, slug).toContain(alias);
+      expect(entry?.headerAudioSrc, slug).toBe(
+        `/audio/language-assets/es-ES/header-clips/${slug}.m4a`,
+      );
     }
   });
 
-  it("keeps newly added plain French consonants score-only until exact clips exist", () => {
-    for (const slug of [
-      "fr-p",
-      "fr-b",
-      "fr-t",
-      "fr-d",
-      "fr-k",
-      "fr-g",
-      "fr-f",
-      "fr-v",
-      "fr-s",
-      "fr-z",
-      "fr-m",
-      "fr-n",
-      "fr-l",
-    ]) {
+  it("promotes newly added plain French consonants to clickable exact clips", () => {
+    for (const [slug, alias] of [
+      ["fr-p", "p"],
+      ["fr-b", "b"],
+      ["fr-t", "t"],
+      ["fr-d", "d"],
+      ["fr-k", "k"],
+      ["fr-g", "g"],
+      ["fr-f", "f"],
+      ["fr-v", "v"],
+      ["fr-s", "s"],
+      ["fr-z", "z"],
+      ["fr-m", "m"],
+      ["fr-n", "n"],
+      ["fr-l", "l"],
+    ] as const) {
       const entry = getPhonologyInventoryEntry("fr-FR", slug);
 
-      expect(entry?.audioStatus, slug).toBe("gap-no-local-clip");
-      expect(entry?.tilePolicy, slug).toBe("score-only-unverified");
-      expect(getAssessmentAliasesForSlug(slug).length, slug).toBeGreaterThan(0);
-      expect(entry?.exactAssessmentAliases, slug).toEqual([]);
-      expect(entry?.headerAudioSrc, slug).toBeUndefined();
+      expect(entry?.audioStatus, slug).toBe("exact-local-header");
+      expect(entry?.tilePolicy, slug).toBe("clickable-exact-header");
+      expect(getAssessmentAliasesForSlug(slug), slug).toContain(alias);
+      expect(entry?.exactAssessmentAliases, slug).toContain(alias);
+      expect(entry?.headerAudioSrc, slug).toBe(
+        `/audio/language-assets/fr-FR/header-clips/${slug}.m4a`,
+      );
     }
   });
 
-  it("keeps newly added Russian hard-soft pairs score-only until exact clips exist", () => {
+  it("keeps Russian hard-soft pairs score-only until exact soft clips exist", () => {
     for (const slug of [
       "ru-t-tj",
       "ru-d-dj",
@@ -392,7 +393,6 @@ describe("language phonology inventory", () => {
       "ru-z-zj",
       "ru-n-nj",
       "ru-l-lj",
-      "ru-r-rj",
       "ru-p-pj",
       "ru-b-bj",
       "ru-m-mj",
@@ -413,6 +413,21 @@ describe("language phonology inventory", () => {
     }
   });
 
+  it("promotes the verified Russian soft rhotic clip without claiming the full hard-soft system is complete", () => {
+    const entry = getPhonologyInventoryEntry("ru-RU", "ru-r-rj");
+
+    expect(entry?.layer).toBe("contrast");
+    expect(entry?.audioStatus).toBe("exact-local-header");
+    expect(entry?.tilePolicy).toBe("clickable-exact-header");
+    expect(entry?.exactAssessmentAliases).toEqual(["rʲ", "rj"]);
+    expect(entry?.headerAudioSrc).toBe(
+      "/audio/language-assets/ru-RU/header-clips/ru-r-rj.m4a",
+    );
+    expect(entry?.gaps.join(" ")).toContain(
+      "full hard/soft pair-lesson clip is still missing",
+    );
+  });
+
   it("documents Russian hard-soft pair gaps as missing soft or pair clips, not missing hard anchors", () => {
     for (const [slug, hardIpa, softIpa] of [
       ["ru-t-tj", "/t/", "/tʲ/"],
@@ -421,7 +436,6 @@ describe("language phonology inventory", () => {
       ["ru-z-zj", "/z/", "/zʲ/"],
       ["ru-n-nj", "/n/", "/nʲ/"],
       ["ru-l-lj", "/l/", "/lʲ/"],
-      ["ru-r-rj", "/r/", "/rʲ/"],
       ["ru-p-pj", "/p/", "/pʲ/"],
       ["ru-b-bj", "/b/", "/bʲ/"],
       ["ru-m-mj", "/m/", "/mʲ/"],
@@ -438,6 +452,15 @@ describe("language phonology inventory", () => {
       expect(gapText, slug).toContain(`soft ${softIpa} and pair-lesson clips are still missing`);
       expect(gapText, slug).not.toContain(`No verified exact single-segment ${hardIpa}`);
     }
+
+    const rhoticGapText =
+      getPhonologyInventoryEntry("ru-RU", "ru-r-rj")?.gaps.join(" ") ?? "";
+    expect(rhoticGapText).toContain(
+      "Hard /r/ and soft /rʲ/ now have standalone exact clips",
+    );
+    expect(rhoticGapText).toContain(
+      "full hard/soft pair-lesson clip is still missing",
+    );
   });
 
   it("promotes exact Russian hard consonant anchors to clickable same-unit header clips", () => {

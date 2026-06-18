@@ -154,63 +154,54 @@ const SPANISH_INVENTORY_BASE: PhonologyInventoryBaseEntry[] = [
     "phoneme",
     "Plain Spanish /p/ is unaspirated; keep it short and separate from English aspirated word-initial p.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["No verified exact local /p/ header clip exists yet."],
   ),
   row(
     "es-t",
     "phoneme",
     "Plain Spanish /t/ is dental and unaspirated; do not import English alveolar aspiration.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["No verified exact local /t/ header clip exists yet."],
   ),
   row(
     "es-k",
     "phoneme",
     "Plain Spanish /k/ is unaspirated and can be spelled c, qu, or k depending on context.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["No verified exact local /k/ header clip exists yet."],
   ),
   row(
     "es-f",
     "phoneme",
     "Plain Spanish /f/ is a voiceless labiodental fricative, not an English /v/ substitute.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["No verified exact local /f/ header clip exists yet."],
   ),
   row(
     "es-m",
     "phoneme",
     "Plain Spanish /m/ is a bilabial nasal; contextual nasal place changes remain a separate rule unit.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["No verified exact local /m/ header clip exists yet."],
   ),
   row(
     "es-n",
     "phoneme",
     "Plain Spanish /n/ is a dental/alveolar nasal anchor; place assimilation is trained separately.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["No verified exact local /n/ header clip exists yet."],
   ),
   row(
     "es-b-stop",
     "phoneme",
     "Plain Spanish /b/ phoneme anchor for stop-position realizations after pause or nasal; b/v spelling does not split into English /b/ vs /v/.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es", "spanishdict-pronunciation"],
-    ["No verified exact local stop-position /b/ header clip exists yet."],
   ),
   row(
     "es-d-stop",
     "phoneme",
     "Plain Spanish /d/ phoneme anchor for dental stop-position realizations after pause, /n/, or /l/.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["No verified exact local dental stop-position /d/ header clip exists yet."],
   ),
   row(
     "es-g-stop",
     "phoneme",
     "Plain Spanish /g/ phoneme anchor for stop-position realizations after pause or nasal; separate from /x/ for j/ge/gi.",
     [...SPANISH_CORE_SOURCES, "sounds-of-speech-es"],
-    ["No verified exact local stop-position /g/ header clip exists yet."],
   ),
   row(
     "es-bv",
@@ -376,91 +367,78 @@ const FRENCH_INVENTORY_BASE: PhonologyInventoryBaseEntry[] = [
     "phoneme",
     "Plain French /p/ is a voiceless bilabial stop; keep it short and avoid English-style aspiration.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /p/ header clip exists yet."],
   ),
   row(
     "fr-b",
     "phoneme",
     "Plain French /b/ is a voiced bilabial stop and contrasts with /p/ by voicing.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /b/ header clip exists yet."],
   ),
   row(
     "fr-t",
     "phoneme",
     "Plain French /t/ is a short coronal stop with less aspiration than English word-initial t.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /t/ header clip exists yet."],
   ),
   row(
     "fr-d",
     "phoneme",
     "Plain French /d/ is a voiced coronal stop; do not turn it into an English-style flap.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /d/ header clip exists yet."],
   ),
   row(
     "fr-k",
     "phoneme",
     "Plain French /k/ is a voiceless velar stop and may be spelled c, qu, or k.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /k/ header clip exists yet."],
   ),
   row(
     "fr-g",
     "phoneme",
     "Plain French hard /g/ is a voiced velar stop; soft g before front vowels belongs to /ʒ/.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /g/ header clip exists yet."],
   ),
   row(
     "fr-f",
     "phoneme",
     "Plain French /f/ is a voiceless labiodental fricative and contrasts with /v/.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /f/ header clip exists yet."],
   ),
   row(
     "fr-v",
     "phoneme",
     "Plain French /v/ is a voiced labiodental fricative; avoid /w/ or /f/ transfer.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /v/ header clip exists yet."],
   ),
   row(
     "fr-s",
     "phoneme",
     "Plain French /s/ is a voiceless alveolar fricative; intervocalic spelling s may instead map to /z/.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /s/ header clip exists yet."],
   ),
   row(
     "fr-z",
     "phoneme",
     "Plain French /z/ is the voiced counterpart of /s/ and occurs in z, intervocalic s, and some final spellings.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /z/ header clip exists yet."],
   ),
   row(
     "fr-m",
     "phoneme",
     "Plain French /m/ is a bilabial nasal; keep it separate from nasal vowel spelling.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /m/ header clip exists yet."],
   ),
   row(
     "fr-n",
     "phoneme",
     "Plain French /n/ is an alveolar nasal; do not pronounce silent nasal letters after nasal vowels as full /n/.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /n/ header clip exists yet."],
   ),
   row(
     "fr-l",
     "phoneme",
     "Plain French /l/ stays clear and forward; avoid English word-final dark-L transfer.",
     [...FRENCH_CORE_SOURCES, "phonetique-ca"],
-    ["No verified exact local /l/ header clip exists yet."],
   ),
   row(
     "fr-liaison",
@@ -771,7 +749,9 @@ const RUSSIAN_INVENTORY_BASE: PhonologyInventoryBaseEntry[] = [
     "contrast",
     "Hard/soft rhotic contrast /r rʲ/.",
     [...RUSSIAN_CORE_SOURCES, "wiktionary-ru-pronunciation-appendix"],
-    ["Hard /r/ now has a standalone exact clip; soft /rʲ/ and pair-lesson clips are still missing."],
+    [
+      "Hard /r/ and soft /rʲ/ now have standalone exact clips; a full hard/soft pair-lesson clip is still missing.",
+    ],
   ),
   row(
     "ru-soft-labials",
@@ -913,15 +893,6 @@ export const LANGUAGE_PHONOLOGY_GAPS: Record<
 > = {
   "es-ES": [
     {
-      id: "es-common-plain-consonants",
-      label: "/p t k f m n b d g/ 精确短音频",
-      layer: "phoneme",
-      reason:
-        "These Spanish phoneme units now exist as course/scoring anchors, but the current local header inventory has not verified exact standalone clips for them.",
-      expectedBeforeStable: true,
-      sourceRefs: SPANISH_CORE_SOURCES,
-    },
-    {
       id: "es-dialect-selector",
       label: "seseo / yeismo variants",
       layer: "contrast",
@@ -932,15 +903,6 @@ export const LANGUAGE_PHONOLOGY_GAPS: Record<
     },
   ],
   "fr-FR": [
-    {
-      id: "fr-common-consonants",
-      label: "/p b t d k g f v s z m n l/ 精确短音频",
-      layer: "phoneme",
-      reason:
-        "These French phoneme units now exist, but the current local header inventory has not verified exact standalone clips for them.",
-      expectedBeforeStable: true,
-      sourceRefs: FRENCH_CORE_SOURCES,
-    },
     {
       id: "fr-phrase-rule-clips",
       label:
@@ -958,7 +920,7 @@ export const LANGUAGE_PHONOLOGY_GAPS: Record<
       label: "complete hard/soft consonant pairs",
       layer: "contrast",
       reason:
-        "Russian hard/soft consonants are systemic. Standalone coronal stop, sibilant, sonorant, labial, and velar pair anchors now exist, but the full per-consonant exact audio inventory is still incomplete.",
+        "Russian hard/soft consonants are systemic. Standalone hard anchors and soft /rʲ/ now exist, but the full per-consonant exact soft audio inventory is still incomplete.",
       expectedBeforeStable: true,
       sourceRefs: RUSSIAN_CORE_SOURCES,
     },
