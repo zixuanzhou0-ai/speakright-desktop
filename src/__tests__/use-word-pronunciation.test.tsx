@@ -292,6 +292,8 @@ describe("useWordPronunciation", () => {
       expect(result.current.error).toContain("发布包音频可能缺失");
     });
     expect(result.current.error).toContain("bonjour");
+    expect(result.current.error).toContain("本地练习示范音频");
+    expect(result.current.error).not.toContain("本地标准发音");
     expect(mocks.fetchPronunciation).not.toHaveBeenCalled();
     expect(mocks.getLanguageAudioPackEntry).not.toHaveBeenCalled();
     expect(mocks.howlSources).toEqual([]);
@@ -331,6 +333,8 @@ describe("useWordPronunciation", () => {
     await waitFor(() => {
       expect(result.current.error).toContain("旧版本地音频缓存可能损坏");
     });
+    expect(result.current.error).toContain("本地练习示范音频");
+    expect(result.current.error).not.toContain("本地标准发音");
     expect(result.current.error).toContain("数据与隐私中心");
     expect(result.current.error).toContain("重新安装最新版桌面端");
     expect(result.current.error).not.toContain("重新安装音频包");
@@ -347,6 +351,8 @@ describe("useWordPronunciation", () => {
     await waitFor(() => {
       expect(result.current.error).toContain("暂无");
     });
+    expect(result.current.error).toContain("本地练习示范音频");
+    expect(result.current.error).not.toContain("本地标准发音");
     expect(result.current.error).toContain("不会用在线词典或 TTS 冒充");
     expect(result.current.error).toContain("音频/provider issue");
     expect(result.current.error).toContain("Release EXE 音频缺口");

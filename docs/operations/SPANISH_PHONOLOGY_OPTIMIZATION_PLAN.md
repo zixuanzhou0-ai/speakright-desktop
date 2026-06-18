@@ -64,6 +64,17 @@ Sounds of Speech 和 IPA Handbook。结论很明确：西语有成熟音系和 I
   `src/lib/language-feedback-rules.ts`,
   `src/lib/assessment-segment-audio.ts`。
 
+## 证据等级与实现约束
+
+| 等级 | 可用于什么 | 本计划如何使用 |
+| --- | --- | --- |
+| A: 官方/IPA illustration | 决定课程锚点、profile 边界、不得夸大的声明 | ASALE/RAE 约束 pan-Hispanic 口径；JIPA 约束 Castilian `es-ES` 核心库存和 `[β̞ ð̞ ɣ̞]` 实现 |
+| B: 大学教学/发音项目 | 转化为中文动作说明、练习顺序和可视化提示 | University of Iowa 用于描述部位、方式、少送气、tap/trill、鼻音和 glide 的学习路径 |
+| C: 当前代码/本地资产 | 决定 UI 是否可点击、测试覆盖和缺口列表 | 只有本仓库 verified local short clip 能让 speaker 可点击；代码缺口只能写成 TODO/score-only |
+
+落地原则：A级来源可以修改课程锚点；B级来源可以修改教学文案和练习顺序；C级资产只决定
+当前可播放性，不能反过来证明语言里“不存在”某个音或规则。
+
 ## 正确拆分答案
 
 西语主层应继续 phoneme-first，但训练层必须 language-specific：
@@ -162,6 +173,20 @@ mastery/evidenceMastery 完成状态。
    - `assessment-segment-audio.test.ts` 锁定 exact clip 才可点击。
    - `language-feedback-rules.test.ts` 锁定西语重音、音节节奏、实现层反馈。
    - 稳定后只用 Release EXE gates 验收。
+
+## 代码落点清单
+
+- `src/lib/language-sound-units/spanish.ts`: 保持 phoneme-first，同时给
+  `/b d g/`、`[β̞ ð̞ ɣ̞]`、tap/trill、Castilian `/θ/`、鼻音同化、双元音和重音
+  明确 `unitType`。
+- `src/lib/language-phonology-inventory.ts`: 每个西语 unit 必须有 source refs、
+  audio status、tile policy、known gaps。
+- `src/lib/language-feedback-rules.ts`: feedback 按西语少送气、五元音稳定、
+  `[β̞ ð̞ ɣ̞]` 环境、词重音和音节节奏生成，不套英语 stress/rhotic 规则。
+- `src/lib/assessment-segment-audio.ts`: 只有 exact same-unit local short clip 可播放；
+  allophone 或 rule unit 默认不可点击，除非有同单元短音频证据。
+- `src/__tests__/*spanish*` 与 audio policy 测试：锁住 experimental、profile-aware
+  `/θ/`、`/ɾ r/`、`/b d g/` 双层和不可点击策略。
 
 ## Done Definition
 

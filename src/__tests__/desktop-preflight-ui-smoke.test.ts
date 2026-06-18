@@ -275,6 +275,10 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("wordAudioReady");
     expect(script).toContain("expectPracticeAudioLabelIncludes");
     expect(script).toContain("expectedPracticeAudioLabelIncludes");
+    expect(script).toContain('expectPracticeAudioLabelIncludes: "示范"');
+    expect(script).toContain(
+      '(ariaLabel.includes("发音") || ariaLabel.includes("示范"))',
+    );
     expect(script).toContain('ariaLabel !== "播放单词发音"');
     expect(script).toContain("practiceAudioLabels=ok");
     expect(script).toContain("freePracticeSmoke=ok");

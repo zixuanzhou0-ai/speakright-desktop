@@ -90,15 +90,23 @@ describe("PhonemeStudyCard non-English reading layout", () => {
       "data-smoke",
       "practice-voice-a",
     );
+    expect(screen.getByRole("button", { name: "使用A声线" })).toHaveAttribute(
+      "title",
+      "练习示范 A",
+    );
     expect(screen.getByRole("button", { name: "使用B声线" })).toHaveAttribute(
       "data-smoke",
       "practice-voice-b",
+    );
+    expect(screen.getByRole("button", { name: "使用B声线" })).toHaveAttribute(
+      "title",
+      "练习示范 B",
     );
     expect(
       document.querySelector('[data-smoke="practice-word-audio"]'),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "播放规则句子发音" }),
+      screen.getByRole("button", { name: "播放规则句子示范" }),
     ).toHaveAttribute("data-smoke", "practice-word-audio");
     expect(
       screen.queryByRole("button", { name: "播放单词发音" }),
@@ -143,7 +151,7 @@ describe("PhonemeStudyCard non-English reading layout", () => {
     expect(fullTask).not.toHaveClass("truncate");
 
     expect(
-      screen.getByRole("button", { name: "播放规则句子发音" }),
+      screen.getByRole("button", { name: "播放规则句子示范" }),
     ).toHaveAttribute("data-smoke", "practice-word-audio");
     expect(
       screen.queryByRole("button", { name: "播放单词发音" }),
@@ -180,11 +188,11 @@ describe("PhonemeStudyCard non-English reading layout", () => {
         word: "perdon",
         ipa: "/peɾˈdon/",
       },
-      wordAudioError: "暂无「perdon」的本地标准发音。",
+      wordAudioError: "暂无「perdon」的本地练习示范音频。",
     });
 
     const alert = screen.getByRole("alert");
-    expect(alert).toHaveTextContent("暂无「perdon」的本地标准发音。");
+    expect(alert).toHaveTextContent("暂无「perdon」的本地练习示范音频。");
     expect(alert).toHaveAttribute("data-smoke", "practice-word-audio-error");
     expect(alert).toHaveClass("break-words");
     expect(alert).toHaveClass("[overflow-wrap:anywhere]");

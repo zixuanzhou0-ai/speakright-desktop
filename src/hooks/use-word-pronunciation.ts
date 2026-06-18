@@ -68,11 +68,11 @@ function getPronunciationFallbackErrorMessage(error: unknown): string {
 const GENERIC_AUDIO_LOAD_ERROR = "音频加载失败，请稍后重试。";
 
 function getBundledAudioLoadErrorMessage(word: string): string {
-  return `本地标准发音加载失败：「${word}」的发布包音频可能缺失或被系统拦截，请重新安装应用或切换到另一个练习词。`;
+  return `本地练习示范音频加载失败：「${word}」的发布包音频可能缺失或被系统拦截，请重新安装应用或切换到另一个练习项。`;
 }
 
 function getInstalledPackAudioLoadErrorMessage(word: string): string {
-  return `本地标准发音加载失败：「${word}」的旧版本地音频缓存可能损坏，请在设置的数据与隐私中心清理本地缓存，或重新安装最新版桌面端后重试。`;
+  return `本地练习示范音频加载失败：「${word}」的旧版本地音频缓存可能损坏，请在设置的数据与隐私中心清理本地缓存，或重新安装最新版桌面端后重试。`;
 }
 
 function getOnlineFallbackPlaybackErrorMessage(word: string): string {
@@ -400,7 +400,7 @@ export function useWordPronunciation(): UseWordPronunciationReturn {
         setSafeIsLoading(false);
         setSafeIsPlaying(false);
         setSafeError(
-          `暂无「${normalizedWord}」的本地标准发音；桌面端不会用在线词典或 TTS 冒充非英语本地音频。请切换练习项，或通过音频/provider issue 反馈 Release EXE 音频缺口。`,
+          `暂无「${normalizedWord}」的本地练习示范音频；桌面端不会用在线词典或 TTS 冒充非英语本地音频。请切换练习项，或通过音频/provider issue 反馈 Release EXE 音频缺口。`,
         );
         console.warn(
           `[Pronunciation] Missing local ${languageId} pronunciation for "${normalizedWord}"`,

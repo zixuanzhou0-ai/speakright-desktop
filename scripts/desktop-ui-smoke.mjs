@@ -47,7 +47,7 @@ const languageChecks = [
     route: "/phonemes/es-lexical-stress",
     label: "西班牙语词重音",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "es-ES",
@@ -55,7 +55,7 @@ const languageChecks = [
     route: "/phonemes/es-syllable-rhythm",
     label: "西班牙语音节节奏",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "fr-FR",
@@ -77,7 +77,7 @@ const languageChecks = [
     route: "/phonemes/fr-liaison",
     label: "法语 liaison",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "fr-FR",
@@ -85,7 +85,7 @@ const languageChecks = [
     route: "/phonemes/fr-enchainement",
     label: "法语 enchainement",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "fr-FR",
@@ -93,7 +93,7 @@ const languageChecks = [
     route: "/phonemes/fr-elision",
     label: "法语 elision",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "fr-FR",
@@ -101,7 +101,7 @@ const languageChecks = [
     route: "/phonemes/fr-final-consonant-silence",
     label: "法语词尾静音",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "ru-RU",
@@ -116,7 +116,7 @@ const languageChecks = [
     route: "/phonemes/ru-stress-reduction",
     label: "俄语重音弱化",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "ru-RU",
@@ -124,7 +124,7 @@ const languageChecks = [
     route: "/phonemes/ru-unstressed-o-a",
     label: "俄语非重读 O/A",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "ru-RU",
@@ -132,7 +132,7 @@ const languageChecks = [
     route: "/phonemes/ru-unstressed-e-ya",
     label: "俄语非重读 E/Я",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "ru-RU",
@@ -140,7 +140,7 @@ const languageChecks = [
     route: "/phonemes/ru-iotated-vowels",
     label: "俄语带 /j/ 元音",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "ru-RU",
@@ -148,7 +148,7 @@ const languageChecks = [
     route: "/phonemes/ru-final-devoicing",
     label: "俄语词尾清化",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "ru-RU",
@@ -156,7 +156,7 @@ const languageChecks = [
     route: "/phonemes/ru-voicing-assimilation",
     label: "俄语清浊同化",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
   {
     languageId: "ru-RU",
@@ -164,7 +164,7 @@ const languageChecks = [
     route: "/phonemes/ru-clusters",
     label: "俄语辅音丛",
     expectHeaderAudio: false,
-    expectPracticeAudioLabelIncludes: "规则",
+    expectPracticeAudioLabelIncludes: "示范",
   },
 ];
 
@@ -1207,7 +1207,7 @@ async function assertDetail(cdp, language) {
         style.display !== "none" &&
         !button.disabled &&
         button.getAttribute("aria-disabled") !== "true" &&
-        ariaLabel.includes("发音") &&
+        (ariaLabel.includes("发音") || ariaLabel.includes("示范")) &&
         (!expectedPracticeAudioLabelIncludes ||
           (ariaLabel.includes(expectedPracticeAudioLabelIncludes) &&
             ariaLabel !== "播放单词发音"))

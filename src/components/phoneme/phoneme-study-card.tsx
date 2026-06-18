@@ -103,14 +103,14 @@ function NonEnglishPracticeTask({
   );
   const audioLabel =
     practiceText.mode === "word"
-      ? "播放单词发音"
+      ? "播放单词练习示范"
       : practiceText.mode === "phrase"
-        ? "播放短语发音"
+        ? "播放短语练习示范"
         : practiceText.mode === "sentence"
-          ? "播放句子发音"
+          ? "播放句子练习示范"
           : practiceText.density === "sentence"
-            ? "播放规则句子发音"
-            : "播放规则练习发音";
+            ? "播放规则句子示范"
+            : "播放规则练习示范";
 
   return (
     <div
@@ -189,7 +189,7 @@ function NonEnglishPracticeTask({
               key={voice}
               data-smoke={`practice-voice-${voice === "blue" ? "a" : "b"}`}
               aria-label={`使用${voice === "blue" ? "A" : "B"}声线`}
-              title={`标准发音 ${voice === "blue" ? "A" : "B"}`}
+              title={`练习示范 ${voice === "blue" ? "A" : "B"}`}
               onClick={() => onSetSelectedVoice(voice)}
               className={`h-7 w-7 rounded-full text-[11px] font-semibold transition-colors ${
                 selectedVoice === voice

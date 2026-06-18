@@ -60,6 +60,19 @@ enchaînement、elision、e caduc/schwa 和节奏组末突出。
   `src/lib/language-phonology-inventory.ts`,
   `src/lib/local-language-assets.ts`。
 
+## 证据等级与实现约束
+
+| 等级 | 可用于什么 | 本计划如何使用 |
+| --- | --- | --- |
+| A: IPA/JIPA illustration | 决定库存、对比和明确的 profile 限制 | Fougeron/Smith 约束 Parisian/French illustration，不把单一 speaker 描写扩大成所有法语 |
+| A: 语料项目 | 决定 phrase/sentence 规则的可变性 | PFC 约束 liaison、schwa/e caduc、地区/语体差异和 FLE 教学口径 |
+| B: 教学发音项目 | 转化为听辨顺序、中文动作提示和练习路径 | Phonetique.ca 支持先听辨口元音、鼻化元音、前圆唇和 glide 对比 |
+| C: 当前代码/本地资产 | 决定 UI 是否可点击、测试覆盖和缺口列表 | 只有本仓库 verified local short clip 能让 speaker 可点击；规则类单位只能进入短语/句子训练 |
+
+落地原则：法语规则的真实单位通常不是孤立单音。liaison、enchaînement、elision、
+final consonant silence、schwa/e caduc 和 phrase-final prominence 必须落在短语/句子
+层；没有 exact clip 时不能为了 UI 整齐显示单音 speaker。
+
 ## 正确拆分答案
 
 法语应采用“库存 + 对比 + 短语规则 + 韵律”的模型：
@@ -165,6 +178,19 @@ enchaînement、elision、e caduc/schwa 和节奏组末突出。
    - `assessment-segment-audio.test.ts` 锁定规则类和无验证辅音不可点击。
    - `language-phonology-inventory.test.ts` 锁定层级、source refs、audio status。
    - 稳定后只用 Release EXE gates 验收。
+
+## 代码落点清单
+
+- `src/lib/language-sound-units/french.ts`: 给口元音、鼻化元音、前圆唇、glides、
+  `/ʁ ʃ ʒ ɲ/`、liaison、enchaînement、elision、schwa/e caduc、词尾静音分别标层。
+- `src/lib/language-phonology-inventory.ts`: `/œ̃/`、`/ɑ/`、loan `/ŋ/` 必须带
+  variant/profile 说明，不写成全体 speaker 必修。
+- `src/lib/language-feedback-rules.ts`: phrase/sentence feedback 必须显式处理
+  liaison obligatory/optional/forbidden、enchaînement、elision、e caduc、节奏组。
+- `src/lib/assessment-segment-audio.ts`: 规则类和无验证辅音不可点击；只能复用同一
+  sound unit 的本地短音频。
+- `src/__tests__/*french*` 与 audio policy 测试：锁住 nasal/front-rounded/glide
+  对比、规则层不可点击、experimental 和 merge-aware `/œ̃/` 口径。
 
 ## Done Definition
 
