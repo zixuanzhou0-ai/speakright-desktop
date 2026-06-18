@@ -230,8 +230,9 @@ export const LANGUAGE_FEEDBACK_RULES: LanguageFeedbackRule[] = [
     title: "liaison",
     triggerSlugs: ["fr-liaison"],
     guidance:
-      "liaison 是潜在词尾辅音在合适短语环境中出现；不要把每个静音词尾都读出，也不要漏掉必须连的词组。",
-    practiceCue: "les amis, vous avez, petit ami；先找限定词/代词等常见可连环境。",
+      "liaison 是潜在词尾辅音在合适短语环境中出现；要区分必须连、可选连、禁连，不要把每个静音词尾都读出，也不要漏掉必须连的限定词/代词环境。",
+    practiceCue:
+      "les amis、vous avez 先按必须连处理；pas encore 可按语体练可选连；et alors 不连。",
   },
   {
     id: "french-enchainement",
@@ -378,8 +379,10 @@ export const LANGUAGE_FEEDBACK_RULES: LanguageFeedbackRule[] = [
     languageId: "ru-RU",
     title: "voicing assimilation",
     triggerSlugs: ["ru-voicing-assimilation"],
-    guidance: "相邻辅音会影响清浊，例如 встреча 的 в 接清辅音读 [f]。",
-    practiceCue: "встреча, сделать, просьба；圈出相邻辅音再读。",
+    guidance:
+      "俄语清浊同化通常按后一个阻碍音逆行调整；/v/ 要特别处理：它可在清辅音前清化成 [f]，例如 встреча，但不要把 /v/ 当成普通浊阻碍音去自动浊化前一个清辅音。",
+    practiceCue:
+      "встреча, сделать, просьба, к вам；先圈相邻阻碍音，遇到 /v/ 单独判断。",
   },
   {
     id: "russian-cluster-epenthesis",

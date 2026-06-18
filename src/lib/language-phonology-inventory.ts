@@ -892,7 +892,9 @@ const RUSSIAN_INVENTORY_BASE: PhonologyInventoryBaseEntry[] = [
     "connected-speech-rule",
     "Regressive voicing assimilation across adjacent obstruents, with /v/ behavior needing careful treatment.",
     [...RUSSIAN_CORE_SOURCES, "wiktionary-ru-pronunciation-appendix"],
-    ["Proxy clip remains unclickable; /v/ caveat still needs richer coaching."],
+    [
+      "Proxy clip remains unclickable; /v/ caveat is in feedback, but exact phrase-level evidence is still missing.",
+    ],
   ),
 ];
 

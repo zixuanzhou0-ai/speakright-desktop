@@ -199,7 +199,11 @@ describe("language feedback rules", () => {
     expect(liaison?.matchedSlugs).toEqual(["fr-liaison"]);
     expect(liaison?.rule.guidance).toContain("潜在词尾辅音");
     expect(liaison?.rule.guidance).toContain("合适短语环境");
+    expect(liaison?.rule.guidance).toContain("必须连");
+    expect(liaison?.rule.guidance).toContain("可选连");
+    expect(liaison?.rule.guidance).toContain("禁连");
     expect(liaison?.rule.guidance).not.toContain("已经发出来的词尾辅音");
+    expect(liaison?.rule.practiceCue).toContain("et alors 不连");
 
     expect(enchainement?.matchedSlugs).toEqual(["fr-enchainement"]);
     expect(enchainement?.rule.guidance).toContain("已经发出来的词尾辅音");
@@ -299,6 +303,15 @@ describe("language feedback rules", () => {
     expect(finalDevoicing?.guidance).not.toContain("词尾有声辅音要清化");
     expect(finalDevoicing?.practiceCue).toContain("друг дома");
     expect(finalDevoicing?.practiceCue).toContain("снег идёт");
+
+    const voicingAssimilation = matches.find(
+      (match) => match.rule.id === "russian-voicing-assimilation",
+    )?.rule;
+    expect(voicingAssimilation?.guidance).toContain("后一个阻碍音逆行调整");
+    expect(voicingAssimilation?.guidance).toContain("/v/ 要特别处理");
+    expect(voicingAssimilation?.guidance).toContain("встреча");
+    expect(voicingAssimilation?.guidance).toContain("不要把 /v/ 当成普通浊阻碍音");
+    expect(voicingAssimilation?.practiceCue).toContain("к вам");
 
     const iotated = matches.find(
       (match) => match.rule.id === "russian-iotated-vowel-context",
