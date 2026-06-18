@@ -35,4 +35,28 @@ describe("Spanish pronunciation content", () => {
 
     expect(deckText).toMatch(/es-ES|Castilian|拉美|方言|seseo/i);
   });
+
+  it("keeps Spanish rule sentence IPA hints tied to real sentence realization", () => {
+    const deck = LANGUAGE_LEARNING_DECKS["es-ES"];
+    const byText = (text: string) =>
+      deck.sentenceDeck.find((item) => item.text === text);
+
+    expect(byText("Un gato duerme en un banco.")?.ipaHint).toBe(
+      "/uŋ ˈgato ˈdweɾme en um ˈbaŋko/",
+    );
+    expect(byText("Un gato duerme en un banco.")?.focus).toContain(
+      "鼻音位置同化",
+    );
+    expect(byText("Papá habló con el médico.")?.ipaHint).toBe(
+      "/paˈpa aˈβlo kon el ˈmeðiko/",
+    );
+    expect(byText("Papá habló con el médico.")?.ipaHint).toContain("β");
+    expect(byText("Papá habló con el médico.")?.ipaHint).toContain("ð");
+    expect(byText("Buenos días, muchas gracias.")?.ipaHint).toBe(
+      "/ˈbwenos ˈdias ˈmutʃas ˈɣɾaθjas/",
+    );
+    expect(byText("Buenos días, muchas gracias.")?.targetUnitSlugs).toContain(
+      "es-syllable-rhythm",
+    );
+  });
 });

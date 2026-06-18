@@ -137,7 +137,11 @@ describe("Russian pronunciation content", () => {
       ipaHint: "/noʂ tʊˈpoj/",
     });
     expect(finalDevoicingItems[0]?.focus).toContain("清辅音");
-    expect(assimilationItem?.ipaHint).toBe("/ˈzdʲelətʲ ˈbɨstrə/");
+    expect(
+      deck.sentenceDeck.find((item) => item.text === "Встреча завтра утром.")
+        ?.ipaHint,
+    ).toBe("/ˈfstrʲetɕə ˈzaftrə ˈutrəm/");
+    expect(assimilationItem?.ipaHint).toBe("/ˈzdʲelətʲ ˈbɨstrə ˈtrudnə/");
     expect(assimilationItem?.focus).toContain("清浊同化");
     expect(reductionItem?.stressText).toContain("Москва́");
     expect(reductionItem?.ipaHint).toContain("ɐ");
