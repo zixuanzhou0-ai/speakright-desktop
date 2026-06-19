@@ -1294,6 +1294,80 @@ async function assertDetail(cdp, language) {
   return { languageId: language.languageId, slug: language.slug };
 }
 
+async function assertPhonemeLeftColumnFitsLaunchHeight(cdp) {
+  await setViewport(cdp, 1280, 920);
+  try {
+    await clickLanguage(cdp, "en-US");
+    await forceNavigate(cdp, "/phonemes/ee?smokeScoreSummary=1");
+    await waitForCondition(
+      cdp,
+      `
+(() => ({
+  ok:
+    window.location.pathname === "/phonemes/ee" &&
+    new URLSearchParams(window.location.search).get("smokeScoreSummary") === "1" &&
+    !!document.querySelector('[data-smoke="phoneme-detail-left-column"]') &&
+    !!document.querySelector('[data-smoke="phoneme-score-summary"]'),
+  href: window.location.href,
+  bodyText: (document.body?.innerText ?? "").slice(0, 500)
+}))()
+`,
+      "phoneme detail launch-height score fixture to render",
+    );
+
+    const result = await evaluate(
+      cdp,
+      `
+(() => {
+  const left = document.querySelector('[data-smoke="phoneme-detail-left-column"]');
+  const score = document.querySelector('[data-smoke="phoneme-score-summary"]');
+  const video = left?.querySelector("video");
+  const wordAudio = left?.querySelector('[data-smoke="practice-word-audio"]');
+  const recordButton = [...(left?.querySelectorAll("button") ?? [])].find((button) =>
+    (button.getAttribute("aria-label") ?? "").includes("开始录音")
+  );
+  const hasVisibleRect = (element) => {
+    const rect = element?.getBoundingClientRect();
+    return Boolean(rect && rect.width > 0 && rect.height > 0);
+  };
+  const leftRect = left?.getBoundingClientRect();
+  return {
+    ok:
+      window.innerWidth === 1280 &&
+      window.innerHeight === 920 &&
+      Boolean(left) &&
+      left.scrollHeight <= left.clientHeight + 2 &&
+      hasVisibleRect(video) &&
+      hasVisibleRect(wordAudio) &&
+      hasVisibleRect(recordButton) &&
+      hasVisibleRect(score) &&
+      score.innerText.includes("总分"),
+    innerWidth: window.innerWidth,
+    innerHeight: window.innerHeight,
+    leftClientHeight: left?.clientHeight ?? 0,
+    leftScrollHeight: left?.scrollHeight ?? 0,
+    leftRectHeight: leftRect?.height ?? 0,
+    hasVideo: hasVisibleRect(video),
+    hasWordAudio: hasVisibleRect(wordAudio),
+    hasRecordButton: hasVisibleRect(recordButton),
+    hasScore: hasVisibleRect(score),
+    bodyText: (document.body?.innerText ?? "").slice(0, 800)
+  };
+})()
+`,
+    );
+    if (!result?.ok) {
+      throw new Error(
+        `Phoneme left column launch-height fit failed: ${JSON.stringify(
+          result,
+        )}`,
+      );
+    }
+  } finally {
+    await clearViewport(cdp);
+  }
+}
+
 async function assertHiddenRuleRouteBlocked(cdp, check) {
   await clickLanguage(cdp, check.languageId);
   await navigate(
@@ -2741,6 +2815,7 @@ async function smoke() {
     for (const language of languageChecks) {
       details.push(await assertDetail(cdp, language));
     }
+    await assertPhonemeLeftColumnFitsLaunchHeight(cdp);
     const hiddenRuleRoutes = [];
     for (const check of hiddenRuleRouteChecks) {
       hiddenRuleRoutes.push(await assertHiddenRuleRouteBlocked(cdp, check));
@@ -2769,6 +2844,7 @@ async function smoke() {
         `details=${details
           .map((item) => `${item.languageId}:${item.slug}`)
           .join(",")}`,
+        "phonemeLeftColumn=ok",
         `hiddenRuleRoutes=ok(${hiddenRuleRoutes
           .map((item) => `${item.languageId}:${item.slug}`)
           .join(",")})`,

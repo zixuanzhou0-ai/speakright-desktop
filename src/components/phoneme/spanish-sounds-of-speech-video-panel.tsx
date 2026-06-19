@@ -12,6 +12,7 @@ interface SpanishSoundsOfSpeechVideoPanelProps {
   videoSet: SpanishSoundVideoSet;
   className?: string;
   teachingVideos?: LanguageTeachingVideoAsset[];
+  compact?: boolean;
 }
 
 interface SpanishPanelClip {
@@ -50,6 +51,7 @@ export function SpanishSoundsOfSpeechVideoPanel({
   videoSet,
   className,
   teachingVideos = [],
+  compact = false,
 }: SpanishSoundsOfSpeechVideoPanelProps) {
   const [selection, setSelection] = useState({
     slug: videoSet.slug,
@@ -90,6 +92,7 @@ export function SpanishSoundsOfSpeechVideoPanel({
 
   const selectedIndex = selection.slug === videoSet.slug ? selection.index : 0;
   const selectedClip = clips[selectedIndex] ?? clips[0];
+  const maxHeightClass = compact ? "max-h-[210px]" : "max-h-[285px]";
 
   function moveSelection(delta: number) {
     setSelection((current) => {
@@ -112,7 +115,7 @@ export function SpanishSoundsOfSpeechVideoPanel({
     <div
       className={`overflow-hidden rounded-lg border bg-background ${className ?? ""}`}
     >
-      <div className="border-b bg-muted/10 px-3 py-1.5">
+      <div className="border-b bg-muted/10 px-3 py-1">
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             {selectedClip.kind === "lesson" ? "教学讲解" : "发音示范"}
@@ -120,7 +123,7 @@ export function SpanishSoundsOfSpeechVideoPanel({
         </div>
       </div>
 
-      <div className="grid grid-cols-[2rem_minmax(0,1fr)_2rem] items-center gap-2 bg-muted/15 px-2 py-1.5">
+      <div className="grid grid-cols-[2rem_minmax(0,1fr)_2rem] items-center gap-2 bg-muted/15 px-2 py-1">
         <button
           type="button"
           aria-label="上一个西语视频"
@@ -136,7 +139,7 @@ export function SpanishSoundsOfSpeechVideoPanel({
             src={selectedClip.localSrc}
             controls
             preload="metadata"
-            className={`block h-auto max-h-[285px] max-w-full rounded-md border bg-black shadow-sm ${videoWidthClassForClip(selectedClip)}`}
+            className={`block h-auto ${maxHeightClass} max-w-full rounded-md border bg-black shadow-sm ${videoWidthClassForClip(selectedClip)}`}
           >
             <track kind="captions" />
           </video>

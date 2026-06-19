@@ -227,6 +227,10 @@ describe("desktop preflight and UI smoke", () => {
     expect(script).toContain("assertLowHeightViewportRoutes");
     expect(script).toContain("lowHeightViewport=ok");
     expect(script).toContain("window.innerHeight === 560");
+    expect(script).toContain("assertPhonemeLeftColumnFitsLaunchHeight");
+    expect(script).toContain("smokeScoreSummary=1");
+    expect(script).toContain("phoneme-detail-left-column");
+    expect(script).toContain("phonemeLeftColumn=ok");
     expect(script).toContain("assessment-breakdown-placeholder");
     expect(script).toContain("assessment-target-ipa-reference");
     expect(script).toContain("breakdownSmokeReady");

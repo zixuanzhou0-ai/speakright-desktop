@@ -33,6 +33,7 @@ interface VideoPlayerProps {
   spanishVideoSet?: SpanishSoundVideoSet;
   teachingVideos?: LanguageTeachingVideoAsset[];
   sourceAlignment?: SoundUnitSourceAlignment;
+  compact?: boolean;
 }
 
 const RESOURCE_ICON = {
@@ -84,24 +85,29 @@ function LocalVideoPanel({
   slug,
   sources,
   className,
+  compact = false,
 }: {
   slug: string;
   sources: LocalVideoSource[];
   className?: string;
+  compact?: boolean;
 }) {
   const [selection, setSelection] = useState({ slug, index: 0 });
   const selectedIndex = selection.slug === slug ? selection.index : 0;
   const selectedSource = sources[selectedIndex] ?? sources[0];
   const widthClass = localLanguageVideoWidthClass(selectedSource.localSrc);
+  const maxHeightClass = compact ? "max-h-[210px]" : "max-h-[285px]";
   const videoClass = widthClass
-    ? `block h-auto max-h-[285px] max-w-full rounded-lg border bg-black shadow-sm ${widthClass}`
-    : "w-full rounded-lg border";
+    ? `block h-auto ${maxHeightClass} max-w-full rounded-lg border bg-black shadow-sm ${widthClass}`
+    : compact
+      ? "h-[210px] w-full rounded-lg border bg-black object-contain"
+      : "w-full rounded-lg border";
 
   return (
     <div
       className={`overflow-hidden rounded-lg border bg-background ${className ?? ""}`}
     >
-      <div className="border-b bg-muted/10 px-3 py-1.5">
+      <div className="border-b bg-muted/10 px-3 py-1">
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             {selectedSource.kind === "lesson" ? "教学讲解" : "发音视频"}
@@ -109,7 +115,7 @@ function LocalVideoPanel({
         </div>
       </div>
 
-      <div className="flex justify-center bg-muted/15 px-2 py-1.5">
+      <div className="flex justify-center bg-muted/15 px-2 py-1">
         <video
           key={selectedSource.localSrc}
           src={selectedSource.localSrc}
@@ -177,6 +183,7 @@ export function VideoPlayer({
   spanishVideoSet,
   teachingVideos = [],
   sourceAlignment,
+  compact = false,
 }: VideoPlayerProps) {
   const videoSrc = localSrc ?? `/videos/phonemes/${slug}.mp4`;
   const lessonSources = useMemo(
@@ -191,13 +198,16 @@ export function VideoPlayer({
           slug={slug}
           sources={lessonSources}
           className={className}
+          compact={compact}
         />
       );
     }
 
     return (
       <div
-        className={`flex w-full flex-col justify-center rounded-lg border border-dashed bg-muted/25 p-3 ${className ?? ""}`}
+        className={`flex w-full flex-col justify-center rounded-lg border border-dashed bg-muted/25 ${
+          compact ? "p-2" : "p-3"
+        } ${className ?? ""}`}
       >
         <div className="mb-2 text-center">
           <p className="text-sm font-medium text-foreground">
@@ -271,10 +281,11 @@ export function VideoPlayer({
     return (
       <SpanishSoundsOfSpeechVideoPanel
         videoSet={spanishVideoSet}
-        className={className}
-        teachingVideos={teachingVideos}
-      />
-    );
+          className={className}
+          teachingVideos={teachingVideos}
+          compact={compact}
+        />
+      );
   }
 
   if (lessonSources.length > 0) {
@@ -292,23 +303,27 @@ export function VideoPlayer({
           ...lessonSources,
         ]}
         className={className}
+        compact={compact}
       />
     );
   }
 
   const languageVideoWidthClass = localLanguageVideoWidthClass(videoSrc);
+  const maxHeightClass = compact ? "max-h-[210px]" : "max-h-[285px]";
 
   if (languageVideoWidthClass) {
     return (
       <div
-        className={`flex justify-center bg-muted/15 px-2 py-2 ${className ?? ""}`}
+        className={`flex justify-center bg-muted/15 px-2 ${
+          compact ? "py-1" : "py-2"
+        } ${className ?? ""}`}
       >
         <video
           key={slug}
           src={videoSrc}
           controls
           preload="metadata"
-          className={`block h-auto max-h-[285px] max-w-full rounded-lg border bg-black shadow-sm ${languageVideoWidthClass}`}
+          className={`block h-auto ${maxHeightClass} max-w-full rounded-lg border bg-black shadow-sm ${languageVideoWidthClass}`}
         >
           <track kind="captions" />
         </video>
@@ -322,7 +337,11 @@ export function VideoPlayer({
       src={videoSrc}
       controls
       preload="metadata"
-      className={`w-full rounded-lg border ${className ?? ""}`}
+      className={
+        compact
+          ? `h-[210px] w-full rounded-lg border bg-black object-contain ${className ?? ""}`
+          : `w-full rounded-lg border ${className ?? ""}`
+      }
     >
       <track kind="captions" />
     </video>

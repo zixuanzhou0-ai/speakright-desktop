@@ -105,11 +105,11 @@ function NonEnglishPracticeTask({
 
   return (
     <div
-      className="mt-3 rounded-lg border bg-muted/15 px-3 py-3"
+      className="mt-2 rounded-lg border bg-muted/15 px-3 py-2.5"
       data-practice-mode={practiceText.mode}
       data-smoke="non-english-practice-task"
     >
-      <div className="mb-2 flex flex-wrap items-center gap-2">
+      <div className="mb-1.5 flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
           请朗读
         </span>
@@ -152,7 +152,7 @@ function NonEnglishPracticeTask({
       </div>
 
       <div
-        className="mt-3 flex flex-wrap items-center justify-center gap-2"
+        className="mt-2 flex flex-wrap items-center justify-center gap-2"
         data-smoke="practice-controls"
       >
         <motion.div whileTap={{ scale: 0.9 }}>
@@ -319,8 +319,9 @@ export function PhonemeStudyCard({
         spanishVideoSet={spanishVideoSet}
         teachingVideos={teachingVideos}
         sourceAlignment={sourceAlignment ?? undefined}
+        compact
       />
-      <div className="px-4 py-3">
+      <div className="px-3 py-2.5">
         {/* IPA + play + emoji */}
         <div className="flex items-center gap-3">
           <h1
@@ -417,7 +418,7 @@ export function PhonemeStudyCard({
             />
           ) : (
             <>
-              <div className="mt-3 flex items-center gap-2">
+              <div className="mt-2 flex items-center gap-2">
                 <motion.div whileTap={{ scale: 0.9 }}>
                   <Button
                     variant="ghost"

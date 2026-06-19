@@ -68,6 +68,14 @@ const SMOKE_ASSESSMENT_TILE_PHONEMES: Record<
   ],
 };
 
+const SMOKE_SCORE_SUMMARY_RESULT: AzureAssessmentResult = {
+  pronunciationScore: 86,
+  accuracyScore: 88,
+  fluencyScore: 82,
+  completenessScore: 91,
+  words: [],
+};
+
 export function PhonemeDetailPage() {
   const params = useParams<{ phoneme: string }>();
   const router = useRouter();
@@ -98,6 +106,7 @@ export function PhonemeDetailPage() {
   const [wordDirection, setWordDirection] = useState<number>(1);
   const [showSmokeAssessmentTiles, setShowSmokeAssessmentTiles] =
     useState(false);
+  const [showSmokeScoreSummary, setShowSmokeScoreSummary] = useState(false);
   const autoAssessTriggered = useRef(false);
 
   const sessionPrefix = `phonemes:${languageId}:${params.phoneme}`;
@@ -195,11 +204,9 @@ export function PhonemeDetailPage() {
   );
 
   useEffect(() => {
-    setShowSmokeAssessmentTiles(
-      new URLSearchParams(window.location.search).get(
-        "smokeAssessmentTiles",
-      ) === "1",
-    );
+    const searchParams = new URLSearchParams(window.location.search);
+    setShowSmokeAssessmentTiles(searchParams.get("smokeAssessmentTiles") === "1");
+    setShowSmokeScoreSummary(searchParams.get("smokeScoreSummary") === "1");
   }, []);
 
   useEffect(() => {
@@ -480,18 +487,23 @@ export function PhonemeDetailPage() {
   const breakdownLabel = languageId === "en-US" ? "音标拆解" : "发音拆解";
   const showRuleEvidenceNote =
     languageId !== "en-US" && isRuleLikeSoundUnit(phoneme);
+  const scoreSummaryResult =
+    azure.result ?? (showSmokeScoreSummary ? SMOKE_SCORE_SUMMARY_RESULT : null);
 
   return (
     <div
-      className="h-full flex flex-col px-6 py-4 overflow-hidden"
+      className="h-full flex flex-col px-6 py-3 overflow-hidden"
       data-smoke="phoneme-detail-page"
       data-language-id={languageId}
       data-sound-unit={phoneme.slug}
     >
       {/* Two-column layout */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_2fr] flex-1 min-h-0">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_2fr] flex-1 min-h-0">
         {/* ====== LEFT COLUMN ====== */}
-        <div className="flex flex-col gap-3 min-h-0 lg:overflow-y-auto scrollbar-thin">
+        <div
+          className="flex flex-col gap-2 min-h-0 lg:overflow-y-auto scrollbar-thin"
+          data-smoke="phoneme-detail-left-column"
+        >
           {/* ── 学习区 ── */}
           <PhonemeStudyCard
             phoneme={phoneme}
@@ -541,8 +553,8 @@ export function PhonemeDetailPage() {
           )}
 
           {/* ── 练习区 ── */}
-          <div className="shrink-0 rounded-xl border bg-card px-4 py-4 shadow-sm">
-            <div className="flex flex-col items-center gap-2">
+          <div className="shrink-0 rounded-xl border bg-card px-3 py-3 shadow-sm">
+            <div className="flex flex-col items-center gap-1.5">
               <RecordButton
                 isRecording={recorder.isRecording}
                 onStart={handleRecordStart}
@@ -597,16 +609,20 @@ export function PhonemeDetailPage() {
             </div>
 
             {/* Score summary — inside practice card */}
-            {azure.result && (
-              <div className="mt-3 border-t pt-3">
+            {scoreSummaryResult && (
+              <div
+                className="mt-2 border-t pt-2"
+                data-smoke="phoneme-score-summary"
+              >
                 <ScoreSummary
-                  result={azure.result}
+                  result={scoreSummaryResult}
+                  compact
                   showProsody={false}
-                  historyKey={scoreHistoryKey(
-                    languageId,
-                    phoneme.slug,
-                    currentWordStr,
-                  )}
+                  historyKey={
+                    azure.result
+                      ? scoreHistoryKey(languageId, phoneme.slug, currentWordStr)
+                      : undefined
+                  }
                 />
               </div>
             )}
