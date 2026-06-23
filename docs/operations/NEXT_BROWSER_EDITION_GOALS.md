@@ -11,7 +11,7 @@ then gives hard boundaries and acceptance gates.
   dependency in Browser Edition source.
 - Latest local gate passed from `E:\SpeakRight`:
   `npm run validate:browser`.
-  This covered Browser Edition lint, typecheck, 112 Vitest files / 637 tests,
+  This covered Browser Edition lint, typecheck, 113 Vitest files / 639 tests,
   Next production static build with 197 routes, and static smoke for 9 routes
   plus 2 media assets.
 - `npm run docs:check-links` passed for public README/docs relative links and
@@ -26,8 +26,10 @@ then gives hard boundaries and acceptance gates.
 - Browser screenshots are stored in `docs/assets/screenshots/browser/`.
 - Browser Edition PR #1 has been merged to GitHub `main`
   (`8669834c Merge pull request #1 from
-  zixuanzhou0-ai/codex/browser-edition-release-pr`), and this worktree is now
-  on local `main` tracking `origin/main`.
+  zixuanzhou0-ai/codex/browser-edition-release-pr`). The follow-up scoring
+  validation commit `3e900c3 Validate browser Azure scoring release gate` was
+  also pushed to GitHub `main`; remote `refs/heads/main`
+  was verified immediately after that push.
 - Follow-up SDK audit verified the installed Azure Speech browser SDK exposes
   sentence prosody as a boolean setter:
   `pronunciationConfig.enableProsodyAssessment = isSentence(referenceText)`.
@@ -37,10 +39,10 @@ then gives hard boundaries and acceptance gates.
   current Browser Edition page plus `es-ES`, `fr-FR`, and `ru-RU` through
   low-cost ElevenLabs `eleven_flash_v2_5` synthetic audio scored by Azure REST;
   this is provider/locale/scoring evidence, not a replacement for a separate
-  human microphone UX pass. Remaining work is final staged validation,
-  commit/push, and the unresolved decision that current public Windows Desktop code still lives in
-  repository root / `src` / `src-tauri` rather than a physically migrated
-  `apps/desktop` folder.
+  human microphone UX pass. The current scoring-validation follow-up is pushed;
+  the remaining separate decision is that current public Windows Desktop code
+  still lives in repository root / `src` / `src-tauri` rather than a physically
+  migrated `apps/desktop` folder.
 
 ```text
 /goal 继续 SpeakRight Browser Edition 最后一轮收紧：先读取 E:\SpeakRight\docs\browser-edition\README.md、E:\SpeakRight\docs\browser-edition\ARCHITECTURE_AND_SEPARATION.md、E:\SpeakRight\docs\browser-edition\IMPLEMENTATION_PLAN.md、E:\SpeakRight\docs\browser-edition\VALIDATION_AND_RELEASE.md，以及 E:\SpeakRight\docs\operations\NEXT_BROWSER_EDITION_GOALS.md 本文件。当前目标不是继续打磨 Windows 安装包，而是把最新 Windows Desktop 版本的功能同步到一个清晰独立的 Browser Edition，让 Windows、macOS、Linux 用户都能通过浏览器使用开源版 SpeakRight。

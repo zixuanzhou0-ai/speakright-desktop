@@ -219,13 +219,16 @@ Ignored live-log results:
 This proves the live provider/key/locale/scoring path for all public languages.
 It does not claim that synthetic samples are the same evidence as a human
 microphone UX pass.
-## Not Yet Complete
+
+## Release Notes Caveat
 
 - The Azure live-scoring provider path is now recorded for all four public
   locales: `en-US` via current Browser Edition page evidence, and `es-ES`,
   `fr-FR`, `ru-RU` via low-cost ElevenLabs synthetic audio scored by Azure REST.
 - Final GitHub release notes should describe the synthetic checks honestly and
   avoid claiming they replace a human microphone UX pass.
+- Follow-up scoring validation was committed and pushed to GitHub `main` as
+  `3e900c3 Validate browser Azure scoring release gate`.
 
 
 ## 2026-06-23 Final Synthetic Gate And Browser Validation
