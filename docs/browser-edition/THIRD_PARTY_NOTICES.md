@@ -11,7 +11,6 @@ sources for SpeakRight Browser Edition.
 | ElevenLabs | Optional TTS provider for generated demo/read-along audio. |
 | LLM providers | Chinese coaching feedback only; not a scoring source. |
 | Youdao | Online dictionary pronunciation fallback. |
-| Merriam-Webster | Dictionary pronunciation fallback where configured/supported. |
 
 Users bring their own provider keys. Keys must not be committed, logged, placed
 in URLs, or included in screenshots.

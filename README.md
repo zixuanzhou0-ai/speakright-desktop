@@ -177,7 +177,6 @@ The LLM layer is downstream only. LLM providers only generate coaching explanati
 - **ElevenLabs**: optional standard-demo TTS and previously approved bundled local language-pack audio. Routine validation queries usage only and does not generate new audio. Do not generate ElevenLabs audio without explicit maintainer approval.
 - **LLM providers**: OpenAI-compatible providers can be configured for Chinese coaching feedback. They are not the scoring authority.
 - **Youdao pronunciation**: English online dictionary fallback for word pronunciation when local English word audio is unavailable.
-- **Merriam-Webster**: optional English dictionary pronunciation/stress source when the user configures an API key.
 
 ## Install And Run
 
@@ -265,7 +264,7 @@ SpeakRight depends on careful third-party educational and provider ecosystems:
 - Seeing Speech / University of Glasgow and related phonetics references inform selected source-ledger decisions and some local articulation media.
 - EasyPronunciation and similar pronunciation resources are used as reference material or source-ledger context where noted; they are not automatically bundled or treated as a redistribution license.
 - Microsoft Fluent Emoji-style IPA images are used for English phoneme cards.
-- Azure Speech, ElevenLabs, Youdao, Merriam-Webster, and user-configured LLM providers power optional online capabilities subject to their own terms.
+- Azure Speech, ElevenLabs, Youdao or configured online dictionary sources, and user-configured LLM providers power optional online capabilities subject to their own terms.
 
 See `THIRD_PARTY_NOTICES.md` and `docs/browser-edition/THIRD_PARTY_NOTICES.md` for the full media and provider boundary.
 
