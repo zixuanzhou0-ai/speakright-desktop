@@ -11,11 +11,12 @@ then gives hard boundaries and acceptance gates.
   dependency in Browser Edition source.
 - Latest local gate passed from `E:\SpeakRight`:
   `npm run validate:browser`.
-  This covered Browser Edition lint, typecheck, 111 Vitest files / 631 tests,
+  This covered Browser Edition lint, typecheck, 112 Vitest files / 637 tests,
   Next production static build with 197 routes, and static smoke for 9 routes
   plus 2 media assets.
 - `npm run docs:check-links` passed for public README/docs relative links and
   screenshot paths.
+- Root `npm run lint` passes without diagnostics after `biome.json` was tightened to exclude local generated output directories, nested Browser app config parsed by the app-local Biome version, and generated IPA audit input JSON files.
 - `npm run browser:azure-live-log` and
   `npm --prefix apps/browser run azure:live-log` both create/verify the ignored
   root `.runlogs/browser-azure-live-check.md` template for sanitized live Azure
@@ -23,13 +24,23 @@ then gives hard boundaries and acceptance gates.
 - Text secret scan over Browser Edition source/scripts/docs and public entry
   docs found no Azure/OpenAI/ElevenLabs/Gemini-style key literals.
 - Browser screenshots are stored in `docs/assets/screenshots/browser/`.
+- Browser Edition PR #1 has been merged to GitHub `main`
+  (`8669834c Merge pull request #1 from
+  zixuanzhou0-ai/codex/browser-edition-release-pr`), and this worktree is now
+  on local `main` tracking `origin/main`.
+- Follow-up SDK audit verified the installed Azure Speech browser SDK exposes
+  sentence prosody as a boolean setter:
+  `pronunciationConfig.enableProsodyAssessment = isSentence(referenceText)`.
+  Targeted Azure boundary tests passed after the source/type check.
 - `docs/browser-edition/COMPLETION_AUDIT.md` maps each hard requirement to
-  current evidence and explicitly marks real Azure live checks plus GitHub
-  `main` push as not proven.
-- Remaining external gates before final commit/push: real browser Azure
-  microphone checks for `en-US`, `es-ES`, `fr-FR`, and `ru-RU`; a configured Git
-  remote and target `main` branch for pushing. This worktree is currently on
-  `master` and `git remote -v` returns no configured remotes.
+  current evidence. The live Azure scoring path now covers `en-US` from the
+  current Browser Edition page plus `es-ES`, `fr-FR`, and `ru-RU` through
+  low-cost ElevenLabs `eleven_flash_v2_5` synthetic audio scored by Azure REST;
+  this is provider/locale/scoring evidence, not a replacement for a separate
+  human microphone UX pass. Remaining work is final staged validation,
+  commit/push, and the unresolved decision that current public Windows Desktop code still lives in
+  repository root / `src` / `src-tauri` rather than a physically migrated
+  `apps/desktop` folder.
 
 ```text
 /goal 继续 SpeakRight Browser Edition 最后一轮收紧：先读取 E:\SpeakRight\docs\browser-edition\README.md、E:\SpeakRight\docs\browser-edition\ARCHITECTURE_AND_SEPARATION.md、E:\SpeakRight\docs\browser-edition\IMPLEMENTATION_PLAN.md、E:\SpeakRight\docs\browser-edition\VALIDATION_AND_RELEASE.md，以及 E:\SpeakRight\docs\operations\NEXT_BROWSER_EDITION_GOALS.md 本文件。当前目标不是继续打磨 Windows 安装包，而是把最新 Windows Desktop 版本的功能同步到一个清晰独立的 Browser Edition，让 Windows、macOS、Linux 用户都能通过浏览器使用开源版 SpeakRight。
@@ -56,7 +67,7 @@ then gives hard boundaries and acceptance gates.
 
 第十一原则：清理垃圾文档和过时入口，但必须先查引用。不要一上来删除。先列出 stale docs、旧截图、旧 static export、旧根目录页面、废弃 svg、过时 plan、重复启动脚本、旧 release 文案。用搜索确认没有 README、docs、scripts、tests 引用后再删除或归档。清理时按小 commit 做：结构/脚本、功能迁移、验证、文档、清理分开提交。不要提交 EXE/MSI/NSIS、node_modules、.next、out 临时产物、.runlogs、.codex logs、私钥、录音、真实 API key、用户路径敏感日志。
 
-第十二原则：验收必须完整。至少运行 Browser Edition 的 lint、typecheck、unit tests、build、browser smoke、static smoke（如支持）。真实 Azure live check 至少覆盖 en-US、es-ES、fr-FR、ru-RU 各一次，可以在本地验证日志中记录，不把 key/录音/账号信息公开。桌面 parity 声明前，再在 E:\SpeakRightDesktopRepo 跑 validate:desktop 或读取最新通过证据，确认没有把未验证的桌面功能写进 Browser Edition 文案。最后跑 markdown 链接检查或手动验证新增链接，做 staged diff 审查和 secret scan。最终 git status 只能包含有意变更。
+第十二原则：验收必须完整。至少运行 Browser Edition 的 lint、typecheck、unit tests、build、browser smoke、static smoke（如支持）。真实 Azure live check 至少覆盖 en-US、es-ES、fr-FR、ru-RU 各一次，可以在本地验证日志中记录，不把 key/录音/账号信息公开。若用户明确要求降低手动录音成本，可以用 ElevenLabs `eleven_flash_v2_5` 生成极短 synthetic audio 并交给 Azure Speech 真实评分；必须记录字符预算、模型、locale、分数，并明确说明这是 synthetic-audio provider validation，不冒充人工麦克风 UX。桌面 parity 声明前，再在 E:\SpeakRightDesktopRepo 跑 validate:desktop 或读取最新通过证据，确认没有把未验证的桌面功能写进 Browser Edition 文案。最后跑 markdown 链接检查或手动验证新增链接，做 staged diff 审查和 secret scan。最终 git status 只能包含有意变更。
 
 最终完成标准：一个新用户打开 GitHub 后，不需要问作者就能明白 SpeakRight 有两个清楚版本：Windows Desktop 和 Browser Edition；他能选择 Browser Edition，按照 README 进入 apps/browser，安装依赖，启动 localhost，配置自己的 Azure key，录一段英语或西语/法语/俄语练习，看到真实 Azure 分数和基于该分数的中文反馈；他也能选择 Windows Desktop，知道哪里是安装包/Release EXE 路线，知道 unsigned artifact 的限制。代码层面没有桌面/浏览器互相 import 的混乱；文档层面没有旧 web、desktop、root legacy 入口互相打架；发布层面有当前截图、API 说明、语言功能表、第三方鸣谢、已知限制和清晰验证记录。完成后提交并推送到 GitHub main，提交信息要清楚说明 Browser Edition sync、validation、docs/release cleanup 的范围。
 ```

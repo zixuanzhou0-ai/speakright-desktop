@@ -75,6 +75,25 @@ Live-check procedure:
    Do not store keys, recordings, account identifiers, screenshots containing
    keys, or full raw Azure payloads in the public repository.
 
+
+Synthetic low-cost fallback:
+
+When repeated manual microphone samples are impractical, a release engineer may
+run a clearly labeled synthetic-audio Azure gate:
+
+1. Use already configured Browser Edition BYOK credentials in the active browser
+   profile; do not print, screenshot, or write provider keys.
+2. Generate only tiny ElevenLabs samples with the configured low-cost model,
+   preferably `eleven_flash_v2_5`.
+3. Keep the total text budget small and record it, for example `casa`, `si`, and
+   `да` for 8 final characters across Spanish/French/Russian.
+4. Convert generated audio to Azure-compatible WAV and send it to Azure Speech
+   Pronunciation Assessment with the matching locale.
+5. Record only sanitized locale, route, pass/fail, score, timestamp, recognized
+   display text, model family, and text-character budget in the ignored live log.
+6. Public docs must label this as synthetic-audio provider validation, not as a
+   human microphone UX pass.
+
 Use the local ignored log helper for this private evidence:
 
 ```bat
@@ -145,7 +164,8 @@ The final README must include:
   - Windows Desktop
   - Browser Edition
 - folder map:
-  - `apps/desktop`
+  - repository root / `src` / `src-tauri` for the current Windows Desktop app
+  - `apps/desktop` only after a validated physical desktop-folder migration
   - `apps/browser`
   - optional `packages/shared`
 - install/run commands for each edition

@@ -87,7 +87,9 @@ checks. It is intentionally under .runlogs/ and ignored by Git.
 ## Rules
 
 - Serve Browser Edition from localhost or HTTPS, never file://.
-- Use a clean browser profile or clear Browser Edition storage.
+- Use the current validation browser profile when preserving configured provider
+  keys is part of the test; do not clear Browser Edition storage unless
+  reset/export behavior is the explicit scenario.
 - Configure Azure Speech in Settings using session storage unless persistence is
   explicitly being tested.
 - Record one fresh microphone sample per locale.
@@ -110,7 +112,10 @@ ${rows}
 }
 
 function sanitizeNotes(notes) {
-  const value = String(notes ?? "").replace(/\s+/g, " ").trim();
+  const value = String(notes ?? "")
+    .replace(/\s+/g, " ")
+    .replace(/\|/g, "/")
+    .trim();
   assertSafeValue("notes", value);
   return value.slice(0, 180);
 }
@@ -125,6 +130,22 @@ function normalizeScore(score) {
     throw new Error("--score must be an integer from 0 to 100.");
   }
   return String(value);
+}
+
+function formatRow({ locale, route, status, score, checkedAt, notes }) {
+  return `| ${locale} | ${route} | ${status} | ${score} | ${checkedAt} | ${notes} |`;
+}
+
+function updateChecklistRow({ locale, route, status, score, checkedAt, notes }) {
+  const lines = fs.readFileSync(logPath, "utf8").split(/\r?\n/);
+  const rowIndex = lines.findIndex((line) => line.startsWith(`| ${locale} |`));
+
+  if (rowIndex === -1) {
+    throw new Error(`Could not find checklist row for ${locale} in ${logPath}.`);
+  }
+
+  lines[rowIndex] = formatRow({ locale, route, status, score, checkedAt, notes });
+  fs.writeFileSync(logPath, lines.join("\n"), "utf8");
 }
 
 function appendRecord(args) {
@@ -147,9 +168,24 @@ function appendRecord(args) {
   const score = normalizeScore(args.score);
   const notes = sanitizeNotes(args.notes);
   const checkedAt = new Date().toISOString();
-  const row = `| ${locale} | ${routeValue} | ${status} | ${score} | ${checkedAt} | ${notes} |\n`;
+  const row = formatRow({
+    locale,
+    route: routeValue,
+    status,
+    score,
+    checkedAt,
+    notes,
+  });
 
-  fs.appendFileSync(logPath, row, "utf8");
+  updateChecklistRow({
+    locale,
+    route: routeValue,
+    status,
+    score,
+    checkedAt,
+    notes,
+  });
+  fs.appendFileSync(logPath, `${row}\n`, "utf8");
 }
 
 try {

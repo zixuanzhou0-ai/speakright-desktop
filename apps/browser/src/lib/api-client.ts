@@ -70,8 +70,8 @@ export async function testAzure(
 }
 
 /**
- * Run pronunciation assessment via Azure Speech REST API.
- * Uses the REST endpoint instead of the Node.js SDK.
+ * Run pronunciation assessment via the Azure Speech browser SDK.
+ * Numeric scores are returned from Azure Pronunciation Assessment, not from LLM feedback.
  */
 export async function assessPronunciation(
   audioBlob: Blob,

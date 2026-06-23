@@ -25,11 +25,13 @@ npm run browser:smoke
 
 ## Legacy Web Scaffold
 
-`apps/web` is retained only as a legacy scaffold / historical seed during the
-migration. It is not the recommended production Browser Edition entry.
+No production `apps/web` folder is tracked in the public repository. If a local
+checkout still has an ignored `apps/web` directory, treat it as a historical
+scaffold only. It is not the recommended Browser Edition entry.
 
-Do not add new Browser Edition work to `apps/web` unless the migration plan
-explicitly says to archive or remove it afterward.
+Do not add new Browser Edition work to `apps/web`. Use `apps/browser`, or create
+a separately reviewed migration/archival change before touching legacy web
+files.
 
 ## Browser Rules
 

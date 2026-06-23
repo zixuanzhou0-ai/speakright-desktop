@@ -34,7 +34,10 @@ describe("Azure scoring boundary", () => {
     expect(browserSpeech).toContain(
       "PronunciationAssessmentGranularity.Phoneme",
     );
-    expect(browserSpeech).toContain("enableProsodyAssessment");
+    expect(browserSpeech).toContain(
+      "pronunciationConfig.enableProsodyAssessment =",
+    );
+    expect(browserSpeech).not.toContain("enableProsodyAssessment();");
     expect(azureHook).toContain("assessPronunciation(");
     expect(azureHook).toContain("language,");
     expect(azureHook).toContain("setResult(assessed)");

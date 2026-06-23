@@ -6,7 +6,23 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!!**/.next",
+      "!!**/out",
+      "!!**/node_modules",
+      "!!**/coverage",
+      "!!**/build",
+      "!!**/.runlogs",
+      "!!**/.playwright-mcp",
+      "!!src-tauri/target",
+      "!!src-tauri/gen",
+      "!!apps/desktop",
+      "!!apps/browser/biome.json",
+      "!!docs/operations/non-english-ipa-audit-input.json",
+      "!!docs/operations/phoneme-practice-ipa-audit-input.json"
+    ]
   },
   "formatter": {
     "enabled": true,

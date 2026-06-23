@@ -8,7 +8,7 @@
 - Added browser Speech SDK pronunciation assessment adapter under
   `src/platform/speech-assessment.ts`.
 - Browser recording uses MediaRecorder, converts audio to 16 kHz mono WAV, and
-  sends it to Azure Speech with the active language locale.
+  sends it to Azure Speech with the active language locale through the browser Speech SDK.
 - Added session-first API key storage. Provider keys persist to local browser
   storage only when the user explicitly enables that setting.
 - Added static export support and local static server script.
@@ -27,9 +27,11 @@
 
 ## Windows Desktop
 
-Windows Desktop remains a separate Tauri app under `apps/desktop` or the latest
-desktop source repository. Windows installer/Release EXE validation, unsigned
-artifact warnings, and Tauri permissions belong to the desktop release flow.
+Windows Desktop remains a separate Tauri app in the repository root / `src` /
+`src-tauri` in this public repo, with the latest settled desktop source also
+tracked in `E:\SpeakRightDesktopRepo`. Windows installer/Release EXE
+validation, unsigned artifact warnings, and Tauri permissions belong to the
+desktop release flow.
 
 Current public Windows artifacts should not be described as signed. They remain
 controlled-test artifacts until code signing and public release gates are

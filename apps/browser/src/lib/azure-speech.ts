@@ -21,20 +21,44 @@ export function parseAzureResult(
     };
   }
 
-  // SDK format: scores under PronunciationAssessment sub-object
-  // REST API format: scores flat at top level
+  // SDK format: scores under PronunciationAssessment sub-object.
+  // REST API format can expose scores flat at top level. Some single-word REST
+  // responses include only AccuracyScore, so use it as the total-score fallback
+  // rather than showing an Azure-derived result as 0.
   const pa = best.PronunciationAssessment as Record<string, number> | undefined;
+  const rawWords = (best.Words ?? []) as Array<Record<string, unknown>>;
+  const wordAccuracyScores = rawWords
+    .map((word) => {
+      const wpa = word.PronunciationAssessment as
+        | Record<string, number>
+        | undefined;
+      return wpa?.AccuracyScore ?? (word.AccuracyScore as number | undefined);
+    })
+    .filter((score): score is number => typeof score === "number");
+  const averageWordAccuracy =
+    wordAccuracyScores.length > 0
+      ? wordAccuracyScores.reduce((sum, score) => sum + score, 0) /
+        wordAccuracyScores.length
+      : undefined;
 
-  const pronunciationScore = pa?.PronScore ?? (best.PronScore as number) ?? 0;
+  const pronunciationScore =
+    pa?.PronScore ??
+    (best.PronScore as number | undefined) ??
+    pa?.AccuracyScore ??
+    (best.AccuracyScore as number | undefined) ??
+    averageWordAccuracy ??
+    0;
   const accuracyScore =
-    pa?.AccuracyScore ?? (best.AccuracyScore as number) ?? 0;
+    pa?.AccuracyScore ??
+    (best.AccuracyScore as number | undefined) ??
+    averageWordAccuracy ??
+    0;
   const fluencyScore = pa?.FluencyScore ?? (best.FluencyScore as number) ?? 0;
   const completenessScore =
     pa?.CompletenessScore ?? (best.CompletenessScore as number) ?? 0;
   const prosodyScore =
     pa?.ProsodyScore ?? (best.ProsodyScore as number) ?? undefined;
 
-  const rawWords = (best.Words ?? []) as Array<Record<string, unknown>>;
   const words: AzureWord[] = rawWords.map((w) => {
     const wpa = w.PronunciationAssessment as
       | Record<string, unknown>

@@ -7,7 +7,8 @@ parts of the current Windows Desktop app.
 
 | Folder | Owner | Allowed platform APIs | Release output |
 | --- | --- | --- | --- |
-| `apps/desktop` | Windows Desktop | Tauri, Rust commands, Tauri store, Tauri HTTP/plugin APIs, Windows installer scripts. | EXE/MSI/NSIS and Release EXE validation. |
+| repository root / `src` / `src-tauri` | Windows Desktop today | Tauri, Rust commands, Tauri store, Tauri HTTP/plugin APIs, Windows installer scripts. | EXE/MSI/NSIS and Release EXE validation. |
+| `apps/desktop` | Future desktop folder target | Same desktop-only APIs after a validated physical move. | Not the current public entry until migrated. |
 | `apps/browser` | Browser Edition | Web APIs only: MediaRecorder, Web Audio, IndexedDB/localStorage, fetch, optional Azure Speech browser SDK. | Static export or browser dev/build output. |
 | `packages/shared` | Shared pure code | No Tauri, no browser globals at module load, no process/env secrets. | Imported by both apps. |
 | `apps/web` | Legacy seed only | Temporary old browser code during migration. | No final production claim unless renamed/converted. |
@@ -33,7 +34,7 @@ Forbidden:
 apps/browser -> apps/desktop/*
 apps/browser -> @tauri-apps/*
 apps/browser -> src-tauri/*
-apps/desktop -> apps/browser/*
+desktop root or apps/desktop -> apps/browser/*
 packages/shared -> @tauri-apps/*
 packages/shared -> browser-only code that runs at import time
 ```
@@ -52,7 +53,8 @@ apps/browser/src/platform/
   audio-recording.ts   Browser MediaRecorder/Web Audio adapter.
   file-runtime.ts      Static asset URL/runtime helpers.
 
-apps/desktop/src/platform/
+desktop root today, or apps/desktop after migration:
+  src/platform/
   api-keys.ts          Tauri secure store adapter.
   speech-assessment.ts Desktop Azure/Tauri-safe assessment adapter.
   audio-recording.ts   Desktop microphone/runtime adapter.
