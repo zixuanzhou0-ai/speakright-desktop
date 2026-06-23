@@ -53,10 +53,12 @@ npm run browser:azure-live-log
 
 See [Validation Log](VALIDATION_LOG.md) for the current local run evidence.
 
-Real Azure live validation still requires a user-provided Azure Speech key and
-manual recording checks for `en-US`, `es-ES`, `fr-FR`, and `ru-RU`. Do not mark
-the Browser Edition release complete until those checks are recorded without
-exposing keys, recordings, or account details.
+Real Azure scoring evidence is recorded in the private ignored validation log:
+`en-US` from the current Browser Edition page, plus `es-ES`, `fr-FR`, and
+`ru-RU` from low-cost ElevenLabs `eleven_flash_v2_5` synthetic audio scored by
+real Azure REST calls. The synthetic checks prove the provider, locale, and
+scoring path; they must not be described as a replacement for separate human
+microphone UX parity checks.
 
 ## Known Limitations
 
@@ -68,8 +70,10 @@ exposing keys, recordings, or account details.
 - Some teaching media has licensing/source-ledger risk. Unclear assets should be
   removed, linked externally, or represented as unavailable before public
   release.
-- Browser screenshots are captured, but final public release still requires live
-  microphone/Azure evidence for all supported language locales.
+- Browser screenshots are captured, and Azure provider/locale scoring evidence
+  is recorded for all supported language locales. Separate release notes should
+  still be honest when a check used synthetic audio rather than a human
+  microphone sample.
 
 ## Credits
 
