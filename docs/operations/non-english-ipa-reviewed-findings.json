@@ -24,7 +24,7 @@
         },
         {
           "name": "SpeakRight Spanish source policy",
-          "url": "https://github.com/zixuanzhou0-ai/speakright-desktop/blob/main/src/lib/language-sound-units/spanish.ts"
+          "url": "https://github.com/zixuanzhou0-ai/speakright/blob/main/src/lib/language-sound-units/spanish.ts"
         }
       ]
     },

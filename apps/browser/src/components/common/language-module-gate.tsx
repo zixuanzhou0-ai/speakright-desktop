@@ -1,0 +1,85 @@
+"use client";
+
+import { ArrowRight, FlaskConical } from "lucide-react";
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { useLanguageConfig } from "@/hooks/use-api-keys";
+import { auditLanguageCoverage } from "@/lib/language-content-audit";
+import { getLanguageProfile } from "@/lib/language-profiles";
+import type { LanguageReadiness } from "@/types/language";
+
+interface LanguageModuleGateProps {
+  moduleName: string;
+  readinessKey: keyof LanguageReadiness;
+  children: ReactNode;
+}
+
+const WRAP_SAFE_ACTION_BUTTON_CLASS =
+  "h-auto min-h-8 max-w-full whitespace-normal break-words text-center [overflow-wrap:anywhere]";
+
+export function LanguageModuleGate({
+  moduleName,
+  readinessKey,
+  children,
+}: LanguageModuleGateProps) {
+  const { languageId } = useLanguageConfig();
+  const profile = getLanguageProfile(languageId);
+  const audit = auditLanguageCoverage(languageId);
+  const ready = profile.readiness[readinessKey];
+
+  if (ready) return <>{children}</>;
+
+  return (
+    <div className="flex h-full items-center justify-center px-6 py-8">
+      <div className="w-full max-w-2xl rounded-xl border bg-card p-6 shadow-sm">
+        <div className="flex items-start gap-3">
+          <div className="rounded-lg bg-yellow-500/10 p-2 text-yellow-600">
+            <FlaskConical className="h-5 w-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h1 className="break-words text-xl font-semibold [overflow-wrap:anywhere]">
+              {profile.displayName}{moduleName}暂未开放完整训练
+            </h1>
+            <p
+              className="mt-2 break-words text-sm text-muted-foreground [overflow-wrap:anywhere]"
+              data-smoke="language-module-missing-capabilities"
+            >
+              当前语言已有 {audit.soundUnits} 个{profile.soundUnitLabel}和{" "}
+              {audit.keywordTotal} 个示例词；部分模块可预览/可练习，但{" "}
+              {audit.missingCapabilities.join("、")}还在补齐。
+            </p>
+          </div>
+        </div>
+
+        <div
+          className="mt-4 break-words rounded-lg bg-muted/35 p-4 text-sm text-muted-foreground [overflow-wrap:anywhere]"
+          data-smoke="language-module-known-gaps"
+        >
+          {profile.knownGaps.map((gap) => (
+            <p key={gap} className="mb-1 last:mb-0">
+              {gap}
+            </p>
+          ))}
+        </div>
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <Link href="/phonemes" className="max-w-full">
+            <Button className={`gap-2 ${WRAP_SAFE_ACTION_BUTTON_CLASS}`}>
+              先查看可练习的发音单位
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Link href="/settings" className="max-w-full">
+            <Button
+              variant="outline"
+              className={WRAP_SAFE_ACTION_BUTTON_CLASS}
+            >
+              配置语言/音频包
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,153 @@
+import { existsSync, statSync } from "node:fs";
+import { join } from "node:path";
+import { describe, expect, it } from "vitest";
+import {
+  LOCAL_LANGUAGE_PHONEME_ASSETS,
+  getLocalLanguagePhonemeAsset,
+} from "@/lib/local-language-assets";
+import { getLanguagePhonemes } from "@/lib/language-phonemes";
+import { getPhonologyInventoryEntry } from "@/lib/language-phonology-inventory";
+import { RUSSIAN_PHONEMES } from "@/lib/language-sound-units/russian";
+
+function publicDiskPath(publicPath: string): string {
+  return join(process.cwd(), "public", publicPath.replace(/^\//, ""));
+}
+
+const RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS = [
+  "ru-t-tj",
+  "ru-d-dj",
+  "ru-s-sj",
+  "ru-z-zj",
+  "ru-n-nj",
+  "ru-l-lj",
+  "ru-p-pj",
+  "ru-b-bj",
+  "ru-m-mj",
+  "ru-f-fj",
+  "ru-v-vj",
+  "ru-k-kj",
+  "ru-g-gj",
+  "ru-x-xj",
+];
+
+describe("local language assets", () => {
+  it("maps every Russian sound unit slug to local primary media or an explicit score-only gap", () => {
+    const unmappedRussianSlugs = RUSSIAN_PHONEMES.map(
+      (soundUnit) => soundUnit.slug,
+    ).filter((slug) => !getLocalLanguagePhonemeAsset("ru-RU", slug));
+
+    expect(unmappedRussianSlugs).toEqual(RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS);
+    for (const slug of unmappedRussianSlugs) {
+      expect(getPhonologyInventoryEntry("ru-RU", slug)?.tilePolicy).toBe(
+        "score-only-unverified",
+      );
+    }
+  });
+
+  it("keeps every local Russian primary video and audio file on disk", () => {
+    const missingOrEmptyFiles = LOCAL_LANGUAGE_PHONEME_ASSETS.filter(
+      (asset) => asset.languageId === "ru-RU",
+    ).flatMap((asset) =>
+      [asset.videoSrc, asset.audioSrc]
+        .filter((src): src is string => Boolean(src))
+        .filter((src) => {
+          const diskPath = publicDiskPath(src);
+          return !existsSync(diskPath) || statSync(diskPath).size < 1024;
+        })
+        .map((src) => `${asset.slug}:${src}`),
+    );
+
+    expect(missingOrEmptyFiles).toEqual([]);
+  });
+
+  it("assembles every Russian sound unit as local ready video and audio", () => {
+    const unresolvedRussianUnits = getLanguagePhonemes("ru-RU").flatMap(
+      (soundUnit) =>
+        soundUnit.video?.status === "ready" &&
+        soundUnit.video.localSrc &&
+        soundUnit.phonemeAudio?.localSrc
+          ? []
+          : [`ru-RU:${soundUnit.slug}`],
+    );
+
+    expect(unresolvedRussianUnits).toEqual(
+      RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS.map((slug) => `ru-RU:${slug}`),
+    );
+  });
+
+  it("preserves attribution and proxy notes for Russian local assets", () => {
+    const russianAssets = LOCAL_LANGUAGE_PHONEME_ASSETS.filter(
+      (asset) => asset.languageId === "ru-RU",
+    );
+
+    expect(russianAssets).toHaveLength(
+      RUSSIAN_PHONEMES.length - RUSSIAN_SCORE_ONLY_LOCAL_ASSET_GAPS.length,
+    );
+    for (const asset of russianAssets) {
+      if (asset.slug === "ru-r-rj") {
+        expect(asset.source).toContain("Wikimedia Commons");
+        expect(asset.sourceUrl).toMatch(/^https:\/\/commons\.wikimedia\.org/);
+        expect(asset.license).toContain("Wikimedia Commons file page");
+        expect(asset.attribution).toContain("Voiced palatalized alveolar trill");
+        expect(asset.notes?.join(" ").trim()).toContain(
+          "other Russian hard/soft pair units stay score-only",
+        );
+        continue;
+      }
+
+      expect(asset.source).toContain("Seeing Speech");
+      expect(asset.sourceUrl).toMatch(/^https:\/\/www\.seeingspeech\.ac\.uk/);
+      expect(asset.license).toContain("CC BY-NC-ND 4.0");
+      expect(asset.attribution).toContain("University of Glasgow");
+      expect(asset.notes?.join(" ").trim()).not.toBe("");
+    }
+  });
+
+  it("maps exact Russian hard consonant anchors to same-unit local audio", () => {
+    for (const slug of [
+      "ru-p",
+      "ru-b",
+      "ru-t",
+      "ru-d",
+      "ru-k",
+      "ru-g",
+      "ru-f",
+      "ru-v",
+      "ru-s",
+      "ru-z",
+      "ru-m",
+      "ru-n",
+      "ru-l",
+      "ru-sh",
+      "ru-zh",
+    ]) {
+      const asset = getLocalLanguagePhonemeAsset("ru-RU", slug);
+
+      expect(asset?.audioSrc, slug).toBe(
+        `/audio/language-assets/ru-RU/header-clips/${slug}.m4a`,
+      );
+      expect(asset?.isProxyForAssessment, slug).not.toBe(true);
+      expect(getPhonologyInventoryEntry("ru-RU", slug)?.tilePolicy).toBe(
+        "clickable-exact-header",
+      );
+    }
+
+    expect(getLocalLanguagePhonemeAsset("ru-RU", "ru-sh-zh")?.isProxyForAssessment).toBe(
+      true,
+    );
+  });
+
+  it("maps the verified Russian soft rhotic contrast to its Commons header clip", () => {
+    const asset = getLocalLanguagePhonemeAsset("ru-RU", "ru-r-rj");
+
+    expect(asset?.source).toContain("Wikimedia Commons");
+    expect(asset?.audioSrc).toBe(
+      "/audio/language-assets/ru-RU/header-clips/ru-r-rj.m4a",
+    );
+    expect(asset?.audioIpa).toBe("/rʲ/");
+    expect(asset?.exactAssessmentAliases).toEqual(["rʲ", "rj"]);
+    expect(getPhonologyInventoryEntry("ru-RU", "ru-r-rj")?.tilePolicy).toBe(
+      "clickable-exact-header",
+    );
+  });
+});
