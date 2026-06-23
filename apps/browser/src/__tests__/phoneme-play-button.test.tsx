@@ -1,0 +1,267 @@
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { PhonemePlayButton } from "@/components/phoneme/phoneme-play-button";
+import { getPhonemeAudioInfo } from "@/lib/azure-phoneme-map";
+import { getLocalLanguagePhonemeAsset } from "@/lib/local-language-assets";
+
+type MockHowlInstance = {
+  play: ReturnType<typeof vi.fn>;
+  seek: ReturnType<typeof vi.fn>;
+  fade: ReturnType<typeof vi.fn>;
+  stop: ReturnType<typeof vi.fn>;
+  unload: ReturnType<typeof vi.fn>;
+  triggerLoadError: () => void;
+};
+
+const howlerMock = vi.hoisted(() => ({
+  Howl: vi.fn(),
+  instances: [] as MockHowlInstance[],
+}));
+
+vi.mock("howler", () => ({
+  Howl: howlerMock.Howl,
+}));
+
+vi.mock("@/lib/browser-external-url", () => ({
+  openBrowserExternalUrl: vi.fn(),
+}));
+
+beforeEach(() => {
+  vi.useFakeTimers();
+  howlerMock.instances.length = 0;
+  howlerMock.Howl.mockImplementation(function MockHowl(options: {
+    onplay?: () => void;
+    onstop?: () => void;
+    onloaderror?: () => void;
+  }) {
+    const instance: MockHowlInstance = {
+      play: vi.fn(() => {
+        options.onplay?.();
+        return 7;
+      }),
+      seek: vi.fn(),
+      fade: vi.fn(),
+      stop: vi.fn(() => options.onstop?.()),
+      unload: vi.fn(),
+      triggerLoadError: () => options.onloaderror?.(),
+    };
+    howlerMock.instances.push(instance);
+    return instance;
+  });
+});
+
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+  vi.restoreAllMocks();
+});
+
+describe("PhonemePlayButton", () => {
+  it("plays English header phoneme audio once and stops after the short window", () => {
+    render(<PhonemePlayButton chartWord="cat" />);
+
+    const button = screen.getByRole("button", { name: "播放发音" });
+    expect(button).toHaveAttribute("data-audio-playable", "true");
+    expect(button).toHaveAttribute("data-audio-kind", "chart");
+    expect(button).toHaveAttribute("data-audio-src", "/audio/ipa/phoneme/cat.mp3");
+    expect(button).toHaveAttribute("data-audio-start-ms", "25");
+    expect(button).toHaveAttribute("data-audio-max-duration-ms", "560");
+    expect(button).toHaveAttribute("data-audio-fade-out-ms", "55");
+
+    fireEvent.click(button);
+
+    expect(howlerMock.instances).toHaveLength(1);
+    expect(howlerMock.instances[0].play).toHaveBeenCalledTimes(1);
+    expect(howlerMock.instances[0].seek).toHaveBeenCalledWith(0.025, 7);
+
+    act(() => {
+      vi.advanceTimersByTime(505);
+    });
+    expect(howlerMock.instances[0].fade).toHaveBeenCalledWith(1, 0, 55, 7);
+    expect(howlerMock.instances[0].stop).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(55);
+    });
+    expect(howlerMock.instances[0].stop).toHaveBeenCalledWith(7);
+    expect(howlerMock.instances[0].unload).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses the same one-shot behavior for local non-English header audio", () => {
+    render(
+      <PhonemePlayButton
+        phonemeAudio={{
+          kind: "local",
+          label: "法语本地音频",
+          source: "local",
+          localSrc: "/audio/language-assets/fr-FR/header-clips/fr-schwa.m4a",
+        }}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: "播放发音" });
+    expect(button).toHaveAttribute("data-audio-playable", "true");
+    expect(button).toHaveAttribute("data-audio-kind", "sound-unit");
+    expect(button).toHaveAttribute(
+      "data-audio-src",
+      "/audio/language-assets/fr-FR/header-clips/fr-schwa.m4a",
+    );
+    expect(button).toHaveAttribute("data-audio-start-ms", "15");
+    expect(button).toHaveAttribute("data-audio-max-duration-ms", "500");
+    expect(button).toHaveAttribute("data-audio-fade-out-ms", "60");
+
+    fireEvent.click(button);
+
+    expect(howlerMock.instances).toHaveLength(1);
+    expect(howlerMock.instances[0].seek).toHaveBeenCalledWith(0.015, 7);
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+    expect(howlerMock.instances[0].stop).toHaveBeenCalledWith(7);
+  });
+
+  it("matches scoring-tile audio to the same localSrc used by the header speaker", () => {
+    const localAsset = getLocalLanguagePhonemeAsset("fr-FR", "fr-schwa");
+    const scoringAudio = getPhonemeAudioInfo("ax", "fr-FR");
+
+    expect(localAsset?.audioSrc).toBe(
+      "/audio/language-assets/fr-FR/header-clips/fr-schwa.m4a",
+    );
+    expect(scoringAudio?.kind).toBe("sound-unit");
+    expect(scoringAudio?.url).toBe(localAsset?.audioSrc);
+    expect(scoringAudio).toMatchObject({
+      startMs: 15,
+      maxDurationMs: 500,
+      fadeOutMs: 60,
+    });
+  });
+
+  it("does not render a header speaker for video-backed local sources", () => {
+    render(
+      <PhonemePlayButton
+        phonemeAudio={{
+          kind: "local",
+          label: "法语本地视频",
+          source: "local",
+          localSrc: "/videos/language-assets/fr-FR/articulation/fr-schwa.mp4",
+        }}
+      />,
+    );
+
+    expect(
+      screen.queryByRole("button", { name: "播放发音" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not render a header speaker for unsafe English chart-word stems", () => {
+    render(<PhonemePlayButton chartWord="normal/cat" />);
+
+    expect(
+      screen.queryByRole("button", { name: "播放发音" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not render fake header speakers for external-only audio references", () => {
+    render(
+      <PhonemePlayButton
+        phonemeAudio={{
+          kind: "external",
+          label: "外部参考",
+          source: "external",
+          url: "https://example.com/reference",
+        }}
+      />,
+    );
+
+    expect(
+      screen.queryByRole("button", { name: "播放发音" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not render a header speaker for whole-word local language-pack audio", () => {
+    render(
+      <PhonemePlayButton
+        phonemeAudio={{
+          kind: "local",
+          label: "整词本地音频",
+          source: "local language pack",
+          localSrc: "/audio/language-packs/fr-FR/bonjour-pink-acf26f7271.mp3",
+          languageId: "fr-FR",
+        }}
+      />,
+    );
+
+    expect(
+      screen.queryByRole("button", { name: "播放发音" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not render a header speaker when localSrc points to an external URL", () => {
+    render(
+      <PhonemePlayButton
+        phonemeAudio={{
+          kind: "local",
+          label: "外部短音",
+          source: "external CDN",
+          localSrc: "https://example.com/audio/fr-schwa.m4a",
+        }}
+      />,
+    );
+
+    expect(
+      screen.queryByRole("button", { name: "播放发音" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not render browser TTS fallback as a sound-unit header speaker", () => {
+    render(
+      <PhonemePlayButton
+        phonemeAudio={{
+          kind: "tts-example",
+          label: "浏览器朗读",
+          source: "speech-synthesis",
+          text: "petit",
+          languageId: "fr-FR",
+        }}
+      />,
+    );
+
+    expect(
+      screen.queryByRole("button", { name: "播放发音" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("cleans up the previous header speaker playback on repeat clicks", () => {
+    render(<PhonemePlayButton chartWord="blue" />);
+    const button = screen.getByRole("button", { name: "播放发音" });
+
+    fireEvent.click(button);
+    fireEvent.click(screen.getByRole("button"));
+
+    expect(howlerMock.instances).toHaveLength(2);
+    expect(howlerMock.instances[0].unload).toHaveBeenCalledTimes(1);
+    expect(howlerMock.instances[1].play).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows a Chinese alert when header audio fails to load", () => {
+    render(<PhonemePlayButton chartWord="cat" />);
+    const button = screen.getByRole("button", { name: "播放发音" });
+
+    fireEvent.click(button);
+    act(() => {
+      howlerMock.instances[0].triggerLoadError();
+    });
+
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveAttribute("data-smoke", "phoneme-header-audio-error");
+    expect(alert).toHaveTextContent("本地音频加载失败");
+    expect(alert).toHaveTextContent("Browser Edition 音频缺口");
+  });
+});

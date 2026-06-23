@@ -1,0 +1,223 @@
+import { describe, expect, it } from "vitest";
+import {
+  analyzeProsodyAttempt,
+  buildProsodyTrainingSession,
+  getProsodyExercise,
+  PROSODY_EXERCISES,
+  recommendProsodyExercises,
+} from "@/lib/prosody-training";
+import type { AzureAssessmentResult } from "@/types/azure";
+
+function result(
+  overrides: Partial<AzureAssessmentResult> = {},
+): AzureAssessmentResult {
+  return {
+    pronunciationScore: 82,
+    accuracyScore: 82,
+    fluencyScore: 82,
+    completenessScore: 90,
+    prosodyScore: 82,
+    words: [
+      "I",
+      "need",
+      "a",
+      "quick",
+      "update",
+      "before",
+      "the",
+      "meeting",
+    ].map((word) => ({
+      word,
+      accuracyScore: word === "a" || word === "the" ? 96 : 84,
+      errorType: "None" as const,
+      phonemes: [],
+      syllables: [],
+    })),
+    ...overrides,
+  };
+}
+
+describe("prosody training", () => {
+  it("passes when prosody, fluency and accuracy are all above the gate", () => {
+    const exercise = getProsodyExercise("content-word-stress-1");
+    if (!exercise) throw new Error("missing exercise");
+
+    const analysis = analyzeProsodyAttempt(exercise, result());
+
+    expect(analysis.passed).toBe(true);
+    expect(analysis.likelyIssue).toBe("good-control");
+  });
+
+  it("does not treat incomplete text as a prosody weakness", () => {
+    const exercise = getProsodyExercise("content-word-stress-1");
+    if (!exercise) throw new Error("missing exercise");
+
+    const analysis = analyzeProsodyAttempt(
+      exercise,
+      result({
+        completenessScore: 60,
+        words: [
+          {
+            word: "need",
+            accuracyScore: 82,
+            errorType: "None",
+            phonemes: [],
+            syllables: [],
+          },
+        ],
+      }),
+    );
+
+    expect(analysis.passed).toBe(false);
+    expect(analysis.likelyIssue).toBe("unclear-text");
+    expect(analysis.nextCue).toContain("读完整");
+  });
+
+  it("flags over-heavy function words when prosody is low", () => {
+    const exercise = getProsodyExercise("content-word-stress-1");
+    if (!exercise) throw new Error("missing exercise");
+
+    const analysis = analyzeProsodyAttempt(
+      exercise,
+      result({ prosodyScore: 64, fluencyScore: 82 }),
+    );
+
+    expect(analysis.passed).toBe(false);
+    expect(analysis.likelyIssue).toBe("over-heavy-function-words");
+    expect(analysis.overHeavyFunctionWords).toContain("a");
+    expect(analysis.evidenceConfidence).toBe("low");
+  });
+
+  it("uses Azure break feedback to detect missing expected pauses", () => {
+    const exercise = getProsodyExercise("content-word-stress-1");
+    if (!exercise) throw new Error("missing exercise");
+
+    const analysis = analyzeProsodyAttempt(
+      exercise,
+      result({
+        words: result().words.map((word) =>
+          word.word.toLowerCase() === "update"
+            ? {
+                ...word,
+                feedback: {
+                  prosody: { break: { errorTypes: ["MissingBreak"] } },
+                },
+              }
+            : word,
+        ),
+      }),
+    );
+
+    expect(analysis.passed).toBe(false);
+    expect(analysis.likelyIssue).toBe("choppy-rhythm");
+    expect(analysis.missingExpectedPauses).toContain("update|before");
+    expect(analysis.evidenceConfidence).toBe("high");
+  });
+
+  it("turns high-confidence prosody failures into stress-rhythm review evidence", () => {
+    const exercise = getProsodyExercise("content-word-stress-1");
+    if (!exercise) throw new Error("missing exercise");
+    const analysis = analyzeProsodyAttempt(
+      exercise,
+      result({
+        words: result().words.map((word) =>
+          word.word.toLowerCase() === "update"
+            ? {
+                ...word,
+                feedback: {
+                  prosody: { break: { errorTypes: ["MissingBreak"] } },
+                },
+              }
+            : word,
+        ),
+      }),
+    );
+
+    const session = buildProsodyTrainingSession(exercise, analysis, 1000);
+
+    expect(session.packId).toBe("stress-rhythm");
+    expect(session.modality).toBe("prosody");
+    expect(session.assessmentReliability?.canPromoteMastery).toBe(true);
+    expect(session.failedItems?.[0]).toMatchObject({
+      levelId: exercise.id,
+      passed: false,
+    });
+    expect(
+      session.reviewItems?.some((item) => item.source === "failed-item"),
+    ).toBe(true);
+  });
+
+  it("keeps low-confidence prosody attempts as non-promoting observations", () => {
+    const exercise = getProsodyExercise("content-word-stress-1");
+    if (!exercise) throw new Error("missing exercise");
+    const analysis = analyzeProsodyAttempt(
+      exercise,
+      result({ prosodyScore: 82 }),
+    );
+
+    const session = buildProsodyTrainingSession(exercise, analysis, 1000);
+
+    expect(analysis.evidenceConfidence).toBe("low");
+    expect(session.assessmentReliability?.canPromoteMastery).toBe(false);
+    expect(session.levelSummaries?.[0].passed).toBe(false);
+  });
+
+  it("uses Azure break feedback to detect unexpected pauses", () => {
+    const exercise = getProsodyExercise("content-word-stress-1");
+    if (!exercise) throw new Error("missing exercise");
+
+    const analysis = analyzeProsodyAttempt(
+      exercise,
+      result({
+        words: result().words.map((word) =>
+          word.word.toLowerCase() === "quick"
+            ? {
+                ...word,
+                feedback: {
+                  prosody: { break: { errorTypes: ["UnexpectedBreak"] } },
+                },
+              }
+            : word,
+        ),
+      }),
+    );
+
+    expect(analysis.passed).toBe(false);
+    expect(analysis.likelyIssue).toBe("choppy-rhythm");
+    expect(analysis.unexpectedPauses).toContain("quick|update");
+  });
+
+  it("contains a focused set of prosody exercise types", () => {
+    expect(PROSODY_EXERCISES.map((exercise) => exercise.kind)).toEqual(
+      expect.arrayContaining([
+        "sentence-stress",
+        "weak-forms",
+        "thought-groups",
+        "linking",
+        "shadowing",
+      ]),
+    );
+  });
+
+  it("prioritizes previously failed prosody kinds", () => {
+    const recommended = recommendProsodyExercises([
+      {
+        exerciseId: "linking-1",
+        passed: false,
+        prosodyScore: 60,
+        fluencyScore: 70,
+        accuracyScore: 80,
+        completenessScore: 90,
+        missingFocusWords: [],
+        overHeavyFunctionWords: [],
+        missingExpectedPauses: [],
+        unexpectedPauses: [],
+        evidenceConfidence: "low",
+        likelyIssue: "choppy-rhythm",
+        nextCue: "link",
+      },
+    ]);
+
+    expect(recommended[0].kind).toBe("linking");
+  });
+});

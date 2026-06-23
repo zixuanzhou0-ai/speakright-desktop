@@ -1,0 +1,990 @@
+﻿import { matchLanguageFeedbackRules } from "@/lib/language-feedback-rules";
+import type { LanguageId } from "@/types/language";
+
+export type DeckLanguageId = Exclude<LanguageId, "en-US">;
+
+export interface LanguageDiagnosticWord {
+  text: string;
+  ipa: string;
+  targetUnitSlug: string;
+  stressText?: string;
+}
+
+export interface LanguageContrastItem {
+  left: string;
+  right: string;
+  ipa: string;
+  targetUnitSlug: string;
+  focus: string;
+}
+
+export interface LanguageSentenceItem {
+  text: string;
+  ipaHint: string;
+  targetUnitSlugs: string[];
+  focus: string;
+  stressText?: string;
+}
+
+export interface LanguageLearningDeck {
+  languageId: DeckLanguageId;
+  sourceRefs: string[];
+  diagnosticWords: LanguageDiagnosticWord[];
+  diagnosticPassage: {
+    title: string;
+    text: string;
+    stressText?: string;
+    targetUnitSlugs: string[];
+  };
+  contrastDeck: LanguageContrastItem[];
+  sentenceDeck: LanguageSentenceItem[];
+}
+
+export type LanguageDeckFeedbackEntryType =
+  | "diagnostic-word"
+  | "diagnostic-passage"
+  | "contrast"
+  | "sentence";
+
+export interface LanguageDeckFeedbackRuleSummary {
+  id: string;
+  title: string;
+  matchedSlugs: string[];
+}
+
+export interface LanguageDeckFeedbackRuleMatch {
+  languageId: DeckLanguageId;
+  entryType: LanguageDeckFeedbackEntryType;
+  text: string;
+  targetUnitSlugs: string[];
+  matchedRules: LanguageDeckFeedbackRuleSummary[];
+}
+
+export const LANGUAGE_LEARNING_DECKS: Record<DeckLanguageId, LanguageLearningDeck> = {
+  "es-ES": {
+    languageId: "es-ES",
+    sourceRefs: [
+      "easypronunciation-es-ipa",
+      "ipatics-es-ipa",
+      "spanishdict-pronunciation",
+      "sounds-of-speech-es",
+    ],
+    diagnosticWords: [
+      { text: "casa", ipa: "/ˈkasa/", targetUnitSlug: "es-a" },
+      { text: "mesa", ipa: "/ˈmesa/", targetUnitSlug: "es-e" },
+      { text: "sí", ipa: "/si/", targetUnitSlug: "es-i" },
+      { text: "ocho", ipa: "/ˈotʃo/", targetUnitSlug: "es-o" },
+      { text: "luna", ipa: "/ˈluna/", targetUnitSlug: "es-u" },
+      { text: "pan", ipa: "/pan/", targetUnitSlug: "es-p" },
+      { text: "tú", ipa: "/tu/", targetUnitSlug: "es-t" },
+      { text: "queso", ipa: "/ˈkeso/", targetUnitSlug: "es-k" },
+      { text: "foto", ipa: "/ˈfoto/", targetUnitSlug: "es-f" },
+      { text: "mano", ipa: "/ˈmano/", targetUnitSlug: "es-m" },
+      { text: "nada", ipa: "/ˈnaða/", targetUnitSlug: "es-n" },
+      { text: "boca", ipa: "/ˈboka/", targetUnitSlug: "es-b-stop" },
+      { text: "dos", ipa: "/dos/", targetUnitSlug: "es-d-stop" },
+      { text: "gato", ipa: "/ˈgato/", targetUnitSlug: "es-g-stop" },
+      { text: "pero", ipa: "/ˈpeɾo/", targetUnitSlug: "es-tap-r" },
+      { text: "perro", ipa: "/ˈpero/", targetUnitSlug: "es-trill-r" },
+      { text: "jamón", ipa: "/xaˈmon/", targetUnitSlug: "es-x" },
+      { text: "niño", ipa: "/ˈniɲo/", targetUnitSlug: "es-ny" },
+      { text: "zapato", ipa: "/θaˈpato/", targetUnitSlug: "es-theta" },
+      { text: "vida", ipa: "/ˈbiða/", targetUnitSlug: "es-bv" },
+      { text: "dedo", ipa: "/ˈdeðo/", targetUnitSlug: "es-d" },
+      { text: "agua", ipa: "/ˈaɣwa/", targetUnitSlug: "es-g" },
+      { text: "sol", ipa: "/sol/", targetUnitSlug: "es-s" },
+      { text: "chico", ipa: "/ˈtʃiko/", targetUnitSlug: "es-ch" },
+      { text: "yo", ipa: "/ʝo/", targetUnitSlug: "es-y-ll" },
+      { text: "hola", ipa: "/ˈola/", targetUnitSlug: "es-l" },
+      { text: "un gato", ipa: "/uŋ ˈgato/", targetUnitSlug: "es-nasal-place" },
+      { text: "tierra", ipa: "/ˈtjera/", targetUnitSlug: "es-diphthongs-j" },
+      { text: "bueno", ipa: "/ˈbweno/", targetUnitSlug: "es-diphthongs-w" },
+      { text: "papá", ipa: "/paˈpa/", targetUnitSlug: "es-lexical-stress" },
+      { text: "Buenos días", ipa: "/ˈbwenos ˈdias/", targetUnitSlug: "es-syllable-rhythm" },
+    ],
+    diagnosticPassage: {
+      title: "纯元音、r/rr 和 es-ES /θ/ 筛查",
+      text: "Mi perro corre por la plaza. La niña compra pan, queso y zumo por la mañana.",
+      targetUnitSlugs: ["es-a", "es-e", "es-tap-r", "es-trill-r", "es-theta"],
+    },
+    contrastDeck: [
+      {
+        left: "pero",
+        right: "perro",
+        ipa: "/ˈpeɾo/ ~ /ˈpero/",
+        targetUnitSlug: "es-trill-r",
+        focus: "单击 r 与颤音 rr",
+      },
+      {
+        left: "casa",
+        right: "caza",
+        ipa: "/ˈkasa/ ~ /ˈkaθa/",
+        targetUnitSlug: "es-theta",
+        focus: "es-ES /s/ 与 /θ/",
+      },
+      {
+        left: "caro",
+        right: "carro",
+        ipa: "/ˈkaɾo/ ~ /ˈkaro/",
+        targetUnitSlug: "es-trill-r",
+        focus: "词中 r/rr",
+      },
+      {
+        left: "baca",
+        right: "vaca",
+        ipa: "/ˈbaka/ ~ /ˈbaka/",
+        targetUnitSlug: "es-b-stop",
+        focus: "b/v 是拼写差异，不按英语 /v/ 分裂",
+      },
+      {
+        left: "boca",
+        right: "uva",
+        ipa: "/ˈboka/ ~ /ˈuba/",
+        targetUnitSlug: "es-bv",
+        focus: "停顿后 /b/ 与元音间 [β] 的实现层区别",
+      },
+      {
+        left: "dos",
+        right: "nada",
+        ipa: "/dos/ ~ /ˈnada/",
+        targetUnitSlug: "es-d",
+        focus: "停顿后 /d/ 与元音间 [ð] 的实现层区别",
+      },
+      {
+        left: "gato",
+        right: "agua",
+        ipa: "/ˈgato/ ~ /ˈagwa/",
+        targetUnitSlug: "es-g",
+        focus: "停顿后 /g/ 与元音间 [ɣ] 的实现层区别",
+      },
+      {
+        left: "piso",
+        right: "peso",
+        ipa: "/ˈpiso/ ~ /ˈpeso/",
+        targetUnitSlug: "es-i",
+        focus: "/i/ 与 /e/ 都要短而纯，不拖成英语双元音",
+      },
+      {
+        left: "cana",
+        right: "caña",
+        ipa: "/ˈkana/ ~ /ˈkaɲa/",
+        targetUnitSlug: "es-ny",
+        focus: "/n/ 与 /ɲ/",
+      },
+      {
+        left: "gol",
+        right: "lago",
+        ipa: "/gol/ ~ /ˈlago/",
+        targetUnitSlug: "es-g-stop",
+        focus: "词首 /g/ 与元音间 /ɣ/",
+      },
+      {
+        left: "dedo",
+        right: "nada",
+        ipa: "/ˈdeðo/ ~ /ˈnaða/",
+        targetUnitSlug: "es-d",
+        focus: "d 的硬起音与元音间近音",
+      },
+      {
+        left: "chico",
+        right: "ciclo",
+        ipa: "/ˈtʃiko/ ~ /ˈθiklo/",
+        targetUnitSlug: "es-ch",
+        focus: "/tʃ/ 和 es-ES /θ/ 的区别",
+      },
+      {
+        left: "llama",
+        right: "yema",
+        ipa: "/ˈʝama/ ~ /ˈʝema/",
+        targetUnitSlug: "es-y-ll",
+        focus: "y/ll yeísmo，说明方言变体",
+      },
+      {
+        left: "lata",
+        right: "rata",
+        ipa: "/ˈlata/ ~ /ˈrata/",
+        targetUnitSlug: "es-l",
+        focus: "清晰 /l/ vs 颤音 /r/",
+      },
+      {
+        left: "un beso",
+        right: "un gato",
+        ipa: "/um ˈbeso/ ~ /uŋ ˈgato/",
+        targetUnitSlug: "es-nasal-place",
+        focus: "鼻音随后接辅音改变位置",
+      },
+      {
+        left: "bien",
+        right: "ven",
+        ipa: "/bjen/ ~ /ben/",
+        targetUnitSlug: "es-diphthongs-j",
+        focus: "ie 的 /j/ glide",
+      },
+      {
+        left: "bueno",
+        right: "bono",
+        ipa: "/ˈbweno/ ~ /ˈbono/",
+        targetUnitSlug: "es-diphthongs-w",
+        focus: "ue 的 /w/ glide",
+      },
+      {
+        left: "papa",
+        right: "papá",
+        ipa: "/ˈpapa/ ~ /paˈpa/",
+        targetUnitSlug: "es-lexical-stress",
+        focus: "词重音改变词义",
+      },
+      {
+        left: "hablo",
+        right: "habló",
+        ipa: "/ˈaβlo/ ~ /aˈβlo/",
+        targetUnitSlug: "es-lexical-stress",
+        focus: "accent mark 和重音位置",
+      },
+    ],
+    sentenceDeck: [
+      {
+        text: "La casa está cerca de la plaza.",
+        ipaHint: "/a e θ/",
+        targetUnitSlugs: ["es-a", "es-e", "es-theta", "es-l"],
+        focus: "纯元音和 es-ES /θ/",
+      },
+      {
+        text: "Pero mi perro corre rápido.",
+        ipaHint: "/ɾ r/",
+        targetUnitSlugs: ["es-tap-r", "es-trill-r"],
+        focus: "r/rr 对比",
+      },
+      {
+        text: "El niño bebe agua fría.",
+        ipaHint: "/ɲ β/",
+        targetUnitSlugs: ["es-ny", "es-bv"],
+        focus: "ñ 与 b/v 近音",
+      },
+      {
+        text: "Javier trabaja por la mañana.",
+        ipaHint: "/x a/",
+        targetUnitSlugs: ["es-x", "es-a"],
+        focus: "西语 /x/ 和纯 /a/",
+      },
+      {
+        text: "Cinco zapatos son azules.",
+        ipaHint: "/θ s/",
+        targetUnitSlugs: ["es-theta", "es-o"],
+        focus: "Castilian c/z 和稳定 /o/",
+      },
+      {
+        text: "Una familia vive en Madrid.",
+        ipaHint: "/u i ð/",
+        targetUnitSlugs: ["es-u", "es-i", "es-d"],
+        focus: "短元音和 /ð/",
+      },
+      {
+        text: "Chico, escucha la leche.",
+        ipaHint: "/tʃ/",
+        targetUnitSlugs: ["es-ch", "es-e"],
+        focus: "ch /tʃ/",
+      },
+      {
+        text: "Yo llevo la llave amarilla.",
+        ipaHint: "/ʝ/",
+        targetUnitSlugs: ["es-y-ll"],
+        focus: "y/ll yeísmo 与方言说明",
+      },
+      {
+        text: "Un gato duerme en un banco.",
+        ipaHint: "/uŋ ˈgato ˈdweɾme en um ˈbaŋko/",
+        targetUnitSlugs: ["es-nasal-place", "es-g"],
+        focus: "鼻音位置同化",
+      },
+      {
+        text: "Tierra y cielo son palabras con diptongos.",
+        ipaHint: "/j/",
+        targetUnitSlugs: ["es-diphthongs-j", "es-theta"],
+        focus: "ie/io 等 /j/ glide",
+      },
+      {
+        text: "Bueno, cuatro amigos juegan afuera.",
+        ipaHint: "/w ɣ/",
+        targetUnitSlugs: ["es-diphthongs-w", "es-g"],
+        focus: "ue/ua /w/ glide 和 g 近音",
+      },
+      {
+        text: "Papá habló con el médico.",
+        ipaHint: "/paˈpa aˈβlo kon el ˈmeðiko/",
+        targetUnitSlugs: ["es-lexical-stress"],
+        focus: "重音和 accent marks",
+      },
+      {
+        text: "Buenos días, muchas gracias.",
+        ipaHint: "/ˈbwenos ˈdias ˈmutʃas ˈɣɾaθjas/",
+        targetUnitSlugs: ["es-syllable-rhythm", "es-diphthongs-w"],
+        focus: "西语音节节奏",
+      },
+      {
+        text: "El carro rojo va por la carretera.",
+        ipaHint: "/r x ɾ/",
+        targetUnitSlugs: ["es-trill-r", "es-x", "es-tap-r"],
+        focus: "rr、j、单击 r",
+      },
+      {
+        text: "La ciudad tiene cinco universidades.",
+        ipaHint: "/θj s/",
+        targetUnitSlugs: ["es-diphthongs-j", "es-theta", "es-s"],
+        focus: "es-ES /θ/、/s/ 和 ciudad 的 /j/",
+      },
+      {
+        text: "Mi amigo dice que todo va bien.",
+        ipaHint: "/ð ɣ j/",
+        targetUnitSlugs: ["es-d", "es-g", "es-diphthongs-j"],
+        focus: "d/g 近音和 bien 的 /j/",
+      },
+      {
+        text: "Papá pide pan para Paco.",
+        ipaHint: "/p/",
+        targetUnitSlugs: ["es-p"],
+        focus: "西语 /p/ 不强送气",
+      },
+      {
+        text: "Beto busca un banco.",
+        ipaHint: "/b/",
+        targetUnitSlugs: ["es-b-stop"],
+        focus: "停顿后和鼻音后的 /b/ 塞音锚点",
+      },
+      {
+        text: "Tú tomas té temprano.",
+        ipaHint: "/t/",
+        targetUnitSlugs: ["es-t"],
+        focus: "齿化、不送气 /t/",
+      },
+      {
+        text: "Quiero queso caliente.",
+        ipaHint: "/k/",
+        targetUnitSlugs: ["es-k"],
+        focus: "c/qu/k 的 /k/",
+      },
+      {
+        text: "Dora da dos datos.",
+        ipaHint: "/d/",
+        targetUnitSlugs: ["es-d-stop"],
+        focus: "停顿后 /d/ 塞音锚点",
+      },
+      {
+        text: "Gabi guarda guantes.",
+        ipaHint: "/g/",
+        targetUnitSlugs: ["es-g-stop"],
+        focus: "停顿后和鼻音后的 /g/ 塞音锚点",
+      },
+      {
+        text: "La familia toma fotos.",
+        ipaHint: "/f/",
+        targetUnitSlugs: ["es-f"],
+        focus: "清音 /f/",
+      },
+      {
+        text: "Mi mamá mira el mapa.",
+        ipaHint: "/m/",
+        targetUnitSlugs: ["es-m"],
+        focus: "双唇鼻音 /m/",
+      },
+      {
+        text: "No necesito nada nuevo.",
+        ipaHint: "/n/",
+        targetUnitSlugs: ["es-n"],
+        focus: "基础 /n/ 和鼻音位置",
+      },
+    ],
+  },
+  "fr-FR": {
+    languageId: "fr-FR",
+    sourceRefs: [
+      "easypronunciation-fr-ipa",
+      "openipa-fr",
+      "lawless-french-ipa",
+      "phonetique-ca",
+    ],
+    diagnosticWords: [
+      { text: "si", ipa: "/si/", targetUnitSlug: "fr-i" },
+      { text: "tu", ipa: "/ty/", targetUnitSlug: "fr-y" },
+      { text: "cou", ipa: "/ku/", targetUnitSlug: "fr-u" },
+      { text: "été", ipa: "/ete/", targetUnitSlug: "fr-e" },
+      { text: "lait", ipa: "/lɛ/", targetUnitSlug: "fr-e-open" },
+      { text: "peu", ipa: "/pø/", targetUnitSlug: "fr-eu-close" },
+      { text: "sœur", ipa: "/sœʁ/", targetUnitSlug: "fr-eu-open" },
+      { text: "sans", ipa: "/sɑ̃/", targetUnitSlug: "fr-an" },
+      { text: "vin", ipa: "/vɛ̃/", targetUnitSlug: "fr-in" },
+      { text: "bon", ipa: "/bɔ̃/", targetUnitSlug: "fr-on" },
+      { text: "rue", ipa: "/ʁy/", targetUnitSlug: "fr-r" },
+      { text: "pain", ipa: "/pɛ̃/", targetUnitSlug: "fr-p" },
+      { text: "bébé", ipa: "/bebe/", targetUnitSlug: "fr-b" },
+      { text: "tête", ipa: "/tɛt/", targetUnitSlug: "fr-t" },
+      { text: "deux", ipa: "/dø/", targetUnitSlug: "fr-d" },
+      { text: "café", ipa: "/kafe/", targetUnitSlug: "fr-k" },
+      { text: "garçon", ipa: "/gaʁsɔ̃/", targetUnitSlug: "fr-g" },
+      { text: "faire", ipa: "/fɛʁ/", targetUnitSlug: "fr-f" },
+      { text: "vite", ipa: "/vit/", targetUnitSlug: "fr-v" },
+      { text: "sel", ipa: "/sɛl/", targetUnitSlug: "fr-s" },
+      { text: "zéro", ipa: "/zeʁo/", targetUnitSlug: "fr-z" },
+      { text: "merci", ipa: "/mɛʁsi/", targetUnitSlug: "fr-m" },
+      { text: "nous", ipa: "/nu/", targetUnitSlug: "fr-n" },
+      { text: "livre", ipa: "/livʁ/", targetUnitSlug: "fr-l" },
+      { text: "petit", ipa: "/pəti/", targetUnitSlug: "fr-schwa" },
+      { text: "les amis", ipa: "/lez‿ami/", targetUnitSlug: "fr-liaison" },
+      { text: "la", ipa: "/la/", targetUnitSlug: "fr-a" },
+      { text: "beau", ipa: "/bo/", targetUnitSlug: "fr-o-close" },
+      { text: "porte", ipa: "/pɔʁt/", targetUnitSlug: "fr-o-open" },
+      { text: "un", ipa: "/œ̃/", targetUnitSlug: "fr-un" },
+      { text: "chat", ipa: "/ʃa/", targetUnitSlug: "fr-sh" },
+      { text: "jour", ipa: "/ʒuʁ/", targetUnitSlug: "fr-zh" },
+      { text: "agneau", ipa: "/aɲo/", targetUnitSlug: "fr-ny" },
+      { text: "fille", ipa: "/fij/", targetUnitSlug: "fr-glide-j" },
+      { text: "huit", ipa: "/ɥit/", targetUnitSlug: "fr-glide-hui" },
+      { text: "oui", ipa: "/wi/", targetUnitSlug: "fr-glide-w" },
+      { text: "trop", ipa: "/tʁo/", targetUnitSlug: "fr-final-consonant-silence" },
+      { text: "avec elle", ipa: "/avɛk‿ɛl/", targetUnitSlug: "fr-enchainement" },
+      { text: "j’aime", ipa: "/ʒɛm/", targetUnitSlug: "fr-elision" },
+      { text: "bonjour", ipa: "/bɔ̃ʒuʁ/", targetUnitSlug: "fr-phrase-final-prominence" },
+    ],
+    diagnosticPassage: {
+      title: "前圆唇元音、鼻化元音和连诵筛查",
+      text: "Un étudiant prend un bon café. Les amis parlent dans une petite rue.",
+      targetUnitSlugs: [
+        "fr-y",
+        "fr-an",
+        "fr-in",
+        "fr-on",
+        "fr-liaison",
+        "fr-phrase-final-prominence",
+      ],
+    },
+    contrastDeck: [
+      {
+        left: "si",
+        right: "su",
+        ipa: "/si/ ~ /sy/",
+        targetUnitSlug: "fr-y",
+        focus: "/i/ 与前圆唇 /y/",
+      },
+      {
+        left: "deux",
+        right: "sœur",
+        ipa: "/dø/ ~ /sœʁ/",
+        targetUnitSlug: "fr-eu-open",
+        focus: "/ø/ 与 /œ/",
+      },
+      {
+        left: "sans",
+        right: "son",
+        ipa: "/sɑ̃/ ~ /sɔ̃/",
+        targetUnitSlug: "fr-on",
+        focus: "鼻化元音对比",
+      },
+      {
+        left: "vin",
+        right: "vent",
+        ipa: "/vɛ̃/ ~ /vɑ̃/",
+        targetUnitSlug: "fr-in",
+        focus: "/ɛ̃/ 与 /ɑ̃/",
+      },
+      {
+        left: "rue",
+        right: "lu",
+        ipa: "/ʁy/ ~ /ly/",
+        targetUnitSlug: "fr-r",
+        focus: "法语小舌 /ʁ/",
+      },
+      {
+        left: "les amis",
+        right: "les livres",
+        ipa: "/lez‿ami/ ~ /le livʁ/",
+        targetUnitSlug: "fr-liaison",
+        focus: "必要连诵 vs 不连诵",
+      },
+      {
+        left: "la",
+        right: "lait",
+        ipa: "/la/ ~ /lɛ/",
+        targetUnitSlug: "fr-a",
+        focus: "/a/ 与 /ɛ/ 开口对比",
+      },
+      {
+        left: "beau",
+        right: "bonne",
+        ipa: "/bo/ ~ /bɔn/",
+        targetUnitSlug: "fr-o-open",
+        focus: "/o/ 与 /ɔ/ 对比",
+      },
+      {
+        left: "un",
+        right: "in",
+        ipa: "/œ̃/ ~ /ɛ̃/",
+        targetUnitSlug: "fr-un",
+        focus: "/œ̃/ 可与 /ɛ̃/ 合并，按变体提示",
+      },
+      {
+        left: "chat",
+        right: "chaud",
+        ipa: "/ʃa/ ~ /ʃo/",
+        targetUnitSlug: "fr-sh",
+        focus: "法语 ch 是 /ʃ/，不是 /tʃ/",
+      },
+      {
+        left: "je",
+        right: "chez",
+        ipa: "/ʒə/ ~ /ʃe/",
+        targetUnitSlug: "fr-zh",
+        focus: "/ʒ/ 与 /ʃ/ 清浊对比",
+      },
+      {
+        left: "agneau",
+        right: "anneau",
+        ipa: "/aɲo/ ~ /ano/",
+        targetUnitSlug: "fr-ny",
+        focus: "/ɲ/ 不拆成 /n+j/",
+      },
+      {
+        left: "fille",
+        right: "fil",
+        ipa: "/fij/ ~ /fil/",
+        targetUnitSlug: "fr-glide-j",
+        focus: "末尾 /j/ glide",
+      },
+      {
+        left: "huit",
+        right: "oui",
+        ipa: "/ɥit/ ~ /wi/",
+        targetUnitSlug: "fr-glide-hui",
+        focus: "/ɥ/ 与 /w/ 的圆唇 glide",
+      },
+      {
+        left: "petit",
+        right: "ptit",
+        ipa: "/pəti/ ~ /pti/",
+        targetUnitSlug: "fr-schwa",
+        focus: "schwa 是否发出受语速和语境影响",
+      },
+      {
+        left: "petit",
+        right: "petite",
+        ipa: "/pəti/ ~ /pətit/",
+        targetUnitSlug: "fr-final-consonant-silence",
+        focus: "孤立阳性词尾静音 vs 派生形式",
+      },
+    ],
+    sentenceDeck: [
+      {
+        text: "Tu veux du café ?",
+        ipaHint: "/y ø/",
+        targetUnitSlugs: ["fr-y", "fr-eu-close", "fr-e"],
+        focus: "前圆唇元音和 fermé /e/",
+      },
+      {
+        text: "Un bon vin blanc.",
+        ipaHint: "/œ̃ ɔ̃ ɛ̃ ɑ̃/",
+        targetUnitSlugs: ["fr-in", "fr-on", "fr-an"],
+        focus: "鼻化元音串联",
+      },
+      {
+        text: "Les amis arrivent à Paris.",
+        ipaHint: "/lezami aʁiv a paʁi/",
+        targetUnitSlugs: ["fr-liaison", "fr-r"],
+        focus: "连诵和法语 r",
+      },
+      {
+        text: "Je prends un petit déjeuner.",
+        ipaHint: "/ə ɑ̃/",
+        targetUnitSlugs: ["fr-schwa", "fr-an"],
+        focus: "schwa 与鼻化",
+      },
+      {
+        text: "La sœur de Luc parle peu.",
+        ipaHint: "/œ ø/",
+        targetUnitSlugs: ["fr-eu-open", "fr-eu-close"],
+        focus: "/œ/ 和 /ø/",
+      },
+      {
+        text: "Il habite avec elle.",
+        ipaHint: "/ilabit avɛkɛl/",
+        targetUnitSlugs: ["fr-enchainement"],
+        focus: "词尾辅音和连音",
+      },
+      {
+        text: "Le chat jaune dort.",
+        ipaHint: "/ʃ ʒ/",
+        targetUnitSlugs: ["fr-sh", "fr-zh", "fr-final-consonant-silence"],
+        focus: "ch /ʃ/、j /ʒ/ 和词尾静音",
+      },
+      {
+        text: "L’ami arrive à huit heures.",
+        ipaHint: "/lami aʁiv a ɥit œʁ/",
+        targetUnitSlugs: ["fr-elision", "fr-glide-hui", "fr-enchainement"],
+        focus: "省音、enchaînement 和 /ɥ/",
+      },
+      {
+        text: "Une fille lit près de la porte.",
+        ipaHint: "/j a ɔ/",
+        targetUnitSlugs: ["fr-glide-j", "fr-a", "fr-o-open", "fr-i", "fr-e-open"],
+        focus: "/j/ glide 与 /i a ɛ ɔ/",
+      },
+      {
+        text: "Oui, nous allons au bureau.",
+        ipaHint: "/w o/",
+        targetUnitSlugs: ["fr-glide-w", "fr-o-close", "fr-u"],
+        focus: "/w/ glide、/o/ 和 /u/",
+      },
+      {
+        text: "Un parfum brun peut varier selon l’accent.",
+        ipaHint: "/œ̃ ɛ̃/",
+        targetUnitSlugs: ["fr-un", "fr-in", "fr-elision"],
+        focus: "/œ̃/ 与 /ɛ̃/ 可能合并，不硬判变体",
+      },
+      {
+        text: "Le grand homme parle encore.",
+        ipaHint: "/lə gʁɑ̃tɔm paʁl ɑ̃kɔʁ/",
+        targetUnitSlugs: ["fr-liaison", "fr-r", "fr-an"],
+        focus: "grand homme 的 liaison：/t/ 重新发出并连到 homme",
+      },
+      {
+        text: "Petit à petit, elle écoute.",
+        ipaHint: "/ə/",
+        targetUnitSlugs: ["fr-schwa", "fr-enchainement"],
+        focus: "schwa 与词间连音",
+      },
+      {
+        text: "Trop grand, trop lent, trop fort.",
+        ipaHint: "/tʁo gʁɑ̃ tʁo lɑ̃ tʁo fɔʁ/",
+        targetUnitSlugs: ["fr-final-consonant-silence", "fr-an", "fr-r"],
+        focus: "词尾静音和法语 r",
+      },
+      {
+        text: "J’aime le bon vin blanc.",
+        ipaHint: "/ʒɛm lə bɔ̃ vɛ̃ blɑ̃/",
+        targetUnitSlugs: ["fr-elision", "fr-on", "fr-in", "fr-an"],
+        focus: "省音和鼻化元音",
+      },
+      {
+        text: "Il y a un agneau près du jardin.",
+        ipaHint: "/ɲ j/",
+        targetUnitSlugs: ["fr-ny", "fr-glide-j", "fr-un"],
+        focus: "/ɲ/、/j/ 和 /œ̃/ 变体",
+      },
+      {
+        text: "Papa prépare un petit pain.",
+        ipaHint: "/p/",
+        targetUnitSlugs: ["fr-p"],
+        focus: "法语 /p/ 短促、少送气",
+      },
+      {
+        text: "Bébé boit du bon lait.",
+        ipaHint: "/b/",
+        targetUnitSlugs: ["fr-b"],
+        focus: "浊双唇塞音 /b/",
+      },
+      {
+        text: "Tu attends le train tôt.",
+        ipaHint: "/t/",
+        targetUnitSlugs: ["fr-t"],
+        focus: "短促、不强送气 /t/",
+      },
+      {
+        text: "Dimanche, Madame donne deux cadeaux.",
+        ipaHint: "/d/",
+        targetUnitSlugs: ["fr-d"],
+        focus: "浊塞音 /d/，不要读成 flap",
+      },
+      {
+        text: "Qui écoute quatre questions ?",
+        ipaHint: "/k/",
+        targetUnitSlugs: ["fr-k"],
+        focus: "c/qu/k 的 /k/",
+      },
+      {
+        text: "Le grand garçon regarde la gare.",
+        ipaHint: "/g/",
+        targetUnitSlugs: ["fr-g"],
+        focus: "硬 g /g/，不同于 soft g /ʒ/",
+      },
+      {
+        text: "La famille fait une photo facile.",
+        ipaHint: "/f/",
+        targetUnitSlugs: ["fr-f"],
+        focus: "清唇齿摩擦 /f/",
+      },
+      {
+        text: "Vous venez voir le vélo vert.",
+        ipaHint: "/v/",
+        targetUnitSlugs: ["fr-v"],
+        focus: "浊唇齿摩擦 /v/",
+      },
+      {
+        text: "Sans souci, Simon sert la salade.",
+        ipaHint: "/s/",
+        targetUnitSlugs: ["fr-s"],
+        focus: "清摩擦 /s/，不浊化",
+      },
+      {
+        text: "La maison rose a zéro défaut.",
+        ipaHint: "/z/",
+        targetUnitSlugs: ["fr-z"],
+        focus: "浊摩擦 /z/，不要清化成 /s/",
+      },
+      {
+        text: "Ma maman aime la musique moderne.",
+        ipaHint: "/m/",
+        targetUnitSlugs: ["fr-m"],
+        focus: "双唇鼻音 /m/",
+      },
+      {
+        text: "Nous venons demain matin.",
+        ipaHint: "/n/",
+        targetUnitSlugs: ["fr-n"],
+        focus: "基础 /n/ 与鼻化元音分开",
+      },
+      {
+        text: "Le livre bleu est sur la table.",
+        ipaHint: "/l/",
+        targetUnitSlugs: ["fr-l"],
+        focus: "清亮法语 /l/，避免英语 dark L",
+      },
+      {
+        text: "Le musée ferme à six heures.",
+        ipaHint: "/lə myze fɛʁm a sizœʁ/",
+        targetUnitSlugs: ["fr-phrase-final-prominence"],
+        focus: "节奏组末的 heures 稍突出，不逐词套英语重音。",
+      },
+    ],
+  },
+  "ru-RU": {
+    languageId: "ru-RU",
+    sourceRefs: [
+      "easypronunciation-ru-ipa",
+      "ipatics-ru-ipa",
+      "easypronunciation-ru-trainer",
+      "wiktionary-ru-pronunciation-appendix",
+      "jipa-russian",
+      "ipa-handbook",
+    ],
+    diagnosticWords: [
+      { text: "мама", stressText: "ма́ма", ipa: "/ˈmamə/", targetUnitSlug: "ru-a" },
+      { text: "город", stressText: "го́род", ipa: "/ˈgorət/", targetUnitSlug: "ru-o" },
+      { text: "это", stressText: "э́то", ipa: "/ˈetə/", targetUnitSlug: "ru-e" },
+      { text: "мир", ipa: "/mir/", targetUnitSlug: "ru-i" },
+      { text: "сыр", ipa: "/sɨr/", targetUnitSlug: "ru-y" },
+      { text: "рука", stressText: "рука́", ipa: "/rʊˈka/", targetUnitSlug: "ru-u" },
+      { text: "папа", stressText: "па́па", ipa: "/ˈpapə/", targetUnitSlug: "ru-p" },
+      { text: "брат", ipa: "/brat/", targetUnitSlug: "ru-b" },
+      { text: "там", ipa: "/tam/", targetUnitSlug: "ru-t" },
+      { text: "дым", ipa: "/dɨm/", targetUnitSlug: "ru-d" },
+      { text: "кот", ipa: "/kot/", targetUnitSlug: "ru-k" },
+      { text: "группа", stressText: "гру́ппа", ipa: "/ˈgrupə/", targetUnitSlug: "ru-g" },
+      { text: "фото", stressText: "фо́то", ipa: "/ˈfotə/", targetUnitSlug: "ru-f" },
+      { text: "вы", ipa: "/vɨ/", targetUnitSlug: "ru-v" },
+      { text: "сад", ipa: "/sat/", targetUnitSlug: "ru-s" },
+      { text: "зуб", ipa: "/zup/", targetUnitSlug: "ru-z" },
+      { text: "мост", ipa: "/most/", targetUnitSlug: "ru-m" },
+      { text: "нос", ipa: "/nos/", targetUnitSlug: "ru-n" },
+      { text: "луна", stressText: "луна́", ipa: "/lʊˈna/", targetUnitSlug: "ru-l" },
+      { text: "шум", ipa: "/ʂum/", targetUnitSlug: "ru-sh" },
+      { text: "жук", ipa: "/ʐuk/", targetUnitSlug: "ru-zh" },
+      { text: "мать", ipa: "/matʲ/", targetUnitSlug: "ru-hard-soft" },
+      { text: "день", ipa: "/dʲenʲ/", targetUnitSlug: "ru-soft-t-d" },
+      { text: "ток", ipa: "/tok/", targetUnitSlug: "ru-t-tj" },
+      { text: "дом", ipa: "/dom/", targetUnitSlug: "ru-d-dj" },
+      { text: "зима", stressText: "зима́", ipa: "/zʲɪˈma/", targetUnitSlug: "ru-soft-s-z" },
+      { text: "люк", ipa: "/lʲuk/", targetUnitSlug: "ru-soft-n-l-r" },
+      { text: "сын", ipa: "/sɨn/", targetUnitSlug: "ru-s-sj" },
+      { text: "земля", stressText: "земля́", ipa: "/zʲɪˈmlʲa/", targetUnitSlug: "ru-z-zj" },
+      { text: "нёс", ipa: "/nʲos/", targetUnitSlug: "ru-n-nj" },
+      { text: "лес", ipa: "/lʲes/", targetUnitSlug: "ru-l-lj" },
+      { text: "ряд", ipa: "/rʲat/", targetUnitSlug: "ru-r-rj" },
+      { text: "пять", ipa: "/pʲatʲ/", targetUnitSlug: "ru-soft-labials" },
+      { text: "парк", ipa: "/park/", targetUnitSlug: "ru-p-pj" },
+      { text: "билет", stressText: "биле́т", ipa: "/bʲɪˈlʲet/", targetUnitSlug: "ru-b-bj" },
+      { text: "мел", ipa: "/mʲel/", targetUnitSlug: "ru-m-mj" },
+      { text: "фильм", ipa: "/fʲilʲm/", targetUnitSlug: "ru-f-fj" },
+      { text: "вес", ipa: "/vʲes/", targetUnitSlug: "ru-v-vj" },
+      { text: "кино", stressText: "кино́", ipa: "/kʲɪˈno/", targetUnitSlug: "ru-k-kj" },
+      { text: "герой", stressText: "геро́й", ipa: "/gʲɪˈroj/", targetUnitSlug: "ru-g-gj" },
+      { text: "химия", stressText: "хи́мия", ipa: "/ˈxʲimʲɪjə/", targetUnitSlug: "ru-x-xj" },
+      { text: "уголь", stressText: "у́голь", ipa: "/ˈugəlʲ/", targetUnitSlug: "ru-soft-sign" },
+      { text: "река", stressText: "река́", ipa: "/rʲɪˈka/", targetUnitSlug: "ru-r" },
+      { text: "хорошо", stressText: "хорошо́", ipa: "/xərɐˈʂo/", targetUnitSlug: "ru-x" },
+      { text: "журнал", stressText: "журна́л", ipa: "/ʐʊrˈnal/", targetUnitSlug: "ru-sh-zh" },
+      { text: "цена", stressText: "цена́", ipa: "/tsɨˈna/", targetUnitSlug: "ru-ts" },
+      { text: "чай", ipa: "/tɕaj/", targetUnitSlug: "ru-ch" },
+      { text: "щи", ipa: "/ɕːi/", targetUnitSlug: "ru-shch" },
+      { text: "йогурт", stressText: "йо́гурт", ipa: "/ˈjogʊrt/", targetUnitSlug: "ru-j" },
+      { text: "семья", stressText: "семья́", ipa: "/sʲɪmʲˈja/", targetUnitSlug: "ru-iotated-vowels" },
+      { text: "молоко", stressText: "молоко́", ipa: "/məlɐˈko/", targetUnitSlug: "ru-stress-reduction" },
+      { text: "Москва", stressText: "Москва́", ipa: "/mɐˈskva/", targetUnitSlug: "ru-unstressed-o-a" },
+      { text: "минута", stressText: "мину́та", ipa: "/mʲɪˈnutə/", targetUnitSlug: "ru-unstressed-e-ya" },
+      { text: "друг", ipa: "/druk/", targetUnitSlug: "ru-final-devoicing" },
+      { text: "встреча", stressText: "встре́ча", ipa: "/ˈfstrʲetɕə/", targetUnitSlug: "ru-voicing-assimilation" },
+      { text: "текст", ipa: "/tʲekst/", targetUnitSlug: "ru-clusters" },
+    ],
+    diagnosticPassage: {
+      title: "俄语重音、弱化、硬软辅音、清化和辅音丛筛查",
+      text: "Здравствуйте. Сегодня студент идёт в школу, читает русский текст, встречает друга и говорит спасибо.",
+      stressText: "Здра́вствуйте. Сего́дня студе́нт идёт в шко́лу, чита́ет ру́сский текст, встреча́ет дру́га и говори́т спаси́бо.",
+      targetUnitSlugs: [
+        "ru-stress-reduction",
+        "ru-unstressed-o-a",
+        "ru-unstressed-e-ya",
+        "ru-hard-soft",
+        "ru-p",
+        "ru-b",
+        "ru-t",
+        "ru-d",
+        "ru-k",
+        "ru-g",
+        "ru-f",
+        "ru-v",
+        "ru-s",
+        "ru-z",
+        "ru-m",
+        "ru-n",
+        "ru-l",
+        "ru-sh",
+        "ru-zh",
+        "ru-soft-t-d",
+        "ru-soft-s-z",
+        "ru-ts",
+        "ru-ts-ch-shch",
+        "ru-ch",
+        "ru-final-devoicing",
+        "ru-voicing-assimilation",
+        "ru-clusters",
+      ],
+    },
+    contrastDeck: [
+      { left: "мат", right: "мать", ipa: "/mat/ ~ /matʲ/", targetUnitSlug: "ru-soft-sign", focus: "硬/软辅音和软音符号" },
+      { left: "лук", right: "люк", ipa: "/luk/ ~ /lʲuk/", targetUnitSlug: "ru-soft-n-l-r", focus: "л vs ль" },
+      { left: "и", right: "ы", ipa: "/i/ ~ /ɨ/", targetUnitSlug: "ru-y", focus: "/i/ 与 /ɨ/" },
+      { left: "мэр", right: "мел", ipa: "/mɛr/ ~ /mʲel/", targetUnitSlug: "ru-e", focus: "э/е 与前辅音软化" },
+      { left: "ток", right: "тётя", ipa: "/tok/ ~ /ˈtʲotʲə/", targetUnitSlug: "ru-soft-t-d", focus: "硬 т 与软 ть" },
+      { left: "там", right: "тихо", ipa: "/tam/ ~ /ˈtʲixə/", targetUnitSlug: "ru-t-tj", focus: "硬 т 与软 ть" },
+      { left: "да", right: "дядя", ipa: "/da/ ~ /ˈdʲadʲə/", targetUnitSlug: "ru-d-dj", focus: "硬 д 与软 дь" },
+      { left: "сад", right: "сядь", ipa: "/sat/ ~ /sʲatʲ/", targetUnitSlug: "ru-soft-s-z", focus: "硬 с 与软 сь" },
+      { left: "сын", right: "синий", ipa: "/sɨn/ ~ /ˈsʲinʲɪj/", targetUnitSlug: "ru-s-sj", focus: "硬 с 与软 сь" },
+      { left: "зуб", right: "зима", ipa: "/zup/ ~ /zʲɪˈma/", targetUnitSlug: "ru-z-zj", focus: "硬 з 与软 зь" },
+      { left: "нос", right: "нёс", ipa: "/nos/ ~ /nʲos/", targetUnitSlug: "ru-n-nj", focus: "硬 н 与软 нь" },
+      { left: "луна", right: "линия", ipa: "/lʊˈna/ ~ /ˈlʲinʲɪjə/", targetUnitSlug: "ru-l-lj", focus: "硬 л 与软 ль" },
+      { left: "рад", right: "ряд", ipa: "/rat/ ~ /rʲat/", targetUnitSlug: "ru-r-rj", focus: "硬 р 与软 рь" },
+      { left: "пять", right: "пить", ipa: "/pʲatʲ/ ~ /pʲitʲ/", targetUnitSlug: "ru-soft-labials", focus: "软唇音" },
+      { left: "парк", right: "пять", ipa: "/park/ ~ /pʲatʲ/", targetUnitSlug: "ru-p-pj", focus: "硬 п 与软 пь" },
+      { left: "банк", right: "билет", ipa: "/bank/ ~ /bʲɪˈlʲet/", targetUnitSlug: "ru-b-bj", focus: "硬 б 与软 бь" },
+      { left: "мать", right: "мяч", ipa: "/matʲ/ ~ /mʲatɕ/", targetUnitSlug: "ru-m-mj", focus: "硬 м 与软 мь" },
+      { left: "телефон", right: "фильм", ipa: "/tʲɪlʲɪˈfon/ ~ /fʲilʲm/", targetUnitSlug: "ru-f-fj", focus: "硬 ф 与软 фь" },
+      { left: "вы", right: "вес", ipa: "/vɨ/ ~ /vʲes/", targetUnitSlug: "ru-v-vj", focus: "硬 в 与软 вь" },
+      { left: "кот", right: "кино", ipa: "/kot/ ~ /kʲɪˈno/", targetUnitSlug: "ru-k-kj", focus: "硬 к 与软 кь" },
+      { left: "год", right: "герой", ipa: "/got/ ~ /gʲɪˈroj/", targetUnitSlug: "ru-g-gj", focus: "硬 г 与软 гь" },
+      { left: "хлеб", right: "химия", ipa: "/xlʲep/ ~ /ˈxʲimʲɪjə/", targetUnitSlug: "ru-x-xj", focus: "硬 х 与软 хь" },
+      { left: "шить", right: "жить", ipa: "/ʂɨtʲ/ ~ /ʐɨtʲ/", targetUnitSlug: "ru-sh-zh", focus: "ш/ж 厚而偏硬" },
+      { left: "чай", right: "царь", ipa: "/tɕaj/ ~ /tsarʲ/", targetUnitSlug: "ru-ts-ch-shch", focus: "ч、ц、щ 的塞擦/擦音组合" },
+      { left: "чай", right: "щи", ipa: "/tɕaj/ ~ /ɕːi/", targetUnitSlug: "ru-shch", focus: "ч 与长软 щ" },
+      { left: "мой", right: "мир", ipa: "/moj/ ~ /mir/", targetUnitSlug: "ru-j", focus: "й glide 与 /i/" },
+      { left: "я", right: "а", ipa: "/ja/ ~ /a/", targetUnitSlug: "ru-iotated-vowels", focus: "iotated vowel 起首 /j/" },
+      { left: "дом", right: "дома", ipa: "/dom/ ~ /dɐˈma/", targetUnitSlug: "ru-unstressed-o-a", focus: "重音改变 о/а 质量" },
+      { left: "семья", right: "сам", ipa: "/sʲɪmʲˈja/ ~ /sam/", targetUnitSlug: "ru-unstressed-e-ya", focus: "非重读 е/я 弱化和软化" },
+      { left: "дуб", right: "дуба", ipa: "/dup/ ~ /duˈba/", targetUnitSlug: "ru-final-devoicing", focus: "词尾清化" },
+      { left: "встреча", right: "вес", ipa: "/ˈfstrʲetɕə/ ~ /vʲes/", targetUnitSlug: "ru-voicing-assimilation", focus: "辅音清浊同化" },
+      { left: "стол", right: "снег", ipa: "/stol/ ~ /snʲek/", targetUnitSlug: "ru-clusters", focus: "辅音丛不插元音" },
+      { left: "река", right: "рука", ipa: "/rʲɪˈka/ ~ /rʊˈka/", targetUnitSlug: "ru-r", focus: "软/硬 r 和元音弱化" },
+    ],
+    sentenceDeck: [
+      { text: "Мама дома.", stressText: "Ма́ма до́ма.", ipaHint: "/ˈmamə ˈdomə/", targetUnitSlugs: ["ru-a", "ru-o", "ru-stress-reduction"], focus: "重音、/o/ 和非重读弱化" },
+      { text: "Папа был дома, кот гулял.", stressText: "Па́па был до́ма, кот гуля́л.", ipaHint: "/ˈpapə bɨl ˈdomə kot gʊˈlʲal/", targetUnitSlugs: ["ru-p", "ru-b", "ru-d", "ru-k", "ru-t", "ru-g"], focus: "硬 п/б/д/к/т/г 单音锚点" },
+      { text: "Фома на луне, Саша в зале, Жора слышит.", stressText: "Фома́ на луне́, Са́ша в за́ле, Жо́ра слы́шит.", ipaHint: "/fɐˈma nɐ lʊˈnʲe ˈsaʂə v ˈzalʲe ˈʐorə ˈslɨʂɨt/", targetUnitSlugs: ["ru-f", "ru-v", "ru-s", "ru-z", "ru-m", "ru-n", "ru-l", "ru-sh", "ru-zh"], focus: "硬 ф/в/с/з/м/н/л/ш/ж 单音锚点" },
+      { text: "Я люблю русский язык.", stressText: "Я люблю́ ру́сский язы́к.", ipaHint: "/ruskij jɪˈzɨk/", targetUnitSlugs: ["ru-y", "ru-u", "ru-r", "ru-hard-soft", "ru-iotated-vowels"], focus: "/ɨ/、/u/、颤音、硬软辅音和 iotated vowels" },
+      { text: "Здравствуйте, студент.", stressText: "Здра́вствуйте, студе́нт.", ipaHint: "/ˈzdrastvʊjtʲe stʊˈdʲent/", targetUnitSlugs: ["ru-clusters"], focus: "辅音丛" },
+      { text: "Чай и щи горячие.", stressText: "Чай и щи горя́чие.", ipaHint: "/tɕ ɕː/", targetUnitSlugs: ["ru-ch", "ru-shch", "ru-ts-ch-shch"], focus: "ч/щ 和 ц/ч/щ 组对比" },
+      { text: "Хорошо, спасибо.", stressText: "Хорошо́, спаси́бо.", ipaHint: "/x spɐˈsʲibə/", targetUnitSlugs: ["ru-x", "ru-stress-reduction"], focus: "/x/ 与弱化" },
+      { text: "Встреча завтра утром.", stressText: "Встре́ча за́втра у́тром.", ipaHint: "/ˈfstrʲetɕə ˈzaftrə ˈutrəm/", targetUnitSlugs: ["ru-clusters", "ru-voicing-assimilation"], focus: "辅音丛和清浊同化" },
+      { text: "Это билет в театр.", stressText: "Э́то биле́т в теа́тр.", ipaHint: "/e i/", targetUnitSlugs: ["ru-e", "ru-i", "ru-unstressed-e-ya"], focus: "/e/、/i/ 与 е/э" },
+      { text: "День и дом звучат по-разному.", stressText: "День и дом звуча́т по-ра́зному.", ipaHint: "/d dʲ/", targetUnitSlugs: ["ru-soft-t-d"], focus: "硬/软 д" },
+      { text: "Там тихо сегодня.", stressText: "Там ти́хо сего́дня.", ipaHint: "/t tʲ/", targetUnitSlugs: ["ru-t-tj"], focus: "т/ть 硬软对比" },
+      { text: "Да, дядя дома.", stressText: "Да, дя́дя до́ма.", ipaHint: "/d dʲ/", targetUnitSlugs: ["ru-d-dj"], focus: "д/дь 硬软对比" },
+      { text: "Сад зимой синий.", stressText: "Сад зимо́й си́ний.", ipaHint: "/s sʲ zʲ/", targetUnitSlugs: ["ru-soft-s-z"], focus: "с/з 软化" },
+      { text: "Лук и люк - разные слова.", stressText: "Лук и люк - ра́зные слова́.", ipaHint: "/l lʲ/", targetUnitSlugs: ["ru-soft-n-l-r"], focus: "л/ль 对比" },
+      { text: "Сын и синий цвет рядом.", stressText: "Сын и си́ний цвет ря́дом.", ipaHint: "/s sʲ/", targetUnitSlugs: ["ru-s-sj"], focus: "с/сь 硬软对比" },
+      { text: "Зуб и земля рядом.", stressText: "Зуб и земля́ ря́дом.", ipaHint: "/z zʲ/", targetUnitSlugs: ["ru-z-zj"], focus: "з/зь 硬软对比" },
+      { text: "Нос и нёс - разные слова.", stressText: "Нос и нёс - ра́зные слова́.", ipaHint: "/n nʲ/", targetUnitSlugs: ["ru-n-nj"], focus: "н/нь 硬软对比" },
+      { text: "Луна и линия рядом.", stressText: "Луна́ и ли́ния ря́дом.", ipaHint: "/l lʲ/", targetUnitSlugs: ["ru-l-lj"], focus: "л/ль 硬软对比" },
+      { text: "Рад и ряд - разные слова.", stressText: "Рад и ряд - ра́зные слова́.", ipaHint: "/r rʲ/", targetUnitSlugs: ["ru-r-rj"], focus: "р/рь 硬软对比" },
+      { text: "Пять билетов лежат на столе.", stressText: "Пять биле́тов лежа́т на столе́.", ipaHint: "/pʲ bʲ/", targetUnitSlugs: ["ru-soft-labials"], focus: "软唇音" },
+      { text: "Парк и пять песен рядом.", stressText: "Парк и пять пе́сен ря́дом.", ipaHint: "/p pʲ/", targetUnitSlugs: ["ru-p-pj"], focus: "п/пь 硬软对比" },
+      { text: "Белый билет был дома.", stressText: "Бе́лый биле́т был до́ма.", ipaHint: "/b bʲ/", targetUnitSlugs: ["ru-b-bj"], focus: "б/бь 硬软对比" },
+      { text: "Мэр и мел лежат на столе.", stressText: "Мэр и мел лежа́т на столе́.", ipaHint: "/m mʲ/", targetUnitSlugs: ["ru-m-mj"], focus: "м/мь 硬软对比" },
+      { text: "Телефон и фильм на столе.", stressText: "Телефо́н и фильм на столе́.", ipaHint: "/f fʲ/", targetUnitSlugs: ["ru-f-fj"], focus: "ф/фь 硬软对比" },
+      { text: "Вы видите вес.", stressText: "Вы ви́дите вес.", ipaHint: "/v vʲ/", targetUnitSlugs: ["ru-v-vj"], focus: "в/вь 硬软对比" },
+      { text: "Кот смотрит кино.", stressText: "Кот смо́трит кино́.", ipaHint: "/k kʲ/", targetUnitSlugs: ["ru-k-kj"], focus: "к/кь 硬软对比" },
+      { text: "Год и герой рядом.", stressText: "Год и геро́й ря́дом.", ipaHint: "/g gʲ/", targetUnitSlugs: ["ru-g-gj"], focus: "г/гь 硬软对比" },
+      { text: "Хлеб и химия разные.", stressText: "Хлеб и хи́мия ра́зные.", ipaHint: "/x xʲ/", targetUnitSlugs: ["ru-x-xj"], focus: "х/хь 硬软对比" },
+      { text: "Уголь лежит у двери.", stressText: "У́голь лежи́т у две́ри.", ipaHint: "/ʲ/", targetUnitSlugs: ["ru-soft-sign"], focus: "软音符号" },
+      { text: "Центр улицы рядом.", stressText: "Центр у́лицы ря́дом.", ipaHint: "/ts/", targetUnitSlugs: ["ru-ts"], focus: "ц /ts/" },
+      { text: "Мой поезд идёт на юг.", stressText: "Мой по́езд идёт на юг.", ipaHint: "/j/", targetUnitSlugs: ["ru-j", "ru-iotated-vowels"], focus: "й 和 iotated vowels" },
+      { text: "Москва сегодня холодная.", stressText: "Москва́ сего́дня хо́лодная.", ipaHint: "/ɐ ə/", targetUnitSlugs: ["ru-unstressed-o-a", "ru-unstressed-e-ya"], focus: "非重读元音弱化" },
+      { text: "Нож тупой.", stressText: "Нож тупо́й.", ipaHint: "/noʂ tʊˈpoj/", targetUnitSlugs: ["ru-final-devoicing", "ru-sh-zh"], focus: "ж 在清辅音 /t/ 前清化，同时听 ж/ш 的厚音色" },
+      { text: "Сделать быстро трудно.", stressText: "Сде́лать бы́стро тру́дно.", ipaHint: "/ˈzdʲelətʲ ˈbɨstrə ˈtrudnə/", targetUnitSlugs: ["ru-voicing-assimilation", "ru-soft-t-d"], focus: "清浊同化" },
+      { text: "Текст простой, но группа большая.", stressText: "Текст просто́й, но гру́ппа больша́я.", ipaHint: "/tʲekst prɐˈstoj no ˈgrupə bɐlʲˈʂajə/", targetUnitSlugs: ["ru-clusters"], focus: "辅音丛不加元音" },
+    ],
+  },
+};
+
+export function getLanguageLearningDeck(
+  languageId: DeckLanguageId,
+): LanguageLearningDeck {
+  return LANGUAGE_LEARNING_DECKS[languageId];
+}
+
+function summarizeFeedbackRules(
+  languageId: DeckLanguageId,
+  targetUnitSlugs: string[],
+): LanguageDeckFeedbackRuleSummary[] {
+  return matchLanguageFeedbackRules(languageId, targetUnitSlugs).map(
+    ({ rule, matchedSlugs }) => ({
+      id: rule.id,
+      title: rule.title,
+      matchedSlugs,
+    }),
+  );
+}
+
+export function getLanguageDeckFeedbackRuleMatches(
+  languageId: DeckLanguageId,
+): LanguageDeckFeedbackRuleMatch[] {
+  const deck = getLanguageLearningDeck(languageId);
+  const entries: Omit<LanguageDeckFeedbackRuleMatch, "matchedRules">[] = [
+    ...deck.diagnosticWords.map((word) => ({
+      languageId,
+      entryType: "diagnostic-word" as const,
+      text: word.text,
+      targetUnitSlugs: [word.targetUnitSlug],
+    })),
+    {
+      languageId,
+      entryType: "diagnostic-passage" as const,
+      text: deck.diagnosticPassage.text,
+      targetUnitSlugs: deck.diagnosticPassage.targetUnitSlugs,
+    },
+    ...deck.contrastDeck.map((item) => ({
+      languageId,
+      entryType: "contrast" as const,
+      text: `${item.left} ~ ${item.right}`,
+      targetUnitSlugs: [item.targetUnitSlug],
+    })),
+    ...deck.sentenceDeck.map((sentence) => ({
+      languageId,
+      entryType: "sentence" as const,
+      text: sentence.text,
+      targetUnitSlugs: sentence.targetUnitSlugs,
+    })),
+  ];
+
+  return entries
+    .map((entry) => ({
+      ...entry,
+      matchedRules: summarizeFeedbackRules(languageId, entry.targetUnitSlugs),
+    }))
+    .filter((entry) => entry.matchedRules.length > 0);
+}
