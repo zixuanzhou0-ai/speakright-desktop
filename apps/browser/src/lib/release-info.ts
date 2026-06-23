@@ -1,6 +1,6 @@
 export const BROWSER_RELEASE_VERSION = "1.0.1";
 
-const repositoryUrl = "https://github.com/zixuanzhou0-ai/speakright-desktop";
+const repositoryUrl = "https://github.com/zixuanzhou0-ai/speakright";
 const releaseTag = `v${BROWSER_RELEASE_VERSION}`;
 const releaseUrl = `${repositoryUrl}/releases/tag/${releaseTag}`;
 

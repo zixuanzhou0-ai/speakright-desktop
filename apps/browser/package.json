@@ -6,11 +6,11 @@
   "description": "SpeakRight Browser Edition: cross-platform local browser pronunciation practice.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zixuanzhou0-ai/speakright-desktop.git"
+    "url": "https://github.com/zixuanzhou0-ai/speakright.git"
   },
-  "homepage": "https://github.com/zixuanzhou0-ai/speakright-desktop#readme",
+  "homepage": "https://github.com/zixuanzhou0-ai/speakright#readme",
   "bugs": {
-    "url": "https://github.com/zixuanzhou0-ai/speakright-desktop/issues"
+    "url": "https://github.com/zixuanzhou0-ai/speakright/issues"
   },
   "scripts": {
     "dev": "next dev --turbopack --port 3000",
